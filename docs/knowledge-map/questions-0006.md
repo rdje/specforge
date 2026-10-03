@@ -263,6 +263,8 @@
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > how does SpecForge handle one transaction and one rule writing the same named-drive target
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > how does SpecForge know which signals a check signal covers
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does SpecForge measure source-to-IntentIR stage loss
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
@@ -295,5 +297,3 @@
   > how does SpecForge resolve PSEL to PSELx in a temporal condition
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge resolve a persisted path after the repository moves
-- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
-  > how does SpecForge send a question to FSMGen

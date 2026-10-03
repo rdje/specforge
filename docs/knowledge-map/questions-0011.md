@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > is the LLM/VLM provider missing or not wired up
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is the NLP-SHALLOW-PARSE build frontier exhausted
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > is the OpenCAPI 3.0 Certified Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > is the OpenCAPI 3.0 Ready Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -287,13 +297,3 @@
   > should we buy the TYPESAFE_API_KEY
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > temporal rule eval false positives root cause
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > temporal rule predicate atom vocabulary
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > torch MPS float64 error during ingest
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > was DL a signal declaration in the OpenCAPI Ready note
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > was Jev ever run against the corpus
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > was OpenCAPI Discovery ingest deterministic and memory safe

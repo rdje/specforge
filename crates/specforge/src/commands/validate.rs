@@ -2621,6 +2621,18 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("    conditioned: {signal_presence_conditioned}");
     println!("    variant_labels: {signal_presence_variant_labels}");
     println!("    absent_values: {signal_presence_absent_values}");
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — the check-coverage inventory beside it.
+    let check_signal_covered = ir
+        .check_signal_records
+        .iter()
+        .flat_map(|r| r.covered_signals.iter())
+        .collect::<std::collections::BTreeSet<_>>()
+        .len();
+    println!(
+        "  check_signal_records (from check-coverage tables): {}",
+        ir.check_signal_records.len()
+    );
+    println!("    covered_signals: {check_signal_covered}");
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -3262,6 +3274,20 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — the check-coverage inventory, likewise only when present.
+    if !ir.check_signal_records.is_empty() {
+        findings.push(finding(
+            "evidence_check_signal_inventory",
+            ValidationFindingSeverity::Info,
+            "check_signal",
+            format!(
+                "typed check-coverage inventory: {} check signal(s) covering {} distinct signal(s); names, widths, granularities, and enables are document-literal, never evaluated",
+                ir.check_signal_records.len(),
+                check_signal_covered
+            ),
+            Vec::new(),
+        ));
+    }
     // .5b: class-aware per-doc completeness gauge — how complete is the typed intent the
     // extraction DID produce (every register has fields + a width, every signal a
     // direction, every intent-bearing table accounted), judged appropriately for the class.
@@ -3848,6 +3874,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 "signal_presence_absent_values",
                 signal_presence_absent_values.to_string(),
             ),
+            metric(
+                "check_signal_records",
+                ir.check_signal_records.len().to_string(),
+            ),
+            metric("check_signal_covered", check_signal_covered.to_string()),
             metric(
                 "signal_polarity_conflicts",
                 ir.signal_polarity_conflicts.len().to_string(),
@@ -5293,6 +5324,7 @@ fn validate_semantic_ir_with_prior_memory(
         "  signal_presence_records: {}",
         ir.signal_presence_records.len()
     );
+    println!("  check_signal_records: {}", ir.check_signal_records.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -5509,6 +5541,10 @@ fn validate_semantic_ir_with_prior_memory(
             metric(
                 "signal_presence_records",
                 ir.signal_presence_records.len().to_string(),
+            ),
+            metric(
+                "check_signal_records",
+                ir.check_signal_records.len().to_string(),
             ),
             metric(
                 "interface_edge_timings",
@@ -5867,6 +5903,7 @@ fn validate_intent_ir_with_prior_memory(
         "  signal_presence_records: {}",
         ir.signal_presence_records.len()
     );
+    println!("  check_signal_records: {}", ir.check_signal_records.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -7443,6 +7480,10 @@ fn validate_intent_ir_with_prior_memory(
             metric(
                 "signal_presence_records",
                 ir.signal_presence_records.len().to_string(),
+            ),
+            metric(
+                "check_signal_records",
+                ir.check_signal_records.len().to_string(),
             ),
             metric(
                 "interface_edge_timings",

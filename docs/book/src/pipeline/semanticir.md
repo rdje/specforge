@@ -599,6 +599,8 @@ Five evidence-grounded protocol collections, and the signal-presence records, cr
 - `interface_edge_timings`
 - `signal_presence_records` — which signals exist per variant, under what condition, and the value an absent one
   takes (`absent_value`, with the statement that states it; `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`)
+- `check_signal_records` — each check (parity) signal and the signals it covers, with its width, granularity and
+  enable cells verbatim (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`)
 
 This projection is intentionally lossless rather than interpretive. Record order, ids, optional values, and
 every `supporting_statement_ids` and `supporting_table_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
@@ -635,6 +637,7 @@ state, encodings, values, ports, activation conditions, or storage targets.
   protocol_transitions: N
   interface_edge_timings: N
   signal_presence_records: N
+  check_signal_records: N
 ```
 
 IntentIR carries the same collections unchanged, and the `.isf` adapter keeps one residual per record rather than

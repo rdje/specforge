@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why does check_chain_currency report 24/24 current when 54 documents are legacy
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > why does check_doctrines.sh --fast refuse to run
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > why does check_doctrines.sh skip CHAIN-CURRENCY on CI
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why does check_live_document_size not report records
+- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
+  > why does check_live_document_size.pl decode every registry a second time
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > why does check_production_genericity_flow.sh disagree with flow_census.json
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > why does condition_text matter for the NLI claim
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why does constraint promotion run outside the convergence loop
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > why does constraint_bearing_sentence need the same modals as the kind table
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > why does coordination need a verb marker (Distributor registers and provides)
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
@@ -265,8 +289,6 @@
   > why is 'Any AxSNOOP bits not driven by an interface are assumed to be LOW' not bound
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why is 'assumed to be 0b0 for a DVMComplete request' not read as an absent value
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > why is 'the missing signals are assumed to be LOW' (signals covered by a check signal) not bound
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > why is 0010 read as ten
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -275,25 +297,3 @@
   > why is 198 exactly the largest fact-card maximum the current projection allows
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
   > why is ADIv6 ABORT emitted 5 bits wide
-- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
-  > why is ADIv6 Table B2-7's bit-to-signal mapping not read
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > why is ADR 0038 not split or rewritten
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > why is AHB ADDR_WIDTH declared as 10
-- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
-  > why is AHB's HWRITE direction sentence not read
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why is APB Check signal descriptions not refused as a property table
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > why is AWLOCK no longer driven in AXI manager.isf (For Atomic transactions, the following restrictions apply:)
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why is AWSNOOP Table A7.3 not published as an enum
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why is AWSNOOP[3] not resolved to AWSNOOP
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > why is AXI AWAKEUP's hold guard unchanged (the condition already excludes the release)
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped

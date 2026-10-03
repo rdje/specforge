@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > how many docs reach evidence vs semantic vs intent vs isf
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > how many documents carry declaration_row_accounting
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > how many documents carry unfiltered conditional rules and signal constraints
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > how many documents declare a fragment of an escaped compound
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -290,11 +298,3 @@
   > how to read a chip-spec PDF when the Read tool refuses it
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > how to recover register field bit positions that live in the layout graphic, not the table
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how was AHB HREADY recovered for the temporal antecedent
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how was AXI constraint precision fixed
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > how was the 400 page Docling SIGKILL reproduced
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > how was the CHI field-constraint routing measured without re-ingesting the PDF

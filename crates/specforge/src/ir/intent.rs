@@ -13,7 +13,7 @@ use crate::ir::derivation::{
     SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
 use crate::ir::evidence::{
-    InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
+    CheckSignalRecord, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
     ProtocolTransitionRecord, SerialFrameField, SignalPolarityConflictRecord, SignalPolarityRecord,
     SignalPresenceRecord, SignalSemanticConflictRecord,
 };
@@ -184,6 +184,11 @@ pub struct IntentIr {
     /// `.isf` can say it (`sf-isf-optional-signal`).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_presence_records: Vec<SignalPresenceRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — check (parity) signals and the signals each covers,
+    /// carried losslessly from SemanticIR (ADR 0016). Not lowered: `.isf` lowering of a parity check is
+    /// `EXTRACTION-REPRESENTATION-GAPS.46`'s decision.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub check_signal_records: Vec<CheckSignalRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.24.b — declared signals with one instance per actor of a role, carried from
     /// SemanticIR: the adapter lists a family the lowered actor drives as one instance.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -312,6 +317,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_transitions", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
     ("signal_presence_records", "intent.carried_semantics"),
+    ("check_signal_records", "intent.carried_semantics"),
     ("signal_families", "intent.carried_semantics"),
     ("operation_kinds", "intent.carried_semantics"),
     ("regular_states", "intent.carried_semantics"),
@@ -364,6 +370,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "protocol_transitions",
     "interface_edge_timings",
     "signal_presence_records",
+    "check_signal_records",
     "signal_families",
     "operation_kinds",
     "regular_states",
@@ -731,6 +738,7 @@ impl IntentIr {
             protocol_transitions: semantic_ir.protocol_transitions.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             signal_presence_records: semantic_ir.signal_presence_records.clone(),
+            check_signal_records: semantic_ir.check_signal_records.clone(),
             signal_families: semantic_ir.signal_families.clone(),
             operation_kinds: semantic_ir.operation_kinds.clone(),
             system_contract,
@@ -806,6 +814,7 @@ impl IntentIr {
         insert_field!(protocol_transitions);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
+        insert_field!(check_signal_records);
         insert_field!(signal_families);
         insert_field!(operation_kinds);
         insert_field!(regular_states);
@@ -1386,6 +1395,7 @@ impl IntentIr {
             protocol_transitions: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_presence_records: Vec::new(),
+            check_signal_records: Vec::new(),
             signal_families: Vec::new(),
             operation_kinds: Vec::new(),
             system_contract: None,
@@ -6752,8 +6762,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 54);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 34);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 55);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 35);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()

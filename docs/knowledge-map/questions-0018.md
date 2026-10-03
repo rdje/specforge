@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where is a register summary's Reset column kept (RegisterRecord.reset_value)
+- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
+  > where is a tie-off's configuration (the signal's own absence on the driver, its presence condition)
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > where is actor-signal relation drive/read direction decided in evidence.rs
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > where is adaptive_batch_pages / BatchSizePolicy in the code
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > where is build_fixture.py digest pinned
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > where is coordinated-object actor-signal relation extraction implemented
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
@@ -282,19 +298,3 @@
   > which doctrine checks the persisted proof seal on every commit
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered in the SpecForge doctrine driver
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > which doctrines does --fast skip
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > which document loses the most declaration rows on the frozen set
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > which document uses a heading-as-declaration convention
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which documents are in the first source-to-IntentIR vertical evaluation population
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > which documents are undeclared rather than unrebuildable
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > which documents can a classification-keyed extractor actually see

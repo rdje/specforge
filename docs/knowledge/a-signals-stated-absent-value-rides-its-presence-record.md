@@ -7,7 +7,7 @@ answers:
   - "how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values"
   - "why does AXI's BRESP presence record carry 0b000"
   - "why is 'Any AxSNOOP bits not driven by an interface are assumed to be LOW' not bound"
-  - "why is 'the missing signals are assumed to be LOW' (signals covered by a check signal) not bound"
+  - "why was 'the missing signals are assumed to be LOW' (signals covered by a check signal) not bound by .3.d.ii.a alone"
   - "why is 'assumed to be 0b0 for a DVMComplete request' not read as an absent value"
   - "do signal_presence_records cross SemanticIR and IntentIR"
   - "what does the isf adapter do with a stated absent value / what is isf_protocol_signal_absent_value_"
@@ -42,8 +42,8 @@ disagreeing statements bind nothing.
 **What is not read, each a measured residual with an owner.** A value the sentence goes on to qualify (AXI's
 *ARMMUVALID is assumed to be 0b0 for a DVMComplete request*) — the record cannot carry the qualification. A class
 of signals (*If some of the signals covered by a check signal are not present …, the missing signals are assumed
-to be LOW*, APB5 and AHB5) — the members are stated by the check-coverage table (`Check signal | Signals
-covered`), which no reader reads yet (`.3.d.ii.a.i`). A generic name no matrix row carries (*Any AxSNOOP bits not
+to be LOW*, APB5 and AHB5) — bound since `.3.d.ii.a.i` the same day through the check-coverage table
+([[a-check-coverage-table-binds-the-class-of-covered-signals]]). A generic name no matrix row carries (*Any AxSNOOP bits not
 driven … are assumed to be LOW*; the rows are `AWSNOOP` and `ARSNOOP`, and the alias map is empty for AXI) —
 the document's prefix convention has no carrier (`.3.d.ii.a.ii`).
 

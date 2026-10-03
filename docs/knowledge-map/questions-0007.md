@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > how does SpecForge send a question to FSMGen
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge serialize repository owned paths
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -234,6 +236,8 @@
   > how is 'must remain asserted until X' represented
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > how is 'the missing signals are assumed to be LOW' (signals covered by a check signal) bound now
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -274,6 +278,8 @@
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > how is a footnote letter beside a check signal name (PSELxCHK b) handled
 - [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
   > how is a footnote mark read when the converter lost its note (Polling.Active 2)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -290,11 +296,5 @@
   > how is a logic level paired with a signal in the dynamic path
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how is a message field's width kept honest (per-variant widths stay None)
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > how is a polarity stated as a rule over a class of signals read (All WISHBONE interface signals MUST use active high logic)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how is a promoted constraint surface visible in the extraction manifest
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > how is a published mechanism or causal account verified in SpecForge
-- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
-  > how is a question to FSMGen tracked until it is answered
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > how is a parity check-signal table (Check signal | Signals covered) read

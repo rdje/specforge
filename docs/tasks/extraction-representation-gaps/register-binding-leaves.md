@@ -57,10 +57,26 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   (`PWDATACHK`, `PSTRBCHK`, `PREADYCHK`, `PBUSERCHK`) carry variant labels `OC`/`N`/`N`/`N` and `PWDATACHK`'s
   condition reads `DATA_WIDTH/8 Check_Type`, while the fused row itself is refused. **Reproduce:** `python3 -c
   "import json; e=json.load(open('generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json')); print([(r['presence_id'], [v['variant_label'] for v in r['variant_presence']]) for r in e['signal_presence_records'] if r['table_id']=='table_0018'])"`.
-  **Impact:** four check signals state presence under labels that are codes, not versions; a consumer reading
-  `APB5` finds nothing for them. Acceptance: find why one fused row moves the fragment's header remap (the
+  The same converter fault hits `table_0016`: `PRESETn | 1 | - | - | Y Y |  | Y | Y` and `PADDR | ADDR_WIDTH | - | - |
+  Y | Y | Y Y | ` are refused whole, so APB5 has no presence row for `PADDR` or `PRESETn` and `.3.d.ii.a.i`'s class
+  value reaches 15 of the 16 covered signals. **Impact:** four check signals state presence under labels that are
+  codes, not versions; a consumer reading `APB5` finds nothing for them, and two always-present signals have no row. Acceptance: find why one fused row moves the fragment's header remap (the
   `.5h` rotation votes, or the fused-pair split), keep the header labels when the header row is a proper
   header, refuse only the fused row, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.46`
+  Status: `open` (`2026-10-03`; DESIGN then CODE; found by `.3.d.ii.a.i`)
+  Goal: **a parity check signal lowers from the signals it covers and its enable, or the gap is requested.** IntentIR
+  now carries 153 `check_signal_records` in 3 documents (AXI 123, AHB5 16, APB5 14: a check signal, its covered
+  signals, width, granularity and enable, all as written). `.isf` has `(^ A B)` and `(set …)` but no parity or
+  reduction form, so a byte-granular check (`ceil(ADDR_WIDTH/8)` wide, granularity `1-8`) would be a chain of XOR
+  rules per byte that the adapter does not emit; a 1-bit check over several signals (`PCTRLCHK` over `PPROT,
+  PWRITE, PNSE`) is one XOR chain under its enable (`PSEL`). **Reproduce:** `python3 scripts/measure_intent_to_isf_reach.py
+  residuals` lists no check signal; `validate` on AXI's IntentIR reports `check_signal_records: 123`. **Impact:** the
+  parity structure every AMBA5 interface declares reaches `.isf` as plain ports with no drive. Acceptance: decide,
+  per record shape, whether the adapter emits a combinational rule (and how a parameterised byte count is expressed
+  in `.isf`'s width vocabulary) or whether a parity form is a `FSMGEN-REQUESTS` packet; then emit or request, and
+  measure every emitting chain under FSMGen `--strict --check`.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 

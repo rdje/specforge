@@ -36,6 +36,7 @@ the pipeline's: **source** (PDF to SourceIR), **evidence** (reading), **semantic
 | S14 | A relation does not become a declaration in a table-rich document | evidence | junk declarations | `WIRE-BASED-100.10f` |
 | S15 | A transaction's body, where the document gives its steps | semantic, intent | most named transactions carry ports only | `KG-ISF-TRANSACTIONS` |
 | S16 | Serial frame fields, a prose bus-line grammar, single-word state names | evidence | CAN, SMBus | `PDF-VARIANT-DIGESTION.9.3b`, `PDF-VARIANT-DIGESTION.9.10`, `PDF-VARIANT-DIGESTION.9.7` |
+| S25 | A parity check signal lowers from the signals it covers and its enable | adapter | 153 `check_signal_records` in 3 documents (AXI 123, AHB5 16, APB5 14) since `2026-10-03`; `.isf` has `(^ A B)` but no parity form, and the adapter emits none | `EXTRACTION-REPRESENTATION-GAPS.46` |
 
 ## Programmable register and memory-mapped IP
 

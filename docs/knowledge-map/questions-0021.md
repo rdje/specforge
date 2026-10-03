@@ -2,6 +2,23 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why did a current claim census count change without the producer changing
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why did a figure caption become null after re-ingest
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > why did a fresh ingest expose normalized staging in persisted metadata
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why did a freshly partitioned task-evidence part fill up in one slice
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why did a junk polarity record appear after WIRE-BASED-100.10b
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > why did a must not be changed obligation type while cannot be changed did not
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why did a paragraph gain words after re-ingest
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > why did a proof-carrying EvidenceIR stop loading after I added a production function (because the function was COMPOSED INTO a registered evidence derivation: the proof binds the derivation topology, so extract_normative_signal_constraints gaining a call edge makes every artifact whose recorded topology no longer matches fail with registered derivation
+  > evidence.claim.schema_version.root output or input topology is stale)
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why did a signal declared in EvidenceIR never reach the semantic interface records
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -14,6 +31,8 @@
   > why did a temporal conflict disappear when a signal constraint was removed
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > why did adding a task-evidence part trip the files warning
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > why did adding check_signal_records re-seal every chain
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why did adding signal_presence_records to SemanticIR and IntentIR re-seal every chain
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
@@ -278,23 +297,3 @@
   > why do statements contain &gt; and &lt;
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > why do the CCIX specs extract almost no register fields
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > why do two constraints with different conditions not merge
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > why do two enum members have the same value
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > why do unchanged PDF proof digests differ between isolated scratch roots
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > why do workflow standards remain an explicit target list
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why does ACE table_0275 stay flagged after presence capture
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > why does ADIv6 table_0108 produce no signal declarations
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md) | 2026-06-06 | `current` | APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses |
 | [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md) | 2026-09-14 | `current` | A signal declaration whose width the SemanticIR parser cannot finish is discarded whole, and every obligation… |
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
 | [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md) | 2026-06-07 | `current` | A signal-constraint subject must be a DECLARED signal (drops property/config/doc-meta noise) |
@@ -60,4 +61,3 @@
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
 | [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
 | [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |
-| [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |

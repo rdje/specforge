@@ -26,6 +26,8 @@
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does a research record with a live writer need a rollover instead of a partition
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > does a sentence naming a signal outrank a class sentence for the same signal
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > does a stale tree make the live-document-size gate slower
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -296,5 +298,3 @@
   > does the declaration reader publish any false positive declaration
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does the drop model agree with docling iterate_items
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > does the dynamic constraint path use classify_signal_constraint_kind

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > how is a polarity stated as a rule over a class of signals read (All WISHBONE interface signals MUST use active high logic)
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > how is a promoted constraint surface visible in the extraction manifest
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > how is a published mechanism or causal account verified in SpecForge
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > how is a question to FSMGen tracked until it is answered
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > how is a recommended parameter range like between 10 and 64 stored
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -289,11 +297,3 @@
   > how many distinct proof seals does the corpus carry
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > how many docs reach evidence vs semantic vs intent vs isf
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > how many documents carry declaration_row_accounting
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > how many documents carry unfiltered conditional rules and signal constraints

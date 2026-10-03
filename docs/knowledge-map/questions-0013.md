@@ -2,6 +2,17 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what document class is a chip-spec PDF (protocol / register / interface / guide)
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what does 'at or above rollover' mean for a line_bytes_each dimension (only that the widest single line is at 90% of the width bound; the milestone vocabulary is written for a quantity that accumulates. Most surfaces have no rollover to perform anyway — rolling_ledgers.jsonl declares just four sources, and README is a bounded_snapshot that appears there only as a reader —
+  > and where one does exist it lowers a maximum only incidentally, as the CHANGES.md rollover did not: line_bytes 1629 either side)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > what does AdapterArtifact write_to_disk reconcile
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -286,15 +297,3 @@
   > what happened to WTAGUPDATE must_be_value UPDATED
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > what happened to the AArch64 External Debug Guide agent.isf
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what happened to the CoreSight Base System agent.isf
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > what happened to the USB4 Connection Manager device_also.isf
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > what happened to the USB4 Inter-Domain channel.isf
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what happened to the four signal two enum Introducing CoreSight adapter
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > what happened to the original Introducing CoreSight rollback
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what happened to the stale 83 interfaces in the GIC Overview Guide

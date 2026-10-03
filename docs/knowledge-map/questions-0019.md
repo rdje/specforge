@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered in the SpecForge doctrine driver
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > which doctrines does --fast skip
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > which document loses the most declaration rows on the frozen set
+- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
+  > which document uses a heading-as-declaration convention
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which documents are in the first source-to-IntentIR vertical evaluation population
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > which documents are undeclared rather than unrebuildable
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > which documents can a classification-keyed extractor actually see
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > which documents carry obligation-bearing signal-description rows
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -281,19 +297,3 @@
   > why are 58 corpus documents not currency-measurable
 - [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
   > why are AHB's signals other than HRESETn active_high
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > why are AXI rule conflicts 16 -> 0
-- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
-  > why are AXI's AWSTASHNID AWSTASHNIDEN AWSTASHLPID AWSTASHLPIDEN LOW drives gone from manager.isf
-- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
-  > why are AXI's for a WriteZero transaction conditions still listed
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why are MMU-700's LTI observation-interface signals missing from its catalog
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > why are RISC-V IOMMU registers named ddtp, cqb, cqcsr instead of register_table_00NN
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why are SINGLE INCR and WRAP4 not signals

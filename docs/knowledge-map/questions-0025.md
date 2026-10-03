@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why is that not in the nominal determiner list (the Manager that drives HTRANS)
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why is the AHB eval baseline wrong or stale
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why is the Docling table capture of a register diagram unreliable
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > why is the FSM important for SWD/JTAG
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > why is the NLI framing better than free-form labeling
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why is the PSEL antecedent dropped in a temporal rule
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why is the SpecForge fact-card catalog almost out of capacity
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the X interface strip gated on X being a connected agent in this doc
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -158,6 +180,8 @@
   > why not trim a two-word actor like HBM responds back to its head
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > why should corpus counts leave MEMORY md
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > why was 'the missing signals are assumed to be LOW' (signals covered by a check signal) not bound by .3.d.ii.a alone
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > why was ADIv6's CSYSPWRUPREQ power-up rule's antecedent the whole When sentence
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -273,26 +297,3 @@
   > why were RISC-V/TRM register tables unextracted (unknown table_kind)
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why were TMC's Bits | Name | Function tables uncited
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > why were TMC's When asserted: rules removed
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why were True and False known signal names in AXI
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were register names synthetic register_table_NNNN and how is the heading association done
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > why were the rows of AXI Table A15.23 DVM Complete request constraints driven unconditionally
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > will a new standalone extraction command fail if converge does not account for it
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > will editing this function re-seal the persisted corpus
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > will generated stage artifacts survive moving the repository
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > would a MORE PERMISSIVE phase detector rescue the SWD frame fields (NO, and the attempt is a documented trap: a proximity rule that accepts the phase word within four tokens of phase/phases appears to rescue 5 of 11, but every hit is a false positive - statement_1678 names both phases and assigns neither yet is claimed for seven fields, statement_1798 is about a FAULT response,
-  > and statement_0813 is 702 statements away. Run the adversarial control in scripts/measure_swd_frame_phase_scope.py)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > would a table-column phase cue move AXI/SWD off empty per-phase grouping (no — .2j NO-GO; the cue is already captured where present and genuinely absent on AXI/SWD)
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > would a topology-bearing seal key separate a refusing document
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > would header-sourced naming have recovered the Arm SMMU guide's SEC_SID enum (NO — honest correction recorded at .5.iv: that table's members are whole description sentences, so the .5.ii spine gate drops them all and the enum empties however it is named. The lever is real but does not help the document that surfaced it)

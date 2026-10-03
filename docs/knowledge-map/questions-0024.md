@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > why is ADIv6 Table B2-7's bit-to-signal mapping not read
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why is ADR 0038 not split or rewritten
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why is AHB ADDR_WIDTH declared as 10
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > why is AHB's HWRITE direction sentence not read
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why is APB Check signal descriptions not refused as a property table
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why is AWLOCK no longer driven in AXI manager.isf (For Atomic transactions, the following restrictions apply:)
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > why is AWSNOOP Table A7.3 not published as an enum
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why is AWSNOOP[3] not resolved to AWSNOOP
+- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
+  > why is AXI AWAKEUP's hold guard unchanged (the condition already excludes the release)
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -276,25 +298,3 @@
   > why is synthesize_directions_from_relations load-bearing for Avalon
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why is text inside a diagram missing from SourceIR
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > why is that not in the nominal determiner list (the Manager that drives HTRANS)
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why is the AHB eval baseline wrong or stale
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why is the Docling table capture of a register diagram unreliable
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > why is the FSM important for SWD/JTAG
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > why is the NLI framing better than free-form labeling
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why is the PSEL antecedent dropped in a temporal rule
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why is the SpecForge fact-card catalog almost out of capacity
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy

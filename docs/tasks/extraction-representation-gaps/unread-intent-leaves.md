@@ -102,7 +102,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   one empty, and the capture remapped the header (`.45`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`
-  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a`)
+  Status: `done` (`2026-10-03`; CODE; found by `.3.d.ii.a`; checklist below; opened `.46`)
   Goal: **a class-scoped absent value binds each signal the check-coverage table lists.** APB5 and AHB5 state *If
   some of the signals covered by a check signal are not present on an interface, then the missing signals are
   assumed to be LOW* (`ihi0024_e` `statement_0388`, `ihi0033_c` `statement_1047`; `ihi0022_h_c` and `ihi0024_d` say
@@ -114,6 +114,23 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   coverage table into a typed relation (a check signal and the signals it covers), resolve the class phrase to that
   relation when the sentence's words name the table's two headers, bind each covered signal's presence record, and
   measure every chain.
+  **Decided `2026-10-03`: a typed relation, and the class resolves through it.** EvidenceIR gains
+  `check_signal_records` (`CheckSignalRecord { check_id, check_signal, covered_signals, width, granularity,
+  check_enable, table_id }`, `evidence.declaration`), carried unchanged by SemanticIR and IntentIR. The gate is a
+  header cell whose words are exactly *signals covered* and a preceding column headed by *signal* or *name* (AXI's
+  *Table A16.4*); width, granularity and enable columns are found by their header word and kept verbatim. A name
+  cell's trailing footnote letter is dropped (`PSELxCHK b`); a covered cell splits on commas and spaces; a row whose
+  covered cell holds anything but identifiers is refused and keeps its position out of the ids. One reading
+  (`check_coverage_tables`) feeds both the records and the binder, so they cannot disagree. **The class sentence**
+  binds when its absence clause carries every word of the table's two headers (`sentence_names_relation`:
+  `check`, `signal`, `signals`, `covered`); each covered signal's presence record takes the literal, citing the
+  statement and the table in a new `supporting_table_ids`. A sentence naming the signal itself outranks the class.
+  No check signal is lowered: `.isf` has `(^ A B)` but no parity form, and the decision is `.46` (ledger S25).
+  **Measured over all 31 chains:** 28 identical at EvidenceIR. AXI: 123 records over `table_0245`-`0249` (166
+  distinct covered signals), no absent value (its class sentence states *the default for that signal*). APB5: 14
+  records, 15 presence rows take `LOW` citing `statement_0388` and `table_0014` (16 covered; `PADDR`'s matrix row is
+  refused for a fused cell, `.45`). AHB5: 16 records, 22 rows take `LOW` citing `statement_1047` and `table_0031`.
+  Unread records 441 -> 439, `assumed_by_word` 109 -> 107.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`
   Status: `open` (`2026-10-03`; DESIGN + CODE; found by `.3.d.ii.a`)
@@ -186,3 +203,39 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   `a-signals-stated-absent-value-rides-its-presence-record` (new), `signal-presence-matrix-capture` (amended);
   category contract (`interface_inventory_and_shape` names the surface) and census script carry it. No production
   rule was deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i` (CODE) — DONE `2026-10-03`
+
+- [x] **REPRODUCE / MEASURE** — `validate` on APB5's and AHB5's EvidenceIR after `.3.d.ii.a`: `signal_presence_absent_values`
+  0 on both, while `statement_0388` and `statement_1047` (*the missing signals are assumed to be LOW*) sit in the unread
+  `assumed_by_word` family (109 records). No IR field held a check signal's covered signals: APB5 `table_0014`
+  (14 rows), AHB5 `table_0031` (16), AXI `table_0245`-`0249` (123) reached only the declaration reader.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `stated_absent_values` required exactly one
+  presence-record name in the statement, and nothing read the `Check signal | Signals covered` relation that defines
+  the class. RED, with the file restored byte-identically after each (5 mutations): dropping the header-word
+  match, the covered-cell identifier refusal, the name-cell mark rule or the specific-over-class precedence fails
+  `the_missing_signals_covered_by_a_check_signal_take_the_stated_value`,
+  `a_name_headed_check_table_is_read_and_a_garbled_row_is_refused`,
+  `a_check_coverage_table_declares_each_check_signal_and_what_it_covers` or
+  `a_sentence_naming_the_signal_outranks_the_class`.
+- [x] **ADDRESSED (verified)** — Evidence dry-run of all 31 chains against the persisted (`d7c0def32`-current) artifacts:
+  28 identical; AXI moves only in `check_signal_records` (0 -> 123), APB5 in `check_signal_records` (0 -> 14) and
+  `signal_presence_records` (15 rows gain `LOW`), AHB5 likewise (0 -> 16; 22 rows). The three rebuilt stage by stage,
+  each validated once, the adapter last: SemanticIR and IntentIR carry the records (`check_signal_records` 123, 14 and 16 at both stages);
+  adapter residuals and ISF texts AXI unchanged at 57 and its ISF text byte-identical; APB5 22 -> 37 and AHB5 15 -> 37 (one `isf_protocol_signal_absent_value_*` per newly valued row), both ISF texts byte-identical. Unread records 441 -> 439, `assumed_by_word` 109 -> 107.
+- [x] **NO REGRESSION** — The new evidence rule field re-seals every chain: after the three hand rebuilds,
+  `rebuild_stage_cascade.sh --write` rebuilt all 31 content-identical at every stage; `check_chain_currency.sh`
+  31 of 31 current at every stage. WIRE-BASED-100: all 11 seeds identical to the reports of `d7c0def32`'s binary (temp paths masked; `seed_swd`'s constraint 1.000). `kg-bench` 158/158. `cargo fmt --check`
+  clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib
+  --exclude specforge-production-graph` 474 / 170 / 1,823 passed, 0 failed. Claim-family inventory 180 -> 183 rules;
+  `flow_census.json` rolled forward (+8 functions, +29 decision sites, +127 helper edges, +4 macros); `check_signal_surface` is registered as a producer of the
+  `evidence.declaration` family, so `rule_roots` 124 -> 125 and `grammar_declassifiers` 65 -> 66 move by one for that one cause.
+- [x] **GENERICITY (ADR 0006)** — header words (*signals covered*, *signal*, *name*, *width*, *granularity*, *enable*),
+  identifier shape, a footnote letter's shape, and the sentence's own words against the table's own headers; no
+  document, signal, table or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (the `.12b` presence section extended),
+  `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `reference/intentir-contract.md`,
+  `source-to-intent-contract.md`, `reference/representation-gaps.md` (*Signal absent by default* amended, *Parity check
+  signals* added), `quality/validation.md`; `docs/gaps/specforge.md` (S25); KM
+  `a-check-coverage-table-binds-the-class-of-covered-signals` (new), `a-signals-stated-absent-value-rides-its-presence-record`
+  (amended); category contract and inventories carry the surface. No production rule was deleted or replaced.

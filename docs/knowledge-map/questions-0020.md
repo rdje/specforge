@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why are AXI rule conflicts 16 -> 0
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > why are AXI's AWSTASHNID AWSTASHNIDEN AWSTASHLPID AWSTASHLPIDEN LOW drives gone from manager.isf
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > why are AXI's for a WriteZero transaction conditions still listed
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why are MMU-700's LTI observation-interface signals missing from its catalog
+- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
+  > why are RISC-V IOMMU registers named ddtp, cqb, cqcsr instead of register_table_00NN
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why are SINGLE INCR and WRAP4 not signals
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > why are SWD recognized phases signal_set empty and transactions ports empty
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
@@ -281,20 +297,3 @@
   > why did a census over the persisted corpus have to be retracted
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > why did a conditional rule take its consequent signal from the previous sentence
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > why did a current claim census count change without the producer changing
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > why did a figure caption become null after re-ingest
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > why did a fresh ingest expose normalized staging in persisted metadata
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > why did a freshly partitioned task-evidence part fill up in one slice
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why did a junk polarity record appear after WIRE-BASED-100.10b
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > why did a must not be changed obligation type while cannot be changed did not
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why did a paragraph gain words after re-ingest
-- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
-  > why did a proof-carrying EvidenceIR stop loading after I added a production function (because the function was COMPOSED INTO a registered evidence derivation: the proof binds the derivation topology, so extract_normative_signal_constraints gaining a call edge makes every artifact whose recorded topology no longer matches fail with registered derivation
-  > evidence.claim.schema_version.root output or input topology is stale)

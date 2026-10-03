@@ -2539,6 +2539,7 @@ mod tests {
                 absent_value: Some(StatedAbsentValue {
                     value: "0b000".to_string(),
                     supporting_statement_ids: vec!["statement_absent".to_string()],
+                    supporting_table_ids: Vec::new(),
                 }),
             },
         ];

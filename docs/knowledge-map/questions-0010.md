@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how was AHB HREADY recovered for the temporal antecedent
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how was AXI constraint precision fixed
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > how was the 400 page Docling SIGKILL reproduced
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > how was the CHI field-constraint routing measured without re-ingesting the PDF
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
@@ -139,6 +147,8 @@
   > is a missing normalized bundle the same as a lost normalized bundle
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > is a parity check signal lowered to isf (no: EXTRACTION-REPRESENTATION-GAPS.46 decides)
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > is a persisted SourceIR table premise a deterministic function of the retained backend.json (yes: 1,256 of 1,256 equal)
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
@@ -287,13 +297,3 @@
   > is the Introducing CoreSight Debug and Trace refresh complete
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > is the LLM-primary promotion a recall improvement
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > is the LLM/VLM provider missing or not wired up
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is the NLP-SHALLOW-PARSE build frontier exhausted
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > is the OpenCAPI 3.0 Certified Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete

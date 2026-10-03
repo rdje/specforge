@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > temporal rule predicate atom vocabulary
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > torch MPS float64 error during ingest
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > was DL a signal declaration in the OpenCAPI Ready note
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > was Jev ever run against the corpus
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > was OpenCAPI Discovery ingest deterministic and memory safe
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > was any USB4 pipeline artifact changed by the source locality probe
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -287,14 +297,3 @@
   > what do the rows the declaration reader drops actually offer
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what document class is a chip-spec PDF (protocol / register / interface / guide)
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what does 'at or above rollover' mean for a line_bytes_each dimension (only that the widest single line is at 90% of the width bound; the milestone vocabulary is written for a quantity that accumulates. Most surfaces have no rollover to perform anyway — rolling_ledgers.jsonl declares just four sources, and README is a bounded_snapshot that appears there only as a reader —
-  > and where one does exist it lowers a maximum only incidentally, as the CHANGES.md rollover did not: line_bytes 1629 either side)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)

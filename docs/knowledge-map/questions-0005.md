@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > does the dynamic constraint path use classify_signal_constraint_kind
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does the emitted .isf signal direction affect FSMGen downstream correctness
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)

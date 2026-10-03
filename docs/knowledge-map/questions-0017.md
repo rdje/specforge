@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what structural surfaces discriminate document class
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > what survives a rejected provider evaluation
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what table structure is required before port or pin vocabulary grants signal authority
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what task does the current trajectory controller rank next
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > what temporal logic backs temporal_rules
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what turned on the total probe at semantic and intent
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > what value does an isf rule drive when the spec states none
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
@@ -281,19 +297,3 @@
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
 - [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
   > where is a minimum duration such as for at least one clock cycle kept
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is a register summary's Reset column kept (RegisterRecord.reset_value)
-- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
-  > where is a tie-off's configuration (the signal's own absence on the driver, its presence condition)
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > where is actor-signal relation drive/read direction decided in evidence.rs
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > where is adaptive_batch_pages / BatchSizePolicy in the code
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > where is build_fixture.py digest pinned
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject

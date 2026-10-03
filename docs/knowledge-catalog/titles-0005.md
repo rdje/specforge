@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md) | 2026-09-18 | `current` | The LLM-primary constraint path is shown 18.4% of the obligations that exist — its precision work operates… |
 | [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md) | 2026-06-01 | `current` | SpecForge ships a production Ollama+Qwen2.5VL provider (the default LLM/VLM) |
 | [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md) | 2026-06-05 | `current` | Text-reasoning gates (NLI, semantic checks) want a strong TEXT LLM, not a VLM; qwen2.5:14b-instruct is viable… |
 | [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md) | 2026-09-19 | `current` | A deterministic local repair takes the caption decision from macro-F1 0.65014 to 0.95413, which puts the pre-… |
@@ -60,4 +61,3 @@
 | [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md) | 2026-09-11 | `current` | A configurable-property table whose option name contains "signals" satisfies the signal-caption gate, and onl… |
 | [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |
 | [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
-| [prose-signal-capture](../knowledge/prose-signal-capture.md) | 2026-06-08 | `current` | Signals introduced in PROSE (not tables) are captured — pin appositive + parenthetical abbreviation, as a s… |

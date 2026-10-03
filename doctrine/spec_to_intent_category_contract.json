@@ -148,9 +148,10 @@
             "interfaces",
             "actor_ports",
             "signal_polarities",
-            "signal_presence_records"
+            "signal_presence_records",
+            "check_signal_records"
           ],
-          "required_when": "the source declares boundary signals or pins, or states which signals exist per configuration and what an absent one is assumed to be"
+          "required_when": "the source declares boundary signals or pins, or states which signals exist per configuration and what an absent one is assumed to be, or which signals a check signal covers"
         },
         {
           "family": "actors_and_connectivity",

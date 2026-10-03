@@ -924,6 +924,32 @@ chains only AXI moves: `BRESP` and `RRESP` take `0b000`. The `.isf` adapter keep
 because `.isf` has no clause for the value an absent input reads (`sf-isf-optional-signal` R3).
 *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a`).
 
+**A check-coverage table binds the class of covered signals.** Parity specifications state which signals each
+check signal protects in a table headed `Check signal | Signals covered | Width | Granularity | Check enable`
+(APB5 *Table 5-1 Check signal descriptions*, AHB5 *Table 12-1 Parity check signals*, AXI *Table A16.4* with the
+check column headed `Name`). Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i` (`2026-10-03`) EvidenceIR carries
+each row as a `check_signal_records` entry — the check signal, the signals it covers, and the width, granularity
+and enable cells verbatim — gated by a header cell whose words are exactly *signals covered* and a preceding
+column headed by *signal* or *name*:
+
+```json
+{ "check_id": "check_table_0014_001", "check_signal": "PCTRLCHK",
+  "covered_signals": ["PPROT", "PWRITE", "PNSE"], "width": "1", "granularity": "1-5",
+  "check_enable": "PSEL", "table_id": "table_0014" }
+```
+
+A name cell's trailing footnote letter is dropped (`PSELxCHK b`), a covered cell splits on commas and spaces, and
+a row whose covered cell carries anything but identifiers is refused and keeps its position out of the ids. The
+same reading resolves the class sentence the previous paragraph could not: *If some of the signals covered by a
+check signal are not present on an interface, then the missing signals are assumed to be LOW* carries every word
+of the table's two headers, so each covered signal's presence record takes `LOW`, citing the statement and, in
+`supporting_table_ids`, the table it came through. A sentence naming the signal itself outranks the class. On
+the 31 chains AXI gains 123 records, APB5 14 and AHB5 16; APB5 binds
+15 absent values and AHB5 22. The records cross SemanticIR and IntentIR unchanged; no
+check signal is lowered yet, since `.isf` has no parity construct and a check is expressible only as a
+combinational XOR chain — `EXTRACTION-REPRESENTATION-GAPS.46` decides. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a.i`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

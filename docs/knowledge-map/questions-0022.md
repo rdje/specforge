@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > why do two constraints with different conditions not merge
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > why do two enum members have the same value
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > why do unchanged PDF proof digests differ between isolated scratch roots
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > why do workflow standards remain an explicit target list
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why does ACE table_0275 stay flagged after presence capture
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why does ADIv6 table_0108 produce no signal declarations
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
@@ -16,6 +36,8 @@
   > why does APB-E have an invariant for PNSE when PSEL is asserted
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > why does APB-E's requester.isf say (reset (PRESETn async active_low))
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > why does APB5's PPROT presence record carry absent_value LOW with a supporting_table_ids entry
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > why does ATTR_OVR.SHCFG must be 0b01 produce no signal constraint
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
@@ -145,6 +167,8 @@
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > why does a census of escape-fragmented declarations report zero if you are not careful (the fragmentation mints its own Signal X is width N. and Enum X ... = 0. statements, and the repository's standard standalone-wins discriminator then counts those as standalone occurrences and clears the fragment that created them — the contamination manufactures its own evidence of
   > innocence; measured, disabling the exclusion makes the corpus census report 0 names across 0 documents)
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > why does a check table headed Name (AXI Table A16.4) still read
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > why does a conditional rule have no consequent signal
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
@@ -274,27 +298,3 @@
   > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why does cargo test -p specforge not run the trajectory snapshot tests
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why does check_chain_currency report 24/24 current when 54 documents are legacy
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why does check_doctrines.sh --fast refuse to run
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > why does check_doctrines.sh skip CHAIN-CURRENCY on CI
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why does check_live_document_size not report records
-- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
-  > why does check_live_document_size.pl decode every registry a second time
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > why does check_production_genericity_flow.sh disagree with flow_census.json
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > why does condition_text matter for the NLI claim
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why does constraint promotion run outside the convergence loop
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > why does constraint_bearing_sentence need the same modals as the kind table

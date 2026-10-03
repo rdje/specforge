@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what is the first SpecForge trajectory snapshot
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what is the first reviewed source-to-IntentIR evaluation result
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what is the first task in canonical recovery
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > what is the flow-arrow direction grammar
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is the frozen adjudication set for the bounded decision provider
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > what is the gap_catalog surface / gap_catalog_owners region
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -281,19 +297,3 @@
   > what structural cue separates a message-field table from a register-field table
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what structural cues recognize transactions universally (section anchors + enumeration tables)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what structural surfaces discriminate document class
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > what survives a rejected provider evaluation
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what table structure is required before port or pin vocabulary grants signal authority
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what task does the current trajectory controller rank next
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > what temporal logic backs temporal_rules
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what turned on the total probe at semantic and intent
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)

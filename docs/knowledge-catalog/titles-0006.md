@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [prose-signal-capture](../knowledge/prose-signal-capture.md) | 2026-06-08 | `current` | Signals introduced in PROSE (not tables) are captured — pin appositive + parenthetical abbreviation, as a s… |
 | [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md) | 2026-09-11 | `current` | A protocol state binds to its machine only when the document names both in one statement, and two machines fa… |
 | [published-assertion-gate](../knowledge/published-assertion-gate.md) | 2026-08-30 | `current` | A published value re-derives against its producer field, or names the control, decision, or revision that fix… |
 | [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md) | 2026-08-16 | `current` | The a4a0 canonical-recovery replay is the current 40/0/0 reviewed population |
@@ -60,4 +61,3 @@
 | [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md) | 2026-08-15 | `current` | SpecForge is autonomous first and asks typed questions at the evidence boundary |
 | [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md) | 2026-08-11 | `current` | The source-to-IntentIR completeness contract is category-aware, per-cell exact, and independent of ISF emission |
-| [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md) | 2026-09-14 | `current` | A name cell split by the text layer cannot be rejoined by its shape — the column signature selects 120 colu… |

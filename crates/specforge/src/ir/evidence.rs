@@ -376,6 +376,10 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents without presence matrices.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_presence_records: Vec<SignalPresenceRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — the check (parity) signals a document's check-coverage
+    /// tables declare, each with the signals it covers. Empty (serde-skipped) for documents without one.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub check_signal_records: Vec<CheckSignalRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -687,6 +691,36 @@ pub struct StatedAbsentValue {
     pub value: String,
     /// The statement(s) that state it; several when the document repeats the sentence.
     pub supporting_statement_ids: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — the check-coverage table(s) through which a class-scoped
+    /// sentence (*the missing signals* covered by a check signal) reached this signal; empty for a value the
+    /// sentence states on the signal by name.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — one row of a CHECK-COVERAGE table: a check (parity) signal and
+/// the signals it covers (*Table 5-1 Check signal descriptions*: `PCTRLCHK | PPROT, PWRITE, PNSE | 1 | 1-5 |
+/// PSEL`). Names are as written, with a footnote letter the converter appended dropped (`PSELxCHK b`); the
+/// width, granularity and enable cells are literal strings, never evaluated or interpreted.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CheckSignalRecord {
+    /// Stable id, e.g. `check_table_0014_001`: the table and the row's position in it.
+    pub check_id: String,
+    /// The check signal the row declares (`PCTRLCHK`).
+    pub check_signal: String,
+    /// The signals it covers, as the row lists them (`PPROT`, `PWRITE`, `PNSE`).
+    pub covered_signals: Vec<String>,
+    /// The width cell, verbatim (`ceil(ADDR_WIDTH/8)`), when the table has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub width: Option<String>,
+    /// The granularity cell, verbatim (`1-8`), when the table has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub granularity: Option<String>,
+    /// The check-enable cell, verbatim (`PSEL & PWRITE`), when the table has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub check_enable: Option<String>,
+    /// The structured table (page fragment) that carried this row.
+    pub table_id: String,
 }
 
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
@@ -948,6 +982,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ),
     ("signal_channel_memberships", "evidence.declaration"),
     ("signal_presence_records", "evidence.declaration"),
+    ("check_signal_records", "evidence.declaration"),
     ("signal_alias_map", "evidence.declaration"),
     ("signal_polarities", "evidence.signal_semantics"),
     ("signal_polarity_conflicts", "evidence.signal_semantics"),
@@ -1351,6 +1386,7 @@ impl EvidenceIr {
         insert_field!(table_signal_declaration_provenance);
         insert_field!(signal_channel_memberships);
         insert_field!(signal_presence_records);
+        insert_field!(check_signal_records);
         insert_field!(signal_alias_map);
         insert_field!(signal_polarities);
         insert_field!(signal_polarity_conflicts);
@@ -1995,8 +2031,16 @@ impl EvidenceIr {
         // signals exist per interface class / protocol version / agent side, with literal codes
         // and property-conditioned existence. Configuration intent, not declarations — these
         // records never mint signals (the `.12a` gap-fill owns declaration content).
-        let signal_presence_records =
-            signal_presence_surface(source_ir, &extracted_statements, &mut extraction_manifest);
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — the check-coverage tables (a check signal and the
+        // signals it covers), read once: they feed the typed records and the class-scoped absent values.
+        let check_coverage = check_coverage_tables(&source_ir.structured_tables);
+        let check_signal_records = check_signal_surface(&check_coverage);
+        let signal_presence_records = signal_presence_surface(
+            source_ir,
+            &extracted_statements,
+            &check_coverage,
+            &mut extraction_manifest,
+        );
         let timing_constraints = synthesize_timing_constraints(source_ir, prior_guidance.as_ref());
         // EXTRACTION-REPRESENTATION-GAPS.17 — the section each document statement sits in, for a section's polarity rule.
         let statement_sections =
@@ -2166,6 +2210,7 @@ impl EvidenceIr {
             serial_frame_fields,
             message_field_records,
             signal_presence_records,
+            check_signal_records,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_transitions,
@@ -19157,6 +19202,7 @@ impl Extractor<SignalPresenceRecord> for SignalPresenceMatrixExtractor<'_> {
 fn signal_presence_surface(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
+    check_coverage: &[CheckCoverageTable<'_>],
     manifest: &mut ExtractionManifest,
 ) -> Vec<SignalPresenceRecord> {
     let cx = ExtractionContext { statements: &[] };
@@ -19173,16 +19219,183 @@ fn signal_presence_surface(
     for (index, record) in run.records.iter_mut().enumerate() {
         record.presence_id = format!("presence_{index:04}");
     }
-    bind_stated_absent_values(&mut run.records, statements);
+    bind_stated_absent_values(&mut run.records, statements, check_coverage);
     run.records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — a check-coverage table as read: the header texts that name the
+/// relation (`Check signal` / `Signals covered`) and its rows. The same reading feeds the typed
+/// `check_signal_records` and the class-scoped absent values, so the two can never disagree about a row.
+struct CheckCoverageTable<'a> {
+    table: &'a StructuredTableRecord,
+    /// The check-signal column's header, as written (`Check signal`, `Name`).
+    check_header: String,
+    /// The covered-signals column's header, as written (`Signals covered`).
+    covered_header: String,
+    rows: Vec<CheckCoverageRow>,
+}
+
+struct CheckCoverageRow {
+    /// The row's position among the table's data rows; refused rows keep their position.
+    row_index: usize,
+    check_signal: String,
+    covered_signals: Vec<String>,
+    width: Option<String>,
+    granularity: Option<String>,
+    check_enable: Option<String>,
+}
+
+/// The alphabetic words of a header cell, lowercased (`Signals covered` -> {`signals`, `covered`}).
+fn header_words(text: &str) -> BTreeSet<String> {
+    text.split(|c: char| !c.is_ascii_alphabetic())
+        .filter(|word| !word.is_empty())
+        .map(str::to_ascii_lowercase)
+        .collect()
+}
+
+/// A table states the check-coverage relation when one header cell's words are exactly `signals covered`
+/// and a column before it is headed by a word naming the check signal (`signal`, `name`). Width, granularity
+/// and enable columns are recognised by their header word; any other column is left alone.
+fn check_coverage_tables(
+    structured_tables: &[StructuredTableRecord],
+) -> Vec<CheckCoverageTable<'_>> {
+    let covered_words: BTreeSet<String> = ["signals", "covered"]
+        .iter()
+        .map(|w| w.to_string())
+        .collect();
+    let mut tables = Vec::new();
+    for table in structured_tables {
+        let Some(header) = table.header_rows.first() else {
+            continue;
+        };
+        let words: Vec<BTreeSet<String>> = header.iter().map(|c| header_words(&c.text)).collect();
+        let Some(covered) = words.iter().position(|w| *w == covered_words) else {
+            continue;
+        };
+        let Some(check) = (0..covered)
+            .rev()
+            .find(|&i| words[i].contains("signal") || words[i].contains("name"))
+        else {
+            continue;
+        };
+        let column_with = |word: &str| {
+            words
+                .iter()
+                .enumerate()
+                .position(|(i, w)| i != covered && i != check && w.contains(word))
+        };
+        let (width, granularity, enable) = (
+            column_with("width"),
+            column_with("granularity"),
+            column_with("enable"),
+        );
+        let rows = table
+            .body_rows
+            .iter()
+            .chain(recovered_trapped_data_rows(table))
+            .enumerate()
+            .filter_map(|(row_index, row)| {
+                let cell = |i: Option<usize>| i.and_then(|i| row.get(i)).map(|c| c.text.as_str());
+                let check_signal = check_signal_name(cell(Some(check))?)?;
+                let covered_signals = covered_signal_names(cell(Some(covered))?)?;
+                Some(CheckCoverageRow {
+                    row_index,
+                    check_signal,
+                    covered_signals,
+                    width: cell(width).and_then(literal_cell),
+                    granularity: cell(granularity).and_then(literal_cell),
+                    check_enable: cell(enable).and_then(literal_cell),
+                })
+            })
+            .collect::<Vec<_>>();
+        if rows.is_empty() {
+            continue;
+        }
+        tables.push(CheckCoverageTable {
+            table,
+            check_header: header[check].text.clone(),
+            covered_header: header[covered].text.clone(),
+            rows,
+        });
+    }
+    tables
+}
+
+/// A single lowercase letter is a footnote mark the converter kept beside a cell's content (`PSELxCHK b`).
+fn is_footnote_letter(token: &str) -> bool {
+    token.len() == 1 && token.bytes().all(|b| b.is_ascii_lowercase())
+}
+
+/// The check signal a name cell declares: its first token, an identifier, followed by nothing but footnote
+/// letters. Anything else refuses the row rather than guessing which token is the name.
+fn check_signal_name(cell: &str) -> Option<String> {
+    let mut tokens = cell.split_whitespace();
+    let name = tokens.next().filter(|t| is_hardware_signal_token(t))?;
+    tokens.all(is_footnote_letter).then(|| name.to_string())
+}
+
+/// The signals a covered cell lists, separated by commas or spaces; footnote letters are dropped, and any
+/// other non-identifier token refuses the row.
+fn covered_signal_names(cell: &str) -> Option<Vec<String>> {
+    let mut names = Vec::new();
+    for token in cell.split([',', ' ', '\n', '\t']).filter(|t| !t.is_empty()) {
+        if is_footnote_letter(token) {
+            continue;
+        }
+        if !is_hardware_signal_token(token) {
+            return None;
+        }
+        names.push(token.to_string());
+    }
+    (!names.is_empty()).then_some(names)
+}
+
+/// A width, granularity or enable cell, verbatim, with a trailing footnote letter dropped; `None` when empty.
+fn literal_cell(cell: &str) -> Option<String> {
+    let text = cell.trim();
+    let text = match text.rsplit_once(' ') {
+        Some((head, tail)) if is_footnote_letter(tail) => head.trim_end(),
+        _ => text,
+    };
+    (!text.is_empty()).then(|| text.to_string())
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — one typed record per check-coverage row, in table and row order.
+fn check_signal_surface(tables: &[CheckCoverageTable<'_>]) -> Vec<CheckSignalRecord> {
+    tables
+        .iter()
+        .flat_map(|table| {
+            table.rows.iter().map(|row| CheckSignalRecord {
+                check_id: format!("check_{}_{:03}", table.table.table_id, row.row_index),
+                check_signal: row.check_signal.clone(),
+                covered_signals: row.covered_signals.clone(),
+                width: row.width.clone(),
+                granularity: row.granularity.clone(),
+                check_enable: row.check_enable.clone(),
+                table_id: table.table.table_id.clone(),
+            })
+        })
+        .collect()
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — one statement's reading of the value a signal takes when it
 /// is absent: the presence-record signal the statement names, the literal it writes, and the statement.
+/// `.3.d.ii.a.i`: a class-scoped sentence yields one reading per covered signal, each naming the
+/// check-coverage table it came through.
 struct StatedAbsentValueReading {
     signal_name: String,
     value: String,
     statement_id: String,
+    /// Empty when the sentence names the signal itself; the coverage table(s) when it names the class.
+    table_ids: Vec<String>,
+}
+
+/// What `stated_absent_value_literal` found: the literal, and where the sentence that states it begins and
+/// where its `assumed to be` lead starts, as byte offsets into the statement text.
+struct AbsentValueSentence {
+    value: String,
+    sentence_start: usize,
+    lead: usize,
 }
 
 /// The English predicates by which a document says a signal is absent from an interface or undriven.
@@ -19215,64 +19428,119 @@ const ASSUMED_VALUE_LEAD: &str = "assumed to be";
 fn bind_stated_absent_values(
     records: &mut [SignalPresenceRecord],
     statements: &[ExtractedStatement],
+    check_coverage: &[CheckCoverageTable<'_>],
 ) {
     let signal_names: BTreeSet<&str> = records.iter().map(|r| r.signal_name.as_str()).collect();
     if signal_names.is_empty() {
         return;
     }
-    let mut by_signal: BTreeMap<String, BTreeMap<String, Vec<String>>> = BTreeMap::new();
-    for reading in stated_absent_values(statements, &signal_names) {
-        by_signal
+    // signal -> (named by the sentence?) -> value -> (statement ids, table ids)
+    type Statements = BTreeMap<String, (Vec<String>, BTreeSet<String>)>;
+    let mut by_signal: BTreeMap<String, BTreeMap<bool, Statements>> = BTreeMap::new();
+    for reading in stated_absent_values(statements, &signal_names, check_coverage) {
+        let (statement_ids, table_ids) = by_signal
             .entry(reading.signal_name)
             .or_default()
-            .entry(reading.value)
+            .entry(reading.table_ids.is_empty())
             .or_default()
-            .push(reading.statement_id);
+            .entry(reading.value)
+            .or_default();
+        statement_ids.push(reading.statement_id);
+        table_ids.extend(reading.table_ids);
     }
     for record in records.iter_mut() {
-        let Some(values) = by_signal.get(&record.signal_name) else {
+        let Some(scopes) = by_signal.get(&record.signal_name) else {
             continue;
         };
+        // A sentence naming the signal itself outranks one naming a class it belongs to.
+        let values = scopes
+            .get(&true)
+            .or_else(|| scopes.get(&false))
+            .expect("one scope");
         if values.len() != 1 {
             continue;
         }
-        let (value, statement_ids) = values.iter().next().expect("one stated value");
+        let (value, (statement_ids, table_ids)) = values.iter().next().expect("one stated value");
         record.absent_value = Some(StatedAbsentValue {
             value: value.clone(),
             supporting_statement_ids: statement_ids.clone(),
+            supporting_table_ids: table_ids.iter().cloned().collect(),
         });
     }
 }
 
-/// Every statement that states an absent value for exactly one of `signal_names`, in statement order.
+/// Every statement that states an absent value, in statement order: one reading when it names exactly one
+/// of `signal_names`; one reading per covered signal when, naming none, its sentence names a check-coverage
+/// relation by the words of that table's two headers (`.3.d.ii.a.i`).
 fn stated_absent_values(
     statements: &[ExtractedStatement],
     signal_names: &BTreeSet<&str>,
+    check_coverage: &[CheckCoverageTable<'_>],
 ) -> Vec<StatedAbsentValueReading> {
-    statements
-        .iter()
-        .filter_map(|statement| {
-            let value = stated_absent_value_literal(&statement.text)?;
-            let named: BTreeSet<&str> = identifier_words(&statement.text)
-                .into_iter()
-                .map(|(_, word)| word)
-                .filter(|word| signal_names.contains(word))
-                .collect();
-            if named.len() != 1 {
-                return None;
-            }
-            Some(StatedAbsentValueReading {
+    let mut readings = Vec::new();
+    for statement in statements {
+        let Some(sentence) = stated_absent_value_literal(&statement.text) else {
+            continue;
+        };
+        let named: BTreeSet<&str> = identifier_words(&statement.text)
+            .into_iter()
+            .map(|(_, word)| word)
+            .filter(|word| signal_names.contains(word))
+            .collect();
+        match named.len() {
+            1 => readings.push(StatedAbsentValueReading {
                 signal_name: (*named.iter().next().expect("one named signal")).to_string(),
-                value,
+                value: sentence.value,
                 statement_id: statement.statement_id.clone(),
-            })
-        })
-        .collect()
+                table_ids: Vec::new(),
+            }),
+            0 => {
+                let window = &statement.text[sentence.sentence_start..sentence.lead];
+                let mut covered: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
+                for table in check_coverage
+                    .iter()
+                    .filter(|t| sentence_names_relation(window, t))
+                {
+                    for row in &table.rows {
+                        for signal in &row.covered_signals {
+                            if signal_names.contains(signal.as_str()) {
+                                covered
+                                    .entry(signal)
+                                    .or_default()
+                                    .insert(table.table.table_id.clone());
+                            }
+                        }
+                    }
+                }
+                for (signal, table_ids) in covered {
+                    readings.push(StatedAbsentValueReading {
+                        signal_name: signal.to_string(),
+                        value: sentence.value.clone(),
+                        statement_id: statement.statement_id.clone(),
+                        table_ids: table_ids.into_iter().collect(),
+                    });
+                }
+            }
+            _ => {}
+        }
+    }
+    readings
+}
+
+/// A sentence names a check-coverage relation when its absence clause carries every word of the table's
+/// check-signal header and of its covered-signals header (*the signals covered by a check signal* against
+/// `Check signal` / `Signals covered`). Header words, not a vocabulary, decide (ADR 0006).
+fn sentence_names_relation(window: &str, table: &CheckCoverageTable<'_>) -> bool {
+    let words = header_words(window);
+    header_words(&table.check_header)
+        .union(&header_words(&table.covered_header))
+        .all(|word| words.contains(word))
 }
 
 /// The literal a statement states unconditionally for an absent signal, read from the first sentence
-/// in which an absence predicate precedes `assumed to be`; `None` when no sentence states one.
-fn stated_absent_value_literal(text: &str) -> Option<String> {
+/// in which an absence predicate precedes `assumed to be`, with that sentence's bounds; `None` when no
+/// sentence states one.
+fn stated_absent_value_literal(text: &str) -> Option<AbsentValueSentence> {
     // `to_ascii_lowercase` keeps the byte layout, so offsets index `text` too.
     let lowered = text.to_ascii_lowercase();
     let mut scan = 0usize;
@@ -19292,7 +19560,11 @@ fn stated_absent_value_literal(text: &str) -> Option<String> {
             .unwrap_or(after.len());
         let token = &after[..token_end];
         if is_absent_value_literal(token) && sentence_closes_after_value(&after[token_end..]) {
-            return Some(token.to_string());
+            return Some(AbsentValueSentence {
+                value: token.to_string(),
+                sentence_start,
+                lead,
+            });
         }
     }
     None
@@ -31470,7 +31742,7 @@ mod tests {
             &[],
         ));
         let mut manifest = crate::ir::extractor::ExtractionManifest::default();
-        let records = super::signal_presence_surface(&source_ir, &[], &mut manifest);
+        let records = super::signal_presence_surface(&source_ir, &[], &[], &mut manifest);
         assert_eq!(
             records.len(),
             3,
@@ -37455,7 +37727,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 40);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 41);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -56604,7 +56876,7 @@ mod stated_absent_value_tests {
             "statement_0001",
             "XRESP is an optional signal. If the XRESP_WIDTH property is 0, it is not present and assumed to be 0b000 (OKAY).",
         )];
-        bind_stated_absent_values(&mut records, &statements);
+        bind_stated_absent_values(&mut records, &statements, &[]);
         assert_eq!(
             bound(&records, "XRESP"),
             Some(("0b000".to_string(), vec!["statement_0001".to_string()]))
@@ -56624,7 +56896,7 @@ mod stated_absent_value_tests {
             "statement_0007",
             "Any XSNOOP bits not driven by an interface are assumed to be LOW.",
         )];
-        bind_stated_absent_values(&mut records, &statements);
+        bind_stated_absent_values(&mut records, &statements, &[]);
         assert!(records.iter().all(|record| {
             record.absent_value.as_ref().map(|v| v.value.as_str()) == Some("LOW")
         }));
@@ -56639,7 +56911,7 @@ mod stated_absent_value_tests {
             "If XRESP is not present it is assumed to be LOW unless a packet has started.",
         ] {
             let mut records = vec![presence("presence_0000", "XRESP", None)];
-            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)]);
+            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[]);
             assert_eq!(bound(&records, "XRESP"), None, "{text}");
         }
     }
@@ -56653,7 +56925,7 @@ mod stated_absent_value_tests {
             "XRESP may be not present. The burst type is assumed to be INCR.",
         ] {
             let mut records = vec![presence("presence_0000", "XRESP", None)];
-            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)]);
+            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[]);
             assert_eq!(bound(&records, "XRESP"), None, "{text}");
         }
     }
@@ -56677,7 +56949,7 @@ mod stated_absent_value_tests {
                 "If XRESP and XACK are not present they are assumed to be LOW.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements);
+        bind_stated_absent_values(&mut records, &statements, &[]);
         assert!(records.iter().all(|record| record.absent_value.is_none()));
     }
 
@@ -56706,7 +56978,7 @@ mod stated_absent_value_tests {
                 "If XACK is omitted it is assumed to be LOW.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements);
+        bind_stated_absent_values(&mut records, &statements, &[]);
         assert_eq!(
             bound(&records, "XRESP"),
             Some((
@@ -56735,5 +57007,242 @@ mod stated_absent_value_tests {
         for prose in ["", "the", "zero", "0b", "0x", "0b102", "Low", "x'F'", "L"] {
             assert!(!super::is_absent_value_literal(prose), "{prose}");
         }
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — a check-coverage table binds the class of covered signals.
+#[cfg(test)]
+mod check_coverage_tests {
+    use super::{
+        EvidenceModality, ExtractedStatement, SignalPresenceRecord, StatementClass,
+        VariantPresenceEntry, bind_stated_absent_values, check_coverage_tables,
+        check_signal_surface,
+    };
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord, TableKind};
+
+    fn cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    fn table(id: &str, header: &[&str], rows: &[&[&str]]) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: id.to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::default(),
+            header_rows: vec![header.iter().map(|t| cell(t, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|row| row.iter().map(|t| cell(t, false)).collect())
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: header.len() as u32,
+        }
+    }
+
+    fn statement(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        }
+    }
+
+    fn presence(id: &str, signal: &str) -> SignalPresenceRecord {
+        SignalPresenceRecord {
+            presence_id: id.to_string(),
+            signal_name: signal.to_string(),
+            presence_condition: None,
+            variant_presence: vec![VariantPresenceEntry {
+                variant_label: "V1".to_string(),
+                code: "O".to_string(),
+            }],
+            table_id: "table_presence".to_string(),
+            absent_value: None,
+        }
+    }
+
+    const APB_HEADER: [&str; 5] = [
+        "Check signal",
+        "Signals covered",
+        "Width",
+        "Granularity",
+        "Check Enable",
+    ];
+
+    /// APB5 *Table 5-1*: the name cell's footnote letter is dropped, a covered cell splits on commas, the
+    /// width and granularity cells keep their text without the mark.
+    #[test]
+    fn a_check_coverage_table_declares_each_check_signal_and_what_it_covers() {
+        let tables = [table(
+            "table_check",
+            &APB_HEADER,
+            &[
+                &["XADDRCHK", "XADDR", "ceil(ADDR_WIDTH/8) a", "1-8", "XSEL"],
+                &["XCTRLCHK", "XPROT, XWRITE, XNSE", "1", "1-5", "XSEL"],
+                &["XSELxCHK b", "XSELx", "1", "1 a", "XRESETn"],
+            ],
+        )];
+        let read = check_coverage_tables(&tables);
+        assert_eq!(read.len(), 1);
+        assert_eq!(read[0].check_header, "Check signal");
+        assert_eq!(read[0].covered_header, "Signals covered");
+        let records = check_signal_surface(&read);
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].check_id, "check_table_check_000");
+        assert_eq!(records[0].check_signal, "XADDRCHK");
+        assert_eq!(records[0].covered_signals, vec!["XADDR".to_string()]);
+        assert_eq!(records[0].width.as_deref(), Some("ceil(ADDR_WIDTH/8)"));
+        assert_eq!(records[0].granularity.as_deref(), Some("1-8"));
+        assert_eq!(records[0].check_enable.as_deref(), Some("XSEL"));
+        assert_eq!(
+            records[1].covered_signals,
+            vec![
+                "XPROT".to_string(),
+                "XWRITE".to_string(),
+                "XNSE".to_string()
+            ]
+        );
+        assert_eq!(records[2].check_signal, "XSELxCHK");
+        assert_eq!(records[2].granularity.as_deref(), Some("1"));
+        assert_eq!(records[2].table_id, "table_check");
+    }
+
+    /// AXI *Table A16.4* heads the check column `Name` and has no granularity; a space-separated covered cell
+    /// splits, a row whose covered cell carries prose is refused and keeps its position out of the ids.
+    #[test]
+    fn a_name_headed_check_table_is_read_and_a_garbled_row_is_refused() {
+        let tables = [table(
+            "table_axi",
+            &["Name", "Signals covered", "Width", "Check enable"],
+            &[
+                &["XWCTLCHK0", "XWSIZE XWBURST XWLOCK", "1", "XWVALID"],
+                &["XWIDCHK", "XWID (see note)", "1", "XWVALID"],
+                &["XWUSERCHK", "XWUSER", "ceil(USER_REQ_WIDTH/8)", "None"],
+            ],
+        )];
+        let records = check_signal_surface(&check_coverage_tables(&tables));
+        assert_eq!(
+            records
+                .iter()
+                .map(|r| r.check_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["check_table_axi_000", "check_table_axi_002"]
+        );
+        assert_eq!(records[0].covered_signals.len(), 3);
+        assert!(records[0].granularity.is_none());
+        assert_eq!(records[1].check_enable.as_deref(), Some("None"));
+    }
+
+    #[test]
+    fn a_table_without_a_signals_covered_header_is_not_a_check_table() {
+        let tables = [table(
+            "table_signals",
+            &["Signal", "Source", "Description"],
+            &[&["XADDRCHK", "XREQ", "Parity of XADDR"]],
+        )];
+        assert!(check_coverage_tables(&tables).is_empty());
+    }
+
+    /// APB5/AHB5: *If some of the signals covered by a check signal are not present on an interface, then the
+    /// missing signals are assumed to be LOW.* names the relation by the table's two header words, so every
+    /// covered signal with a presence record takes the value, citing the statement and the table.
+    #[test]
+    fn the_missing_signals_covered_by_a_check_signal_take_the_stated_value() {
+        let tables = [table(
+            "table_check",
+            &APB_HEADER,
+            &[
+                &["XADDRCHK", "XADDR", "1", "1", "XSEL"],
+                &["XCTRLCHK", "XPROT XWRITE", "1", "1", "XSEL"],
+            ],
+        )];
+        let coverage = check_coverage_tables(&tables);
+        let mut records = vec![
+            presence("presence_0000", "XCLK"),
+            presence("presence_0001", "XADDR"),
+            presence("presence_0002", "XPROT"),
+        ];
+        let statements = [statement(
+            "statement_0388",
+            "- If some of the signals covered by a check signal are not present on an interface, then the missing signals are assumed to be LOW.",
+        )];
+        bind_stated_absent_values(&mut records, &statements, &coverage);
+        for record in &records[1..] {
+            let value = record.absent_value.as_ref().expect("covered signal bound");
+            assert_eq!(value.value, "LOW");
+            assert_eq!(
+                value.supporting_statement_ids,
+                vec!["statement_0388".to_string()]
+            );
+            assert_eq!(value.supporting_table_ids, vec!["table_check".to_string()]);
+        }
+        assert!(
+            records[0].absent_value.is_none(),
+            "XCLK is covered by no check signal"
+        );
+    }
+
+    /// A class sentence that does not carry the relation's header words names no table.
+    #[test]
+    fn a_class_sentence_that_does_not_name_the_relation_binds_nothing() {
+        let tables = [table(
+            "table_check",
+            &APB_HEADER,
+            &[&["XADDRCHK", "XADDR", "1", "1", "XSEL"]],
+        )];
+        let coverage = check_coverage_tables(&tables);
+        let mut records = vec![presence("presence_0000", "XADDR")];
+        let statements = [statement(
+            "statement_0001",
+            "If some of the optional signals are not present on an interface, then the missing signals are assumed to be LOW.",
+        )];
+        bind_stated_absent_values(&mut records, &statements, &coverage);
+        assert!(records[0].absent_value.is_none());
+    }
+
+    /// A sentence naming the signal itself outranks the class it belongs to.
+    #[test]
+    fn a_sentence_naming_the_signal_outranks_the_class() {
+        let tables = [table(
+            "table_check",
+            &APB_HEADER,
+            &[&["XCTRLCHK", "XPROT XWRITE", "1", "1", "XSEL"]],
+        )];
+        let coverage = check_coverage_tables(&tables);
+        let mut records = vec![
+            presence("presence_0000", "XPROT"),
+            presence("presence_0001", "XWRITE"),
+        ];
+        let statements = [
+            statement(
+                "statement_0001",
+                "If some of the signals covered by a check signal are not present on an interface, then the missing signals are assumed to be LOW.",
+            ),
+            statement(
+                "statement_0002",
+                "If XPROT is not present it is assumed to be HIGH.",
+            ),
+        ];
+        bind_stated_absent_values(&mut records, &statements, &coverage);
+        let prot = records[0].absent_value.as_ref().expect("XPROT bound");
+        assert_eq!(
+            (prot.value.as_str(), prot.supporting_table_ids.len()),
+            ("HIGH", 0)
+        );
+        let write = records[1].absent_value.as_ref().expect("XWRITE bound");
+        assert_eq!(write.value, "LOW");
     }
 }

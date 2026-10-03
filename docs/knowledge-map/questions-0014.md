@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > what happened to the CoreSight Base System agent.isf
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what happened to the USB4 Connection Manager device_also.isf
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > what happened to the USB4 Inter-Domain channel.isf
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what happened to the four signal two enum Introducing CoreSight adapter
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > what happened to the original Introducing CoreSight rollback
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what happened to the stale 83 interfaces in the GIC Overview Guide
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
@@ -254,6 +266,8 @@
   > what is capture_signal_presence_rows and who shares it
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is captured_region_residuals
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > what is check_signal_records / CheckSignalRecord and where does it come from
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is cited_table_ids
 - [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
@@ -284,17 +298,3 @@
   > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > what is descriptive_consequent_signal
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is document_intent_category / the 6-category purpose recognizer
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > what is document_signal_coreferences
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_type_declared / front_matter_doc_type_hint
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
-  > what is enum member-column drift
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what is excludes_self and why does a classifier need it
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word

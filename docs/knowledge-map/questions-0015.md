@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is document_intent_category / the 6-category purpose recognizer
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > what is document_signal_coreferences
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_type_declared / front_matter_doc_type_hint
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > what is enum member-column drift
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what is excludes_self and why does a classifier need it
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
@@ -92,6 +106,8 @@
   > what is select_initiator_actor / initiator_perspective_directions
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > what is sentence_end_in
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > what is sentence_names_relation / header_words
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > what is signal_coreferences / SignalCoreferenceRecord
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
@@ -281,19 +297,3 @@
   > what is the exact pre-containment ROADMAP source identity
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what is the executable currentness authority for VALIDATION_SNAPSHOT
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > what is the first SpecForge trajectory snapshot
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > what is the first reviewed source-to-IntentIR evaluation result
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what is the first task in canonical recovery
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > what is the flow-arrow direction grammar
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what is the frozen adjudication set for the bounded decision provider
-- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
-  > what is the gap_catalog surface / gap_catalog_owners region
