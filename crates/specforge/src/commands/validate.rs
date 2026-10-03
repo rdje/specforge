@@ -2607,6 +2607,12 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         .map(|v| v.variant_label.as_str())
         .collect::<std::collections::BTreeSet<_>>()
         .len();
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the rows whose signal has a stated absent value.
+    let signal_presence_absent_values = ir
+        .signal_presence_records
+        .iter()
+        .filter(|r| r.absent_value.is_some())
+        .count();
     println!(
         "  signal_presence_records (from matrices): {}",
         ir.signal_presence_records.len()
@@ -2614,6 +2620,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("    signals: {signal_presence_signals}");
     println!("    conditioned: {signal_presence_conditioned}");
     println!("    variant_labels: {signal_presence_variant_labels}");
+    println!("    absent_values: {signal_presence_absent_values}");
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -3245,11 +3252,12 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Info,
             "signal_presence",
             format!(
-                "typed signal-presence inventory: {} matrix row(s) across {} signal(s) ({} property-conditioned, {} variant label(s)); names, conditions, and presence codes are document-literal, never interpreted",
+                "typed signal-presence inventory: {} matrix row(s) across {} signal(s) ({} property-conditioned, {} variant label(s), {} with a stated absent value); names, conditions, presence codes, and absent values are document-literal, never interpreted",
                 ir.signal_presence_records.len(),
                 signal_presence_signals,
                 signal_presence_conditioned,
-                signal_presence_variant_labels
+                signal_presence_variant_labels,
+                signal_presence_absent_values
             ),
             Vec::new(),
         ));
@@ -3835,6 +3843,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "signal_presence_variant_labels",
                 signal_presence_variant_labels.to_string(),
+            ),
+            metric(
+                "signal_presence_absent_values",
+                signal_presence_absent_values.to_string(),
             ),
             metric(
                 "signal_polarity_conflicts",
@@ -5278,6 +5290,10 @@ fn validate_semantic_ir_with_prior_memory(
     println!("  protocol_states: {}", ir.protocol_states.len());
     println!("  protocol_transitions: {}", ir.protocol_transitions.len());
     println!(
+        "  signal_presence_records: {}",
+        ir.signal_presence_records.len()
+    );
+    println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
     );
@@ -5489,6 +5505,10 @@ fn validate_semantic_ir_with_prior_memory(
             metric(
                 "protocol_transitions",
                 ir.protocol_transitions.len().to_string(),
+            ),
+            metric(
+                "signal_presence_records",
+                ir.signal_presence_records.len().to_string(),
             ),
             metric(
                 "interface_edge_timings",
@@ -5843,6 +5863,10 @@ fn validate_intent_ir_with_prior_memory(
     println!("  protocol_operations: {}", ir.protocol_operations.len());
     println!("  protocol_states: {}", ir.protocol_states.len());
     println!("  protocol_transitions: {}", ir.protocol_transitions.len());
+    println!(
+        "  signal_presence_records: {}",
+        ir.signal_presence_records.len()
+    );
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -7415,6 +7439,10 @@ fn validate_intent_ir_with_prior_memory(
             metric(
                 "protocol_transitions",
                 ir.protocol_transitions.len().to_string(),
+            ),
+            metric(
+                "signal_presence_records",
+                ir.signal_presence_records.len().to_string(),
             ),
             metric(
                 "interface_edge_timings",

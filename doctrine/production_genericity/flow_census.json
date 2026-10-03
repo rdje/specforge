@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-G-PROSE-BIT-MAP",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-II-A-STATED-ABSENT-VALUE",
    "baseline": {
-    "analyzed_functions": 2705,
-    "decision_sites": 14613,
-    "helper_edges": 17962,
-    "semantic_macros": 1560
+    "analyzed_functions": 2715,
+    "decision_sites": 14681,
+    "helper_edges": 18076,
+    "semantic_macros": 1563
    },
    "delta": {
-    "analyzed_functions": 10,
-    "decision_sites": 68,
-    "helper_edges": 114,
-    "semantic_macros": 3
+    "analyzed_functions": 7,
+    "decision_sites": 44,
+    "helper_edges": 50,
+    "semantic_macros": 6
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.g",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.g: a prose bit map binds a register field, and every binding keeps its scope. fill_field_signal_prose_bit_bindings reads `Bit[N] drives \u2026` and a `SIG[h:l], bits[H:L]` heading with its Drives sentence (register_heading_name, field_bits_heading, bit_drives_selects, signal_bits_heading, drives_selection, leading_bit_selection); merge_signal_binding joins repeats; numbered_heading_path and heading_section_number give each binding its scope."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a: a signal's stated absent value rides its presence record. bind_stated_absent_values, stated_absent_values, stated_absent_value_literal, sentence_start_before, is_absent_value_literal and sentence_closes_after_value read `not present \u2026 assumed to be V` into SignalPresenceRecord.absent_value inside the registered signal_presence_surface; absent_value_residual_packet keeps one adapter residual per stated value. No new root or grammar producer."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

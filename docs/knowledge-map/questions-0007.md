@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how does SpecForge serialize repository owned paths
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how does SpecForge stop a published count going stale under a green gate
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > how does SpecForge stop a published gap reproduction from silently running no test
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > how does SpecForge tell a generic channel-signal template from a signal catalogue
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -226,6 +232,8 @@
   > how good is prose signal capture / .3a quality
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > how is 'must remain asserted until X' represented
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -290,11 +298,3 @@
   > how is a published mechanism or causal account verified in SpecForge
 - [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
   > how is a question to FSMGen tracked until it is answered
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > how is a recommended parameter range like between 10 and 64 stored
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)

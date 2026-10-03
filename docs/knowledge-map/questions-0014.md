@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > what happens if someone runs clean --scope source-normalized on a declared document
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > what happens if the dynamic binder is run per clause
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > what happens to a constraint whose subject is a withheld template base name
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > what happens to a declaration whose width is an arithmetic expression
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -222,6 +232,8 @@
   > what is a scope carrier
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > what is a subscript split and why can no underscore rule find it
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > what is absent_value on a SignalPresenceRecord / what is StatedAbsentValue
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > what is aggregate_composition in surfaces.jsonl
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -286,15 +298,3 @@
   > what is excludes_self and why does a classifier need it
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is figure_region_provenance_id for
-- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
-  > what is fill_field_signal_bindings
-- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
-  > what is from_to_signal_relations
-- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
-  > what is fronted_condition_end

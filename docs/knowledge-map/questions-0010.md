@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > how was the bit-range census error caught
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > how was the eval gold checked for idiosyncrasy
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > how was the migrated alignment task evidence independently audited
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -161,6 +169,8 @@
   > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > is an _IN/_OUT suffix universal digital-design grammar
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > is an absent value interpreted against the signal's polarity
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > is an empty result from a table-kind-keyed pass an answer or a blind spot
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -287,13 +297,3 @@
   > is the OpenCAPI 3.0 Certified Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > is the OpenCAPI 3.0 Ready Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > is the OpenCAPI AFU Address Space Usage refresh complete
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > is the PDF-VARIANT-DIGESTION current frontier internally consistent
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > is the SIGQUAL column a width

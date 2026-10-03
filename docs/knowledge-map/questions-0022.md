@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
+- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
+  > why does AHB's HSELx family produce no adapter residual
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why does AMD IOMMU extract no register fields
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised
+- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
+  > why does APB-E have an invariant for PNSE when PSEL is asserted
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > why does APB-E's requester.isf say (reset (PRESETn async active_low))
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > why does ATTR_OVR.SHCFG must be 0b01 produce no signal constraint
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > why does AWBURST must be INCR have no condition
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
@@ -12,6 +30,8 @@
   > why does AXI score 1.000 while losing 103 declaration rows
 - [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
   > why does AXI still list asserted/deasserted obligations as polarity unknown
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > why does AXI's BRESP presence record carry 0b000
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > why does AxBURST publish FIXED instead of FIXED_BURST
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -278,23 +298,3 @@
   > why does constraint promotion run outside the convergence loop
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > why does constraint_bearing_sentence need the same modals as the kind table
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > why does coordination need a verb marker (Distributor registers and provides)
-- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
-  > why does dcsr.cause have values in IntentIR but not in the isf
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > why does decision-record capacity become 58
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > why does declared_node_statuses not match the separator between the id and the status
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why does declaring a newly re-ingested normalized bundle fail the doctrine gate
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does decoder go from 0/0 to connected (decoder also consolidated)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why does docling now extract text from inside a figure
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > why does docs/tasks have no file count cap
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > why does eMMC declare a signal called PARTITION

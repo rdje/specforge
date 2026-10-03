@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why did a signal declared in EvidenceIR never reach the semantic interface records
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `any` appear in an EvidenceIR artifact
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `name` appear in the Avalon interface specification
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why did a temporal conflict disappear when a signal constraint was removed
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why did adding a task-evidence part trip the files warning
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > why did adding signal_presence_records to SemanticIR and IntentIR re-seal every chain
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > why did an OpenCAPI functional test become an IntentIR behavior
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -280,21 +298,3 @@
   > why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
-- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
-  > why does AHB's HSELx family produce no adapter residual
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why does AMD IOMMU extract no register fields
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised
-- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
-  > why does APB-E have an invariant for PNSE when PSEL is asserted
-- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
-  > why does APB-E's requester.isf say (reset (PRESETn async active_low))
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why does ATTR_OVR.SHCFG must be 0b01 produce no signal constraint
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > why does AWBURST must be INCR have no condition

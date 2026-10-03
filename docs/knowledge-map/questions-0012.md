@@ -2,6 +2,15 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > was any USB4 pipeline artifact changed by the source locality probe
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > was anything in the .5.iv.a findings wrong (YES, two statements, corrected 2026-08-31 after the director audited: the RESERVED split shipped as five/seven and is SIX/SIX, and the worked example CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding is BACKWARDS — DataSource accumulates DEFAULT_NO_USEFUL_INFORMATION=0 plus RESERVED at 2 AND 3,
+  > the reserved rows disagree, so the conflicting-value rule drops RESERVED and the surviving enum is (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). Both were read off a dump instead of computed; the NO-GO decision is unchanged and rests on the other two legs)
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > was register_size_from_fields removed
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > was the (contract ... eventually ...) ISF clause removed
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
   > chains against 24 current ones)
@@ -289,11 +298,3 @@
   > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > what does AdapterArtifact write_to_disk reconcile
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what does CORPUS-COVERAGE.1 add
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what does DEFER mean in the doctrine enforcement report
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > what does DOCLING_DEVICE do

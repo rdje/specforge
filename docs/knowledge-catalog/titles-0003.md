@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md) | 2026-06-09 | `current` | Cross-PDF pattern reuse via a DERIVED vendor/layout fingerprint — extend CorpusMemory, advisory + honest |
 | [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md) | 2026-08-09 | `current` | Corpus current-binary refresh completion is independent of normalized-cache retention |
 | [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md) | 2026-08-11 | `current` | The corpus refresh frontier derives the cohort and gates an exact root-neutral lifecycle partition |
 | [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
@@ -60,4 +61,3 @@
 | [extractor-path-architecture](../knowledge/extractor-path-architecture.md) | 2026-06-09 | `current` | The EvidenceIR extractor path is a flat bank of ~60 free functions wired in one build() — coherent IR targe… |
 | [fact-card-catalog](../knowledge/fact-card-catalog.md) | 2026-08-08 | `current` | Fact cards have a bounded derived human catalog distinct from question retrieval |
 | [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md) | 2026-09-29 | `current` | The fact plane's key budget funds a fact's measured key cost, ten keys per fact since ADR 0055 |
-| [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md) | 2026-09-29 | `current` | A table whose header names one register field fills that field's enumerated values; a meaning column of codes… |

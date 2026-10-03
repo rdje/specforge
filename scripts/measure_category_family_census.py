@@ -38,7 +38,7 @@ TYPED_SURFACES = (
     "symbol_definitions", "timing_constraints", "protocol_operations", "protocol_states", "protocol_transitions",
     "serial_frame_fields",
     "interface_edge_timings", "regular_states", "state_transitions", "control_blocks", "signal_connectivity",
-    "temporal_invariants",
+    "temporal_invariants", "signal_presence_records",
 )
 UNTYPED_SURFACES = ("constraints", "behaviors", "assumptions")
 SEMANTIC_RECORD_SURFACES = ("invariants", "contracts", "gates", "assertions", "abstractions", "phases")

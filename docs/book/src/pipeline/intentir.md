@@ -15,6 +15,8 @@
 - structured registers, including distinct register/field access and direct table provenance
 - exact protocol observations: serial-frame fields, operation branches, protocol states, stated state
   transitions, and interface-edge timings
+- signal-presence records: which signals exist per variant, under what condition, and the value an absent
+  signal takes
 - carried conflicts
 - carried residual decisions
 - carried captured-region residuals
@@ -112,7 +114,9 @@ IntentIR ignores them. Source evidence, technical invariant/constraint projectio
 The projection preserves record order, identifiers, optional values, and supporting-statement and supporting-table
 provenance. It does not sort, filter,
 reinterpret, or complete the observations. Empty collections are omitted when serialized and default to empty
-when older artifacts are loaded.
+when older artifacts are loaded. `signal_presence_records` cross the same way, each with its `absent_value` and
+the statements that state it (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`); a stated absent value is exact here,
+and the adapter keeps one residual per value because `.isf` cannot say it yet.
 
 These records are canonical product data, but they are not automatically executable behavior. A named protocol
 state without transitions, guards, initial-state identity, or encoding is still incomplete; frame, operation,

@@ -14,6 +14,7 @@ answers:
   - "why does ACE table_0275 stay flagged after presence capture"
   - "what is capture_signal_presence_rows and who shares it"
   - "what is PDF-VARIANT-DIGESTION.12b"
+  - "does a presence record say what an absent signal is assumed to be (since 2026-10-03, absent_value — see a-signals-stated-absent-value-rides-its-presence-record)"
 date: 2026-06-11
 tags: [extraction, signal-presence, configuration-intent, signal-tables, completeness, pdf-variant-digestion]
 evidence: crates/specforge/src/ir/evidence.rs (SignalPresenceRecord, capture_signal_presence_rows, signal_presence_surface); crates/specforge/src/ir/completeness.rs (signal_presence_capture_covers); crates/specforge/test_data/kg_quality/signal_presence_matrix_gold + signal_presence_malformed_refusal_negative; docs/tasks/PDF-VARIANT-DIGESTION.md (.12b)
@@ -60,3 +61,7 @@ otherwise byte-identical. Canonical accounting (no rebuild): AXI 32→31 (A13.3 
 ACE 36→35 (`0271` closes; `0275` garble stays), LTI 6→4 (0078/0079 close; 0080 stays). All
 wire-based golds re-measure 1.000; APB standing gauge 5/21 unchanged. Coverage is STRICT: one
 refused row keeps the matrix flagged.
+
+Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` (`2026-10-03`) a record also carries `absent_value`, the
+literal the prose states a signal takes when it is not present or not driven, and the records cross
+SemanticIR and IntentIR unchanged ([[a-signals-stated-absent-value-rides-its-presence-record]]).

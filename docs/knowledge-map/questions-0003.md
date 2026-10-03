@@ -106,6 +106,8 @@
   > do old SemanticIR phases create IntentIR behaviors
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > do signal presence records mint signals or declarations
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > do signal_presence_records cross SemanticIR and IntentIR
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > do specforge extractors override applies_to / are any self-disabled opt-in
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -296,5 +298,3 @@
   > does a figure label appear in content_elements
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > does a figure that produced waveform contracts get a residual
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > does a footnote element prove a note number

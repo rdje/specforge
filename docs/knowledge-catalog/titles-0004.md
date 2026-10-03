@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md) | 2026-09-29 | `current` | A table whose header names one register field fills that field's enumerated values; a meaning column of codes… |
 | [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md) | 2026-08-12 | `superseded` | The evidence-composed trajectory gates current-binary replay coverage and recommends task .6 |
 | [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md) | 2026-08-15 | `current` | SpecForge's five portable architectures compose ownership, continuity, retrieval, enforcement, and claim evid… |
 | [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md) | 2026-09-15 | `current` | A direction column may state the signal's flow rather than its port sense, and only a mirror test makes that… |
@@ -60,4 +61,3 @@
 | [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md) | 2026-06-10 | `current` | Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals over-kill |
 | [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md) | 2026-06-10 | `current` | converge --promote-constraints-llm replaces the Pattern constraint surface post-stability |
 | [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md) | 2026-09-18 | `current` | The LLM-primary constraint path is shown 18.4% of the obligations that exist — its precision work operates… |
-| [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md) | 2026-06-01 | `current` | SpecForge ships a production Ollama+Qwen2.5VL provider (the default LLM/VLM) |

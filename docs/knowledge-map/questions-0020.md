@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why are SWD recognized phases signal_set empty and transactions ports empty
+- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
+  > why are TGA_O and STALL_O refused by the heading rule
+- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
+  > why are TGD_I and TGD_O refused by the shipped heading rule
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > why are USB 3.2 LTSSM substates like Polling.Active protocol states / what is merge_transition_states / table_state
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > why are USER_GUIDE.md and the root architecture documents only pointers
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > why are claim evidence commands argv arrays
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > why are conditional_rules excluded from the document-class decision
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > why are determiners (All Managers) NOT rejected by the .1a agent gate
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -282,19 +298,3 @@
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > why did a proof-carrying EvidenceIR stop loading after I added a production function (because the function was COMPOSED INTO a registered evidence derivation: the proof binds the derivation topology, so extract_normative_signal_constraints gaining a call edge makes every artifact whose recorded topology no longer matches fail with registered derivation
   > evidence.claim.schema_version.root output or input topology is stale)
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why did a signal declared in EvidenceIR never reach the semantic interface records
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `any` appear in an EvidenceIR artifact
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `name` appear in the Avalon interface specification
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why did a temporal conflict disappear when a signal constraint was removed
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > why did adding a task-evidence part trip the files warning
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit

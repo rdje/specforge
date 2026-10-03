@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a",
-      "literal" : "`.3.d.ii.a` — a signal's stated absent value is carried with its presence to IntentIR.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i",
+      "literal" : "`.3.d.ii.a.i` — a class-scoped absent value binds each signal the check-coverage table lists.",
       "mode" : "eligible",
       "part_id" : "unread-intent-leaves"
    },
@@ -112,25 +112,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 6679,
-               "line_bytes" : 119,
-               "lines" : 76
+               "bytes" : 8124,
+               "line_bytes" : 281,
+               "lines" : 90
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "39908f2c91179805d229a28bf806d70819bf98a53d0c3774c15fb0820baa00c5",
+            "sha256" : "e199f4ef0f4fc9cb810837dcdb5f8d42eb71dda93eb4f979a6499f1ef5f0f70b",
             "state" : "active"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
             "metrics" : {
-               "bytes" : 7862,
-               "line_bytes" : 120,
-               "lines" : 92
+               "bytes" : 17197,
+               "line_bytes" : 215,
+               "lines" : 188
             },
             "part_id" : "unread-intent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-            "sha256" : "e49bf3c977100fb69f75f15e0a83c9312cc9002239794abe1765ce4ae1b84708",
+            "sha256" : "6a633191992e1abe033859971170eb14486241f2b72c8cbd93fb7b362949402a",
             "state" : "active"
          },
          {
@@ -1038,7 +1038,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -1047,6 +1047,24 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "unread-intent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "unread-intent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.45",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
       }
    ],
    "limits" : {
@@ -1174,7 +1192,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.ii.a` — a signal's stated absent value is carried with its presence to IntentIR.",
+         "`.3.d.ii.a.i` — a class-scoped absent value binds each signal the check-coverage table lists.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1309,7 +1327,10 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.28`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.28`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.45`"
       ]
    },
    "migration_metadata" : {

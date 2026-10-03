@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is the ingest disk pre-flight check
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > what is the inter-annotator agreement of the eval gold
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
@@ -285,15 +297,3 @@
   > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > what value does an isf rule drive when the spec states none
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > what warns before the knowledge map refuses on facts or question keys
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what was the HBM2 canonical promotion pilot result
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what was the must_be_value recall gap and how was it closed
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what were the initial 17-document held-out relation outcomes
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > what width is the cell [0]

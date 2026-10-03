@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > which documents carry obligation-bearing signal-description rows
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > which documents declare signals from tables in the current stratum
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > which documents does SIGNAL-DECLARATION-ROW-DROP.2h.2 change
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > which documents have a retained normalized bundle
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which documents in the corpus are currently stale
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > which documents may a new measurement population be drawn from
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > which documents no longer reproduce their persisted SourceIR
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > which encoder wrote doctrine/live_document_size/fact_card_catalog.json (DERIVE IT, never look it up - this file alone has flipped encoder 8 times in 217 revisions and the answer was indent=1 only between 2026-09-12 and 2026-09-19. Run the round-trip snippet in this card against the file you are about to edit)
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
@@ -66,6 +80,8 @@
   > which mdBook quantitative assertions still lack claim authority
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > which mdBook quantitative census totals may be published and which must be read from the report
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > which metric counts stated absent values (signal_presence_absent_values)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > which metrics govern specification-to-executable-intent progress
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
@@ -281,19 +297,3 @@
   > why are RISC-V IOMMU registers named ddtp, cqb, cqcsr instead of register_table_00NN
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > why are SINGLE INCR and WRAP4 not signals
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why are SWD recognized phases signal_set empty and transactions ports empty
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > why are TGA_O and STALL_O refused by the heading rule
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > why are TGD_I and TGD_O refused by the shipped heading rule
-- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
-  > why are USB 3.2 LTSSM substates like Polling.Active protocol states / what is merge_transition_states / table_state
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > why are USER_GUIDE.md and the root architecture documents only pointers
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > why are claim evidence commands argv arrays
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > why are conditional_rules excluded from the document-class decision

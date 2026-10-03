@@ -371,7 +371,10 @@ both LTI presence fragments (6→4), while the garble-class fragments stay hones
 report itself gains four metrics — `signal_presence_records`, `signal_presence_signals`,
 `signal_presence_conditioned`, `signal_presence_variant_labels` — and an
 `evidence_signal_presence_inventory` Info finding emitted only when the surface is non-empty
-(absence is not an event).
+(absence is not an event). `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` adds a fifth,
+`signal_presence_absent_values` (the rows whose signal has a stated absent value), folds that count into the
+finding, and gives the SemanticIR and IntentIR reports a `signal_presence_records` count, since the records now
+cross both stages.
 
 The typed **message-field inventory** (the in-memory structure and packet-field surface built
 by the bit-position and field-titled table readers) is also on the report: five metrics —

@@ -668,6 +668,25 @@ pub struct SignalPresenceRecord {
     pub variant_presence: Vec<VariantPresenceEntry>,
     /// The structured table (page fragment) that carried this row.
     pub table_id: String,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the value the document states this signal takes when
+    /// it is absent from an interface or not driven (*If the BRESP_WIDTH property is 0, it is not
+    /// present and assumed to be 0b000 (OKAY)*). Bound after capture from the document's own
+    /// statements; `None` when no statement gives one, or when the statements disagree.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub absent_value: Option<StatedAbsentValue>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the value a document states a signal takes when it is
+/// absent or undriven, exactly as the sentence writes it (`0b000`, `LOW`): never interpreted, widened,
+/// or resolved against the signal's polarity, because the sentence states a literal and the consumer
+/// that ties the signal off decides what the literal means on its wire. The statement is cited so the
+/// sentence can be read.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct StatedAbsentValue {
+    /// The literal as written.
+    pub value: String,
+    /// The statement(s) that state it; several when the document repeats the sentence.
+    pub supporting_statement_ids: Vec<String>,
 }
 
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
@@ -1976,7 +1995,8 @@ impl EvidenceIr {
         // signals exist per interface class / protocol version / agent side, with literal codes
         // and property-conditioned existence. Configuration intent, not declarations — these
         // records never mint signals (the `.12a` gap-fill owns declaration content).
-        let signal_presence_records = signal_presence_surface(source_ir, &mut extraction_manifest);
+        let signal_presence_records =
+            signal_presence_surface(source_ir, &extracted_statements, &mut extraction_manifest);
         let timing_constraints = synthesize_timing_constraints(source_ir, prior_guidance.as_ref());
         // EXTRACTION-REPRESENTATION-GAPS.17 — the section each document statement sits in, for a section's polarity rule.
         let statement_sections =
@@ -19136,6 +19156,7 @@ impl Extractor<SignalPresenceRecord> for SignalPresenceMatrixExtractor<'_> {
 /// `presence_id`s are assigned after the merge so they stay dense and stable.
 fn signal_presence_surface(
     source_ir: &SourceIr,
+    statements: &[ExtractedStatement],
     manifest: &mut ExtractionManifest,
 ) -> Vec<SignalPresenceRecord> {
     let cx = ExtractionContext { statements: &[] };
@@ -19152,7 +19173,186 @@ fn signal_presence_surface(
     for (index, record) in run.records.iter_mut().enumerate() {
         record.presence_id = format!("presence_{index:04}");
     }
+    bind_stated_absent_values(&mut run.records, statements);
     run.records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — one statement's reading of the value a signal takes when it
+/// is absent: the presence-record signal the statement names, the literal it writes, and the statement.
+struct StatedAbsentValueReading {
+    signal_name: String,
+    value: String,
+    statement_id: String,
+}
+
+/// The English predicates by which a document says a signal is absent from an interface or undriven.
+/// They are grammar, not a protocol vocabulary (ADR 0006): no signal, document or protocol is named.
+const ABSENCE_PHRASES: [&str; 6] = [
+    "not present",
+    "not driven",
+    "omitted",
+    "missing",
+    "not included",
+    "absent",
+];
+
+/// The lead that introduces the stated value: `… assumed to be 0b000`.
+const ASSUMED_VALUE_LEAD: &str = "assumed to be";
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — bind the value a document states for an absent signal to
+/// that signal's presence records.
+///
+/// A sentence is read when, in one sentence, an absence predicate (`not present`, `not driven`,
+/// `omitted`, `missing`) precedes `assumed to be` and what follows is a literal the sentence states
+/// unconditionally: a binary, hexadecimal or decimal number, an all-capitals level word (`LOW`), or
+/// `asserted`/`deasserted`, closed by the end of the sentence or a parenthetical label (`0b000 (OKAY)`).
+/// A value the sentence goes on to qualify (`assumed to be 0b0 for a DVMComplete request`) is not read,
+/// because the record cannot carry the qualification. The signal is the one presence-record name the
+/// whole statement mentions, which lets a second sentence's `it` resolve to the first sentence's subject;
+/// a statement naming no presence record (a class of signals, a generic name no matrix row carries) or
+/// more than one binds nothing. When several statements state the same value they are all cited; when
+/// they disagree, nothing is bound, since choosing would fabricate.
+fn bind_stated_absent_values(
+    records: &mut [SignalPresenceRecord],
+    statements: &[ExtractedStatement],
+) {
+    let signal_names: BTreeSet<&str> = records.iter().map(|r| r.signal_name.as_str()).collect();
+    if signal_names.is_empty() {
+        return;
+    }
+    let mut by_signal: BTreeMap<String, BTreeMap<String, Vec<String>>> = BTreeMap::new();
+    for reading in stated_absent_values(statements, &signal_names) {
+        by_signal
+            .entry(reading.signal_name)
+            .or_default()
+            .entry(reading.value)
+            .or_default()
+            .push(reading.statement_id);
+    }
+    for record in records.iter_mut() {
+        let Some(values) = by_signal.get(&record.signal_name) else {
+            continue;
+        };
+        if values.len() != 1 {
+            continue;
+        }
+        let (value, statement_ids) = values.iter().next().expect("one stated value");
+        record.absent_value = Some(StatedAbsentValue {
+            value: value.clone(),
+            supporting_statement_ids: statement_ids.clone(),
+        });
+    }
+}
+
+/// Every statement that states an absent value for exactly one of `signal_names`, in statement order.
+fn stated_absent_values(
+    statements: &[ExtractedStatement],
+    signal_names: &BTreeSet<&str>,
+) -> Vec<StatedAbsentValueReading> {
+    statements
+        .iter()
+        .filter_map(|statement| {
+            let value = stated_absent_value_literal(&statement.text)?;
+            let named: BTreeSet<&str> = identifier_words(&statement.text)
+                .into_iter()
+                .map(|(_, word)| word)
+                .filter(|word| signal_names.contains(word))
+                .collect();
+            if named.len() != 1 {
+                return None;
+            }
+            Some(StatedAbsentValueReading {
+                signal_name: (*named.iter().next().expect("one named signal")).to_string(),
+                value,
+                statement_id: statement.statement_id.clone(),
+            })
+        })
+        .collect()
+}
+
+/// The literal a statement states unconditionally for an absent signal, read from the first sentence
+/// in which an absence predicate precedes `assumed to be`; `None` when no sentence states one.
+fn stated_absent_value_literal(text: &str) -> Option<String> {
+    // `to_ascii_lowercase` keeps the byte layout, so offsets index `text` too.
+    let lowered = text.to_ascii_lowercase();
+    let mut scan = 0usize;
+    while let Some(found) = lowered[scan..].find(ASSUMED_VALUE_LEAD) {
+        let lead = scan + found;
+        scan = lead + ASSUMED_VALUE_LEAD.len();
+        let sentence_start = sentence_start_before(&lowered, lead);
+        let absence_before = ABSENCE_PHRASES
+            .iter()
+            .any(|phrase| contains_whole_identifier(&lowered[sentence_start..lead], phrase));
+        if !absence_before {
+            continue;
+        }
+        let after = text[scan..].trim_start();
+        let token_end = after
+            .find(|c: char| c.is_whitespace() || matches!(c, '.' | ',' | ';' | ':' | ')'))
+            .unwrap_or(after.len());
+        let token = &after[..token_end];
+        if is_absent_value_literal(token) && sentence_closes_after_value(&after[token_end..]) {
+            return Some(token.to_string());
+        }
+    }
+    None
+}
+
+/// The byte offset where the sentence containing `position` begins: after the last period that is
+/// followed by whitespace, or the start of the text.
+fn sentence_start_before(lowered: &str, position: usize) -> usize {
+    let mut start = 0usize;
+    let mut scan = 0usize;
+    while let Some(found) = lowered[scan..position].find('.') {
+        let period = scan + found;
+        if lowered[period + 1..]
+            .chars()
+            .next()
+            .is_some_and(char::is_whitespace)
+        {
+            start = period + 1;
+        }
+        scan = period + 1;
+    }
+    start
+}
+
+/// A literal a signal can take: a binary, hexadecimal or decimal number, an all-capitals level word
+/// of two or more letters, or the words `asserted`/`deasserted`. Prose (`the default`, `zero`) is not.
+fn is_absent_value_literal(token: &str) -> bool {
+    if token.is_empty() {
+        return false;
+    }
+    if let Some(bits) = token.strip_prefix("0b") {
+        return !bits.is_empty() && bits.bytes().all(|b| b == b'0' || b == b'1');
+    }
+    if let Some(digits) = token.strip_prefix("0x") {
+        return !digits.is_empty() && digits.bytes().all(|b| b.is_ascii_hexdigit());
+    }
+    if token.bytes().all(|b| b.is_ascii_digit()) {
+        return true;
+    }
+    if token.len() >= 2 && token.bytes().all(|b| b.is_ascii_uppercase()) {
+        return true;
+    }
+    matches!(token, "asserted" | "deasserted")
+}
+
+/// What may follow the value for it to be unconditional: the end of the sentence, a clause break, or
+/// one parenthetical label and then the same. Any other continuation qualifies the value.
+fn sentence_closes_after_value(rest: &str) -> bool {
+    let rest = rest.trim_start();
+    if rest.is_empty() || rest.starts_with(['.', ',', ';']) {
+        return true;
+    }
+    let Some(label) = rest.strip_prefix('(') else {
+        return false;
+    };
+    let Some(close) = label.find(')') else {
+        return false;
+    };
+    let after_label = label[close + 1..].trim_start();
+    after_label.is_empty() || after_label.starts_with(['.', ',', ';'])
 }
 
 /// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
@@ -24655,6 +24855,7 @@ pub fn capture_signal_presence_rows(
             presence_condition,
             variant_presence,
             table_id: table.table_id.clone(),
+            absent_value: None,
         });
     }
 
@@ -31269,7 +31470,7 @@ mod tests {
             &[],
         ));
         let mut manifest = crate::ir::extractor::ExtractionManifest::default();
-        let records = super::signal_presence_surface(&source_ir, &mut manifest);
+        let records = super::signal_presence_surface(&source_ir, &[], &mut manifest);
         assert_eq!(
             records.len(),
             3,
@@ -56344,5 +56545,195 @@ mod kg_isf_completeness_1d_i_a_ii_e {
         assert!(has(&found, "Requester", RelationKind::Drives), "{found:?}");
         assert!(!has(&found, "Completer", RelationKind::Drives), "{found:?}");
         Ok(())
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — a signal's stated absent value rides its presence record.
+#[cfg(test)]
+mod stated_absent_value_tests {
+    use super::{
+        EvidenceModality, ExtractedStatement, SignalPresenceRecord, StatementClass,
+        VariantPresenceEntry, bind_stated_absent_values,
+    };
+
+    fn statement(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        }
+    }
+
+    fn presence(id: &str, signal: &str, condition: Option<&str>) -> SignalPresenceRecord {
+        SignalPresenceRecord {
+            presence_id: id.to_string(),
+            signal_name: signal.to_string(),
+            presence_condition: condition.map(str::to_string),
+            variant_presence: vec![VariantPresenceEntry {
+                variant_label: "V1".to_string(),
+                code: "O".to_string(),
+            }],
+            table_id: "table_presence".to_string(),
+            absent_value: None,
+        }
+    }
+
+    fn bound(records: &[SignalPresenceRecord], signal: &str) -> Option<(String, Vec<String>)> {
+        records
+            .iter()
+            .find(|record| record.signal_name == signal)
+            .and_then(|record| record.absent_value.as_ref())
+            .map(|value| (value.value.clone(), value.supporting_statement_ids.clone()))
+    }
+
+    /// AXI: *BRESP is an optional signal. If the BRESP_WIDTH property is 0, it is not present and
+    /// assumed to be 0b000 (OKAY).* The second sentence's `it` resolves to the one presence-record
+    /// name the statement mentions; the width property is not a signal; the parenthetical label
+    /// closes the sentence.
+    #[test]
+    fn a_signals_stated_absent_value_rides_its_presence_record() {
+        let mut records = vec![
+            presence("presence_0000", "XCLK", None),
+            presence("presence_0001", "XRESP", Some("XRESP_WIDTH > 0")),
+        ];
+        let statements = [statement(
+            "statement_0001",
+            "XRESP is an optional signal. If the XRESP_WIDTH property is 0, it is not present and assumed to be 0b000 (OKAY).",
+        )];
+        bind_stated_absent_values(&mut records, &statements);
+        assert_eq!(
+            bound(&records, "XRESP"),
+            Some(("0b000".to_string(), vec!["statement_0001".to_string()]))
+        );
+        assert_eq!(bound(&records, "XCLK"), None);
+    }
+
+    /// AXI: *Any AxSNOOP bits not driven by an interface are assumed to be LOW.* — `not driven` is an
+    /// absence predicate and `LOW` a level literal; the value binds every row of that name.
+    #[test]
+    fn an_undriven_signals_level_binds_every_row_of_that_name() {
+        let mut records = vec![
+            presence("presence_0000", "XSNOOP", Some("XSNOOP_WIDTH > 0")),
+            presence("presence_0001", "XSNOOP", None),
+        ];
+        let statements = [statement(
+            "statement_0007",
+            "Any XSNOOP bits not driven by an interface are assumed to be LOW.",
+        )];
+        bind_stated_absent_values(&mut records, &statements);
+        assert!(records.iter().all(|record| {
+            record.absent_value.as_ref().map(|v| v.value.as_str()) == Some("LOW")
+        }));
+    }
+
+    /// A value the sentence goes on to qualify is not read, and prose is not a literal.
+    #[test]
+    fn a_qualified_or_prose_absent_value_is_not_read() {
+        for text in [
+            "If not present, XRESP is assumed to be 0b0 for a special request.",
+            "If there is a missing XRESP output, the value is assumed to be the default for that signal.",
+            "If XRESP is not present it is assumed to be LOW unless a packet has started.",
+        ] {
+            let mut records = vec![presence("presence_0000", "XRESP", None)];
+            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)]);
+            assert_eq!(bound(&records, "XRESP"), None, "{text}");
+        }
+    }
+
+    /// Without an absence predicate before the value, the sentence states a default or a reading,
+    /// not an absent value.
+    #[test]
+    fn an_absent_value_needs_an_absence_predicate_in_the_same_sentence() {
+        for text in [
+            "XRESP is assumed to be LOW.",
+            "XRESP may be not present. The burst type is assumed to be INCR.",
+        ] {
+            let mut records = vec![presence("presence_0000", "XRESP", None)];
+            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)]);
+            assert_eq!(bound(&records, "XRESP"), None, "{text}");
+        }
+    }
+
+    /// APB5/AHB5: *If some of the signals covered by a check signal are not present on an interface,
+    /// then the missing signals are assumed to be LOW.* names a class, not a presence record; a
+    /// statement naming two records is ambiguous. Both bind nothing.
+    #[test]
+    fn a_class_of_signals_or_two_signals_binds_nothing() {
+        let mut records = vec![
+            presence("presence_0000", "XRESP", None),
+            presence("presence_0001", "XACK", None),
+        ];
+        let statements = [
+            statement(
+                "statement_0001",
+                "If some of the signals covered by a check signal are not present on an interface, then the missing signals are assumed to be LOW.",
+            ),
+            statement(
+                "statement_0002",
+                "If XRESP and XACK are not present they are assumed to be LOW.",
+            ),
+        ];
+        bind_stated_absent_values(&mut records, &statements);
+        assert!(records.iter().all(|record| record.absent_value.is_none()));
+    }
+
+    /// Repeated statements are all cited; disagreeing statements bind nothing.
+    #[test]
+    fn repeated_statements_are_cited_and_disagreeing_ones_bind_nothing() {
+        let mut records = vec![
+            presence("presence_0000", "XRESP", None),
+            presence("presence_0001", "XACK", None),
+        ];
+        let statements = [
+            statement(
+                "statement_0001",
+                "If XRESP is not present it is assumed to be 0b00.",
+            ),
+            statement(
+                "statement_0002",
+                "If XRESP is not present it is assumed to be 0b00.",
+            ),
+            statement(
+                "statement_0003",
+                "If XACK is omitted it is assumed to be HIGH.",
+            ),
+            statement(
+                "statement_0004",
+                "If XACK is omitted it is assumed to be LOW.",
+            ),
+        ];
+        bind_stated_absent_values(&mut records, &statements);
+        assert_eq!(
+            bound(&records, "XRESP"),
+            Some((
+                "0b00".to_string(),
+                vec!["statement_0001".to_string(), "statement_0002".to_string()]
+            ))
+        );
+        assert_eq!(bound(&records, "XACK"), None);
+    }
+
+    #[test]
+    fn an_absent_value_literal_is_a_number_a_level_word_or_an_assertion() {
+        for literal in [
+            "0b000",
+            "0x1F",
+            "0",
+            "7",
+            "LOW",
+            "HIGH",
+            "OKAY",
+            "asserted",
+            "deasserted",
+        ] {
+            assert!(super::is_absent_value_literal(literal), "{literal}");
+        }
+        for prose in ["", "the", "zero", "0b", "0x", "0b102", "Low", "x'F'", "L"] {
+            assert!(!super::is_absent_value_literal(prose), "{prose}");
+        }
     }
 }

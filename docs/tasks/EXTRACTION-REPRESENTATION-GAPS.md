@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: the program objective (ADR 0033, amended by ADR 0053) and `R0` downstream contract hygiene
 - Created: `2026-09-25`
-- Last updated: `2026-09-29`
+- Last updated: `2026-10-03`
 - Owner: repo-local workflow
 - Decision: ADR 0053 (`docs/decisions/0053-extraction-and-isf-requests-advance-in-parallel.md`)
 
@@ -38,16 +38,17 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.d.ii.a` — a signal's stated absent value is carried with its presence to IntentIR.
+`.3.d.ii.a.i` — a class-scoped absent value binds each signal the check-coverage table lists.
 
-Then, in order: `.3.d.ii.b` (stated defaults and equivalences), `.3.d.iii` (permissions and unread obligations), `.3.d.i` (software intent), `.41.h` (APB4's PPROT
-map), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
+Then, in order: `.3.d.ii.a.ii` (a generic channel-prefix name binds the signals it abbreviates), `.3.d.ii.b` (stated
+defaults and equivalences), `.3.d.iii` (permissions and unread obligations), `.3.d.i` (software intent), `.41.h` (APB4's PPROT
+map), `.45` (a fused presence row keeps the header's labels), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
 matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
 (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain); `.3.c`,
 `.3.e`, `.3.e.i`, `.3.c.iii`,
 `.39`, `.3.c.ii.a`, `.3.c.ii.b`, `.42`, `.3.c.ii`, `.3.c.vii`, `.41.c`, `.43.a`, `.3.b`, `.3.b.i`, `.3.b.ii`,
 `.3.b.iii`, `.41.f`, `.3.b.iii.a`, `.3.b.iii.b`, `.3.b.iii.e`, `.3.b.iii.f`, `.3.b.iii.c`, `.3.b.iii.d`, `.3.b.iii.g`,
-`.3.b.iii.h`, `.3.b.iii.i`, `.3.f.iv`, `.41.e`, `.3.d`, `.41.g` and `.3.d.ii` are done
+`.3.b.iii.h`, `.3.b.iii.i`, `.3.f.iv`, `.41.e`, `.3.d`, `.41.g`, `.3.d.ii` and `.3.d.ii.a` are done
 (every typed table of `2026-09-26` has a reason or an owner; a symbol cites the table it was read from; a word in a
 signal table's name column is not a signal; a field's value table fills the field's values; a condition marker that
 opens a sentence opens that sentence's condition; the object before *and then* is no subject; an actor phrase ends at
@@ -61,7 +62,8 @@ first sentence or its one code; an untyped timeout table is read as timing; a na
 its state machine feeds no signal alias; a timeout's next state is the transition its timer takes; a timer name's
 operation mode is its condition; a state a stated transition names is a protocol state; a typed timing value is read without a printed
 footnote mark; a table mapping a field's bits to signal bits binds them; the unread assumptions and behaviors fall into six
-families; a prose bit map binds a field, and every binding keeps its scope; an assumption's shapes are measured). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
+families; a prose bit map binds a field, and every binding keeps its scope; an assumption's shapes are measured; a signal's
+stated absent value rides its presence record to IntentIR). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
 `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a
 legacy register-map document's re-ingest.
 
@@ -116,6 +118,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
@@ -211,6 +215,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.43`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.43.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.45`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
 
 ## Changelog

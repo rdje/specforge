@@ -11,6 +11,7 @@ use crate::ir::derivation::{
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
     SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
+use crate::ir::evidence::{SignalPresenceRecord, StatedAbsentValue};
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
 use crate::ir::semantic::SystemResetPolarity;
@@ -1119,18 +1120,62 @@ fn protocol_residual_packet(
     }
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the residual for a signal whose absent value the document
+/// states. The record carries everything the sentence states; what is missing is the `.isf` clause that
+/// could say it (`(absent-value V)`, requested as `sf-isf-optional-signal` R3 and acknowledged by
+/// FSMGen), so the packet says that rather than naming a binding the record lacks.
+fn absent_value_residual_packet(
+    record: &SignalPresenceRecord,
+    absent_value: &StatedAbsentValue,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!(
+            "isf_protocol_signal_absent_value_{}",
+            crate::ir::isf_ir::sanitize_isf_name(&record.presence_id)
+        ),
+        question: format!(
+            "How should the value `{}` that signal `{}` takes when absent be represented downstream of `.isf`?",
+            absent_value.value, record.signal_name
+        ),
+        why_unresolved: format!(
+            "`.isf` has no port clause for the value an absent input reads (`(absent-value V)`, requested as `sf-isf-optional-signal` R3). The value remains exact in IntentIR and is not rendered; no tie-off is inferred. Source provenance: supporting statements: {}; supporting tables: {}.",
+            absent_value.supporting_statement_ids.join(", "),
+            record.table_id
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "preserve_intent_observation".to_string(),
+                description: "Keep the stated absent value on the presence record in IntentIR and expose this adapter residual without emitting executable syntax.".to_string(),
+                downstream_impact: "Independently licensed ISF remains usable, while an absent input's value stays visibly unlowered.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "lower_after_bindings".to_string(),
+                description: "Emit `(absent-value V)` on the port once FSMGen publishes the optional-port clause and the port's presence condition is lowered beside it.".to_string(),
+                downstream_impact: "A future adapter may tie the absent input off exactly as the document states, FSMGen-strict verified.".to_string(),
+            },
+        ],
+    }
+}
+
 /// Account for every canonical protocol observation at the adapter boundary (ADR 0016).
 ///
 /// None of the current record types supplies every operand required by a supported executable ISF
 /// construct. Keep one stable residual packet per input record, in schema and record order, instead
 /// of silently dropping observations or fabricating transitions, values, ports, storage, or timing.
 fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPacket> {
+    let stated_absent_values = intent_ir
+        .signal_presence_records
+        .iter()
+        .filter_map(|record| record.absent_value.as_ref().map(|value| (record, value)))
+        .collect::<Vec<_>>();
     let mut residuals = Vec::with_capacity(
         intent_ir.serial_frame_fields.len()
             + intent_ir.protocol_operations.len()
             + intent_ir.protocol_states.len()
             + intent_ir.protocol_transitions.len()
-            + intent_ir.interface_edge_timings.len(),
+            + intent_ir.interface_edge_timings.len()
+            + stated_absent_values.len(),
     );
 
     for record in &intent_ir.serial_frame_fields {
@@ -1184,6 +1229,10 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             &[],
             "an activation/guard, sample destination, drive value, and transaction or state association",
         ));
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — a stated absent value has no `.isf` clause yet.
+    for (record, absent_value) in stated_absent_values {
+        residuals.push(absent_value_residual_packet(record, absent_value));
     }
 
     residuals
@@ -1334,7 +1383,8 @@ mod tests {
     };
     use crate::ir::evidence::{
         EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ParticipantDriveRecord,
-        ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField,
+        ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField, SignalPresenceRecord,
+        StatedAbsentValue, VariantPresenceEntry,
     };
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
@@ -2464,6 +2514,34 @@ mod tests {
             drive_changes_on_edge: true,
             supporting_statement_ids: vec!["statement_edge".to_string()],
         }];
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — one presence row with a stated absent value, one without.
+        intent_ir.signal_presence_records = vec![
+            SignalPresenceRecord {
+                presence_id: "presence_0000".to_string(),
+                signal_name: "XCLK".to_string(),
+                presence_condition: None,
+                variant_presence: vec![VariantPresenceEntry {
+                    variant_label: "V1".to_string(),
+                    code: "Y".to_string(),
+                }],
+                table_id: "table_presence".to_string(),
+                absent_value: None,
+            },
+            SignalPresenceRecord {
+                presence_id: "presence_0001".to_string(),
+                signal_name: "XRESP".to_string(),
+                presence_condition: Some("XRESP_WIDTH > 0".to_string()),
+                variant_presence: vec![VariantPresenceEntry {
+                    variant_label: "V1".to_string(),
+                    code: "O".to_string(),
+                }],
+                table_id: "table_presence".to_string(),
+                absent_value: Some(StatedAbsentValue {
+                    value: "0b000".to_string(),
+                    supporting_statement_ids: vec!["statement_absent".to_string()],
+                }),
+            },
+        ];
         intent_ir.write_to_disk()?;
 
         let artifact = AdapterArtifact::build(
@@ -2495,6 +2573,7 @@ mod tests {
                 "isf_protocol_operation_protocol_operation_0001",
                 "isf_protocol_state_protocol_state_0001",
                 "isf_protocol_interface_edge_timing_interface_edge_timing_0001",
+                "isf_protocol_signal_absent_value_presence_0001",
             ]
         );
         for packet in &protocol_residuals {
@@ -2528,6 +2607,11 @@ mod tests {
                 .why_unresolved
                 .contains("sample destination")
         );
+        assert!(protocol_residuals[5].question.contains("`0b000`"));
+        assert!(protocol_residuals[5].question.contains("`XRESP`"));
+        assert!(protocol_residuals[5].why_unresolved.contains(
+            "supporting statements: statement_absent; supporting tables: table_presence"
+        ));
 
         let repeated = AdapterArtifact::build(
             &intent_ir.artifact_layout.intent_ir_path,

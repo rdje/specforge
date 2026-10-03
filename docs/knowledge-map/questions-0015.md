@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is figure_region_provenance_id for
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > what is fill_field_signal_bindings
+- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
+  > what is from_to_signal_relations
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > what is fronted_condition_end
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > what is fronted_condition_split
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
@@ -285,15 +297,3 @@
   > what is the frozen adjudication set for the bounded decision provider
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
   > what is the gap_catalog surface / gap_catalog_owners region
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is the ingest disk pre-flight check
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > what is the inter-annotator agreement of the eval gold

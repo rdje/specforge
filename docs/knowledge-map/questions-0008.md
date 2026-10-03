@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > how is a recommended parameter range like between 10 and 64 stored
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
   > how is a remote model evaluated in this repository
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
@@ -289,11 +297,3 @@
   > how many documents carry declaration_row_accounting
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > how many documents carry unfiltered conditional rules and signal constraints
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > how many documents declare a fragment of an escaped compound
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > how many documents lost promoted records when the empty-catalog special case was deleted
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > how many drifted tables can a production rule reach
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > how many dropped declaration rows are real signals

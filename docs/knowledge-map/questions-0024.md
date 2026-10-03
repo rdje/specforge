@@ -2,6 +2,32 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why is DATA_WIDTH declared as 8 in the AXI isf
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is DTI DOWNSTREAM not preserved as a heuristic only wire
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > why is FAST_EXCLUDE membership quoted but never a share
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
+- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
+  > why is HPROT bit not an actor
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why is HPROT constrained to 0 in the persisted AHB evidence
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > why is HSIZE BYTE equal to HALFWORD
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why is LOOP_W_WIDTH not declared as a signal
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why is LTI_GPC == True ? 2:1 not refused as prose
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -272,28 +298,3 @@
   > why is the SpecForge fact-card catalog almost out of capacity
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the X interface strip gated on X being a connected agent in this doc
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as
-  > an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why is the absolute bit position never derived from offset*8+bit
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > why is the adoption margin fixed before any model runs
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > why is the behavioral population a subset of retained rather than equal to it
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why is the block name not used to qualify the duplicate registers (heading levels flattened)
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > why is the book-behaviour obligation not hard-gated
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > why is the bounded active task root written last
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why is the caption census addition count higher than the published delta
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is the channel role kept verbatim instead of mapped to address/data/response phases
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why is the constraint subject fallback bounded by the obligation

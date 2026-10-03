@@ -899,6 +899,31 @@ mint signals**: existence-in-a-variant is configuration intent about a name, not
 `.12a` gap-fill owns declaration content, with its own width/direction evidence rules).
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.12b`).
 
+**A signal's stated absent value rides its presence record.** A presence matrix says when a signal exists; the
+prose says what it is when it does not: *BRESP is an optional signal. If the BRESP_WIDTH property is 0, it is not
+present and assumed to be 0b000 (OKAY).* Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` (`2026-10-03`) that value
+is bound to the signal's presence records as `absent_value` — the literal as written (`0b000`, `LOW`) and the
+statement that states it — and the records cross SemanticIR and IntentIR unchanged:
+
+```json
+{ "presence_id": "presence_0082", "signal_name": "BRESP", "presence_condition": "BRESP_WIDTH > 0",
+  "variant_presence": [ { "variant_label": "AXI5", "code": "O" }, "…" ], "table_id": "table_0268",
+  "absent_value": { "value": "0b000", "supporting_statement_ids": ["statement_1089"] } }
+```
+
+A sentence is read when, within one sentence, an absence predicate (*not present*, *not driven*, *omitted*,
+*missing*) precedes *assumed to be* and a literal follows — a binary, hexadecimal or decimal number, a level word
+in capitals, or *asserted*/*deasserted* — closed by the end of the sentence or a parenthetical label. The signal
+is the one presence-record name the whole statement mentions, which is how the second sentence's *it* resolves to
+`BRESP` while `BRESP_WIDTH`, a property, is no candidate. A value the sentence goes on to qualify (*assumed to be
+0b0 for a DVMComplete request*) is not read, because the record cannot carry the qualification. A statement that
+names a class of signals (*the missing signals* covered by a check signal, in APB5 and AHB5) or a generic name no
+matrix row carries (*AxSNOOP*, whose rows are `AWSNOOP` and `ARSNOOP`) binds nothing, and two statements that
+disagree bind nothing: each is a measured residual with its own owner (`.3.d.ii.a.i`, `.3.d.ii.a.ii`). On the 31
+chains only AXI moves: `BRESP` and `RRESP` take `0b000`. The `.isf` adapter keeps one residual per stated value,
+because `.isf` has no clause for the value an absent input reads (`sf-isf-optional-signal` R3).
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

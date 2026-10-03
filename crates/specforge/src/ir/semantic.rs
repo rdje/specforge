@@ -16,9 +16,10 @@ use crate::ir::derivation::{
 use crate::ir::evidence::{
     EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
     ProtocolTransitionRecord, SerialFrameField, SignalPolarity, SignalPolarityConflictRecord,
-    SignalPolarityRecord, SignalSemanticConflictRecord, SignalSemanticHintRecord,
-    SignalSemanticHintSourceKind, SignalSemanticTag, SourceLocalInferenceConstraintGrounding,
-    StatementClass, VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
+    SignalPolarityRecord, SignalPresenceRecord, SignalSemanticConflictRecord,
+    SignalSemanticHintRecord, SignalSemanticHintSourceKind, SignalSemanticTag,
+    SourceLocalInferenceConstraintGrounding, StatementClass, VisualEvidenceRole,
+    VisualObservationKind, parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
     CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
@@ -291,6 +292,11 @@ pub struct SemanticIr {
     /// Interface-edge timing observations projected losslessly from EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — signal-presence records (which signals exist per
+    /// variant, under what condition, and the value an absent signal takes) projected losslessly from
+    /// EvidenceIR (ADR 0016).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_presence_records: Vec<SignalPresenceRecord>,
     #[serde(default)]
     pub control_blocks: Vec<ControlBlockRecord>,
     #[serde(default)]
@@ -422,6 +428,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_states", "semantic.carried_evidence"),
     ("protocol_transitions", "semantic.carried_evidence"),
     ("interface_edge_timings", "semantic.carried_evidence"),
+    ("signal_presence_records", "semantic.carried_evidence"),
     ("register_records", "semantic.carried_evidence"),
     // These three collections are projections, not lossless carries: SemanticIR filters
     // ungrounded EvidenceIR records and may add records derived from typed visual evidence.
@@ -989,6 +996,7 @@ impl SemanticIr {
             protocol_states: evidence_ir.protocol_states.clone(),
             protocol_transitions: evidence_ir.protocol_transitions.clone(),
             interface_edge_timings: evidence_ir.interface_edge_timings.clone(),
+            signal_presence_records: evidence_ir.signal_presence_records.clone(),
             control_blocks,
             explicit_modules,
             explicit_tops,
@@ -1185,6 +1193,7 @@ impl SemanticIr {
         insert_field!(protocol_states);
         insert_field!(protocol_transitions);
         insert_field!(interface_edge_timings);
+        insert_field!(signal_presence_records);
         insert_field!(register_records);
         insert_field!(timing_constraints);
         insert_field!(signal_constraints);
@@ -29075,7 +29084,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 54);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 55);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

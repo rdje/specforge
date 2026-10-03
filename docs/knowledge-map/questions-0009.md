@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > how many documents declare a fragment of an escaped compound
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > how many documents lost promoted records when the empty-catalog special case was deleted
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how many drifted tables can a production rule reach
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > how many dropped declaration rows are real signals
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -290,11 +298,3 @@
   > how was the 400 page Docling SIGKILL reproduced
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > how was the CHI field-constraint routing measured without re-ingesting the PDF
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > how was the bit-range census error caught
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > how was the eval gold checked for idiosyncrasy
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how was the migrated alignment task evidence independently audited

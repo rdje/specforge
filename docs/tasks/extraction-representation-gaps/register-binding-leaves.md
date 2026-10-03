@@ -48,6 +48,20 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   later *Drives SIG[2:0]* of the same width in the same register section binds, without pairing a sentence with
   the wrong heading, and measure every chain.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.45`
+  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a`)
+  Goal: **a presence row whose converter fused two code cells keeps the header's variant labels.** APB5
+  `table_0018` (*Table B-3*, header `Signal | Width | Property | APB5 | APB4 | APB3 | APB2`) has a row the converter
+  rendered as `PWAKEUPCHK | 1 | Check_Type &Wakeup_Signal | C | N N |  | N` — two codes fused into one cell and the next
+  cell empty. The capture's rotation remap then relabelled the whole fragment: `presence_0020`-`presence_0023`
+  (`PWDATACHK`, `PSTRBCHK`, `PREADYCHK`, `PBUSERCHK`) carry variant labels `OC`/`N`/`N`/`N` and `PWDATACHK`'s
+  condition reads `DATA_WIDTH/8 Check_Type`, while the fused row itself is refused. **Reproduce:** `python3 -c
+  "import json; e=json.load(open('generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json')); print([(r['presence_id'], [v['variant_label'] for v in r['variant_presence']]) for r in e['signal_presence_records'] if r['table_id']=='table_0018'])"`.
+  **Impact:** four check signals state presence under labels that are codes, not versions; a consumer reading
+  `APB5` finds nothing for them. Acceptance: find why one fused row moves the fragment's header remap (the
+  `.5h` rotation votes, or the fused-pair split), keep the header labels when the header row is a proper
+  header, refuse only the fused row, and measure every chain.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6's AHB3 and AHB5 sections map `CSW.Prot` bits 28-24 to `HPROT` in prose; no

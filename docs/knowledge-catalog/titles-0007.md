@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md) | 2026-06-04 | `current` | SpecForge stability obligations stay .isf residuals — phase-scoped, not FSMGen's unconditional (stable s) |
 | [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md) | 2026-09-28 | `current` | Only the items a stage's rule registry reaches are sealed, so an edit re-seals the corpus exactly when it tou… |
 | [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md) | 2026-06-17 | `current` | validate emits a stage_staleness Warning when a downstream IR carries 0 actor_signal_relations while its upst… |
 | [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md) | 2026-08-28 | `current` | The status ledger's record count is bounded but unreported, and its per-record budget is overhead-net |

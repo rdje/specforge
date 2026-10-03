@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md) | 2026-09-14 | `current` | A signal declaration whose width the SemanticIR parser cannot finish is discarded whole, and every obligation… |
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
 | [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md) | 2026-06-07 | `current` | A signal-constraint subject must be a DECLARED signal (drops property/config/doc-meta noise) |
 | [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md) | 2026-09-11 | `current` | A signal table whose names the document instantiates with a shared prefix is a naming template, and only the… |
@@ -60,4 +61,3 @@
 | [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
 | [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |
 | [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |
-| [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md) | 2026-06-09 | `current` | Cross-PDF pattern reuse via a DERIVED vendor/layout fingerprint — extend CorpusMemory, advisory + honest |

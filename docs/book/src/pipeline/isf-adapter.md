@@ -480,7 +480,11 @@ protocol record, preserving collection and record order. Stable packet ids begin
 `isf_protocol_serial_frame_field_`, `isf_protocol_operation_`, `isf_protocol_state_`, `isf_protocol_transition_`,
 or `isf_protocol_interface_edge_timing_` and include the upstream record id. Each packet names the missing bindings
 and carries the supporting statement ids, or the supporting table ids of a record read from a table. No protocol name, transition, value, port, storage destination, or
-schedule is inferred.
+schedule is inferred. A presence record whose signal has a stated absent value gets a packet too,
+`isf_protocol_signal_absent_value_` plus the presence id (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`): the record
+carries everything the sentence states, and what is missing is the `.isf` clause for the value an absent input
+reads (`(absent-value V)`, `sf-isf-optional-signal` R3), so the value stays exact in IntentIR, is not rendered, and
+no tie-off is inferred.
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
 unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,

@@ -64,13 +64,67 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   (`sf-isf-optional-signal`, its `(absent-value V)`). So the measurement closes here and the code is two children.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`
-  Status: `open` (`2026-09-30`; CODE; found by `.3.d.ii`)
+  Status: `done` (`2026-10-03`; CODE; found by `.3.d.ii`; checklist below; opened `.3.d.ii.a.i`, `.3.d.ii.a.ii` and
+  `.45`)
   Goal: **a signal's stated absent value is carried with its presence to IntentIR.** Carry
   `signal_presence_records` through SemanticIR and IntentIR, and read a sentence that gives an absent or undriven
   signal a value (*not present and assumed to be 0b000*, *not driven … assumed to be LOW*, *the missing signals are
   assumed to be LOW*) into that signal's record as its absent value, citing the statement. **Reproduce:** the 5
   records of `.3.d.ii`'s first shape. **Impact:** a width-0 `BRESP` has no value in IntentIR, so no consumer can tie
   it off. Acceptance: the carrier and the reader, the re-seal handled as `.3.b.iii.g`'s was, and every chain measured.
+  **Decided `2026-10-03`: the value lives on the presence record, literal and cited.** `SignalPresenceRecord` gains
+  `absent_value: Option<StatedAbsentValue { value, supporting_statement_ids }>`, bound after the matrix capture
+  inside the one registered `signal_presence` surface (no new extractor entry, so no other document's manifest
+  moves), and `signal_presence_records` cross SemanticIR (`semantic.carried_evidence`) and IntentIR
+  (`intent.carried_semantics`) unchanged. The value is the literal as written and is never interpreted against the
+  signal's polarity: the sentence states a literal, and the consumer that ties the signal off decides its meaning on
+  the wire. **The reader:** in one sentence an absence predicate (*not present*, *not driven*, *omitted*, *missing*)
+  precedes *assumed to be*, and a literal follows — a binary, hexadecimal or decimal number, a word of two or more
+  capitals, or *asserted*/*deasserted* — closed by the end of the sentence, a clause break or one parenthetical label
+  (*0b000 (OKAY)*). The signal is the one presence-record name the whole statement mentions, so the second
+  sentence's *it* resolves to `BRESP` while `BRESP_WIDTH`, a property, is no candidate. A qualified value (*assumed
+  to be 0b0 for a DVMComplete request*) is not read; a statement naming no presence record or two binds nothing;
+  statements that disagree bind nothing, and repeats are all cited. **Of the 5 target records, 2 bind** (`BRESP`,
+  `RRESP`); the other 3 are the two shapes the reader cannot resolve without a carrier, each now owned:
+  `.3.d.ii.a.i` (the class *signals covered by a check signal*, whose members APB5's *Table 5-1 Check signal
+  descriptions* and AHB5's *Table 12-1 Parity check signals* state in a `Check signal | Signals covered` table) and
+  `.3.d.ii.a.ii` (the generic `AxSNOOP`, whose rows are `AWSNOOP`/`ARSNOOP`; AXI's alias map is empty). The `.isf`
+  adapter keeps one `isf_protocol_signal_absent_value_<presence_id>` residual per stated value (`.isf` has no
+  `(absent-value V)` at the pin; `sf-isf-optional-signal` R3 is acknowledged).
+  **Measured over all 31 chains:** evidence dry-run with the HEAD and the new binary, 30 identical; AXI moves only in
+  `signal_presence_records` (`presence_0082` `BRESP` and `presence_0143` `RRESP` gain `0b000`, citing
+  `statement_1089` and `statement_1118`). The unread `assumed_by_word` family: 111 -> 109 (443 ->
+  441 records). The three presence-bearing chains (AXI, APB5, AHB5) change content at SemanticIR and
+  IntentIR (the carried field) and were rebuilt stage by stage first; the cascade then re-sealed all 31
+  content-identical at every stage.
+  **Issue uncovered, owned:** APB5 `table_0018`'s presence rows (`PWDATACHK`..`PBUSERCHK`, `presence_0020`-`0023`)
+  carry variant labels `OC`/`N`/`N`/`N` instead of `APB5`..`APB2`: the converter fused one row's `N N` cells and left
+  one empty, and the capture remapped the header (`.45`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`
+  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a`)
+  Goal: **a class-scoped absent value binds each signal the check-coverage table lists.** APB5 and AHB5 state *If
+  some of the signals covered by a check signal are not present on an interface, then the missing signals are
+  assumed to be LOW* (`ihi0024_e` `statement_0388`, `ihi0033_c` `statement_1047`; `ihi0022_h_c` and `ihi0024_d` say
+  it too). The class's members are stated by a table whose headers name the relation (`Check signal | Signals
+  covered`: APB5 *Table 5-1*, `table_0014`, 15 rows; AHB5 *Table 12-1*, `table_0031`, 17 rows; a cell lists several
+  covered signals, `PPROT, PWRITE, PNSE` or `HBURST HMASTLOCK HWRITE HSIZE HNONSEC`). **Reproduce:** the two
+  statements bind nothing under `.3.d.ii.a`'s reader (`validate` metric `signal_presence_absent_values` 0 on both).
+  **Impact:** the tie-off rule for every parity-covered signal stays an unread assumption. Acceptance: read the
+  coverage table into a typed relation (a check signal and the signals it covers), resolve the class phrase to that
+  relation when the sentence's words name the table's two headers, bind each covered signal's presence record, and
+  measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`
+  Status: `open` (`2026-10-03`; DESIGN + CODE; found by `.3.d.ii.a`)
+  Goal: **a generic channel-prefix name binds the signals it abbreviates.** *Any AxSNOOP bits not driven by an
+  interface are assumed to be LOW* (AXI `statement_2207`) names `AxSNOOP`; the presence rows are `AWSNOOP`
+  (`presence_0034`) and `ARSNOOP` (`presence_0113`), AXI's `signal_alias_map` is empty, and SpecForge keeps generic
+  names literal everywhere (`AxBURST` enums, `AxMMUATST`). **Reproduce:** the statement binds nothing under
+  `.3.d.ii.a`'s reader. **Impact:** every rule stated on a generic name reaches neither concrete signal. Acceptance:
+  decide the carrier for the document's own prefix convention (the sentence that defines `Ax` as `AW` and `AR`, or
+  the matrix rows that share the suffix), bind through it and nothing else (ADR 0006: no prefix list), and measure
+  every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b`
   Status: `open` (`2026-09-30`; MEASUREMENT then CODE; found by `.3.d.ii`)
@@ -90,3 +144,45 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   **Reproduce:** family `permission_or_description`. **Impact:** optional behavior has no carrier, and obligations
   stay untyped. Acceptance: split the family by modality, route each obligation class to the reader that should take
   it, decide a carrier for a permission, find why those 17 are classed as timing, and measure every chain.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` (CODE) — DONE `2026-10-03`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: 443 unread records, family
+  `assumed_by_word` 111, among them AXI `statement_1089` (*BRESP … not present and assumed to be 0b000 (OKAY)*),
+  `statement_1118` (RRESP) and `statement_2207` (*Any AxSNOOP bits not driven … assumed to be LOW*), APB5
+  `statement_0388` and AHB5 `statement_1047` (*the missing signals are assumed to be LOW*). `validate` on AXI's
+  EvidenceIR: `signal_presence_records` 306, no record carries a value; SemanticIR and IntentIR carry no presence
+  record at all.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `SignalPresenceRecord` had no field for a
+  value, `signal_presence_surface` read tables only and never the statements, and `crates/specforge/src/ir/semantic.rs`
+  / `intent.rs` listed `signal_presence_records` in no rule-field table, so the surface stopped at EvidenceIR
+  (`.3.d.ii`'s finding). RED, with the file restored byte-identically after each (5 mutations): dropping the
+  absence predicate, the sentence-closure rule, the one-name rule or the disagreement rule fails
+  `a_signals_stated_absent_value_rides_its_presence_record`, `a_qualified_or_prose_absent_value_is_not_read`,
+  `a_class_of_signals_or_two_signals_binds_nothing` or
+  `repeated_statements_are_cited_and_disagreeing_ones_bind_nothing`.
+- [x] **ADDRESSED (verified)** — Evidence dry-run of all 31 chains with the HEAD binary (`513610ddc`'s build) and the new
+  one: 30 identical; AXI moves only in `signal_presence_records`, `BRESP` and `RRESP` gaining `absent_value` `0b000`
+  with their statements. AXI rebuilt stage by stage (evidence, semantic, intent, each validated once, the adapter
+  last): `signal_presence_absent_values` 2; SemanticIR and IntentIR `signal_presence_records` 0 -> 306; adapter
+  residuals 55 -> 57 (two `isf_protocol_signal_absent_value_*`), lowering status and ISF text unchanged.
+  APB5 and AHB5 rebuilt from semantic down: `signal_presence_records` 0 -> 24 and 0 -> 40, no other section moved.
+  Unread records 443 -> 441, `assumed_by_word` 111 -> 109.
+- [x] **NO REGRESSION** — The new rule fields re-seal every chain: after the three hand rebuilds,
+  `rebuild_stage_cascade.sh --write` rebuilt all 31 content-identical at every stage; `check_chain_currency.sh` 31 of
+  31 current at evidence, semantic, intent and isf-adapter. WIRE-BASED-100:
+  all 11 seeds identical to the reports of `513610ddc`'s binary (temp paths masked; `seed_swd`'s constraint 1.000). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets --
+  -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,817 passed, 0 failed.
+  Claim-family inventory 178 -> 180 rules (one carried field per stage); `flow_census.json` rolled forward
+  (+7 functions, +44 decision sites, +50 helper edges, +6 macros); boundary counts unchanged, since the binder is a helper of the registered `signal_presence_surface`
+  producer and no new root or grammar producer was registered.
+- [x] **GENERICITY (ADR 0006)** — English absence predicates and the lead *assumed to be*; a literal's shape (a
+  number, a capitalised word, *asserted*); the document's own presence-record names; no signal, property, document or
+  protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (the `.12b` presence section extended),
+  `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `reference/intentir-contract.md`,
+  `source-to-intent-contract.md`, `reference/representation-gaps.md` (*Signal absent by default*),
+  `quality/validation.md` (the fifth presence metric); `docs/gaps/fsmgen-ladder.md` (F7); KM
+  `a-signals-stated-absent-value-rides-its-presence-record` (new), `signal-presence-matrix-capture` (amended);
+  category contract (`interface_inventory_and_shape` names the surface) and census script carry it. No production
+  rule was deleted or replaced.

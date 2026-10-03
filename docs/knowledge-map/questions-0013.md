@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > what does AdapterArtifact write_to_disk reconcile
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what does CORPUS-COVERAGE.1 add
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does DEFER mean in the doctrine enforcement report
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > what does DOCLING_DEVICE do
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what does KG-ISF-TRANSACTIONS.2k add
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -202,6 +210,8 @@
   > what does the held-out bundle census report now that nothing is held out
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what does the ingest traversal oracle check
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > what does the isf adapter do with a stated absent value / what is isf_protocol_signal_absent_value_
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > what does the name-column override score, and what does it refuse
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
@@ -288,13 +298,3 @@
   > what happened to the original Introducing CoreSight rollback
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > what happened to the stale 83 interfaces in the GIC Overview Guide
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > what happens if someone runs clean --scope source-normalized on a declared document
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > what happens if the dynamic binder is run per clause
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > what happens to a constraint whose subject is a withheld template base name

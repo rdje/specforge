@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > does a footnote element prove a note number
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > does a freshly built EvidenceIR carry a document_class
 - [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
@@ -16,6 +18,8 @@
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > does a noun use of read or access create a relation
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > does a presence record say what an absent signal is assumed to be (since 2026-10-03, absent_value — see a-signals-stated-absent-value-rides-its-presence-record)
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > does a refresh need specforge validate
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -294,7 +298,3 @@
   > does the drop model agree with docling iterate_items
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > does the dynamic constraint path use classify_signal_constraint_kind
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does the emitted .isf signal direction affect FSMGen downstream correctness
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > does the explicit-direction signal catalog repeat the UTF-8 boundary bug

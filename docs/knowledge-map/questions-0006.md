@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > how do I edit one field of a doctrine JSON contract without reformatting the whole file (derive that FILE's encoder by round-tripping candidates against its exact bytes - there is no repository-wide style: of 27 parseable contracts under doctrine/, 20 reproduce under json.dumps with separators comma-space-colon and a trailing newline, 3 under Perl JSON::PP canonical+pretty, and
+  > 4 are hand-authored and reproduce under neither)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how do I file an FSMGen bug report or feature request
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > how do I find out which documents are chain-stale
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
@@ -292,9 +297,3 @@
   > how does SpecForge resolve a persisted path after the repository moves
 - [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
   > how does SpecForge send a question to FSMGen
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how does SpecForge serialize repository owned paths
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > how does SpecForge stop a published count going stale under a green gate
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > how does SpecForge stop a published gap reproduction from silently running no test

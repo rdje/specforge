@@ -590,13 +590,15 @@ This is the main semantic safety boundary before canonical intent.
 
 ## Lossless frame and protocol observations
 
-Five evidence-grounded protocol collections cross into `SemanticIR` unchanged:
+Five evidence-grounded protocol collections, and the signal-presence records, cross into `SemanticIR` unchanged:
 
 - `serial_frame_fields`
 - `protocol_operations`
 - `protocol_states`
 - `protocol_transitions`
 - `interface_edge_timings`
+- `signal_presence_records` — which signals exist per variant, under what condition, and the value an absent one
+  takes (`absent_value`, with the statement that states it; `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`)
 
 This projection is intentionally lossless rather than interpretive. Record order, ids, optional values, and
 every `supporting_statement_ids` and `supporting_table_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
@@ -632,6 +634,7 @@ state, encodings, values, ports, activation conditions, or storage targets.
   protocol_states: N
   protocol_transitions: N
   interface_edge_timings: N
+  signal_presence_records: N
 ```
 
 IntentIR carries the same collections unchanged, and the `.isf` adapter keeps one residual per record rather than
