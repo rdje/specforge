@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > how many declared signals never reach the SemanticIR interface catalog
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how many digests move when the reviewed projection changes
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how many distinct proof seals does the corpus carry
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -290,11 +298,3 @@
   > how to express the JTAG TAP / SWD FSM in .isf
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > how to get a fresh eval-extraction baseline for a spec
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how to re-measure the message-field corpus yield
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how to re-score SWD derivation
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > how to read a chip-spec PDF when the Read tool refuses it
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how to recover register field bit positions that live in the layout graphic, not the table

@@ -486,7 +486,8 @@ carries everything the sentence states, and what is missing is the `.isf` clause
 reads (`(absent-value V)`, `sf-isf-optional-signal` R3), so the value stays exact in IntentIR, is not rendered, and
 no tie-off is inferred. `check_signal_records` (`.3.d.ii.a.i`) are carried and not lowered, without a residual
 each: a parity check is interface shape rather than a protocol observation, and its lowering — a combinational
-XOR chain, or a request — is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision.
+XOR chain, or a request — is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_names`
+(`.3.d.ii.a.ii`) are carried the same way: a name is not a port, and the members it stands for are already ports.
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
 unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,

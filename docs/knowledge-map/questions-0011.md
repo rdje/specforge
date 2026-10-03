@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > is the EvidenceIR build reproducible / deterministic
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > is the Introducing CoreSight Debug and Trace refresh complete
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > is the LLM-primary promotion a recall improvement
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -289,11 +297,3 @@
   > should the claim registry get an archive lifecycle
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > should the drifted SourceIR documents be re-ingested
-- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
-  > should the legacy corpus be deleted or rebuilt when the EvidenceIR schema bumps
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > should the logic-level walk skip predicate adjectives
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > should we buy the TYPESAFE_API_KEY
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > temporal rule eval false positives root cause

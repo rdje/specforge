@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what stops AWSIZE, ARSIZE or HSELx a from being joined
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what stops a bounded snapshot from accreting chronology
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what stops a doctrine JSON contract being silently reformatted (the CONTRACT-ENCODING doctrine: doctrine/contract_encoding/encoders.jsonl declares each contract's encoder and scripts/check_contract_encoding.py refuses a file that no longer round-trips under it; a deliberate migration updates that one registry line in the same commit)
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > what stops a legacy artifact entering the EvidenceIR build
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what structural cue separates a message-field table from a register-field table
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what structural cues recognize transactions universally (section anchors + enumeration tables)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what structural surfaces discriminate document class
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
@@ -283,17 +297,3 @@
   > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > where does the phantom signal DATA in the CoreSight TMC come from
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > where does the post-boundary retention declaration live and why
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > where does the until release go (the temporal rule's exceptions, not the condition)
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > where does the uppercase spelling in a declaration come from
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > where is FigureRegion stored in EvidenceIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
-- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
-  > where is a minimum duration such as for at least one clock cycle kept

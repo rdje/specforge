@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > does the declaration reader publish any false positive declaration
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does the drop model agree with docling iterate_items
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > does the dynamic constraint path use classify_signal_constraint_kind
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -294,7 +298,3 @@
   > how do I decide between partitioning a research record and declaring a rollover for it
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > how do I decide whether a naming convention is universal grammar or one document's habit
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > how do I declare a newly retained normalized bundle
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)

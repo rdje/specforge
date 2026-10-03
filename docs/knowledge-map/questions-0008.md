@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > how is a leaf route lifecycle verified
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > how is a logic level paired with a signal in the dynamic path
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how is a message field's width kept honest (per-variant widths stay None)
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > how is a parity check-signal table (Check signal | Signals covered) read
 - [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
   > how is a polarity stated as a rule over a class of signals read (All WISHBONE interface signals MUST use active high logic)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -289,11 +297,3 @@
   > how many declarations does the current reader refuse corpus-wide
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > how many declared names are spelled in a case the document never uses
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > how many declared signals never reach the SemanticIR interface catalog
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > how many digests move when the reviewed projection changes
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > how many distinct proof seals does the corpus carry
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)

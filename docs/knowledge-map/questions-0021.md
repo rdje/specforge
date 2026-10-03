@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why did VALID PENDING CRDT CRDTSH SHAREDCRD RP become AXI interface ports
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > why did Wishbone's CYC_O must be asserted no later than constraint disappear
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > why did Wishbone's slave.isf declare ACK_I as an output (The SLAVE asserts either the [ACK_I] ...; fixed by EXTRACTION-REPRESENTATION-GAPS.32)
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a Name | Signals covered | Width | Check enable table classify as unknown
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why did a Python census over persisted table_kind over-count the row extractor's population
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > why did a SourceIR classification change fail with 'classification is not the registered capture/proposal replay'
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > why did a census over persisted artifacts disagree with what the producer does (because the artifacts were written by an earlier producer — check the artifact mtimes against git log -L on the grounding function before treating a persisted population as evidence about current behaviour)
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > why did a census over the persisted corpus have to be retracted
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why did a conditional rule take its consequent signal from the previous sentence
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > why did a current claim census count change without the producer changing
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -279,21 +297,3 @@
   > why do plain English words like Address or Vector become field names under the bracket frame
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
-- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
-  > why do questions and bug reports to FSMGen follow the same process
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > why do register records carry no size_bits
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > why do register records cite table_0030
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why do replayed SourceIR digests always differ between replay roots
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why do source derived ids need field aware alpha normalization
-- [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
-  > why do statements contain &gt; and &lt;
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why do the CCIX specs extract almost no register fields

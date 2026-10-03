@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > why is seed_swd's CSYSPWRUPACK gold must_be_high and not must_be_asserted
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why is signal direction hard to lower faithfully to a single .isf module
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why is source_ref ambiguous
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why is standalone wins circular for an escaped identifier fragment
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why is statement_0223 still a normative statement
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why is subs/fsmgen empty in a git worktree
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > why is surfaces.jsonl pinned in three registries
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > why is synthesize_directions_from_relations load-bearing for Avalon
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why is text inside a diagram missing from SourceIR
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > why is that not in the nominal determiner list (the Manager that drives HTRANS)
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -181,6 +199,8 @@
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > why should corpus counts leave MEMORY md
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > why was 'Any AxSNOOP bits not driven by an interface are assumed to be LOW' not bound by .3.d.ii.a alone
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why was 'the missing signals are assumed to be LOW' (signals covered by a check signal) not bound by .3.d.ii.a alone
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > why was ADIv6's CSYSPWRUPREQ power-up rule's antecedent the whole When sentence
@@ -277,23 +297,3 @@
   > why was the task-tree count in live-docs.md wrong
 - [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
   > why was validate_canonical_recovery_contract.py deleted
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why was was-not-permitted dropped from the negated permission form
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > why were ADIv6's CTRL/STAT fields read into ABORT
-- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
-  > why were ADIv6's power-up handshake wires declared nowhere
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why were BDF DL and VPD removed from OpenCAPI Discovery
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why were PWR and OPEN promoted as conditional-rule consequent signals
-- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
-  > why were RISC-V Debug register fields in the wrong register
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were RISC-V/TRM register tables unextracted (unknown table_kind)
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > why were TMC's Bits | Name | Function tables uncited

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what guards the APB antecedent recovery now
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what happened in OpenCAPI Discovery Configuration refresh 46
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > what happened to WTAGUPDATE must_be_value UPDATED
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > what happened to the AArch64 External Debug Guide agent.isf
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what happened to the CoreSight Base System agent.isf
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -274,6 +282,12 @@
   > what is classified_obligation_residuals / evidence_classified_obligation_residuals_remaining
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > what is closes_character_reference
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > what is collective_name on a StatedAbsentValue
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > what is collective_signal_name_surface / collective_marker / is_collective_member
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > what is collective_signal_names / CollectiveSignalNameRecord
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -284,17 +298,3 @@
   > what is continuation_inherited_table_heads and what grounds the join
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > what is continuation_inherited_table_heads and which passes use it
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 47 and why is its adapter honestly blocked
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 49
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is declared_signal_complete_gold_precision
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > what is dedup_constraints / its canonical key
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > what is descriptive_consequent_signal

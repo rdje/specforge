@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the exact CORPUS-COVERAGE task evidence boundary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the exact active PDF task evidence baseline
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > what is the exact partition of the 78 persisted documents by schema and refresh cohort (78 = 21 refreshed-and-loadable + 6 outside-cohort-and-loadable + 31 refreshed-but-legacy + 15 outside-cohort-and-legacy + 5 remaining-and-legacy)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what is the exact pre-containment ROADMAP source identity
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what is the executable currentness authority for VALIDATION_SNAPSHOT
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
@@ -283,17 +297,3 @@
   > what signals belong to which AXI channel
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what stable order may production use for opaque signal collections
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > what stops AWSIZE, ARSIZE or HSELx a from being joined
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > what stops a bounded snapshot from accreting chronology
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what stops a doctrine JSON contract being silently reformatted (the CONTRACT-ENCODING doctrine: doctrine/contract_encoding/encoders.jsonl declares each contract's encoder and scripts/check_contract_encoding.py refuses a file that no longer round-trips under it; a deliberate migration updates that one registry line in the same commit)
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > what stops a legacy artifact entering the EvidenceIR build
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what structural cue separates a message-field table from a register-field table
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what structural cues recognize transactions universally (section anchors + enumeration tables)

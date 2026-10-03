@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md) | 2026-09-29 | `current` | A table SourceIR left untyped is read as a signal table when its header names a signal column and another col… |
 | [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md) | 2026-06-06 | `current` | APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses |
 | [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md) | 2026-09-14 | `current` | A signal declaration whose width the SemanticIR parser cannot finish is discarded whole, and every obligation… |
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
@@ -60,4 +61,3 @@
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
 | [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
-| [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |

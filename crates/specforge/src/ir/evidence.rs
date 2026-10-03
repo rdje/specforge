@@ -380,6 +380,10 @@ pub struct EvidenceIr {
     /// tables declare, each with the signals it covers. Empty (serde-skipped) for documents without one.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub check_signal_records: Vec<CheckSignalRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — the collective signal names the document defines, each with the
+    /// signals it stands for. Empty (serde-skipped) for documents that define none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub collective_signal_names: Vec<CollectiveSignalNameRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -696,6 +700,11 @@ pub struct StatedAbsentValue {
     /// sentence states on the signal by name.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — the collective name the sentence used when it did not name
+    /// this signal itself (*Any AxSNOOP bits not driven … are assumed to be LOW* reaches `AWSNOOP` through
+    /// `AxSNOOP`); `None` for a value stated on the signal by name or through a class.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub collective_name: Option<String>,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — one row of a CHECK-COVERAGE table: a check (parity) signal and
@@ -721,6 +730,25 @@ pub struct CheckSignalRecord {
     pub check_enable: Option<String>,
     /// The structured table (page fragment) that carried this row.
     pub table_id: String,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — a COLLECTIVE signal name the document defines: *In this
+/// specification, AxSIZE indicates AWSIZE and ARSIZE*; *the term VAxQOSACCEPT refers collectively to the
+/// VAWQOSACCEPT and VARQOSACCEPT signals*. A collective name carries one run of lowercase letters where its members
+/// carry uppercase ones, and a document may also state the rule (*Lowercase x at the second letter of a signal name
+/// denotes a collective term for both Read and Write. For example, AxCACHE refers to both the ARCACHE and
+/// AWCACHE signals*), from which every other name of that shape whose members the document declares is read. The
+/// members are as written and are not required to be declared when a sentence names them.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CollectiveSignalNameRecord {
+    /// Stable id, e.g. `collective_0003`.
+    pub collective_id: String,
+    /// The collective name (`AxSIZE`).
+    pub collective_name: String,
+    /// The signals it stands for, in the order the document gives them (`AWSIZE`, `ARSIZE`).
+    pub member_names: Vec<String>,
+    /// The sentence that names the members, or the rule statement a derived record rests on.
+    pub supporting_statement_ids: Vec<String>,
 }
 
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
@@ -983,6 +1011,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("signal_channel_memberships", "evidence.declaration"),
     ("signal_presence_records", "evidence.declaration"),
     ("check_signal_records", "evidence.declaration"),
+    ("collective_signal_names", "evidence.declaration"),
     ("signal_alias_map", "evidence.declaration"),
     ("signal_polarities", "evidence.signal_semantics"),
     ("signal_polarity_conflicts", "evidence.signal_semantics"),
@@ -1387,6 +1416,7 @@ impl EvidenceIr {
         insert_field!(signal_channel_memberships);
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
+        insert_field!(collective_signal_names);
         insert_field!(signal_alias_map);
         insert_field!(signal_polarities);
         insert_field!(signal_polarity_conflicts);
@@ -2035,11 +2065,30 @@ impl EvidenceIr {
         // signals it covers), read once: they feed the typed records and the class-scoped absent values.
         let check_coverage = check_coverage_tables(&source_ir.structured_tables);
         let check_signal_records = check_signal_surface(&check_coverage);
-        let signal_presence_records = signal_presence_surface(
-            source_ir,
+        let mut signal_presence_records =
+            signal_presence_surface(source_ir, &mut extraction_manifest);
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — the collective names the document defines (`AxSIZE` for
+        // `AWSIZE` and `ARSIZE`), read from its sentences and, where it states the rule, from every name of that
+        // shape whose members it declares or lists in a presence matrix.
+        let known_collective_members: BTreeSet<String> = declared_signal_names
+            .iter()
+            .cloned()
+            .chain(
+                signal_presence_records
+                    .iter()
+                    .map(|r| r.signal_name.clone()),
+            )
+            .collect();
+        let collective_signal_names =
+            collective_signal_name_surface(&extracted_statements, &known_collective_members);
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a / .a.i / .a.ii — the value a signal takes when absent, bound to its
+        // presence records from the sentences that state it: by name, through a collective name, or through the
+        // class a check-coverage table defines.
+        bind_stated_absent_values(
+            &mut signal_presence_records,
             &extracted_statements,
             &check_coverage,
-            &mut extraction_manifest,
+            &collective_signal_names,
         );
         let timing_constraints = synthesize_timing_constraints(source_ir, prior_guidance.as_ref());
         // EXTRACTION-REPRESENTATION-GAPS.17 — the section each document statement sits in, for a section's polarity rule.
@@ -2211,6 +2260,7 @@ impl EvidenceIr {
             message_field_records,
             signal_presence_records,
             check_signal_records,
+            collective_signal_names,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_transitions,
@@ -19201,8 +19251,6 @@ impl Extractor<SignalPresenceRecord> for SignalPresenceMatrixExtractor<'_> {
 /// `presence_id`s are assigned after the merge so they stay dense and stable.
 fn signal_presence_surface(
     source_ir: &SourceIr,
-    statements: &[ExtractedStatement],
-    check_coverage: &[CheckCoverageTable<'_>],
     manifest: &mut ExtractionManifest,
 ) -> Vec<SignalPresenceRecord> {
     let cx = ExtractionContext { statements: &[] };
@@ -19219,7 +19267,6 @@ fn signal_presence_surface(
     for (index, record) in run.records.iter_mut().enumerate() {
         record.presence_id = format!("presence_{index:04}");
     }
-    bind_stated_absent_values(&mut run.records, statements, check_coverage);
     run.records
 }
 
@@ -19388,6 +19435,20 @@ struct StatedAbsentValueReading {
     statement_id: String,
     /// Empty when the sentence names the signal itself; the coverage table(s) when it names the class.
     table_ids: Vec<String>,
+    /// The collective name the sentence used, when it reached the signal through one (`.3.d.ii.a.ii`).
+    collective_name: Option<String>,
+}
+
+impl StatedAbsentValueReading {
+    /// How directly the sentence named the signal: by name, through a collective name, or through a class. A
+    /// closer naming outranks a wider one for the same signal.
+    fn rank(&self) -> u8 {
+        match (&self.collective_name, self.table_ids.is_empty()) {
+            (None, true) => 0,
+            (Some(_), _) => 1,
+            (None, false) => 2,
+        }
+    }
 }
 
 /// What `stated_absent_value_literal` found: the literal, and where the sentence that states it begins and
@@ -19429,42 +19490,44 @@ fn bind_stated_absent_values(
     records: &mut [SignalPresenceRecord],
     statements: &[ExtractedStatement],
     check_coverage: &[CheckCoverageTable<'_>],
+    collectives: &[CollectiveSignalNameRecord],
 ) {
     let signal_names: BTreeSet<&str> = records.iter().map(|r| r.signal_name.as_str()).collect();
     if signal_names.is_empty() {
         return;
     }
-    // signal -> (named by the sentence?) -> value -> (statement ids, table ids)
-    type Statements = BTreeMap<String, (Vec<String>, BTreeSet<String>)>;
-    let mut by_signal: BTreeMap<String, BTreeMap<bool, Statements>> = BTreeMap::new();
-    for reading in stated_absent_values(statements, &signal_names, check_coverage) {
-        let (statement_ids, table_ids) = by_signal
+    // signal -> rank (by name 0, collective 1, class 2) -> value -> (statement ids, table ids, collective)
+    type Statements = BTreeMap<String, (Vec<String>, BTreeSet<String>, Option<String>)>;
+    let mut by_signal: BTreeMap<String, BTreeMap<u8, Statements>> = BTreeMap::new();
+    for reading in stated_absent_values(statements, &signal_names, check_coverage, collectives) {
+        let rank = reading.rank();
+        let (statement_ids, table_ids, collective) = by_signal
             .entry(reading.signal_name)
             .or_default()
-            .entry(reading.table_ids.is_empty())
+            .entry(rank)
             .or_default()
             .entry(reading.value)
             .or_default();
         statement_ids.push(reading.statement_id);
         table_ids.extend(reading.table_ids);
+        *collective = reading.collective_name;
     }
     for record in records.iter_mut() {
-        let Some(scopes) = by_signal.get(&record.signal_name) else {
+        let Some(ranks) = by_signal.get(&record.signal_name) else {
             continue;
         };
-        // A sentence naming the signal itself outranks one naming a class it belongs to.
-        let values = scopes
-            .get(&true)
-            .or_else(|| scopes.get(&false))
-            .expect("one scope");
+        // The closest naming wins: the signal itself, then a collective name, then a class.
+        let values = ranks.values().next().expect("one rank");
         if values.len() != 1 {
             continue;
         }
-        let (value, (statement_ids, table_ids)) = values.iter().next().expect("one stated value");
+        let (value, (statement_ids, table_ids, collective)) =
+            values.iter().next().expect("one stated value");
         record.absent_value = Some(StatedAbsentValue {
             value: value.clone(),
             supporting_statement_ids: statement_ids.clone(),
             supporting_table_ids: table_ids.iter().cloned().collect(),
+            collective_name: collective.clone(),
         });
     }
 }
@@ -19476,25 +19539,55 @@ fn stated_absent_values(
     statements: &[ExtractedStatement],
     signal_names: &BTreeSet<&str>,
     check_coverage: &[CheckCoverageTable<'_>],
+    collectives: &[CollectiveSignalNameRecord],
 ) -> Vec<StatedAbsentValueReading> {
+    let collective_by_name: BTreeMap<&str, &CollectiveSignalNameRecord> = collectives
+        .iter()
+        .map(|record| (record.collective_name.as_str(), record))
+        .collect();
     let mut readings = Vec::new();
     for statement in statements {
         let Some(sentence) = stated_absent_value_literal(&statement.text) else {
             continue;
         };
-        let named: BTreeSet<&str> = identifier_words(&statement.text)
+        let words: Vec<&str> = identifier_words(&statement.text)
             .into_iter()
             .map(|(_, word)| word)
+            .collect();
+        let named: BTreeSet<&str> = words
+            .iter()
+            .copied()
             .filter(|word| signal_names.contains(word))
             .collect();
-        match named.len() {
-            1 => readings.push(StatedAbsentValueReading {
+        // `.3.d.ii.a.ii` — a collective name the document defines stands for each member that has a row.
+        let collective: BTreeSet<&str> = words
+            .iter()
+            .copied()
+            .filter(|word| collective_by_name.contains_key(word))
+            .collect();
+        match (named.len(), collective.len()) {
+            (1, _) => readings.push(StatedAbsentValueReading {
                 signal_name: (*named.iter().next().expect("one named signal")).to_string(),
                 value: sentence.value,
                 statement_id: statement.statement_id.clone(),
                 table_ids: Vec::new(),
+                collective_name: None,
             }),
-            0 => {
+            (0, 1) => {
+                let name = *collective.iter().next().expect("one collective name");
+                for member in &collective_by_name[name].member_names {
+                    if signal_names.contains(member.as_str()) {
+                        readings.push(StatedAbsentValueReading {
+                            signal_name: member.clone(),
+                            value: sentence.value.clone(),
+                            statement_id: statement.statement_id.clone(),
+                            table_ids: Vec::new(),
+                            collective_name: Some(name.to_string()),
+                        });
+                    }
+                }
+            }
+            (0, 0) => {
                 let window = &statement.text[sentence.sentence_start..sentence.lead];
                 let mut covered: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
                 for table in check_coverage
@@ -19518,6 +19611,7 @@ fn stated_absent_values(
                         value: sentence.value.clone(),
                         statement_id: statement.statement_id.clone(),
                         table_ids: table_ids.into_iter().collect(),
+                        collective_name: None,
                     });
                 }
             }
@@ -19525,6 +19619,146 @@ fn stated_absent_values(
         }
     }
     readings
+}
+
+/// The verbs by which a sentence defines a collective name: *AxSIZE indicates AWSIZE and ARSIZE*; *the term
+/// AxCACHE refers collectively to the AWCACHE and ARCACHE signals*. English, not a signal vocabulary (ADR 0006).
+const COLLECTIVE_LEADS: [&str; 5] = ["indicates", "refers", "denotes", "means", "represents"];
+
+/// The one run of lowercase letters in a collective name (`Ax` -> 1..2, `VAx` -> 2..3, `Cxxx` -> 1..4); `None`
+/// when the name has no such run or more than one, opens with it, or carries no uppercase letter after it — a
+/// capitalised word (`When`) is a run with nothing after it, not a name.
+fn collective_marker(name: &str) -> Option<std::ops::Range<usize>> {
+    let bytes = name.as_bytes();
+    let start = bytes.iter().position(u8::is_ascii_lowercase)?;
+    let end = start
+        + bytes[start..]
+            .iter()
+            .take_while(|b| b.is_ascii_lowercase())
+            .count();
+    let rest_is_plain = bytes[..start]
+        .iter()
+        .chain(&bytes[end..])
+        .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || *b == b'_');
+    let uppercase_follows = bytes[end..].iter().any(u8::is_ascii_uppercase);
+    (start > 0 && rest_is_plain && uppercase_follows).then_some(start..end)
+}
+
+/// `member` is `collective` with its lowercase run replaced by one or more uppercase letters.
+fn is_collective_member(
+    collective: &str,
+    marker: &std::ops::Range<usize>,
+    member: &str,
+) -> Option<String> {
+    let (prefix, suffix) = (&collective[..marker.start], &collective[marker.end..]);
+    let middle = member.strip_prefix(prefix)?.strip_suffix(suffix)?;
+    (!middle.is_empty() && middle.bytes().all(|b| b.is_ascii_uppercase()))
+        .then(|| middle.to_string())
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — the collective names a document defines.
+///
+/// Two shapes are read. **A sentence that names the members**: an identifier with one lowercase run, a defining
+/// verb, and then two or more identifiers that are that name with the run replaced by uppercase letters (*AxSIZE
+/// indicates AWSIZE and ARSIZE*; *the term VAxQOSACCEPT refers collectively to the VAWQOSACCEPT and VARQOSACCEPT
+/// signals*); the members need not be declared, since the sentence declares them. **A stated rule**: a statement
+/// containing the word *collective* whose example sentence is read the first way states that every name of that
+/// shape — the same lowercase run at the same position — stands for the same replacements; each such name the
+/// document uses whose replacements are all known signals (declared, or a presence-matrix row) is then recorded,
+/// citing the rule. A document that states no rule gets no derived record, so `RxD`-style names stay what they are.
+fn collective_signal_name_surface(
+    statements: &[ExtractedStatement],
+    known_names: &BTreeSet<String>,
+) -> Vec<CollectiveSignalNameRecord> {
+    let mut records: BTreeMap<String, (Vec<String>, Vec<String>)> = BTreeMap::new();
+    // (lowercase run, its byte position, the replacements in the example's order) per rule statement
+    let mut rules: Vec<(String, usize, Vec<String>, String)> = Vec::new();
+    for statement in statements {
+        let stated_rule = contains_whole_identifier(&statement.text, "collective");
+        for sentence in statement.text.split(['.', ';', '|']) {
+            let words: Vec<&str> = identifier_words(sentence)
+                .into_iter()
+                .map(|(_, w)| w)
+                .collect();
+            let Some(lead) = words
+                .iter()
+                .position(|w| COLLECTIVE_LEADS.contains(&w.to_ascii_lowercase().as_str()))
+            else {
+                continue;
+            };
+            let Some(collective) = words[..lead]
+                .iter()
+                .rev()
+                .find_map(|w| collective_marker(w).map(|marker| (*w, marker)))
+            else {
+                continue;
+            };
+            let (name, marker) = collective;
+            let members: Vec<(&str, String)> = words[lead + 1..]
+                .iter()
+                .filter_map(|w| is_collective_member(name, &marker, w).map(|run| (*w, run)))
+                .collect();
+            if members.len() < 2 {
+                continue;
+            }
+            let entry = records.entry(name.to_string()).or_default();
+            if entry.0.is_empty() {
+                entry.0 = members.iter().map(|(m, _)| m.to_string()).collect();
+            }
+            if !entry.1.contains(&statement.statement_id) {
+                entry.1.push(statement.statement_id.clone());
+            }
+            if stated_rule {
+                rules.push((
+                    name[marker.clone()].to_string(),
+                    marker.start,
+                    members.iter().map(|(_, run)| run.clone()).collect(),
+                    statement.statement_id.clone(),
+                ));
+            }
+        }
+    }
+    if !rules.is_empty() {
+        let used: BTreeSet<&str> = statements
+            .iter()
+            .flat_map(|s| identifier_words(&s.text).into_iter().map(|(_, w)| w))
+            .collect();
+        for name in used {
+            if records.contains_key(name) {
+                continue;
+            }
+            let Some(marker) = collective_marker(name) else {
+                continue;
+            };
+            for (run, position, replacements, statement_id) in &rules {
+                if &name[marker.clone()] != run || marker.start != *position {
+                    continue;
+                }
+                let members: Vec<String> = replacements
+                    .iter()
+                    .map(|r| format!("{}{}{}", &name[..marker.start], r, &name[marker.end..]))
+                    .collect();
+                if members.iter().all(|m| known_names.contains(m)) {
+                    records.insert(name.to_string(), (members, vec![statement_id.clone()]));
+                    break;
+                }
+            }
+        }
+    }
+    records
+        .into_iter()
+        .enumerate()
+        .map(
+            |(index, (collective_name, (member_names, supporting_statement_ids)))| {
+                CollectiveSignalNameRecord {
+                    collective_id: format!("collective_{index:04}"),
+                    collective_name,
+                    member_names,
+                    supporting_statement_ids,
+                }
+            },
+        )
+        .collect()
 }
 
 /// A sentence names a check-coverage relation when its absence clause carries every word of the table's
@@ -31742,7 +31976,7 @@ mod tests {
             &[],
         ));
         let mut manifest = crate::ir::extractor::ExtractionManifest::default();
-        let records = super::signal_presence_surface(&source_ir, &[], &[], &mut manifest);
+        let records = super::signal_presence_surface(&source_ir, &mut manifest);
         assert_eq!(
             records.len(),
             3,
@@ -37727,7 +37961,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 41);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 42);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -56876,7 +57110,7 @@ mod stated_absent_value_tests {
             "statement_0001",
             "XRESP is an optional signal. If the XRESP_WIDTH property is 0, it is not present and assumed to be 0b000 (OKAY).",
         )];
-        bind_stated_absent_values(&mut records, &statements, &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[]);
         assert_eq!(
             bound(&records, "XRESP"),
             Some(("0b000".to_string(), vec!["statement_0001".to_string()]))
@@ -56896,7 +57130,7 @@ mod stated_absent_value_tests {
             "statement_0007",
             "Any XSNOOP bits not driven by an interface are assumed to be LOW.",
         )];
-        bind_stated_absent_values(&mut records, &statements, &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[]);
         assert!(records.iter().all(|record| {
             record.absent_value.as_ref().map(|v| v.value.as_str()) == Some("LOW")
         }));
@@ -56911,7 +57145,7 @@ mod stated_absent_value_tests {
             "If XRESP is not present it is assumed to be LOW unless a packet has started.",
         ] {
             let mut records = vec![presence("presence_0000", "XRESP", None)];
-            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[]);
+            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[], &[]);
             assert_eq!(bound(&records, "XRESP"), None, "{text}");
         }
     }
@@ -56925,7 +57159,7 @@ mod stated_absent_value_tests {
             "XRESP may be not present. The burst type is assumed to be INCR.",
         ] {
             let mut records = vec![presence("presence_0000", "XRESP", None)];
-            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[]);
+            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[], &[]);
             assert_eq!(bound(&records, "XRESP"), None, "{text}");
         }
     }
@@ -56949,7 +57183,7 @@ mod stated_absent_value_tests {
                 "If XRESP and XACK are not present they are assumed to be LOW.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements, &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[]);
         assert!(records.iter().all(|record| record.absent_value.is_none()));
     }
 
@@ -56978,7 +57212,7 @@ mod stated_absent_value_tests {
                 "If XACK is omitted it is assumed to be LOW.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements, &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[]);
         assert_eq!(
             bound(&records, "XRESP"),
             Some((
@@ -57179,7 +57413,7 @@ mod check_coverage_tests {
             "statement_0388",
             "- If some of the signals covered by a check signal are not present on an interface, then the missing signals are assumed to be LOW.",
         )];
-        bind_stated_absent_values(&mut records, &statements, &coverage);
+        bind_stated_absent_values(&mut records, &statements, &coverage, &[]);
         for record in &records[1..] {
             let value = record.absent_value.as_ref().expect("covered signal bound");
             assert_eq!(value.value, "LOW");
@@ -57209,7 +57443,7 @@ mod check_coverage_tests {
             "statement_0001",
             "If some of the optional signals are not present on an interface, then the missing signals are assumed to be LOW.",
         )];
-        bind_stated_absent_values(&mut records, &statements, &coverage);
+        bind_stated_absent_values(&mut records, &statements, &coverage, &[]);
         assert!(records[0].absent_value.is_none());
     }
 
@@ -57236,7 +57470,7 @@ mod check_coverage_tests {
                 "If XPROT is not present it is assumed to be HIGH.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements, &coverage);
+        bind_stated_absent_values(&mut records, &statements, &coverage, &[]);
         let prot = records[0].absent_value.as_ref().expect("XPROT bound");
         assert_eq!(
             (prot.value.as_str(), prot.supporting_table_ids.len()),
@@ -57244,5 +57478,231 @@ mod check_coverage_tests {
         );
         let write = records[1].absent_value.as_ref().expect("XWRITE bound");
         assert_eq!(write.value, "LOW");
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — a document-stated collective name stands for its members.
+#[cfg(test)]
+mod collective_signal_name_tests {
+    use super::{
+        CollectiveSignalNameRecord, EvidenceModality, ExtractedStatement, SignalPresenceRecord,
+        StatementClass, VariantPresenceEntry, bind_stated_absent_values,
+        collective_signal_name_surface,
+    };
+    use std::collections::BTreeSet;
+
+    fn statement(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        }
+    }
+
+    fn known(names: &[&str]) -> BTreeSet<String> {
+        names.iter().map(|n| n.to_string()).collect()
+    }
+
+    fn presence(id: &str, signal: &str) -> SignalPresenceRecord {
+        SignalPresenceRecord {
+            presence_id: id.to_string(),
+            signal_name: signal.to_string(),
+            presence_condition: None,
+            variant_presence: vec![VariantPresenceEntry {
+                variant_label: "V1".to_string(),
+                code: "O".to_string(),
+            }],
+            table_id: "table_presence".to_string(),
+            absent_value: None,
+        }
+    }
+
+    fn by_name(records: &[CollectiveSignalNameRecord], name: &str) -> Option<Vec<String>> {
+        records
+            .iter()
+            .find(|r| r.collective_name == name)
+            .map(|r| r.member_names.clone())
+    }
+
+    /// AXI: *In this specification, AxSIZE indicates AWSIZE and ARSIZE*; *the term VAxQOSACCEPT refers
+    /// collectively to the VAWQOSACCEPT and VARQOSACCEPT signals* (the run at the third letter). The members are
+    /// as the sentence lists them and need not be declared.
+    #[test]
+    fn a_sentence_naming_the_members_defines_a_collective_name() {
+        let statements = [
+            statement(
+                "statement_0784",
+                "Size is communicated using the XWSIZE and XRSIZE signals. In this specification, XxSIZE indicates XWSIZE and XRSIZE .",
+            ),
+            statement(
+                "statement_1591",
+                "In this specification, the term VXxQOSACCEPT refers collectively to the VXWQOSACCEPT and VXRQOSACCEPT signals.",
+            ),
+            statement(
+                "statement_3600",
+                "In this specification, XxMMU indicates XWMMU or XRMMU .",
+            ),
+        ];
+        let records = collective_signal_name_surface(&statements, &known(&[]));
+        assert_eq!(records.len(), 3);
+        assert_eq!(
+            by_name(&records, "XxSIZE"),
+            Some(vec!["XWSIZE".to_string(), "XRSIZE".to_string()])
+        );
+        assert_eq!(
+            by_name(&records, "VXxQOSACCEPT"),
+            Some(vec!["VXWQOSACCEPT".to_string(), "VXRQOSACCEPT".to_string()])
+        );
+        assert_eq!(
+            by_name(&records, "XxMMU"),
+            Some(vec!["XWMMU".to_string(), "XRMMU".to_string()])
+        );
+        assert_eq!(records[0].collective_id, "collective_0000");
+        let size = records
+            .iter()
+            .find(|r| r.collective_name == "XxSIZE")
+            .unwrap();
+        assert_eq!(
+            size.supporting_statement_ids,
+            vec!["statement_0784".to_string()]
+        );
+    }
+
+    /// AXI: *Lowercase x - At the second letter of a signal name denotes a collective term for both Read and
+    /// Write. For example, XxCACHE refers to both the XRCACHE and XWCACHE signals.* Every other name of that shape
+    /// the document uses, whose members are known signals, is derived from the rule, in the example's order; a
+    /// name whose members are unknown is not, and nor is a name with the run elsewhere.
+    #[test]
+    fn a_stated_rule_derives_every_name_of_that_shape_whose_members_are_known() {
+        let statements = [
+            statement(
+                "statement_0446",
+                "- Lowercase x - At the second letter of a signal name denotes a collective term for both Read and Write. For example, XxCACHE refers to both the XRCACHE and XWCACHE signals.",
+            ),
+            statement(
+                "statement_2207",
+                "Any XxSNOOP bits not driven by an interface are assumed to be LOW.",
+            ),
+            statement(
+                "statement_0001",
+                "XxGHOST has no declared members. VXxQOS has the run elsewhere.",
+            ),
+        ];
+        let records = collective_signal_name_surface(
+            &statements,
+            &known(&[
+                "XWSNOOP", "XRSNOOP", "XWCACHE", "XRCACHE", "VXWQOS", "VXRQOS",
+            ]),
+        );
+        assert_eq!(
+            by_name(&records, "XxCACHE"),
+            Some(vec!["XRCACHE".to_string(), "XWCACHE".to_string()])
+        );
+        let snoop = records
+            .iter()
+            .find(|r| r.collective_name == "XxSNOOP")
+            .expect("derived");
+        assert_eq!(
+            snoop.member_names,
+            vec!["XRSNOOP".to_string(), "XWSNOOP".to_string()]
+        );
+        assert_eq!(
+            snoop.supporting_statement_ids,
+            vec!["statement_0446".to_string()]
+        );
+        assert!(by_name(&records, "XxGHOST").is_none(), "members unknown");
+        assert!(
+            by_name(&records, "VXxQOS").is_none(),
+            "the run is not at the rule's position"
+        );
+    }
+
+    /// Wishbone: *When the gap indicates a wait state, the symbols '-WSM-' or '-WSS-' are placed …* — a capitalised
+    /// word before a defining verb is not a collective name, and ADIv6's `CxxxPWRUPACK` (*refers to either
+    /// CSYSPWRUPACK or CDBGPWRUPACK*) is one, with a three-letter run.
+    #[test]
+    fn a_capitalised_word_is_not_a_collective_name_but_a_longer_run_is() {
+        let statements = [
+            statement(
+                "statement_0240",
+                "When the gap indicates a wait state, the symbols '-WSM-' or '-WSS-' are placed in the gap.",
+            ),
+            statement(
+                "statement_1251",
+                "- CxxxPWRUPACK refers to either CSYSPWRUPACK or CDBGPWRUPACK .",
+            ),
+        ];
+        let records = collective_signal_name_surface(&statements, &known(&[]));
+        assert_eq!(
+            records
+                .iter()
+                .map(|r| r.collective_name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["CxxxPWRUPACK"]
+        );
+        assert_eq!(
+            records[0].member_names,
+            vec!["CSYSPWRUPACK".to_string(), "CDBGPWRUPACK".to_string()]
+        );
+    }
+
+    /// Without a stated rule, a name with a lowercase run is just a name: USB 3.2's `RxD`, `TxEQ`.
+    #[test]
+    fn without_a_stated_rule_no_name_is_derived() {
+        let statements = [
+            statement(
+                "statement_0001",
+                "The RxEQ and TxEQ settings are negotiated.",
+            ),
+            statement("statement_0002", "RxD is sampled on the rising edge."),
+        ];
+        let records =
+            collective_signal_name_surface(&statements, &known(&["RWD", "RRD", "TWEQ", "TREQ"]));
+        assert!(records.is_empty());
+    }
+
+    /// *Any AxSNOOP bits not driven by an interface are assumed to be LOW* reaches both members through the
+    /// collective name, which the value records; a sentence naming a member itself outranks it.
+    #[test]
+    fn an_absent_value_stated_on_a_collective_name_reaches_each_member() {
+        let collectives = [CollectiveSignalNameRecord {
+            collective_id: "collective_0000".to_string(),
+            collective_name: "XxSNOOP".to_string(),
+            member_names: vec!["XRSNOOP".to_string(), "XWSNOOP".to_string()],
+            supporting_statement_ids: vec!["statement_0446".to_string()],
+        }];
+        let mut records = vec![
+            presence("presence_0000", "XWSNOOP"),
+            presence("presence_0001", "XRSNOOP"),
+            presence("presence_0002", "XCLK"),
+        ];
+        let statements = [
+            statement(
+                "statement_2207",
+                "Any XxSNOOP bits not driven by an interface are assumed to be LOW.",
+            ),
+            statement(
+                "statement_0002",
+                "If XRSNOOP is not present it is assumed to be HIGH.",
+            ),
+        ];
+        bind_stated_absent_values(&mut records, &statements, &[], &collectives);
+        let write = records[0].absent_value.as_ref().expect("XWSNOOP bound");
+        assert_eq!(write.value, "LOW");
+        assert_eq!(write.collective_name.as_deref(), Some("XxSNOOP"));
+        assert_eq!(
+            write.supporting_statement_ids,
+            vec!["statement_2207".to_string()]
+        );
+        let read = records[1].absent_value.as_ref().expect("XRSNOOP bound");
+        assert_eq!(
+            (read.value.as_str(), read.collective_name.as_deref()),
+            ("HIGH", None)
+        );
+        assert!(records[2].absent_value.is_none());
     }
 }

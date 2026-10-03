@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how to re-measure the message-field corpus yield
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how to re-score SWD derivation
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > how to read a chip-spec PDF when the Read tool refuses it
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > how to recover register field bit positions that live in the layout graphic, not the table
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how was AHB HREADY recovered for the temporal antecedent
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
@@ -289,11 +297,3 @@
   > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > is the EvidenceIR build reproducible / deterministic
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > is the Introducing CoreSight Debug and Trace refresh complete
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > is the LLM-primary promotion a recall improvement

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > can the word when in a statement make its whole section a semantic phase
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -280,6 +282,8 @@
   > does a citation like TOOLBOX.md section 7.7 still resolve after the toolbox partition (yes - section numbers were deliberately preserved and every cited number is still named in the landing, which routes it to its part in one hop; 26 such citations exist and several sit in sealed archive segments whose source end can never be repaired)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > does a clean checkout or a CI runner pay for the corpus replay build
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > does a collective name's sentence have to name declared signals (no, the sentence declares them)
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > does a conditional rule's consequent end at its sentence (yes, since .39.a)
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
@@ -294,7 +298,3 @@
   > does a doc comment change move the production seal
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > does a document ever spell the joined form of a split name cell
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > does a figure label appear in content_elements
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > does a figure that produced waveform contracts get a residual

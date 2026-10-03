@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii",
-      "literal" : "`.3.d.ii.a.ii` — a generic channel-prefix name binds the signals it abbreviates.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b",
+      "literal" : "`.3.d.ii.b` — a stated default or equivalence reaches its reader, and a convention is non-contract.",
       "mode" : "eligible",
       "part_id" : "unread-intent-leaves"
    },
@@ -112,25 +112,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 9781,
+               "bytes" : 11113,
                "line_bytes" : 281,
-               "lines" : 106
+               "lines" : 120
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "7528272f1bb625cc5bb99e2a9e985b0bb17029982de444b888c0c11f9ee47a8c",
+            "sha256" : "34cd6faa27795ed117e37d38b036d75bc2be451997024ef20e5ce1798d5de084",
             "state" : "active"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
             "metrics" : {
-               "bytes" : 23028,
-               "line_bytes" : 271,
-               "lines" : 241
+               "bytes" : 29487,
+               "line_bytes" : 280,
+               "lines" : 301
             },
             "part_id" : "unread-intent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-            "sha256" : "1adb2252834772eaff2f35e2a6d1c643d08fd2838666b8e25e0a8e8b98154fcb",
+            "sha256" : "bbe1202d7a1d4c33ae11707d51f3bf9f38966b53283e8abfa2180f8bee34db19",
             "state" : "active"
          },
          {
@@ -1056,7 +1056,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -1068,6 +1068,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.47",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
@@ -1198,7 +1204,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.ii.a.ii` — a generic channel-prefix name binds the signals it abbreviates.",
+         "`.3.d.ii.b` — a stated default or equivalence reaches its reader, and a convention is non-contract.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1337,7 +1343,8 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.45`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`"
       ]
    },
    "migration_metadata" : {

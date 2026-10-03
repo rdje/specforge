@@ -14,9 +14,9 @@ use crate::ir::derivation::{
     production_semantic_implementation_digest,
 };
 use crate::ir::evidence::{
-    CheckSignalRecord, EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord,
-    ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField, SignalPolarity,
-    SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
+    CheckSignalRecord, CollectiveSignalNameRecord, EvidenceIr, InterfaceEdgeTimingRecord,
+    ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
+    SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
     SignalSemanticConflictRecord, SignalSemanticHintRecord, SignalSemanticHintSourceKind,
     SignalSemanticTag, SourceLocalInferenceConstraintGrounding, StatementClass, VisualEvidenceRole,
     VisualObservationKind, parse_visual_observation_json,
@@ -301,6 +301,10 @@ pub struct SemanticIr {
     /// projected losslessly from EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub check_signal_records: Vec<CheckSignalRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — collective signal names and their members, projected
+    /// losslessly from EvidenceIR (ADR 0016).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub collective_signal_names: Vec<CollectiveSignalNameRecord>,
     #[serde(default)]
     pub control_blocks: Vec<ControlBlockRecord>,
     #[serde(default)]
@@ -434,6 +438,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("interface_edge_timings", "semantic.carried_evidence"),
     ("signal_presence_records", "semantic.carried_evidence"),
     ("check_signal_records", "semantic.carried_evidence"),
+    ("collective_signal_names", "semantic.carried_evidence"),
     ("register_records", "semantic.carried_evidence"),
     // These three collections are projections, not lossless carries: SemanticIR filters
     // ungrounded EvidenceIR records and may add records derived from typed visual evidence.
@@ -1003,6 +1008,7 @@ impl SemanticIr {
             interface_edge_timings: evidence_ir.interface_edge_timings.clone(),
             signal_presence_records: evidence_ir.signal_presence_records.clone(),
             check_signal_records: evidence_ir.check_signal_records.clone(),
+            collective_signal_names: evidence_ir.collective_signal_names.clone(),
             control_blocks,
             explicit_modules,
             explicit_tops,
@@ -1201,6 +1207,7 @@ impl SemanticIr {
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
+        insert_field!(collective_signal_names);
         insert_field!(register_records);
         insert_field!(timing_constraints);
         insert_field!(signal_constraints);
@@ -29091,7 +29098,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 56);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 57);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

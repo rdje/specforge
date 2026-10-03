@@ -76,7 +76,7 @@ The content families are:
 
 | Family | Canonical `IntentIR` surface | Applicability |
 | --- | --- | --- |
-| Interface inventory and shape | `interfaces`, `actor_ports`, `signal_polarities`, `signal_presence_records`, `check_signal_records` | Boundary signals or pins are declared, or the source states which signals exist per configuration, what an absent one is assumed to be, or which signals a check signal covers |
+| Interface inventory and shape | `interfaces`, `actor_ports`, `signal_polarities`, `signal_presence_records`, `check_signal_records`, `collective_signal_names` | Boundary signals or pins are declared, or the source states which signals exist per configuration, what an absent one is assumed to be, which signals a check signal covers, or a collective name for several signals |
 | Actors and connectivity | `actors`, `actor_signal_relations`, `signal_connectivity` | Producer/consumer or endpoint responsibilities are stated |
 | Normative and temporal behavior | `signal_constraints`, `conditional_rules`, `temporal_rules`, `actor_contracts`, `fidelity_findings` | Values, stability, ordering, latency, sampling, or handshakes are stated |
 | Protocol structure and state | `transactions`, `protocol_graph`, `regular_states`, `state_transitions`, `control_blocks` | Transactions, phases, handshakes, states, or transitions are named |

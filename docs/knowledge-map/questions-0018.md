@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > where does the post-boundary retention declaration live and why
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > where does the specforge chipdoc host library symlink currently resolve
+- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
+  > where does the until release go (the temporal rule's exceptions, not the condition)
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > where does the uppercase spelling in a declaration come from
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > where is FigureRegion stored in EvidenceIR
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > where is a minimum duration such as for at least one clock cycle kept
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > where is a register summary's Reset column kept (RegisterRecord.reset_value)
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
@@ -284,17 +298,3 @@
   > which determiners stop a relation verb from licensing a relation
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which docs fail to ingest (giants / timeouts)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > which doctrine checks the persisted proof seal on every commit
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)

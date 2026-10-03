@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > how does SpecForge relate to GoldMine Texada Pnueli Ammons
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > how does SpecForge resolve PSEL to PSELx in a temporal condition
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how does SpecForge resolve a persisted path after the repository moves
 - [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
   > how does SpecForge send a question to FSMGen
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -232,6 +238,8 @@
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > how is 'Lowercase x at the second letter denotes a collective term' read
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > how is 'must remain asserted until X' represented
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
@@ -290,11 +298,3 @@
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > how is a leaf route lifecycle verified
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > how is a logic level paired with a signal in the dynamic path
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how is a message field's width kept honest (per-variant widths stay None)
-- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
-  > how is a parity check-signal table (Check signal | Signals covered) read

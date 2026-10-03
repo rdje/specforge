@@ -78,6 +78,20 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   in `.isf`'s width vocabulary) or whether a parity form is a `FSMGEN-REQUESTS` packet; then emit or request, and
   measure every emitting chain under FSMGen `--strict --check`.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.47`
+  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a.ii`)
+  Goal: **a rule stated on a collective name reaches each member.** `.3.d.ii.a.ii` carries the collective names
+  AXI defines (`collective_signal_names`) and resolves them for one reader, the absent-value binder. Every other
+  reader still takes `AxVALID`, `AxADDR` or `AxMMUATST` as a name of its own: AXI uses a collective name in 245 of
+  its statements (*When AxMMUATST is deasserted LOW, the Stall flow is used*; *AxBURST* encodings), so each such
+  constraint, condition, enum and relation reaches neither `AW*` nor `AR*`. **Reproduce:** `python3 -c "import json,re;
+  e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json'));
+  print(sum(1 for s in e['extracted_statements'] if re.search(r'\\bAx[A-Z]', s['text'])))"`. **Impact:** the largest
+  AMBA document's generic rules are typed on a signal no interface has. Acceptance: decide where resolution lives
+  (a SemanticIR projection that duplicates a record per member, or each reader consulting the records), apply it to
+  the readers that resolve a condition's or constraint's signal, keep enum definitions on the collective name where
+  the document defines them there, and measure every chain and the 11 seeds.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6's AHB3 and AHB5 sections map `CSW.Prot` bits 28-24 to `HPROT` in prose; no

@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads or writes the active PDF task tree
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why a parallel field-constraint surface instead of a subject-kind discriminator
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > why are 15 of Avalon's 26 declarations width-only
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why are 58 corpus documents not currency-measurable
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > why are AHB's signals other than HRESETn active_high
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > why are AXI rule conflicts 16 -> 0
 - [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
@@ -26,6 +42,8 @@
   > why are TGD_I and TGD_O refused by the shipped heading rule
 - [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
   > why are USB 3.2 LTSSM substates like Polling.Active protocol states / what is merge_transition_states / table_state
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > why are USB 3.2's RxD and TxEQ not expanded
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > why are USER_GUIDE.md and the root architecture documents only pointers
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -279,21 +297,3 @@
   > why did TMC's isf gain FULL and SYNCREQS outputs
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > why did USB 3.2 produce 918 interfaces and 556 adapter signals
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why did VALID PENDING CRDT CRDTSH SHAREDCRD RP become AXI interface ports
-- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
-  > why did Wishbone's CYC_O must be asserted no later than constraint disappear
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > why did Wishbone's slave.isf declare ACK_I as an output (The SLAVE asserts either the [ACK_I] ...; fixed by EXTRACTION-REPRESENTATION-GAPS.32)
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did a Name | Signals covered | Width | Check enable table classify as unknown
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why did a Python census over persisted table_kind over-count the row extractor's population
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > why did a SourceIR classification change fail with 'classification is not the registered capture/proposal replay'
-- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
-  > why did a census over persisted artifacts disagree with what the producer does (because the artifacts were written by an earlier producer — check the artifact mtimes against git log -L on the grounding function before treating a persisted population as evidence about current behaviour)
-- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
-  > why did a census over the persisted corpus have to be retracted
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > why did a conditional rule take its consequent signal from the previous sentence

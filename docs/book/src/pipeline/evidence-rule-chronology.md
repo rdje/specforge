@@ -950,6 +950,35 @@ check signal is lowered yet, since `.isf` has no parity construct and a check is
 combinational XOR chain — `EXTRACTION-REPRESENTATION-GAPS.46` decides. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a.i`).
 
+**A document-stated collective name stands for its members.** AXI writes *Any AxSNOOP bits not driven by an
+interface are assumed to be LOW*, and `AxSNOOP` is no matrix row: the rows are `AWSNOOP` and `ARSNOOP`. The
+document defines the name itself, twice over — in sentences (*In this specification, AxSIZE indicates AWSIZE and
+ARSIZE*; *the term VAxQOSACCEPT refers collectively to the VAWQOSACCEPT and VARQOSACCEPT signals*) and as a rule
+(*Lowercase x at the second letter of a signal name denotes a collective term for both Read and Write. For
+example, AxCACHE refers to both the ARCACHE and AWCACHE signals*). Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`
+(`2026-10-03`) EvidenceIR carries each as a `collective_signal_names` record — the name, its members in the
+document's order, and the sentence or rule that states them — and the records cross SemanticIR and IntentIR
+unchanged:
+
+```json
+{ "collective_id": "collective_0027", "collective_name": "AxSNOOP",
+  "member_names": ["ARSNOOP", "AWSNOOP"], "supporting_statement_ids": ["statement_0446"] }
+```
+
+A sentence defines a name when an identifier with one run of lowercase letters is followed by a defining verb
+(*indicates*, *refers to*, *denotes*) and two or more identifiers that are that name with the run replaced by
+uppercase letters; the members need not be declared, since the sentence declares them, and the run may sit
+anywhere (`VAx`). A statement that says *collective* and carries such an example states a rule: every other
+name the document uses with the same run at the same position stands for the same replacements, read only when
+all of them are known signals (declared, or a presence-matrix row). A document that states no rule gets no
+derived name, so USB 3.2's `RxD` and `TxEQ` stay what they are. The absent-value binder then reaches each member
+through the collective name, recording it as `collective_name` on the value; a sentence naming a member itself
+outranks it, and a class sentence ranks below both. On the 31 chains two documents define collective names: AXI 37 (6
+from sentences, 31 from the rule) and ADIv6 2 (*CxxxPWRUPREQ refers to either CSYSPWRUPREQ or CDBGPWRUPREQ*, with a
+three-letter run); `AWSNOOP` and `ARSNOOP` take `LOW`. Wishbone's *When the gap indicates a wait state, the symbols
+'-WSM-' or '-WSS-' …* is the shape's trap: a capitalised word is a lowercase run with nothing after it, so a name
+must carry an uppercase letter after its run. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a.ii`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

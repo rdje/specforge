@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does a figure label appear in content_elements
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > does a figure that produced waveform contracts get a residual
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > does a footnote element prove a note number
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -294,7 +298,3 @@
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > does the decimal-before-binary defect reach the current producer
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > does the declaration reader publish any false positive declaration
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > does the drop model agree with docling iterate_items

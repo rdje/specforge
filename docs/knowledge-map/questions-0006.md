@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > how do I declare a newly retained normalized bundle
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how do I edit one field of a doctrine JSON contract without reformatting the whole file (derive that FILE's encoder by round-tripping candidates against its exact bytes - there is no repository-wide style: of 27 parseable contracts under doctrine/, 20 reproduce under json.dumps with separators comma-space-colon and a trailing newline, 3 under Perl JSON::PP canonical+pretty, and
   > 4 are hand-authored and reproduce under neither)
@@ -253,6 +257,8 @@
   > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > how does SpecForge expand a generic Ax name to AW and AR
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how does SpecForge extract register fields from tables
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -291,9 +297,3 @@
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > how does SpecForge recover a timing unit from a table caption
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > how does SpecForge relate to GoldMine Texada Pnueli Ammons
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > how does SpecForge resolve PSEL to PSELx in a temporal condition
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how does SpecForge resolve a persisted path after the repository moves

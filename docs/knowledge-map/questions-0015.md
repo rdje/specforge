@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 47 and why is its adapter honestly blocked
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 49
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is declared_signal_complete_gold_precision
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > what is dedup_constraints / its canonical key
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > what is descriptive_consequent_signal
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -283,17 +297,3 @@
   > what is the difference between validate persistence and stage write_to_disk
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what is the document_class distribution across the corpus
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what is the exact CORPUS-COVERAGE task evidence boundary
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact active PDF task evidence baseline
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > what is the exact partition of the 78 persisted documents by schema and refresh cohort (78 = 21 refreshed-and-loadable + 6 outside-cohort-and-loadable + 31 refreshed-but-legacy + 15 outside-cohort-and-legacy + 5 remaining-and-legacy)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what is the exact pre-containment ROADMAP source identity
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what is the executable currentness authority for VALIDATION_SNAPSHOT

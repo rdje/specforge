@@ -18,6 +18,7 @@
 - signal-presence records: which signals exist per variant, under what condition, and the value an absent
   signal takes
 - check-signal records: each parity check signal and the signals it covers
+- collective signal names: each collective name the document defines and the signals it stands for
 - carried conflicts
 - carried residual decisions
 - carried captured-region residuals
@@ -119,7 +120,9 @@ when older artifacts are loaded. `signal_presence_records` cross the same way, e
 the statements that state it (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`); a stated absent value is exact here,
 and the adapter keeps one residual per value because `.isf` cannot say it yet. `check_signal_records` cross
 the same way (`.3.d.ii.a.i`); a parity check is not lowered, and whether it becomes a combinational rule or a
-request is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision.
+request is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_names` cross likewise
+(`.3.d.ii.a.ii`): a name the document defines for several signals, which the absent-value binder already resolves
+and which `EXTRACTION-REPRESENTATION-GAPS.47` will resolve for every rule stated on such a name.
 
 These records are canonical product data, but they are not automatically executable behavior. A named protocol
 state without transitions, guards, initial-state identity, or encoding is still incomplete; frame, operation,

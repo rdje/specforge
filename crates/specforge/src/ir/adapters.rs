@@ -2540,6 +2540,7 @@ mod tests {
                     value: "0b000".to_string(),
                     supporting_statement_ids: vec!["statement_absent".to_string()],
                     supporting_table_ids: Vec::new(),
+                    collective_name: None,
                 }),
             },
         ];

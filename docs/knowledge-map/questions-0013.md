@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what do I do with a published count no claim outcome fits
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what do leading_section_number and is_descendant_section_number do
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > what do the rows the declaration reader drops actually offer
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what document class is a chip-spec PDF (protocol / register / interface / guide)
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -289,11 +297,3 @@
   > what grounded heuristic only interface evidence is preserved
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > what grounded intent remains in the GIC Overview Guide
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what guards the APB antecedent recovery now
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what happened in OpenCAPI Discovery Configuration refresh 46
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > what happened to WTAGUPDATE must_be_value UPDATED
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > what happened to the AArch64 External Debug Guide agent.isf

@@ -38,6 +38,8 @@
   > are presence codes like Y N O C OC ever interpreted
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > are reference lists allowed to establish semantic intent
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > are rules stated on a collective name applied to each member (not yet: EXTRACTION-REPRESENTATION-GAPS.47)
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > are temporal rules silently dropped when lowering IntentIR to .isf
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -296,5 +298,3 @@
   > can the trajectory controller mutate canonical semantic artifacts
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > can the trajectory controller use one weighted score
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > can the word when in a statement make its whole section a semantic phase

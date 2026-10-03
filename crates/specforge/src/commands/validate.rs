@@ -2633,6 +2633,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         ir.check_signal_records.len()
     );
     println!("    covered_signals: {check_signal_covered}");
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — the collective names the document defines.
+    println!(
+        "  collective_signal_names: {}",
+        ir.collective_signal_names.len()
+    );
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -3288,6 +3293,19 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             Vec::new(),
         ));
     }
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — the collective-name inventory, only when present.
+    if !ir.collective_signal_names.is_empty() {
+        findings.push(finding(
+            "evidence_collective_signal_name_inventory",
+            ValidationFindingSeverity::Info,
+            "collective_signal_name",
+            format!(
+                "typed collective-name inventory: {} collective name(s) the document defines, each standing for the signals its sentence or stated rule names",
+                ir.collective_signal_names.len()
+            ),
+            Vec::new(),
+        ));
+    }
     // .5b: class-aware per-doc completeness gauge — how complete is the typed intent the
     // extraction DID produce (every register has fields + a width, every signal a
     // direction, every intent-bearing table accounted), judged appropriately for the class.
@@ -3879,6 +3897,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 ir.check_signal_records.len().to_string(),
             ),
             metric("check_signal_covered", check_signal_covered.to_string()),
+            metric(
+                "collective_signal_names",
+                ir.collective_signal_names.len().to_string(),
+            ),
             metric(
                 "signal_polarity_conflicts",
                 ir.signal_polarity_conflicts.len().to_string(),
@@ -5326,6 +5348,10 @@ fn validate_semantic_ir_with_prior_memory(
     );
     println!("  check_signal_records: {}", ir.check_signal_records.len());
     println!(
+        "  collective_signal_names: {}",
+        ir.collective_signal_names.len()
+    );
+    println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
     );
@@ -5545,6 +5571,10 @@ fn validate_semantic_ir_with_prior_memory(
             metric(
                 "check_signal_records",
                 ir.check_signal_records.len().to_string(),
+            ),
+            metric(
+                "collective_signal_names",
+                ir.collective_signal_names.len().to_string(),
             ),
             metric(
                 "interface_edge_timings",
@@ -5904,6 +5934,10 @@ fn validate_intent_ir_with_prior_memory(
         ir.signal_presence_records.len()
     );
     println!("  check_signal_records: {}", ir.check_signal_records.len());
+    println!(
+        "  collective_signal_names: {}",
+        ir.collective_signal_names.len()
+    );
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -7484,6 +7518,10 @@ fn validate_intent_ir_with_prior_memory(
             metric(
                 "check_signal_records",
                 ir.check_signal_records.len().to_string(),
+            ),
+            metric(
+                "collective_signal_names",
+                ir.collective_signal_names.len().to_string(),
             ),
             metric(
                 "interface_edge_timings",

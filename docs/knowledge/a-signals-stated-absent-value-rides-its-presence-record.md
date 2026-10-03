@@ -6,7 +6,7 @@ answers:
   - "what is absent_value on a SignalPresenceRecord / what is StatedAbsentValue"
   - "how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values"
   - "why does AXI's BRESP presence record carry 0b000"
-  - "why is 'Any AxSNOOP bits not driven by an interface are assumed to be LOW' not bound"
+  - "why was 'Any AxSNOOP bits not driven by an interface are assumed to be LOW' not bound by .3.d.ii.a alone"
   - "why was 'the missing signals are assumed to be LOW' (signals covered by a check signal) not bound by .3.d.ii.a alone"
   - "why is 'assumed to be 0b0 for a DVMComplete request' not read as an absent value"
   - "do signal_presence_records cross SemanticIR and IntentIR"
@@ -44,8 +44,8 @@ disagreeing statements bind nothing.
 of signals (*If some of the signals covered by a check signal are not present …, the missing signals are assumed
 to be LOW*, APB5 and AHB5) — bound since `.3.d.ii.a.i` the same day through the check-coverage table
 ([[a-check-coverage-table-binds-the-class-of-covered-signals]]). A generic name no matrix row carries (*Any AxSNOOP bits not
-driven … are assumed to be LOW*; the rows are `AWSNOOP` and `ARSNOOP`, and the alias map is empty for AXI) —
-the document's prefix convention has no carrier (`.3.d.ii.a.ii`).
+driven … are assumed to be LOW*; the rows are `AWSNOOP` and `ARSNOOP`) — bound since `.3.d.ii.a.ii` the same day
+through the collective name the document defines ([[a-document-stated-collective-name-stands-for-its-members]]).
 
 **Measured `2026-10-03`.** Evidence dry-run of the 31 chains with the HEAD and the new binary: 30 identical; AXI
 moves only in `signal_presence_records`, `BRESP` (`presence_0082`, `statement_1089`) and `RRESP` (`presence_0143`,

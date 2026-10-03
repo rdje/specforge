@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > should the legacy corpus be deleted or rebuilt when the EvidenceIR schema bumps
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > should the logic-level walk skip predicate adjectives
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > should we buy the TYPESAFE_API_KEY
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > temporal rule eval false positives root cause
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > temporal rule predicate atom vocabulary
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -289,11 +297,3 @@
   > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > what distinguishes converging stalled divergent mixed and unmeasurable
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what do I do with a published count no claim outcome fits
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what do leading_section_number and is_descendant_section_number do
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > what do the rows the declaration reader drops actually offer
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean

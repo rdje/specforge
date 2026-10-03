@@ -133,7 +133,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   Unread records 441 -> 439, `assumed_by_word` 109 -> 107.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`
-  Status: `open` (`2026-10-03`; DESIGN + CODE; found by `.3.d.ii.a`)
+  Status: `done` (`2026-10-03`; DESIGN + CODE; found by `.3.d.ii.a`; checklist below; opened `.47`)
   Goal: **a generic channel-prefix name binds the signals it abbreviates.** *Any AxSNOOP bits not driven by an
   interface are assumed to be LOW* (AXI `statement_2207`) names `AxSNOOP`; the presence rows are `AWSNOOP`
   (`presence_0034`) and `ARSNOOP` (`presence_0113`), AXI's `signal_alias_map` is empty, and SpecForge keeps generic
@@ -142,6 +142,30 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   decide the carrier for the document's own prefix convention (the sentence that defines `Ax` as `AW` and `AR`, or
   the matrix rows that share the suffix), bind through it and nothing else (ADR 0006: no prefix list), and measure
   every chain.
+  **Decided `2026-10-03`: the carrier is the document's own definition, as a typed record.** EvidenceIR gains
+  `collective_signal_names` (`CollectiveSignalNameRecord { collective_id, collective_name, member_names,
+  supporting_statement_ids }`, `evidence.declaration`), carried unchanged by SemanticIR and IntentIR, read in two
+  shapes. **A sentence that names the members:** an identifier with one run of lowercase letters followed by
+  uppercase letters (`Ax`, `VAx`, `Cxxx`), a defining verb (*indicates*, *refers to*, *denotes*, *means*,
+  *represents*), then two or more identifiers that are the name with its run replaced by uppercase letters (*AxSIZE
+  indicates AWSIZE and ARSIZE*; *the term VAxQOSACCEPT refers collectively to the VAWQOSACCEPT and VARQOSACCEPT
+  signals*; ADIv6's *CxxxPWRUPREQ refers to either CSYSPWRUPREQ or CDBGPWRUPREQ*); the members need not be declared.
+  **A stated rule:** a statement that says *collective* and carries such an example (*Lowercase x - At the second
+  letter of a signal name denotes a collective term for both Read and Write. For example, AxCACHE refers to both
+  the ARCACHE and AWCACHE signals*) states that every name with the same run at the same position stands for the
+  same replacements; each such name the document uses is derived, in the example's member order, only when all its
+  members are known signals (declared, or a presence-matrix row), citing the rule. No rule, no derivation (USB 3.2's
+  `RxD`, `TxEQ`). **Binding:** the absent-value reader resolves a statement naming no row but exactly one collective
+  name to each member with a row, recording the name as `collective_name` on the value; the closest naming wins
+  (the signal itself, then a collective name, then a class). **The shape's trap**, found on Wishbone: *When the gap
+  indicates a wait state, the symbols '-WSM-' or '-WSS-' …* read as `When` -> `WSM`, `WSS` until a name was required
+  to carry an uppercase letter after its run.
+  **Measured over all 31 chains:** evidence dry-run against the persisted artifacts, 29 identical. AXI: 37 records
+  (6 from sentences, 31 from the rule; `AxCACHE` cites both `statement_0446` and `statement_1198`), and `AWSNOOP`
+  (`presence_0034`) and `ARSNOOP` (`presence_0113`) take `LOW` from `statement_2207` through `AxSNOOP`. ADIv6: 2
+  records (`CxxxPWRUPREQ`, `CxxxPWRUPACK`), no absent value. Unread records 439 -> 438, `assumed_by_word`
+  107 -> 106. Every other rule stated on a collective name (245 AXI statements) still reaches no member:
+  `.47`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b`
   Status: `open` (`2026-09-30`; MEASUREMENT then CODE; found by `.3.d.ii`)
@@ -239,3 +263,39 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   signals* added), `quality/validation.md`; `docs/gaps/specforge.md` (S25); KM
   `a-check-coverage-table-binds-the-class-of-covered-signals` (new), `a-signals-stated-absent-value-rides-its-presence-record`
   (amended); category contract and inventories carry the surface. No production rule was deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii` (CODE) — DONE `2026-10-03`
+
+- [x] **REPRODUCE / MEASURE** — After `.3.d.ii.a.i`, AXI's `statement_2207` (*Any AxSNOOP bits not driven by an interface
+  are assumed to be LOW*) sits in the unread `assumed_by_word` family (107 records): `validate` on AXI's EvidenceIR
+  reports `signal_presence_absent_values` 2 (`BRESP`, `RRESP`), none on `AWSNOOP` (`presence_0034`) or `ARSNOOP`
+  (`presence_0113`); AXI's `signal_alias_map` is empty, and no IR field held `AxCACHE` -> `ARCACHE`, `AWCACHE` though
+  the document states it (`statement_0446`, `statement_1198`) and uses a collective name in 245 statements.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `stated_absent_values` matched identifiers
+  against presence-row names only, and nothing read the document's own definition of a collective name, in either
+  shape. RED, with the file restored byte-identically after each (5 mutations): dropping the known-member requirement
+  or the rule's position check fails `a_stated_rule_derives_every_name_of_that_shape_whose_members_are_known`;
+  letting a collective name outrank the signal itself, or ignoring collective names in the binder, fails
+  `an_absent_value_stated_on_a_collective_name_reaches_each_member`; dropping the uppercase-after-the-run rule fails
+  `a_capitalised_word_is_not_a_collective_name_but_a_longer_run_is`.
+- [x] **ADDRESSED (verified)** — Evidence dry-run of all 31 chains against the persisted (`9c43a142e`-current) artifacts:
+  29 identical; AXI moves in `collective_signal_names` (0 -> 37) and `signal_presence_records` (`AWSNOOP`, `ARSNOOP`
+  gain `LOW` with `collective_name` `AxSNOOP`); ADIv6 in `collective_signal_names` (0 -> 2). Both rebuilt stage by
+  stage, each validated once, the adapter last: `collective_signal_names` 37 and 2 at both stages; AXI's adapter residuals 57 -> 59 (two `isf_protocol_signal_absent_value_*`) with its ISF text byte-identical, ADIv6's adapter unchanged. Unread records 439 -> 438, `assumed_by_word`
+  107 -> 106.
+- [x] **NO REGRESSION** — The new evidence rule field re-seals every chain: after the two hand rebuilds,
+  `rebuild_stage_cascade.sh --write` rebuilt all 31 content-identical at every stage; `check_chain_currency.sh`
+  31 of 31 current at every stage. WIRE-BASED-100: all 11 seeds identical to the reports of `9c43a142e`'s binary (temp paths masked; `seed_swd`'s constraint 1.000). `kg-bench` 158/158. `cargo fmt --check`
+  clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib
+  --exclude specforge-production-graph` 474 / 170 / 1,828 passed, 0 failed. Claim-family inventory 183 -> 186 rules;
+  `flow_census.json` rolled forward (+4 functions, +41 decision sites, +59 helper edges, +5 macros); `collective_signal_name_surface` is registered as a producer of the
+  `evidence.declaration` family, so `rule_roots` 125 -> 126 and `grammar_declassifiers` 66 -> 67 move by one for that one cause.
+- [x] **GENERICITY (ADR 0006)** — the shape of a name (one lowercase run, uppercase after it), English defining verbs
+  and the word *collective*, the document's own example and its declared or listed signals; no prefix, signal,
+  document or protocol list.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (the `.12b` presence section extended),
+  `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `reference/intentir-contract.md`,
+  `source-to-intent-contract.md`, `reference/representation-gaps.md` (*Signal absent by default*),
+  `quality/validation.md`; KM `a-document-stated-collective-name-stands-for-its-members` (new),
+  `a-signals-stated-absent-value-rides-its-presence-record` (amended); category contract and inventories carry the
+  surface. No production rule was deleted or replaced.

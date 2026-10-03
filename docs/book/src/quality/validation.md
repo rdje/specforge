@@ -376,7 +376,8 @@ report itself gains four metrics — `signal_presence_records`, `signal_presence
 finding, and gives the SemanticIR and IntentIR reports a `signal_presence_records` count, since the records now
 cross both stages. `.3.d.ii.a.i` adds the check-coverage inventory beside it: `check_signal_records` and
 `check_signal_covered` (distinct covered signals) on EvidenceIR, an `evidence_check_signal_inventory` Info finding
-when the surface is non-empty, and a `check_signal_records` count on the two carried stages.
+when the surface is non-empty, and a `check_signal_records` count on the two carried stages. `.3.d.ii.a.ii` does
+the same for `collective_signal_names` (an `evidence_collective_signal_name_inventory` finding).
 
 The typed **message-field inventory** (the in-memory structure and packet-field surface built
 by the bit-position and field-titled table readers) is also on the report: five metrics —
