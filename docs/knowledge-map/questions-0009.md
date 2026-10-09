@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > how many declarations does the current reader refuse corpus-wide
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > how many declared names are spelled in a case the document never uses
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -296,5 +298,3 @@
   > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > how to express the JTAG TAP / SWD FSM in .isf

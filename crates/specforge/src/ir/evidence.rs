@@ -199,6 +199,13 @@ pub enum StatementClass {
     DerivedRule,
     LocalDesignDecision,
     ExplicitAbstraction,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i — document apparatus that uses an abstraction word about the
+    /// document, a figure, the reader, an example or an analysis rather than the hardware (*This guide assumes
+    /// that you are familiar with …*; *the bus or signal can assume any value within the shaded area*). No reader
+    /// consumes it: measured, a diagram key's *You must not assume …* read as a source fact mints a conditional
+    /// rule, and an example circuit's *assumes that output data is valid at the rising [CLK_I] edge* a semantic
+    /// hint on the clock.
+    Apparatus,
     Unknown,
 }
 
@@ -6728,18 +6735,13 @@ fn is_boilerplate_section_title(title: &str) -> bool {
 fn classify_statement(text: &str) -> StatementClass {
     let lowered_text = text.to_ascii_lowercase();
 
-    if contains_any(
-        &lowered_text,
-        &[
-            "assume",
-            "assuming",
-            "modeled as",
-            "modelled as",
-            "abstracted",
-            "treated as",
-        ],
-    ) {
-        return StatementClass::ExplicitAbstraction;
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i — an abstraction is a statement about the hardware, read before
+    // every other class; a sentence that uses an assume-word about the document, a diagram or an example is
+    // apparatus, a class no reader consumes, and is NOT re-read by the classes below: measured, a diagram key's
+    // *Variations, when they occur, have clear labels. You must not assume …* would otherwise mint a conditional
+    // rule, and read as a source fact an example circuit's sentence minted a semantic hint on a clock.
+    if let Some(class) = abstraction_class(&lowered_text) {
+        return class;
     }
     if contains_any(
         &lowered_text,
@@ -6892,6 +6894,117 @@ fn normalize_text_key(text: &str) -> String {
 
 fn contains_any(text: &str, candidates: &[&str]) -> bool {
     candidates.iter().any(|candidate| text.contains(candidate))
+}
+
+/// The words by which a document states an assumption or an equivalence, matched as whole words so that a
+/// fragment such as *Assumer* is none of them; and the verb phrases by which it states a modelling abstraction,
+/// where *abstracted* counts as a verb (*is abstracted as*), not as an adjective (*an abstracted view*).
+const ABSTRACTION_WORDS: [&str; 5] = ["assume", "assumes", "assumed", "assuming", "treated as"];
+const MODELLING_PHRASES: [&str; 5] = [
+    "modeled as",
+    "modelled as",
+    "is abstracted",
+    "are abstracted",
+    "be abstracted",
+];
+/// What a sentence speaks about when its subject is the document itself rather than the hardware.
+const DOCUMENT_SUBJECTS: [&str; 10] = [
+    "guide",
+    "document",
+    "specification",
+    "example",
+    "section",
+    "chapter",
+    "appendix",
+    "figure",
+    "table",
+    "note",
+];
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i — the class a lowercased statement takes for using an abstraction
+/// word, or `None` when it uses none. An equivalence rule (*treated as*) is an abstraction whatever else the
+/// sentence says, since `.3.d.ii.b.ii` reads it from there. A sentence of a shape measured to state nothing about
+/// the hardware — its subject is the document, a figure or the reader (*This guide assumes that you are familiar
+/// with …*), it is a timing-diagram key (*Shaded bus and signal areas are undefined, so the bus or signal can
+/// assume any value*), or it states the premise of an example or an analysis (*This limitation assumes that there
+/// is a maximum of 3 logic levels*; *RJ and BUJ are assumed as Gaussian terms*) — is apparatus, and so is a
+/// sentence that only mentions such a word as a fragment or an adjective. Any other use states an abstraction or
+/// an assumption of the hardware.
+fn abstraction_class(lowered: &str) -> Option<StatementClass> {
+    let sentence = without_list_markers(lowered);
+    let uses_word = ABSTRACTION_WORDS
+        .iter()
+        .any(|word| contains_whole_identifier(sentence, word))
+        || contains_any(sentence, &MODELLING_PHRASES);
+    // A sentence that only mentions such a word — as a fragment (*Assumer*) or an adjective (*an abstracted
+    // view*) — was an abstraction before and is apparatus now: measured, read as ordinary prose two of them
+    // minted invariants (*Figure 2-1 provides an abstracted view of a notional OpenCAPI solution*).
+    let mentions_word = contains_any(
+        sentence,
+        &[
+            "assume",
+            "assuming",
+            "abstracted",
+            "modeled as",
+            "modelled as",
+            "treated as",
+        ],
+    );
+    if uses_word && (sentence.contains("treated as") || !is_non_contract_assumption(sentence)) {
+        Some(StatementClass::ExplicitAbstraction)
+    } else if uses_word || mentions_word {
+        Some(StatementClass::Apparatus)
+    } else {
+        None
+    }
+}
+
+/// The measured shapes of an assume-sentence that states nothing about the hardware (`.3.d.ii.b`).
+fn is_non_contract_assumption(sentence: &str) -> bool {
+    let first = sentence.split('.').next().unwrap_or(sentence);
+    let document_subject = ["this ", "the ", "in this ", "throughout this "]
+        .iter()
+        .filter_map(|opener| first.strip_prefix(opener))
+        .any(|rest| {
+            DOCUMENT_SUBJECTS.iter().any(|noun| {
+                rest.strip_prefix(noun)
+                    .is_some_and(|after| after.starts_with(|c: char| !c.is_ascii_alphanumeric()))
+            })
+        })
+        && first.contains("assum");
+    let reader_subject = contains_any(
+        sentence,
+        &[
+            "we assume",
+            "we refer",
+            "assume that you",
+            "assumes that you",
+            "assumed that you",
+            "assume you",
+            "assumes you",
+            "the reader",
+        ],
+    ) || sentence.trim_end().ends_with("are assumed:");
+    let diagram_key = contains_any(sentence, &["timing diagram", "shaded", "waveform"]);
+    let premise = contains_whole_identifier(sentence, "example")
+        || contains_whole_identifier(sentence, "assuming")
+        || contains_any(
+            sentence,
+            &[
+                "assume that",
+                "assumes that",
+                "assumes the",
+                "assumed as",
+                "shown assume",
+                "assumed to be using",
+                "assumed to be sent",
+                "assumed to be received",
+                "assumed to using",
+                "assumed to sent",
+                "assumed to received",
+            ],
+        );
+    document_subject || reader_subject || diagram_key || premise
 }
 
 fn contains_reference_token(text: &str, token: &str) -> bool {
@@ -57704,5 +57817,83 @@ mod collective_signal_name_tests {
             ("HIGH", None)
         );
         assert!(records[2].absent_value.is_none());
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i — a convention, a diagram key, an example or an analysis premise is not
+/// an abstraction.
+#[cfg(test)]
+mod non_contract_assumption_tests {
+    use super::{StatementClass, classify_statement};
+
+    fn is_abstraction(text: &str) -> bool {
+        matches!(
+            classify_statement(text),
+            StatementClass::ExplicitAbstraction
+        )
+    }
+
+    fn is_apparatus(text: &str) -> bool {
+        matches!(classify_statement(text), StatementClass::Apparatus)
+    }
+
+    #[test]
+    fn a_hardware_rule_stated_with_assume_or_treated_as_is_an_abstraction() {
+        for text in [
+            "LPIs are always treated as Non-secure Group 1 interrupts.",
+            "- Non-cacheable requests are assumed to be in the System domain.",
+            "If the XRESP_WIDTH property is 0, it is not present and assumed to be 0b000 (OKAY).",
+            "The bus is abstracted as a single channel in this model.",
+            "For example, the Deferred DPH shall be treated as a TP for buffering and credit purposes.",
+            "If the transfer that resulted in the original protocol error response was a write, it can be assumed that no write occurred.",
+        ] {
+            assert!(is_abstraction(text), "{text}");
+        }
+    }
+
+    #[test]
+    fn a_sentence_about_the_document_or_reader_is_not_an_abstraction() {
+        for text in [
+            "This guide assumes that you are familiar with the debug and trace capabilities in Arm A-profile processors.",
+            "In this example, the following conditions are assumed:",
+            "We assume the reader is familiar with the AXI protocol.",
+            "The example assumes that the two interrupts are sent simultaneously or almost simultaneously.",
+        ] {
+            assert!(is_apparatus(text), "{text}");
+        }
+    }
+
+    #[test]
+    fn a_timing_diagram_key_is_not_an_abstraction() {
+        for text in [
+            "Shaded bus and signal areas are undefined, so the bus or signal can assume any value within the shaded area at that time.",
+            "The components used in timing diagrams are explained in Figure 1. Do not assume any timing information that is not explicitly stated.",
+            "The following figure explains the components used in timing diagrams. Variations, when they occur, have clear labels. You must not assume any timing information that is not explicitly stated.",
+        ] {
+            assert!(is_apparatus(text), "{text}");
+        }
+    }
+
+    #[test]
+    fn a_premise_of_an_example_or_analysis_is_not_an_abstraction() {
+        for text in [
+            "This limitation assumes that there is a maximum of 3 logic levels available in the timing budget for generating each parity bit.",
+            "1. Rj is the sigma value assuming a Gaussian distribution.",
+            "Using the dual Dirac jitter model, both RJ and BUJ are assumed as Gaussian terms down to 1e-15 probability.",
+            "The latencies shown assume the memory access hits in the Level 1 (L1) data cache.",
+        ] {
+            assert!(is_apparatus(text), "{text}");
+        }
+    }
+
+    #[test]
+    fn an_abstraction_word_counts_only_as_a_whole_word_or_a_verb() {
+        for text in [
+            "60% Cu Assumer",
+            "Figure 2-1 provides an abstracted view of a notional OpenCAPI solution.",
+            "IPMI defines a standardized, abstracted, message-based interface for platform management hardware.",
+        ] {
+            assert!(is_apparatus(text), "{text}");
+        }
     }
 }

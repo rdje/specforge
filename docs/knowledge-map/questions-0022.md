@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > why do message fields prevent a wire or register category completeness claim
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
+- [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md)
+  > why do most tinv_invariant records say not_stated
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -80,6 +92,8 @@
   > why does AXI still list asserted/deasserted obligations as polarity unknown
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why does AXI's BRESP presence record carry 0b000
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why does Assumer no longer classify as an abstraction (whole-word match)
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > why does AxBURST publish FIXED instead of FIXED_BURST
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -284,17 +298,3 @@
   > why does a windowed monitor refuse a value that is not a level (must be valid)
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > why does actions/checkout need fetch-depth 0 and submodules
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
-- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
-  > why does adding an EvidenceIR top-level field re-seal every chain
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does adding an extractor change every doc's extraction manifest
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why does adding both endpoints of a flow to the taxonomy NOT mask the arrow (the cell then matches a requester term AND a completer term, the (true,true) arm returns None, and the arrow reader is reached)
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why does adding one actor term make a flow-arrow cell WORSE rather than better (infer_signal_direction_from_actor_text is tried at priority 2 on the WHOLE cell and infer_signal_direction_from_flow_arrow at priority 4; one known endpoint matches the whole cell, answers first, and returns the same port sense for both senses of the link)
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > why does aggregate_composition support different health and ceiling counts
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why does an .isf enum get dropped / held out of the emitted .isf

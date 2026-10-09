@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md) | 2026-06-10 | `current` | LLM-primary must_be_value recall gap CLOSED — 10/16 → 16/16 gold facts (APB/AHB/AXI) |
 | [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md) | 2026-06-10 | `current` | Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals over-kill |
 | [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md) | 2026-06-10 | `current` | converge --promote-constraints-llm replaces the Pattern constraint surface post-stability |
 | [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md) | 2026-09-18 | `current` | The LLM-primary constraint path is shown 18.4% of the obligations that exist — its precision work operates… |
@@ -60,4 +61,3 @@
 | [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md) | 2026-08-14 | `current` | Proof-bearing chains must validate each stage before building its consumer |
 | [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md) | 2026-08-15 | `current` | Canonical stage artifacts carry one cumulative five-stage proof ledger |
 | [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md) | 2026-08-29 | `current` | The persisted corpus's proof seal is censused totally and probed read-only at gate tier |
-| [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md) | 2026-09-11 | `current` | A configurable-property table whose option name contains "signals" satisfies the signal-caption gate, and onl… |

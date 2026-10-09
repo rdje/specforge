@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification material is deliberately not adopted
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which validate metrics/finding surface channel membership
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > which words mark a swallowed word as a verb (has does was, complementizer that)
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
 - [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
   > who owns a gap between what a PDF states and what the isf can say
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
@@ -285,15 +295,3 @@
   > why did PRODUCTION-GRAPH-CENSUS-PIN.2's census have to be corrected twice
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > why did PRUSER's condition lose PSEL and PENABLE
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why did RESERVED-only NOT ship as a header-naming exclusion (build_symbol_definitions keys members by NAME per document and drops any member whose value conflicts, so HALF the RESERVED-only cases are eliminated downstream with no name-side gate — 6 of 12 in the .5.iv census frame, 4 of 10 in the shipped-predicate frame, the SAME six survivors either way: SMMU
-  > STALL_MODEL/TTENDIAN/HTTU/PGS and CHI-C2C CONTFORMAT/EVENTTYPE. Those survivors are structurally indistinguishable from 31 legitimate single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. Re-derive:
-  > scripts/measure_header_sourced_enum_naming.py --reserved-split)
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why did RRESP ARTAGOP AWTAGOP start minting
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why did SWD protocol_state score 0/13 when the state names were right
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > why did SpecForge reject the TypeSafe Jev decision provider
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why did SpecForge remove every generated (priority RULE over TRANSACTION) line

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > what is the difference between phases and transaction_phases
+- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
+  > what is the difference between source_proof_migrate and source_table_recapture
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > what is the difference between the published population and the actionable population
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what is the difference between validate persistence and stage write_to_disk
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -289,11 +297,3 @@
   > what scopes a cell of an ARM LTI compatibility matrix (both axes — the row key binds the Manager's properties and the column header binds the Subordinate's, so an obligation in a cell holds only under the conjunction; in the persisted LTI artifact the row is statement_1027 and the header is statement_1025)
 - [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
   > what seeds EvidenceIR's known signal names
-- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
-  > what shapes do the unread assumed_by_word records take (convention, diagram_convention, narrative, treated_as, stated_default, other)
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > what shapes does a declaring name cell take
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > what shapes make up the obligations no persisted surface holds (first-match partition of the 247: 51 table row, 41 ordering such as must wait for X before asserting Y, 47 actor-subject such as The Manager must not issue, and 108 other — the remainder is where plain value obligations like AWBURST must be INCR sit)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > what should an auditor do when re-derivation disagrees with a published value

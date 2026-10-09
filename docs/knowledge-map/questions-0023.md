@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > why does adding an EvidenceIR top-level field re-seal every chain
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why does adding an extractor change every doc's extraction manifest
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > why does adding both endpoints of a flow to the taxonomy NOT mask the arrow (the cell then matches a requester term AND a completer term, the (true,true) arm returns None, and the arrow reader is reached)
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > why does adding one actor term make a flow-arrow cell WORSE rather than better (infer_signal_direction_from_actor_text is tried at priority 2 on the WHOLE cell and infer_signal_direction_from_flow_arrow at priority 4; one known endpoint matches the whole cell, answers first, and returns the same port sense for both senses of the link)
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > why does aggregate_composition support different health and ceiling counts
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why does an .isf enum get dropped / held out of the emitted .isf
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
@@ -283,17 +297,3 @@
   > why does the tracked validation snapshot differ from current generated IntentIR reports
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why does the trajectory snapshot reject my fixture builder change
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why does trimming a name token hide a placeholder
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why does validate fail with cumulative proof ledger does not retain the exact verified upstream prefix
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > why does workflow-standard capacity become 21
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > why doesn't SpecForge emit (contract eventually) anymore
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why doesn't SpecForge use TLA+

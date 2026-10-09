@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > where does the backslash underscore in EvidenceIR text come from
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where does the first reviewed source-to-IntentIR population fail
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > where does the flow-arrow reading sit in the direction priority chain
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -290,11 +298,3 @@
   > which corpus documents are real signal-catalog capture misses
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > which corpus documents declare from a subscript-split name cell
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > which corpus documents were ingested in page batches
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > which corpus stages are measurable without re-ingesting a document
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which crate owns the source-to-intent vertical evaluator tests
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts are stable and which ones move

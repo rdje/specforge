@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i",
-      "literal" : "`.3.d.ii.b.i` — a convention, a diagram key, an example or an analysis premise is not an abstraction.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii",
+      "literal" : "`.3.d.ii.b.iii` — a stated default of an attribute, flow or field reaches its reader.",
       "mode" : "eligible",
       "part_id" : "unread-intent-leaves"
    },
@@ -909,7 +909,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -1041,13 +1041,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
          "metrics" : {
-            "bytes" : 36171,
+            "bytes" : 41925,
             "line_bytes" : 639,
-            "lines" : 356
+            "lines" : 408
          },
          "part_id" : "unread-intent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-         "sha256" : "db09e588e759b475c718d4b5322f5f4b57aad872e061be1c22582bd5f254cb54",
+         "sha256" : "ace51a972ac979ca60b78cf1c8635d95a252658ff578e77c094f553601906c2d",
          "state" : "active"
       },
       {

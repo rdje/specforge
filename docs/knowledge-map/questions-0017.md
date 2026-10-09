@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
+  > what shapes do the unread assumed_by_word records take (convention, diagram_convention, narrative, treated_as, stated_default, other)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what shapes does a declaring name cell take
+- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
+  > what shapes make up the obligations no persisted surface holds (first-match partition of the 247: 51 table row, 41 ordering such as must wait for X before asserting Y, 47 actor-subject such as The Manager must not issue, and 108 other — the remainder is where plain value obligations like AWBURST must be INCR sit)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > what should an auditor do when re-derivation disagrees with a published value
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
   > what should happen when a decision record approaches its per-file bound
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -289,11 +297,3 @@
   > where does the NLI gate route a not-entailed contract
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > where does the SpecForge chipdoc source route currently resolve
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > where does the backslash underscore in EvidenceIR text come from
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where does the first reviewed source-to-IntentIR population fail
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > where does the flow-arrow reading sit in the direction priority chain

@@ -2521,6 +2521,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             StatementClass::DerivedRule => "derived_rule",
             StatementClass::LocalDesignDecision => "local_design_decision",
             StatementClass::ExplicitAbstraction => "explicit_abstraction",
+            StatementClass::Apparatus => "apparatus",
             StatementClass::SourceFact => "source_fact",
             StatementClass::Unknown => "unknown",
         };

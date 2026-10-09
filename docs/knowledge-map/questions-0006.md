@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > how do I decide whether a naming convention is universal grammar or one document's habit
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > how do I declare a newly retained normalized bundle
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -295,5 +297,3 @@
   > how does SpecForge read a temporal condition with an unless or except clause
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > how does SpecForge read a timing table with one MIN/MAX pair per operating mode
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > how does SpecForge recover a subject the model misspelled

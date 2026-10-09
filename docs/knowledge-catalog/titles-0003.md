@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
 | [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
 | [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |
 | [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |
@@ -60,4 +61,3 @@
 | [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md) | 2026-08-11 | `current` | EvidenceIR statement text comes from the normalized markdown, where `_` is escaped, so every underscore-beari… |
 | [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md) | 2026-08-13 | `current` | EvidenceIR protocol structure is document-derived and schema-3 proof-carrying |
 | [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md) | 2026-06-08 | `current` | audit-extraction — VLM proposer/verifier precision estimate over the broadened table-driven extraction |
-| [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md) | 2026-06-10 | `current` | The NLI extraction-quality gauge is persisted on EvidenceIR and re-measured by converge |

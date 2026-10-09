@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > what is collective_signal_names / CollectiveSignalNameRecord
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > what is constraint_bearing_sentences and how does it differ from constraint_bearing_sentence
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is continuation_inherited_table_heads and what grounds the join
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -289,11 +297,3 @@
   > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what is the difference between ingest batch activation and adaptive batch size
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > what is the difference between phases and transaction_phases
-- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
-  > what is the difference between source_proof_migrate and source_table_recapture
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > what is the difference between the published population and the actionable population

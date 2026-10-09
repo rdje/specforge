@@ -485,7 +485,11 @@ typed record cites the statements they come from. On `2026-09-30` that was 166 a
 31 current chains, and `EXTRACTION-REPRESENTATION-GAPS.3.d` sorted them (`scripts/measure_unread_intent_records.py`).
 The assumptions are mostly not assumptions: 17 are IntentIR's own statements of its modeling choices, which is by
 design, but the rest are sentences lifted because they say *assume* or *treated as*, and many state a hardware rule
-or default (*the DTF value assumed for reporting such faults is 0*). The behaviors mix software obligations (the USB4
+or default (*the DTF value assumed for reporting such faults is 0*). Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i`
+(`2026-10-03`) a sentence that uses such a word about the document, a figure, the reader, an example or an analysis
+(*This guide assumes that you are familiar with …*; *the bus or signal can assume any value within the shaded
+area*) is classified `apparatus` at the evidence stage, a class no reader consumes, so it is no longer an
+assumption; 83 sentences in 22 of the 31 chains left the surface. The behaviors mix software obligations (the USB4
 connection-manager guide's procedures), permissions (*A MASTER MAY use End-Of-Burst …*), obligations no reader takes
 yet, table rows lifted as prose, and document apparatus. Each open kind has an owner (`.3.d.i`-`.3.d.iii`); the
 census is in `docs/research/category-family-census.md`.

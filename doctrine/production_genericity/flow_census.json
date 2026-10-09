@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-II-A-II-COLLECTIVE-SIGNAL-NAME",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-II-B-I-APPARATUS-CLASS",
    "baseline": {
-    "analyzed_functions": 2730,
-    "decision_sites": 14754,
-    "helper_edges": 18253,
-    "semantic_macros": 1573
+    "analyzed_functions": 2734,
+    "decision_sites": 14795,
+    "helper_edges": 18312,
+    "semantic_macros": 1578
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 41,
-    "helper_edges": 59,
-    "semantic_macros": 5
+    "analyzed_functions": 2,
+    "decision_sites": 8,
+    "helper_edges": 9,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii: a document-stated collective name stands for its members. collective_signal_name_surface, collective_marker and is_collective_member read `AxSIZE indicates AWSIZE and ARSIZE` and the stated lowercase-letter rule into collective_signal_names; StatedAbsentValueReading::rank orders the signal itself, a collective name, then a class in the binder."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i: an assume-sentence about the document, a diagram key or an example is apparatus. abstraction_class matches the abstraction words as whole words and keeps treated-as an abstraction; is_non_contract_assumption reads the three measured non-contract shapes; StatementClass::Apparatus is consumed by no reader."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

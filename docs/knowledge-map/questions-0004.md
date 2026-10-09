@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > does a document ever spell the joined form of a split name cell
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does a figure label appear in content_elements
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -296,5 +298,3 @@
   > does the current SWD chain come from the tracked ADI PDF
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > does the decimal-before-binary defect reach the current producer

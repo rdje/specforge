@@ -9557,7 +9557,10 @@ fn is_invariant_like(
     context: &SemanticContext,
     interface_ids_by_signal: &HashMap<String, BTreeSet<String>>,
 ) -> bool {
-    if matches!(statement.class, StatementClass::ExplicitAbstraction) {
+    if matches!(
+        statement.class,
+        StatementClass::ExplicitAbstraction | StatementClass::Apparatus
+    ) {
         return false;
     }
 

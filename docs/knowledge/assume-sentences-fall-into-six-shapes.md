@@ -35,6 +35,10 @@ were bound (`.3.d.ii.a`, `.a.i`, `.a.ii`), 106 such records remain on the 31 cha
 | `convention` | 6 | *This guide assumes that you are familiar with …* | non-contract |
 | `other` | 4 | a fragment; *abstracted* as an adjective | non-contract |
 
+**Outcome so far.** `.3.d.ii.b.i` (`2026-10-03`) files the convention, diagram-key, narrative and other shapes as
+the `apparatus` statement class ([[an-assume-sentence-about-the-document-is-apparatus]]); the equivalence rules
+and the genuine defaults remain abstractions until `.3.d.ii.b.ii` and `.3.d.ii.b.iii` carry them.
+
 **What this fixes the direction of.** A rule stated with *treated as* is a conditional behaviour and a stated default
 is a value; neither belongs beside a guide's prerequisite. The remedy is split by what each shape needs rather than
 by removing the words from the classifier wholesale, because a reclassified sentence falls through to the other

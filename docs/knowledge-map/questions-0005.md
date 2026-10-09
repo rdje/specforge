@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > does the decimal-before-binary defect reach the current producer
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > does the declaration reader publish any false positive declaration
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -296,5 +298,3 @@
   > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how do I decide between partitioning a research record and declaring a rollover for it
-- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
-  > how do I decide whether a naming convention is universal grammar or one document's habit

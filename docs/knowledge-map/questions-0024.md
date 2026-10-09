@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why does trimming a name token hide a placeholder
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why does validate fail with cumulative proof ledger does not retain the exact verified upstream prefix
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > why does workflow-standard capacity become 21
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > why doesn't SpecForge emit (contract eventually) anymore
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why doesn't SpecForge use TLA+
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > why doesn't fusion use the minimum confidence
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
@@ -20,6 +34,8 @@
   > why is '1110' fourteen and not one thousand one hundred ten
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
   > why is 'LPIs are always treated as Non-secure Group 1 interrupts' an assumption
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why is 'This guide assumes that you are familiar with' no longer an IntentIR assumption
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why is 'assumed to be 0b0 for a DVMComplete request' not read as an absent value
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
@@ -282,19 +298,3 @@
   > why is its not a determiner for relation verbs (GIC ITS agent)
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > why is kg-bench 156/156 not enough for an enum change
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why is lowering_status blocked
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > why is msi_cfg_tbl not sized
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why is must be greater than 0 not a value binding
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why is my rebuilt chain stale even though the content matches
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why is nRESET not treated as a metavariable
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document

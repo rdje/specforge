@@ -196,7 +196,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   default belongs to (`.3.d.ii.b.iii`). No code change here, so no acceptance checklist applies.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i`
-  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.b`)
+  Status: `done` (`2026-10-03`; CODE; found by `.3.d.ii.b`; checklist below)
   Goal: **a convention, a diagram key, an example or an analysis premise is not an abstraction.** 50 of the 106
   `assumed_by_word` records (6 conventions, 10 diagram conventions, 30 narratives, 4 others) and the analysis premises
   among the 25 stated defaults become IntentIR assumptions only because their sentence holds an *assume* word.
@@ -206,6 +206,24 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   the guide, document, example, reader, figure or diagram, or the sentence states a premise of an analysis), keep the
   abstraction class for a sentence that states a modelling abstraction, measure what every chain's SemanticIR and
   IntentIR lose and whether any other reader now takes the reclassified sentences, and keep all 11 seeds.
+  **Decided `2026-10-03`: a dedicated class, `apparatus`, that no reader consumes.** `classify_statement`'s first
+  arm is now `abstraction_class`: the words are whole words (*Assumer* is none), *abstracted* counts only as a verb,
+  a sentence saying *treated as* is an abstraction whatever else it says, and the three measured non-contract shapes
+  (`is_non_contract_assumption`: the document, a figure or the reader as subject; a timing-diagram key; the premise
+  of an example or an analysis) are `StatementClass::Apparatus`. *Assumed that* is deliberately no premise marker,
+  so ADIv6's *it can be assumed that no write occurred* stays an abstraction. **Two cheaper remedies were measured
+  and refused.** Letting the sentence fall through sent 33 of 83 into the rule, constraint and timing classes and the
+  rule reader minted conditional rules from six of them, a diagram key among them (*Variations, when they occur,
+  have clear labels. You must not assume …*); filing it as `SourceFact` kept every other record byte-identical except
+  Wishbone's, where the prose hint reader minted `CLK_I` -> `handshake_valid_like` from an example circuit's *assumes
+  that output data is valid at the rising [CLK_I] edge*. `is_invariant_like` excludes the new class beside
+  `ExplicitAbstraction`; class-filtered readers never select it.
+  **Measured over all 31 chains:** 83 statements in 22 chains move `explicit_abstraction` -> `apparatus`, 6 of
+  them sentences that used an abstraction word only as a fragment or an adjective (*Assumer*, *an abstracted
+  view*); every other evidence section is byte-identical (dry-run against the persisted artifacts). A first cut let
+  those 6 fall through as source facts, and the invariant reader minted two constraints from *Figure 2-1 provides
+  an abstracted view of a notional OpenCAPI solution*; a sentence that only mentions the word is apparatus too. Unread records 438 -> 364,
+  `assumed_by_word` 106 -> 53; IntentIR assumptions 78 fewer across the 22 chains, no other IntentIR section moved, adapters and ISF texts byte-identical.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`
   Status: `open` (`2026-10-03`; DESIGN then CODE; found by `.3.d.ii.b`)
@@ -354,3 +372,37 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   `quality/validation.md`; KM `a-document-stated-collective-name-stands-for-its-members` (new),
   `a-signals-stated-absent-value-rides-its-presence-record` (amended); category contract and inventories carry the
   surface. No production rule was deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i` (CODE) — DONE `2026-10-03`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: `assumed_by_word` 106 with shapes
+  `convention` 6, `diagram_convention` 10, `narrative` 30, `other` 4 — every one an IntentIR assumption because its
+  sentence holds an *assume* word; over all 180 `explicit_abstraction` statements on the 31 chains, 78 take those
+  shapes. `validate` on APB5's EvidenceIR counts its two timing-diagram keys and parity-budget premise as
+  `explicit_abstraction`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `classify_statement` tested a substring list
+  (`assume`, `assuming`, `modeled as`, `abstracted`, `treated as`) before every other class and returned
+  `ExplicitAbstraction`; `semantic.rs` `build_abstractions` lifts that class and `intent.rs` `build_assumptions`
+  carries it. RED, with the file restored byte-identically after each (6 mutations): dropping the diagram-key, premise
+  or reader-subject shape fails `a_timing_diagram_key_is_not_an_abstraction`,
+  `a_premise_of_an_example_or_analysis_is_not_an_abstraction` or
+  `a_sentence_about_the_document_or_reader_is_not_an_abstraction`; dropping the *treated as* override fails
+  `a_hardware_rule_stated_with_assume_or_treated_as_is_an_abstraction`; matching the words as substrings, or
+  treating a fragment or adjective mention as ordinary prose, fails
+  `an_abstraction_word_counts_only_as_a_whole_word_or_a_verb`.
+- [x] **ADDRESSED (verified)** — Evidence dry-run of all 31 chains against the persisted (`121da63e7`-current) artifacts:
+  83 statements in 22 chains move `explicit_abstraction` -> `apparatus`, and no other section of any chain moves (the two refused remedies moved `conditional_rules` in six chains and `signal_semantic_hints` in one).
+  The changed chains rebuilt stage by stage, each validated once, the adapter last: IntentIR assumptions 78 fewer across the 22 chains, no other IntentIR section moved; adapters and ISF texts byte-identical. Unread records
+  438 -> 364, `assumed_by_word` 106 -> 53.
+- [x] **NO REGRESSION** — The classifier is outside the EvidenceIR seal closure: `check_chain_currency.sh` 31 of
+  31 current at every stage after the rebuilds, no cascade needed. WIRE-BASED-100: all 11 seeds identical to the reports of `121da63e7`'s binary (temp paths masked; `seed_swd`'s constraint 1.000), the HEAD side scored on its own binary's EvidenceIR for the six measurable seed documents, put in place and restored byte-identically. `kg-bench` 158/158.
+  `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test
+  --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,833 passed, 0 failed. `flow_census.json` rolled
+  forward (+2 functions, +8 decision sites, +9 helper edges); boundary counts unchanged, since no producer or field was added.
+- [x] **GENERICITY (ADR 0006)** — English abstraction verbs as whole words, the nouns a sentence takes when it speaks about
+  the document, the words of a diagram key, and the lead words of a premise; no document, signal or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*Which assume-sentences are abstractions, and which are
+  apparatus*), `pipeline/intentir.md` (the unread-assumption passage); KM
+  `an-assume-sentence-about-the-document-is-apparatus` (new), `assume-sentences-fall-into-six-shapes` (amended). No
+  production rule was deleted or replaced: the abstraction arm is narrowed, and the book described it nowhere by
+  name.

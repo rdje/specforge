@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -295,5 +297,3 @@
   > how many declaration rows does the current reader lose on the frozen set
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > how many declarations does the SemanticIR reader refuse corpus-wide
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > how many declarations does the current reader refuse corpus-wide

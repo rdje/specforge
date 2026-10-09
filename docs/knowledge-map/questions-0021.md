@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why did RESERVED-only NOT ship as a header-naming exclusion (build_symbol_definitions keys members by NAME per document and drops any member whose value conflicts, so HALF the RESERVED-only cases are eliminated downstream with no name-side gate — 6 of 12 in the .5.iv census frame, 4 of 10 in the shipped-predicate frame, the SAME six survivors either way: SMMU
+  > STALL_MODEL/TTENDIAN/HTTU/PGS and CHI-C2C CONTFORMAT/EVENTTYPE. Those survivors are structurally indistinguishable from 31 legitimate single-distinct-member tables (TTL 0b00=NO_LEVEL_HINT_INFORMATION, CD2L, S1P, PRI, GRAN4K...), leaving only the word RESERVED itself as a discriminator — exactly the spec-assigned value vocabulary ADR 0006 forbids. Re-derive:
+  > scripts/measure_header_sourced_enum_naming.py --reserved-split)
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > why did RRESP ARTAGOP AWTAGOP start minting
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why did SWD protocol_state score 0/13 when the state names were right
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > why did SpecForge reject the TypeSafe Jev decision provider
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > why did TL disappear from the OpenCAPI Ready Definition
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
@@ -285,15 +297,3 @@
   > why do four corpus documents have no document_class
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > why do generated IR files contain the old SpecForge repository path
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > why do message fields prevent a wire or register category completeness claim
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
-- [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md)
-  > why do most tinv_invariant records say not_stated
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual

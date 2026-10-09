@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > should the claim registry get an archive lifecycle
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > should the drifted SourceIR documents be re-ingested
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
@@ -293,7 +297,3 @@
   > what did the register access carrier improve in the current replay
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > what did the retired SWD frame extractor key on (literal protocol identity: extract_serial_frame_fields at 89d8dee7^ gated the whole document on the strings serial wire / packet request / shift-dr / swdio / swclk, then assigned a fixed three-value SerialFramePhase enum from wdata / rdata / datain / ack[ — exactly what ADR 0006 forbids in production)
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > what disarms is_alpha_variant_placeholder
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > what discriminates a bit-position column from a binary encoding column

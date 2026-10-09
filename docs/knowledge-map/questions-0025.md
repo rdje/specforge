@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is lowering_status blocked
+- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
+  > why is msi_cfg_tbl not sized
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why is must be greater than 0 not a value binding
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why is my rebuilt chain stale even though the content matches
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why is nRESET not treated as a metavariable
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why is page_image_path null / None for a large document
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > why is placing a table by its page wrong
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -202,8 +218,12 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it,
   > sub-enum splitting deferred)
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why not let a convention fall through the classifier (a diagram key minted a conditional rule)
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > why not re-ingest AHB and APB to carry a table fix
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why not reclassify a convention as a source fact (a hint reader minted CLK_I handshake_valid_like from an example circuit)
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
@@ -278,23 +298,3 @@
   > why was is-not-valid refused as a deontic form
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > why was moving only the region the wrong remedy even though LIVE-DOCUMENT-PRESSURE-HEADROOM.30b did exactly that (the region .30b moved superseded nothing, so it never met this)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why was nearest-heading anchoring rejected for capless table adoption
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > why was no ROADMAP amendment made for a decision provider
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > why was raising max_bytes alone not the remedy for the claim registry
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > why was table_0004|toc_non_contract changed
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why was the AXI write-address handshake invariant never extracted
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why was the Arm Debug replay killed at 400 pages
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn

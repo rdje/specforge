@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md) | 2026-09-11 | `current` | A configurable-property table whose option name contains "signals" satisfies the signal-caption gate, and onl… |
 | [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |
 | [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
 | [prose-signal-capture](../knowledge/prose-signal-capture.md) | 2026-06-08 | `current` | Signals introduced in PROSE (not tables) are captured — pin appositive + parenthetical abbreviation, as a s… |
@@ -60,4 +61,3 @@
 | [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md) | 2026-08-11 | `current` | The first source-to-IntentIR vertical population locks twelve reviewed documents without extractor tuning |
 | [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md) | 2026-08-11 | `current` | Vertical evaluation is a strict data-defined oracle over pinned four-stage snapshots |
 | [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md) | 2026-09-11 | `current` | SourceIR classification is proof-verified one record at a time, so a classification rule may never read its n… |
-| [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md) | 2026-08-15 | `current` | SpecForge is autonomous first and asks typed questions at the evidence boundary |

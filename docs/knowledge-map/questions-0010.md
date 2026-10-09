@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > how to express the JTAG TAP / SWD FSM in .isf
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > how to get a fresh eval-extraction baseline for a spec
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -52,6 +54,8 @@
   > is $passed/$total a coverage guard
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > is 'treated as' still an abstraction after .3.d.ii.b.i (yes, whatever the sentence says)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -293,7 +297,3 @@
   > is the CoreSight Base System Architecture current-binary refresh complete
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > is the CoreSight Base System Architecture fully extracted
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > is the DATA phantom mechanism established
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)

@@ -979,6 +979,30 @@ three-letter run); `AWSNOOP` and `ARSNOOP` take `LOW`. Wishbone's *When the gap 
 '-WSM-' or '-WSS-' …* is the shape's trap: a capitalised word is a lowercase run with nothing after it, so a name
 must carry an uppercase letter after its run. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a.ii`).
 
+### Which assume-sentences are abstractions, and which are apparatus
+
+Every sentence holding *assume*, *assuming*, *modeled as*, *abstracted* or *treated as* was classified an explicit
+abstraction before any other class, lifted to a SemanticIR abstraction and carried as an IntentIR assumption — and
+`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b` measured that the sentences fall into six shapes, most of which state
+nothing about the hardware. Since `.3.d.ii.b.i` (`2026-10-03`) the classifier reads the word as a whole word (a
+fragment such as *Assumer* is none of them) and *abstracted* only as a verb, keeps an equivalence rule (*treated
+as*) an abstraction whatever else its sentence says, and files three measured shapes as **apparatus**, a statement
+class no reader consumes: a sentence whose subject is the document, a figure or the reader (*This guide assumes that
+you are familiar with …*; *In this example, the following conditions are assumed:*), a timing-diagram key (*Shaded bus
+and signal areas are undefined, so the bus or signal can assume any value within the shaded area*), and the premise
+of an example or an analysis (*This limitation assumes that there is a maximum of 3 logic levels*; *RJ and BUJ are
+assumed as Gaussian terms*; *The latencies shown assume the memory access hits in the L1*). A hardware consequence
+stated with the same word (*it can be assumed that no write occurred*) stays an abstraction.
+
+The class is dedicated for a measured reason. Letting such a sentence fall through to the other classes minted a
+conditional rule from a diagram key (*Variations, when they occur, have clear labels. You must not assume any timing
+information …*), and filing it as a source fact minted a semantic hint on a clock from an example circuit's
+*assumes that output data is valid at the rising [CLK_I] edge*. A sentence that only mentions such a
+word, as a fragment (*Assumer*) or an adjective (*an abstracted view of a notional OpenCAPI solution*), is apparatus
+too: read as ordinary prose, two of them minted invariants. On the 31 chains 83 sentences in 22 documents become
+apparatus, every other evidence record is byte-identical, and the IntentIR assumptions
+they produced are gone. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.i`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

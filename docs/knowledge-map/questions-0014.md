@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > what goes stale when I register a task-evidence part
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what grounded content survives the Cortex-A76 optimization guide refresh
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what grounded heuristic only interface evidence is preserved
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
@@ -222,6 +226,8 @@
   > what is SpecForge doing in academic or research terms
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > what is SpecForge's deterministic constraint recall (15.8% on the measured stratum — 379 statements state an obligation about a declared signal and the production producer emits a record from 60)
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > what is StatementClass::Apparatus / the apparatus statement class
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > what is SystemResetKind::NotStated / reset_kind not_stated
 - [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md)
@@ -258,6 +264,8 @@
   > what is a subscript split and why can no underscore rule find it
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > what is absent_value on a SignalPresenceRecord / what is StatedAbsentValue
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > what is abstraction_class / is_non_contract_assumption
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > what is aggregate_composition in surfaces.jsonl
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -290,11 +298,3 @@
   > what is collective_name on a StatedAbsentValue
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > what is collective_signal_name_surface / collective_marker / is_collective_member
-- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > what is collective_signal_names / CollectiveSignalNameRecord
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > what is constraint_bearing_sentences and how does it differ from constraint_bearing_sentence
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what is content-based name-column detection / rotation offset remapping

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > what disarms is_alpha_variant_placeholder
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > what discriminates a bit-position column from a binary encoding column
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -293,7 +297,3 @@
   > what gives timing observation samples tick authority
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what global provenance and stage-conservation gates apply before executable lowering
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > what goes stale when I register a task-evidence part
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what grounded content survives the Cortex-A76 optimization guide refresh

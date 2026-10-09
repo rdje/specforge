@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > which corpus documents were ingested in page batches
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > which corpus stages are measurable without re-ingesting a document
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which crate owns the source-to-intent vertical evaluator tests
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which current claim census counts are stable and which ones move
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts may be published and which must be read from the report
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
@@ -167,6 +175,8 @@
   > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > which radix does an unquoted encoding cell use
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > which readers exclude the apparatus class (is_invariant_like, and every class-filtered reader by construction)
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > which readers use a recovered table caption
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -287,13 +297,3 @@
   > which units mark a timing record as decibel domain
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > which untyped tables are contract content
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification material is deliberately not adopted
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > which validate metrics/finding surface channel membership
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > which words mark a swallowed word as a verb (has does was, complementizer that)
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
