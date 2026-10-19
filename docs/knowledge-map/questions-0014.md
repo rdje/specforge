@@ -144,6 +144,8 @@
   > what is ADR 0051
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > what is ADR 0052
+- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
+  > what is ADR 0057
 - [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
   > what is ANALYSIS_TARGET in the production graph
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -174,6 +176,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.41.c
+- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.48
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -294,7 +298,3 @@
   > what is check_signal_records / CheckSignalRecord and where does it come from
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is cited_table_ids
-- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
-  > what is classified_obligation_residuals / evidence_classified_obligation_residuals_remaining
-- [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
-  > what is closes_character_reference

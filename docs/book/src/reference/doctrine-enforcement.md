@@ -136,9 +136,9 @@ The README guard is unconditional: it evaluates the resulting tree even when a c
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
 
-Among its focused suites, the live-document gate runs 93 common lifecycle/control cases, 47 neutral derived-state
+Among its focused suites, the live-document gate runs 120 common lifecycle/control cases, 47 neutral derived-state
 classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
-cases, plus 44 active-task source/topology/route/payload/bound/writer cases, 60 fact-catalog source/plan/route/residue/
+cases, plus 83 active-task source/topology/route/payload/bound/writer cases, 60 fact-catalog source/plan/route/residue/
 bound cases, and the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
 collections must have complete landing membership, exact derive-and-diff content,
 bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
@@ -151,8 +151,10 @@ row only at or below the existing 6,400-byte direct task-evidence cap. Complete 
 `legacy` routes and formal container ids absent from those subjects as `structural` routes; both require an exact
 full or tree-relative source literal in one primary semantic payload. Its migrated state verifies those routes,
 capsule and marker payloads, current root/frontier, index, manifest, per-part/aggregate pressure, and sealed Git
-identities. If the bounded root declares an executable owner registry, complete primary routes must equal that
-registry exactly, including structural and pending owners that have no completion commit. Its guarded
+identities. If the bounded root declares an executable owner registry, an inline catalog's complete primary routes must
+equal that registry exactly, including structural and pending owners that have no completion commit; under a
+sharded catalog the registry declares exactly the leaves not yet closed, plus any closed leaf whose part records
+no status of its own, so a root grows with work in flight rather than with the tree's age (ADR 0057). Its guarded
 materializer preflights all inputs, preserves raw legacy bytes beneath
 UTF-8 scaffolds, writes the stable root last, validates the final tree, and rolls back only its proven-owned
 destinations. The positive continuation fixture also proves that a new active part, eligible frontier,

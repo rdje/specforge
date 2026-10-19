@@ -955,21 +955,39 @@ sub validate_contract_schema {
     scalar_array($migrated->{root_required_literals}, 'contract root_required_literals', $errors, 0);
     scalar_array($migrated->{root_forbidden_literals}, 'contract root_forbidden_literals', $errors, 1);
     scalar_array($migrated->{index_required_literals}, 'contract index_required_literals', $errors, 0);
-    my %root_owner_ids;
-    for my $literal (@{$migrated->{root_required_literals} // []}) {
-        next if ref($literal) || $literal !~ /\A- ID: `([^`]+)`\z/;
-        my $owner_id = $1;
+    my %root_owner_ids = root_owner_ids($contract);
+    for my $owner_id (sort keys %root_owner_ids) {
         push @$errors, "contract root owner '$owner_id' is outside tree '$identity->{tree_id}'"
             if $owner_id ne ($identity->{tree_id} // '')
             && index($owner_id, ($identity->{tree_id} // '') . '.') != 0;
-        $root_owner_ids{$owner_id} = 1;
     }
     if (($input_state // '') eq 'complete' && keys %root_owner_ids) {
         push @$errors, "complete leaf routes omit declared root owner '$_'"
             for grep { !$route_ids{$_} } sort keys %root_owner_ids;
+        # ADR 0057 — a sharded route catalog carries every leaf with its lifecycle, so the root must
+        # declare only the leaves that are not closed; whether a closed leaf may stay is settled against
+        # its part in `validate_route_lifecycles`. An inline catalog has no lifecycle to cut on.
+        my @required = $sharded
+            ? grep { $route_ids{$_} } map { $_->{leaf_id} // '' }
+                grep { ($_->{lifecycle} // '') ne 'closed' } @$routes
+            : keys %route_ids;
         push @$errors, "complete leaf route '$_' is absent from the declared root owner registry"
-            for grep { !$root_owner_ids{$_} } sort keys %route_ids;
+            for grep { !$root_owner_ids{$_} } sort @required;
     }
+}
+
+# The owner ids the bounded root's registry declares: every `- ID: `<id>`` literal the contract requires
+# the root to carry.
+sub root_owner_ids {
+    my ($contract) = @_;
+    my $migrated = $contract->{migrated_requirements};
+    return () if ref($migrated) ne 'HASH' || ref($migrated->{root_required_literals}) ne 'ARRAY';
+    my %ids;
+    for my $literal (@{$migrated->{root_required_literals}}) {
+        next if ref($literal) || $literal !~ /\A- ID: `([^`]+)`\z/;
+        $ids{$1} = 1;
+    }
+    return %ids;
 }
 
 sub validate_source_and_inputs {
@@ -1432,6 +1450,7 @@ sub validate_route_lifecycles {
     return if !route_catalog_is_sharded($contract);
     my %part_path = map { $_->{part_id} => $_->{path} } @{$contract->{destinations}{parts}};
     my $unverified = 0;
+    my %corroborated;
     for my $route (@{$contract->{leaf_routes} // []}) {
         my $path = $part_path{$route->{part_id} // ''} // '';
         my $sealed_and_free = declared_node_statuses($part_raw->{$path}, $route->{leaf_id});
@@ -1443,6 +1462,7 @@ sub validate_route_lifecycles {
         if (@$statuses > 1) {
             push @$errors, "leaf route '$route->{leaf_id}' is declared " . scalar(@$statuses)
                 . " times in the $stratum stratum of its primary part '$route->{part_id}'";
+            $corroborated{$route->{leaf_id} // ''} = 1;
             next;
         }
         my $status = @$statuses ? $statuses->[0] : undef;
@@ -1450,10 +1470,28 @@ sub validate_route_lifecycles {
             $unverified++;
             next;
         }
+        $corroborated{$route->{leaf_id} // ''} = 1;
         my $observed = ($status eq 'done' || $status eq 'superseded') ? 'closed' : 'open';
         push @$errors, "leaf route '$route->{leaf_id}' declares lifecycle '"
             . ($route->{lifecycle} // '') . "' but its primary part records status '$status'"
             if $observed ne ($route->{lifecycle} // '');
+    }
+    # ADR 0057 — the root's owner registry declares what a session can still act on. A closed leaf whose
+    # part records its status is found through the route catalog and leaves the registry, so the root grows
+    # with work in flight rather than with the tree's age; a closed leaf its part does not corroborate has
+    # no other owner declaration, so the registry keeps it.
+    my %declared = root_owner_ids($contract);
+    if (($contract->{input_state} // '') eq 'complete' && %declared) {
+        for my $route (grep { ($_->{lifecycle} // '') eq 'closed' } @{$contract->{leaf_routes} // []}) {
+            my $leaf_id = $route->{leaf_id} // '';
+            if ($corroborated{$leaf_id} && $declared{$leaf_id}) {
+                push @$errors, "closed leaf route '$leaf_id' is still declared in the root owner registry; "
+                    . 'a closed leaf whose part records it belongs to the route catalog';
+            } elsif (!$corroborated{$leaf_id} && !$declared{$leaf_id}) {
+                push @$errors, "closed leaf route '$leaf_id' has no status record in its primary part, "
+                    . 'so the root owner registry must keep declaring it';
+            }
+        }
     }
     my $allowed = $contract->{limits}{route_parts}{max_unverified_routes};
     push @$errors, "$unverified leaf routes declare a lifecycle their primary part does not corroborate, "
@@ -2148,11 +2186,12 @@ sub append_fixture_activity {
     $part->{sha256} = sha256_hex($part_raw);
     $part->{metrics} = metrics($part_raw);
     push @{$contract->{destinations}{parts}}, $part;
+    my $closed = $node_status eq 'done' || $node_status eq 'superseded';
     push @{$contract->{leaf_routes}}, {
         leaf_id => 'PROGRAM.2',
         part_id => $part->{part_id},
         origin => 'post_migration',
-        lifecycle => ($node_status eq 'done' || $node_status eq 'superseded') ? 'closed' : 'open',
+        lifecycle => $closed ? 'closed' : 'open',
     };
     $contract->{current_frontier} = {
         mode => 'eligible',
@@ -2163,13 +2202,29 @@ sub append_fixture_activity {
     for my $literal (@{$contract->{migrated_requirements}{root_required_literals}}) {
         $literal = 'Eligible frontier: PROGRAM.2.' if $literal eq 'No eligible frontier.';
     }
-    push @{$contract->{migrated_requirements}{root_required_literals}}, '- ID: `PROGRAM.2`';
     my $root_raw = fixture_root();
-    $root_raw =~ s/- ID: `PROGRAM\.1`\n/- ID: `PROGRAM.1`\n- ID: `PROGRAM.2`\n/;
+    # A node its part records as closed is found through the route catalog, so the root does not
+    # register it (ADR 0057).
+    if (!$closed) {
+        push @{$contract->{migrated_requirements}{root_required_literals}}, '- ID: `PROGRAM.2`';
+        $root_raw =~ s/- ID: `PROGRAM\.1`\n/- ID: `PROGRAM.1`\n- ID: `PROGRAM.2`\n/;
+    }
     $root_raw =~ s/No eligible frontier\./Eligible frontier: PROGRAM.2./;
     write_raw($base, $contract->{current_path}, $root_raw);
     write_raw($base, $part->{path}, $part_raw);
     write_fixture_derived($base, $contract);
+}
+
+# Rewrite the fixture root's owner registry, and the contract literals that require it, to exactly @owners.
+sub set_fixture_root_owners {
+    my ($base, $contract, @owners) = @_;
+    my $literals = $contract->{migrated_requirements}{root_required_literals};
+    @$literals = ((grep { !/\A- ID: `/ } @$literals), map { "- ID: `$_`" } @owners);
+    my $registry = join '', map { "- ID: `$_`\n" } @owners;
+    my $root_raw = fixture_root();
+    $root_raw =~ s/- ID: `PROGRAM`\n- ID: `PROGRAM\.1`\n/$registry/;
+    $root_raw =~ s/No eligible frontier\./$contract->{current_frontier}{literal}/;
+    write_raw($base, $contract->{current_path}, $root_raw);
 }
 
 sub init_fixture_git {
@@ -2328,6 +2383,9 @@ sub run_self_test {
         ['manifest identity drift', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'fixture migration'; $manifest->{source}{sha256} = 'f' x 64; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/manifest field 'source' disagrees/],
         ['manifest scalar overflow', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'x' x 600; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/scalar above 512 bytes/],
         ['post-migration active append positive', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1]) }, undef],
+        ['closed recorded leaf left in the root owner registry', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done'); set_fixture_root_owners($_[0], $_[1], 'PROGRAM', 'PROGRAM.1', 'PROGRAM.2') }, qr/closed leaf route 'PROGRAM\.2' is still declared in the root owner registry/],
+        ['closed unrecorded leaf dropped from the root owner registry', 'migrated', 'complete', sub { set_fixture_root_owners($_[0], $_[1], 'PROGRAM') }, qr/closed leaf route 'PROGRAM\.1' has no status record in its primary part/],
+        ['open leaf absent from the root owner registry', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1]); set_fixture_root_owners($_[0], $_[1], 'PROGRAM', 'PROGRAM.1') }, qr/complete leaf route 'PROGRAM\.2' is absent from the declared root owner registry/],
         ['sealed part positive', 'migrated', 'complete', sub { seal_fixture_activity_part($_[0], $_[1], $_[2]) }, undef],
         ['sealed part mutation', 'migrated', 'complete', sub { seal_fixture_activity_part($_[0], $_[1], $_[2]); my $part = $_[1]{destinations}{parts}[1]; write_raw($_[0], $part->{path}, fixture_part_raw($_[1], $_[2], $part) . "changed\n") }, qr/differs from its sealing commit/],
     );
@@ -2577,8 +2635,9 @@ sub run_self_test {
         $passed++;
     }
 
-    # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 added seven leaf-route exemption cases (73 -> 80).
-    my $expected = 80;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 added seven leaf-route exemption cases (73 -> 80);
+    # EXTRACTION-REPRESENTATION-GAPS.48 three root-owner-registry lifecycle cases (80 -> 83).
+    my $expected = 83;
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
     # and both sides drop together. The expected total is declared here, independently of the
     # suite, so a case removed — or one added and not declared — fails instead of moving a

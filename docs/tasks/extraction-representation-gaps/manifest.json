@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.48",
-      "literal" : "`.48` — the bounded root stays under rollover as leaves are registered.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a",
+      "literal" : "`.3.d.ii.b.iii.a` — a stated absent value may be a label of the signal's own encoding, and may hold for a class of requests only.",
       "mode" : "eligible",
-      "part_id" : "register-binding-leaves"
+      "part_id" : "unread-intent-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -945,7 +945,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.48",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       }
@@ -1053,13 +1053,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
          "metrics" : {
-            "bytes" : 15946,
+            "bytes" : 18153,
             "line_bytes" : 281,
-            "lines" : 169
+            "lines" : 189
          },
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-         "sha256" : "e064cac80560c0f86097dee67dc84daed1eba36ad4042f7a1dc6e7545e672080",
+         "sha256" : "f3d0c9e983ac0fb791cbaebb05273e781c004fac1ca7b980d3fdddaf9a4c3417",
          "state" : "active"
       },
       {

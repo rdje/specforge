@@ -93,8 +93,8 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   the document defines them there, and measure every chain and the 11 seeds.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.48`
-  Status: `open` (`2026-10-19`; DATA + CODE; found by `.3.d.ii.b.iii`, whose three children took the root to its
-  mandatory rollover)
+  Status: `done` (`2026-10-19`; DATA + CODE; found by `.3.d.ii.b.iii`, whose three children took the root to its
+  mandatory rollover; ADR 0057)
   Goal: **the bounded root stays under rollover as leaves are registered.** Registering `.3.d.ii.b.iii`'s three
   children took the root from 229 to 232 lines, 90.6% of its 256-line health target, and
   `check_active_task_evidence.pl` refused it. The pressure is structural: when a contract's input state is
@@ -112,6 +112,26 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   leaf with its lifecycle and part, and ADR 0056 bounds the leaf count by it), keep a stable-path lookup for every
   open owner, change the checker's rule for every contract that declares a registry in one transaction with a RED
   control, and leave each root below its warning milestone.
+  **Decided `2026-10-19` (ADR 0057): under a sharded route catalog the registry declares exactly the leaves not
+  yet closed, plus every closed leaf whose primary part records no status for it.** It is ADR 0046's lifecycle cut,
+  which the index already takes, applied to the root, and it reads the same evidence: the leaf's own status line in
+  its part, so the registry never drops the only owner declaration a leaf has (`SPEC-TO-INTENT-ALIGNMENT.9a`, whose
+  record `LIVE-DOCUMENT-PRESSURE-HEADROOM.16` writes, is the one such leaf and stays). An inline catalog keeps the
+  complete-route rule. `check_active_task_evidence.pl`: `root_owner_ids` reads the declared ids; `validate_contract`
+  requires every route that is not closed; `validate_route_lifecycles` refuses a closed, part-recorded leaf the
+  registry still declares and a closed, unrecorded leaf it no longer declares. The self-test's closed-append fixture
+  no longer registers its closed leaf, and three RED cases join it (80 -> 83 declared).
+  **Landed over the six sharded trees in one transaction**, each pruned exactly to what the checker reported:
+  extraction representation gaps 214 -> 116 root lines (144 -> 44 ids), spec-to-intent alignment 212 -> 134 (84 ->
+  4), extraction quality gauge 200 -> 147 (66 -> 11), KG-ISF completeness 195 -> 136 (90 -> 29), pressure headroom
+  187 -> 114 (95 -> 20), claim verification 157 -> 107 (54 -> 2); each registry header now states the rule. Closing
+  a leaf now removes its `- ID:` line and its `root_required_literals` entry in the same commit. **Found and fixed
+  beside it:** the book's live-document suite counts were stale, 93 common lifecycle cases (120 run) and 44
+  active-task cases (80 before this leaf), and both now read what the suites run.
+  Verification: `self-test 83/83; RED: each of the four rule mutations (the closed-declared check, the
+  closed-unrecorded check, the open-required check, the old every-route rule) fails the suite; all six sharded
+  contracts --check clean; task-node-retention 1,576 nodes, none moved or retired; no other diagnostic`
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.48 — a root's owner registry declares the leaves not yet closed`
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 

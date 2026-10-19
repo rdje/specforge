@@ -95,54 +95,27 @@ pre-migration source capsule.
 
 ## Executable Owner Registry
 
-These compact declarations preserve stable-path task-owner lookup. The task-evidence index is the primary
-detail-routing authority, and the route catalog carries every leaf with its lifecycle and its detail part.
+These compact declarations preserve stable-path task-owner lookup for every leaf that is not closed, and for
+a closed leaf whose part records no status of its own. A closed leaf leaves this list: the route catalog
+carries every leaf with its lifecycle and its detail part (ADR 0057), and the task-evidence index is the
+primary detail-routing authority.
 
 - ID: `KG-ISF-COMPLETENESS`
 - ID: `KG-ISF-COMPLETENESS.1c`
-- ID: `KG-ISF-COMPLETENESS.1c.i`
 - ID: `KG-ISF-COMPLETENESS.1c.ii`
 - ID: `KG-ISF-COMPLETENESS.1d`
-- ID: `KG-ISF-COMPLETENESS.1d.i`
 - ID: `KG-ISF-COMPLETENESS.1d.i.a`
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.i`
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii`
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.a`
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.b`
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.c`
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.d`
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.e`
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.iii`
-- ID: `KG-ISF-COMPLETENESS.1d.ii`
 - ID: `KG-ISF-COMPLETENESS.1d.ii.a`
-- ID: `KG-ISF-COMPLETENESS.1e`
 - ID: `KG-ISF-COMPLETENESS.1f`
-- ID: `KG-ISF-COMPLETENESS.1g`
 - ID: `KG-ISF-COMPLETENESS.1h`
 - ID: `KG-ISF-COMPLETENESS.1i`
-- ID: `KG-ISF-COMPLETENESS.0`
 - ID: `KG-ISF-COMPLETENESS.1`
-- ID: `KG-ISF-COMPLETENESS.1a`
 - ID: `KG-ISF-COMPLETENESS.1b`
-- ID: `KG-ISF-COMPLETENESS.1b.i`
-- ID: `KG-ISF-COMPLETENESS.1b.ii`
-- ID: `KG-ISF-COMPLETENESS.1b.iii`
-- ID: `KG-ISF-COMPLETENESS.1b.iv`
 - ID: `KG-ISF-COMPLETENESS.2`
 - ID: `KG-ISF-COMPLETENESS.2a`
-- ID: `KG-ISF-COMPLETENESS.2a.i`
-- ID: `KG-ISF-COMPLETENESS.2a.ii`
-- ID: `KG-ISF-COMPLETENESS.2a.iii`
-- ID: `KG-ISF-COMPLETENESS.2a.iv`
-- ID: `KG-ISF-COMPLETENESS.2a.v`
-- ID: `KG-ISF-COMPLETENESS.2a.vi`
 - ID: `KG-ISF-COMPLETENESS.2a.vii`
-- ID: `KG-ISF-COMPLETENESS.2a.vii.a`
-- ID: `KG-ISF-COMPLETENESS.2a.vii.b`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c`
-- ID: `KG-ISF-COMPLETENESS.2a.vii.c.i`
-- ID: `KG-ISF-COMPLETENESS.2a.vii.c.ii`
-- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iii`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c.iv`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c.v`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c.vi`
@@ -150,44 +123,12 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.2a.vii.e`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.f`
 - ID: `KG-ISF-COMPLETENESS.2b`
-- ID: `KG-ISF-COMPLETENESS.3`
-- ID: `KG-ISF-COMPLETENESS.4`
 - ID: `KG-ISF-COMPLETENESS.5`
-- ID: `KG-ISF-COMPLETENESS.5.i`
-- ID: `KG-ISF-COMPLETENESS.5.ii`
-- ID: `KG-ISF-COMPLETENESS.5.iii`
-- ID: `KG-ISF-COMPLETENESS.5.iv`
-- ID: `KG-ISF-COMPLETENESS.5.iv.a`
-- ID: `KG-ISF-COMPLETENESS.5.v`
-- ID: `KG-ISF-COMPLETENESS.5.vi`
-- ID: `KG-ISF-COMPLETENESS.5.vi.a`
-- ID: `KG-ISF-COMPLETENESS.5.vi.a.1`
-- ID: `KG-ISF-COMPLETENESS.5.vi.a.2`
-- ID: `KG-ISF-COMPLETENESS.5.vii`
-- ID: `KG-ISF-COMPLETENESS.5.vii.a`
-- ID: `KG-ISF-COMPLETENESS.5.vii.b`
-- ID: `KG-ISF-COMPLETENESS.5.viii`
 - ID: `KG-ISF-COMPLETENESS.5.x`
-- ID: `KG-ISF-COMPLETENESS.5.xi`
-- ID: `KG-ISF-COMPLETENESS.5.xi.a`
 - ID: `KG-ISF-COMPLETENESS.5.xii`
-- ID: `KG-ISF-COMPLETENESS.5.xiii`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.1`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.2`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.3.a`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.4`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.a`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.b`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.c`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.6`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.7`
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.8`
-- ID: `KG-ISF-COMPLETENESS.5.xiv`
-- ID: `KG-ISF-COMPLETENESS.5.xiv.a`
-- ID: `KG-ISF-COMPLETENESS.5.ix`
 
 ## Changelog
 
