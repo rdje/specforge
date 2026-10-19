@@ -92,6 +92,27 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   the readers that resolve a condition's or constraint's signal, keep enum definitions on the collective name where
   the document defines them there, and measure every chain and the 11 seeds.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.48`
+  Status: `open` (`2026-10-19`; DATA + CODE; found by `.3.d.ii.b.iii`, whose three children took the root to its
+  mandatory rollover)
+  Goal: **the bounded root stays under rollover as leaves are registered.** Registering `.3.d.ii.b.iii`'s three
+  children took the root from 229 to 232 lines, 90.6% of its 256-line health target, and
+  `check_active_task_evidence.pl` refused it. The pressure is structural: when a contract's input state is
+  `complete`, the checker requires the root's `## Executable Owner Registry` to declare every leaf the route
+  catalog routes, closed ones included, so the root gains a line per leaf the tree has ever had and none back when
+  one closes. After `.38` partitioned the tree the root was 142 lines with 77 ids; on `2026-10-19` it holds 143 ids,
+  of which 43 are open. The other sharded trees carry the same registry: LIVE-DOCUMENT-PRESSURE-HEADROOM 95 ids /
+  187 lines, KG-ISF-COMPLETENESS 90 / 195, SPEC-TO-INTENT-ALIGNMENT 84 / 212, EXTRACTION-QUALITY-GAUGE 66 / 200,
+  CLAIM-VERIFICATION-ADOPTION 54 / 157. **Landed in `.3.d.ii.b.iii`'s commit to let it register its children:** the
+  frontier's list of closed leaves (21 lines), which restated the route catalog's lifecycles, moved verbatim to
+  *Frontier notes moved from the root* at the end of this part; root 232 -> 213 lines (83.2%), above the warning
+  milestone. **Reproduce:** `bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE` after adding one `- ID:` line
+  per new leaf. **Impact:** about twenty more leaves and the tree refuses a commit that registers one. Acceptance:
+  bound the registry by what a session can act on rather than by history (the route catalog already carries every
+  leaf with its lifecycle and part, and ADR 0056 bounds the leaf count by it), keep a stable-path lookup for every
+  open owner, change the checker's rule for every contract that declares a registry in one transaction with a RED
+  control, and leave each root below its warning milestone.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6's AHB3 and AHB5 sections map `CSW.Prot` bits 28-24 to `HPROT` in prose; no
@@ -118,3 +139,31 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   records' own fields; no document, register or signal name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field bound to a wire*); KM
   `a-register-field-binding-to-a-wire` (amended); `.41.e`'s record corrected; `.41.h` opened.
+
+## Frontier notes moved from the root
+
+Moved verbatim from the root's `## Current Frontier` on `2026-10-19` by `.48`, whose record is above: the closed
+leaves the frontier listed, with the phrase each one closed on. The route catalog's lifecycles are the authority for
+which leaves are closed.
+
+> `.3.c`,
+> `.3.e`, `.3.e.i`, `.3.c.iii`,
+> `.39`, `.3.c.ii.a`, `.3.c.ii.b`, `.42`, `.3.c.ii`, `.3.c.vii`, `.41.c`, `.43.a`, `.3.b`, `.3.b.i`, `.3.b.ii`,
+> `.3.b.iii`, `.41.f`, `.3.b.iii.a`, `.3.b.iii.b`, `.3.b.iii.e`, `.3.b.iii.f`, `.3.b.iii.c`, `.3.b.iii.d`, `.3.b.iii.g`,
+> `.3.b.iii.h`, `.3.b.iii.i`, `.3.f.iv`, `.41.e`, `.3.d`, `.41.g`, `.3.d.ii`, `.3.d.ii.a`, `.3.d.ii.a.i`, `.3.d.ii.a.ii`, `.3.d.ii.b`, `.3.d.ii.b.i` and `.3.d.ii.b.iii` are done
+> (every typed table of `2026-09-26` has a reason or an owner; a symbol cites the table it was read from; a word in a
+> signal table's name column is not a signal; a field's value table fills the field's values; a condition marker that
+> opens a sentence opens that sentence's condition; the object before *and then* is no subject; an actor phrase ends at
+> its punctuation; a character reference's semicolon is no clause boundary; a signal named from one actor to another is
+> declared; a width operator the converter dropped stays a residual; a layout table sizes the register its heading names;
+> a descriptive consequent's signal is the one it describes; every untyped uncited table has a family, an owner or a
+> reader; an untyped signal table with a direction column declares its signals; every untyped uncited table is
+> non-contract or owned; a field table takes the register of the heading before it; a field's value table is read without
+> a header row or beside an attribute column; a record read from a table's row cites the table; a keyed row's value is its
+> first sentence or its one code; an untyped timeout table is read as timing; a naming table that names a component and
+> its state machine feeds no signal alias; a timeout's next state is the transition its timer takes; a timer name's
+> operation mode is its condition; a state a stated transition names is a protocol state; a typed timing value is read without a printed
+> footnote mark; a table mapping a field's bits to signal bits binds them; the unread assumptions and behaviors fall into six
+> families; a prose bit map binds a field, and every binding keeps its scope; an assumption's shapes are measured; a signal's
+> stated absent value rides its presence record to IntentIR; a check-coverage table is a typed relation that binds the class of
+> covered signals; a document-stated collective name stands for its members; the remaining assume-sentences fall into six shapes; an assume-sentence about the document is apparatus; the remaining stated defaults need three remedies).

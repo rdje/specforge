@@ -41,7 +41,8 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   **Reproduce:** `scripts/measure_unread_intent_records.py`, family `software_agent`. **Impact:** a document's
   software procedure is indistinguishable from unread hardware behavior. Acceptance: decide how an agent is known to
   be software from the document (no IR field says so today), give the obligation a typed non-executable disposition,
-  and measure every chain.
+  and measure every chain. `.3.d.ii.b.iii` (`2026-10-19`) routes one more record here: USB4 inter-domain's *If
+  bonding does not complete, assume single-Lane operation*, a step of the Local Domain's procedure.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii`
   Status: `done` (`2026-09-30`; MEASUREMENT, re-scoped from CODE; found by `.3.d`; children `.3.d.ii.a`, `.3.d.ii.b`)
@@ -237,7 +238,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   software with `.3.d.i`, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii`
-  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.b`)
+  Status: `done` (`2026-10-19`; MEASUREMENT, re-scoped from CODE; found by `.3.d.ii.b`; children `.3.d.ii.b.iii.a`-`.3.d.ii.b.iii.c`)
   Goal: **a stated default of an attribute, flow or field reaches its reader.** Among the 25 `stated_default` records,
   AXI states what a request's domain is when `AxDOMAIN` is absent (*Non-cacheable requests are assumed to be in the
   System domain*; *CMO transactions are assumed to be Non-shareable*), which SMMU flow holds when none is indicated
@@ -248,6 +249,62 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   member of `AxDOMAIN`'s own encoding) reaches no record. Acceptance: let an absent value be a member name the
   document's enum for that signal defines, route a flow or state default to the reader that owns the attribute, and
   measure every chain.
+  **Measured `2026-10-19`** (`python3 scripts/measure_unread_intent_records.py --json`, shape `stated_default`, every
+  record read in its statement's neighbours). After `.3.d.ii.b.i` filed four analysis premises as apparatus, **21**
+  remain, in 7 chains, and they need three different remedies and one existing owner:
+  | group | records | what they say | owner |
+  | --- | ---: | --- | --- |
+  | a labeled default for a class of requests | 3 | AXI `statement_2359`/`2360`, bullets under *If AxDOMAIN signals are not present:* (`statement_2358`): *Non-cacheable requests are assumed to be in the System domain*, *Cacheable requests … in the Shareable domain*; `statement_2701` *If AxDOMAIN is omitted from the interface, CMO transactions are assumed to be Non-shareable* | `.3.d.ii.b.iii.a` |
+  | an *assume* word that states no abstraction | 13 | premises: OpenCAPI's airflow *must be assumed to be approximately 5 ⁰C above ambient*, *One ×8 cable is assumed for this guideline*, *The moving average smoothing procedure assumes a window size of 1 GHz*; USB 3.2's *the conceptual clocking architecture shown in Figure E-15 is assumed* and *The reference JTF curves in Figure E-17 assume a second order filter*. *Assume* as *take on*: IOMMU's *the bits cqb.LOG2SZ-1:0 in cqt assume a valid but otherwise UNSPECIFIED value* (and `fqb`, `pqb`), USB 3.2's SetConfiguration *causes the device to assume the described configuration* and the hub that *shall ignore the route string and assume all packets are routed directly to the hub*. A negation: AXI's *the missing input cannot be assumed to take a fixed value*. A field value under a fault: IOMMU's *the PRPR value assumed is 0* and *the DTF value assumed for reporting such faults is 0* | `.3.d.ii.b.iii.b` |
+  | a default whose subject is no presence-record signal | 4 | AXI `statement_3715` *If no flow is indicated, a Stall flow is assumed*; `statement_3903` *If credit control signals are not included, the interface is assumed to be running when not in reset*; `statement_5203` *ACSNOOP, all requests on the AC channel can be assumed to be DVM messages*; `statement_2337` *if an interface does not have Domain signaling then Non-cacheable requests are assumed to be in the System Domain and Cacheable requests … in the Non-shareable Domain* | `.3.d.ii.b.iii.c` |
+  | a software procedure | 1 | USB4 inter-domain: the Local Domain with the higher UUID *shall* … *If bonding does not complete, assume single-Lane operation* | `.3.d.i` |
+  **Two findings change the leaf's premise.** AXI states every domain default for a **class of requests**, not for
+  the signal: binding *Non-shareable* as `AWDOMAIN`'s one absent value would assign it to non-CMO requests too, which
+  the document contradicts two sections earlier, so the carrier must keep the class the value holds for. And **the
+  document disagrees with itself**: `statement_2337` puts cacheable requests in the Non-shareable domain when
+  domain signaling is absent, and `statement_2360` puts them in the Shareable domain. A label can be resolved where
+  the absent value is bound, because EvidenceIR already states each enum member as a statement citing its table
+  (`Enum AxDOMAIN SYSTEM_DOMAIN = 3.`, `table_0111`, whose rows carry the label and meaning cells *System* and *System
+  domain*). No code change here, so no acceptance checklist applies.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`
+  Status: `open` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii`)
+  Goal: **a stated absent value may be a label of the signal's own encoding, and may hold for a class of requests
+  only.** AXI states `AxDOMAIN`'s defaults per request class, in a list under a lead-in that carries the absence
+  clause (*If AxDOMAIN signals are not present:* / *- Non-cacheable requests are assumed to be in the System domain.*)
+  and in one sentence (*If AxDOMAIN is omitted from the interface, CMO transactions are assumed to be
+  Non-shareable*). **Reproduce:** the 3 records of `.3.d.ii.b.iii`'s first group; `AWDOMAIN` (`presence_0033`) and
+  `ARDOMAIN` (`presence_0112`) carry no absent value. **Impact:** the domain a request takes when the interface has
+  no domain signals reaches no record. Acceptance: read a label value only when it is a cell of a row of the table
+  the document's enum for that signal (or its collective name) cites, naming the member; keep the class a value holds
+  for as written and never fold a class-scoped value into the signal's one absent value; read a list lead-in's
+  absence clause into the bullets it introduces; and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b`
+  Status: `open` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii`)
+  Goal: **an *assume* word that states no abstraction does not make the sentence one.** 13 records: five premises
+  `.3.d.ii.b.i`'s non-contract test does not see (a figure named inside the subject, *for this guideline*, a
+  procedure as subject, a design-guidance *must be assumed*), five sentences where *assume* means *take on* (a
+  register's bits, a device's configuration, a hub's routing), one negation (*cannot be assumed to take a fixed
+  value*), and two field values under a fault condition (IOMMU's PRPR and DTF). **Reproduce:** the 13 records of
+  `.3.d.ii.b.iii`'s second group. **Impact:** a hardware behavior and two conditional field values are filed as
+  assumptions no reader lowers. Acceptance: file the premises as apparatus, let the other sentences take the class
+  they would take without the word, measure what every reader then mints from them (`.3.d.ii.b.i` measured that a
+  fall-through can mint rules from non-contract prose), and keep all 11 seeds.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c`
+  Status: `open` (`2026-10-19`; DESIGN + CODE; found by `.3.d.ii.b.iii`)
+  Goal: **a default whose subject is no presence-record signal reaches the record that owns it.** 4 AXI records: the
+  SMMU flow default (the statement names `MMUFLOW_Present`, a term of the presence conditions of `AWMMUFLOW`,
+  `ARMMUFLOW`, `AWMMUATST` and `ARMMUATST`, and *Stall* labels code 0 of `AxMMUFLOW`'s encoding), the interface
+  state without credit control (*running when not in reset*; the protocol states read are `DEACTIVATE`, `STOP` and
+  `ACTIVATE`), `ACSNOOP`'s removal rationale (a signal of earlier issues with no presence row), and *Domain
+  signaling*'s defaults, which name the `AxDOMAIN` signals by a phrase and disagree with `statement_2360`.
+  **Reproduce:** the 4 records of `.3.d.ii.b.iii`'s third group. **Impact:** a flow and an interface-state default
+  stay assumptions, and the document's disagreement over a cacheable request's domain is invisible. Acceptance:
+  decide each carrier (a default reached through the property that gates the signal, an interface-state default, a
+  removed signal's rationale as non-contract), surface the disagreement as a conflict record, and measure every
+  chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`
   Status: `open` (`2026-09-30`; MEASUREMENT then CODE; found by `.3.d`)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture fully extracted
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > is the DATA phantom mechanism established
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -295,5 +297,3 @@
   > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > should specforge record a residual for every typed rule that does not lower to .isf
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > should specforge record an adapter residual for rules whose subject is not a declared signal

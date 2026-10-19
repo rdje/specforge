@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > which units mark a timing record as decibel domain
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > which untyped tables are contract content
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > which upstream claim-verification material is deliberately not adopted
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -293,5 +297,3 @@
   > why did PREQ publish must_be_high when the row sets PREQ LOW
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > why did PRODUCTION-GRAPH-CENSUS-PIN.2's census have to be corrected twice
-- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
-  > why did PRUSER's condition lose PSEL and PENABLE

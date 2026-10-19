@@ -244,6 +244,8 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does the .5.iv.a header lever change any persisted artifact (NO — it is inert on the whole measurable stratum, proven not assumed: check_chain_currency.sh replays evidence/semantic/intent/isf-adapter for all 24 rebuildable documents against the patched binary and every persisted artifact is byte-identical. Exactly 1 of the 285 accepted tables sits in a rebuildable document
   > — the SMMU guide Table 3-1 that opened .5.iv — and it mints nothing because .5.ii drops its sentence members. The other 8 documents are legacy schema-1 chains the current binary refuses for canonical use until re-ingest)
+- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
+  > does the AXI specification disagree with itself about a cacheable request's domain without domain signals (yes: statement_2337 says Non-shareable, statement_2360 says Shareable)
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > does the Ax metavariable name a wire
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -296,5 +298,3 @@
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does the current SWD chain come from the tracked ADI PDF
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > does the current SpecForge binary still fabricate AIA TOC timing constraints

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > how many declarations does the SemanticIR reader refuse corpus-wide
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > how many declarations does the current reader refuse corpus-wide
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
@@ -296,5 +298,3 @@
   > how should the current FSMGen gitlink in documentation be verified
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names

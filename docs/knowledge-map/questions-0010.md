@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > how to express the JTAG TAP / SWD FSM in .isf
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -295,5 +297,3 @@
   > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > is the CoreSight Base System Architecture current-binary refresh complete
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > is the CoreSight Base System Architecture fully extracted

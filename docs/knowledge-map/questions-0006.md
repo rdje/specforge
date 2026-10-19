@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > how do I decide between partitioning a research record and declaring a rollover for it
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > how do I decide whether a naming convention is universal grammar or one document's habit
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
@@ -295,5 +297,3 @@
   > how does SpecForge read a table whose rows disagree about their column order
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > how does SpecForge read a temporal condition with an unless or except clause
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > how does SpecForge read a timing table with one MIN/MAX pair per operating mode

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how does SpecForge read a timing table with one MIN/MAX pair per operating mode
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -296,5 +298,3 @@
   > how is a footnote mark read when the converter lost its note (Polling.Active 2)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how is a fused Fields(Continued) caption handled

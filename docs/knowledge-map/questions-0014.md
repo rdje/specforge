@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what gives timing observation samples tick authority
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what global provenance and stage-conservation gates apply before executable lowering
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > what goes stale when I register a task-evidence part
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -294,7 +298,3 @@
   > what is classified_obligation_residuals / evidence_classified_obligation_residuals_remaining
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > what is closes_character_reference
-- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > what is collective_name on a StatedAbsentValue
-- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > what is collective_signal_name_surface / collective_marker / is_collective_member

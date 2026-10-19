@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -295,5 +297,3 @@
   > how many decision records can docs/decisions hold
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how many declaration rows does the current reader lose on the frozen set
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > how many declarations does the SemanticIR reader refuse corpus-wide
