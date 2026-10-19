@@ -948,6 +948,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.48.a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1053,13 +1059,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
          "metrics" : {
-            "bytes" : 18153,
+            "bytes" : 20520,
             "line_bytes" : 281,
-            "lines" : 189
+            "lines" : 213
          },
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-         "sha256" : "f3d0c9e983ac0fb791cbaebb05273e781c004fac1ca7b980d3fdddaf9a4c3417",
+         "sha256" : "8bba6ba86281e61f6eed7cc23b498b60e3889e1ead377d0adfec9bbd12dc6354",
          "state" : "active"
       },
       {

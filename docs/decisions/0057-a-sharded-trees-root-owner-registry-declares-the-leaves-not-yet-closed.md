@@ -14,6 +14,7 @@ answers:
   - "why does SPEC-TO-INTENT-ALIGNMENT.9a stay in its root's owner registry although it is closed"
   - "why did registering three leaves refuse the EXTRACTION-REPRESENTATION-GAPS root at its mandatory rollover"
   - "what is EXTRACTION-REPRESENTATION-GAPS.48"
+  - "why does the trajectory controller say a gap owner is not declared in docs/tasks/<TREE>.md (EXTRACTION-REPRESENTATION-GAPS.48.a: it now also looks in the tree's task-evidence directory)"
 ---
 
 # ADR 0057: A sharded tree's root owner registry declares the leaves not yet closed
@@ -55,6 +56,10 @@ ADR 0056 bounds the leaf count by it.
   route row in the catalog. A closed leaf's owner is found there, or by searching `docs/tasks/` for its id.
 - Closing a leaf is now a root edit too: its `- ID:` line and its `root_required_literals` entry leave together, in
   the commit that closes it.
+- One consumer outside the doctrine scripts read the registry: the trajectory controller's owner validation
+  (`validate_task_owner`), which accepted a gap's owner only from the root file it names. The workspace tests caught
+  it after the prune (`SPEC-TO-INTENT-ALIGNMENT.8` and `.5a` are closed), and `EXTRACTION-REPRESENTATION-GAPS.48.a`
+  makes it look in the tree's task-evidence directory too.
 
 ## Links
 

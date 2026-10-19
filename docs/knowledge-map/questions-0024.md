@@ -16,6 +16,8 @@
   > why does the status ledger keep hitting rollover
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > why does the tracked validation snapshot differ from current generated IntentIR reports
+- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
+  > why does the trajectory controller say a gap owner is not declared in docs/tasks/<TREE>.md (EXTRACTION-REPRESENTATION-GAPS.48.a: it now also looks in the tree's task-evidence directory)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why does the trajectory snapshot reject my fixture builder change
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -296,5 +298,3 @@
   > why is constraint_bearing_sentence the wrong narrowing for a model proposal
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > why is corpus coverage refresh 34 blocked before ingest

@@ -967,10 +967,14 @@ fn validate_task_owner(owner: &TaskOwner, gap_id: &str, problems: &mut Vec<Strin
         problems.push(format!("gap '{gap_id}' task tree escapes the repository"));
         return;
     }
-    match fs::read_to_string(canonical) {
-        Ok(contents) if contents.contains(&format!("- ID: `{}`", owner.task_id)) => {}
+    let declaration = format!("- ID: `{}`", owner.task_id);
+    match fs::read_to_string(&canonical) {
+        Ok(contents) if contents.contains(&declaration) => {}
+        // ADR 0057 — a migrated tree's bounded root declares only the leaves not yet closed; a closed leaf is
+        // recorded in the tree's task-evidence directory instead.
+        Ok(_) if task_evidence_declares(&canonical, &declaration) => {}
         Ok(_) => problems.push(format!(
-            "gap '{gap_id}' owner '{}' is not declared in {}",
+            "gap '{gap_id}' owner '{}' is not declared in {} or its task evidence",
             owner.task_id, owner.task_tree_path
         )),
         Err(error) => problems.push(format!(
@@ -978,6 +982,24 @@ fn validate_task_owner(owner: &TaskOwner, gap_id: &str, problems: &mut Vec<Strin
             owner.task_tree_path
         )),
     }
+}
+
+/// Whether a task tree's evidence directory declares the node: the Markdown parts of the directory named after
+/// the root file in lowercase beside it (`docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` ->
+/// `docs/tasks/spec-to-intent-alignment/`), which is every migrated tree's declared collection directory.
+fn task_evidence_declares(root: &Path, declaration: &str) -> bool {
+    let (Some(parent), Some(stem)) = (root.parent(), root.file_stem().and_then(|s| s.to_str()))
+    else {
+        return false;
+    };
+    let Ok(entries) = fs::read_dir(parent.join(stem.to_ascii_lowercase())) else {
+        return false;
+    };
+    entries.flatten().any(|entry| {
+        let path = entry.path();
+        path.extension().is_some_and(|extension| extension == "md")
+            && fs::read_to_string(&path).is_ok_and(|contents| contents.contains(declaration))
+    })
 }
 
 fn validate_evidence_ref(evidence: &EvidenceRef, label: &str, problems: &mut Vec<String>) {
@@ -1071,6 +1093,30 @@ mod tests {
 
     const ZERO_SHA: &str = "0000000000000000000000000000000000000000000000000000000000000000";
     const TASK_PATH: &str = "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md";
+
+    /// EXTRACTION-REPRESENTATION-GAPS.48.a — ADR 0057 left a closed leaf out of its root's owner registry, so an
+    /// owner is found in the root or in the tree's task-evidence directory, and refused when neither declares it.
+    #[test]
+    fn a_closed_owner_is_found_in_its_trees_task_evidence() {
+        let owner = |task_id: &str| TaskOwner {
+            task_id: task_id.to_string(),
+            task_tree_path: TASK_PATH.to_string(),
+        };
+        let problems = |task_id: &str| {
+            let mut problems = Vec::new();
+            validate_task_owner(&owner(task_id), "gap", &mut problems);
+            problems
+        };
+        // The tree itself is declared in its root; `.8` is closed and recorded only in a part.
+        assert!(problems("SPEC-TO-INTENT-ALIGNMENT").is_empty());
+        assert!(problems("SPEC-TO-INTENT-ALIGNMENT.8").is_empty());
+        assert_eq!(
+            problems("SPEC-TO-INTENT-ALIGNMENT.999"),
+            vec![format!(
+                "gap 'gap' owner 'SPEC-TO-INTENT-ALIGNMENT.999' is not declared in {TASK_PATH} or its task evidence"
+            )]
+        );
+    }
 
     fn evidence() -> EvidenceRef {
         EvidenceRef {

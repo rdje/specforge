@@ -133,6 +133,30 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   contracts --check clean; task-node-retention 1,576 nodes, none moved or retired; no other diagnostic`
   Commit: `EXTRACTION-REPRESENTATION-GAPS.48 — a root's owner registry declares the leaves not yet closed`
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.48.a`
+  Status: `done` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii.a`'s workspace test run, a regression of `.48`)
+  Goal: **the trajectory controller finds a closed owner where ADR 0057 put it.** `.48` pruned the closed owner ids
+  from six roots and searched every script that reads `- ID:` lines, but not the Rust: `validate_task_owner`
+  (`crates/specforge/src/ir/trajectory.rs`) accepts a gap's owner only when the named root file contains `- ID:
+  \`<owner>\``. The persisted controller input names `SPEC-TO-INTENT-ALIGNMENT.8` and the tests name `.5a`, both
+  closed and both now recorded only in `docs/tasks/spec-to-intent-alignment/`. **Reproduce:** `cargo test --offline
+  -p specforge-conformance --lib trajectory` — 6 failures, each *gap '…' owner 'SPEC-TO-INTENT-ALIGNMENT.…' is not
+  declared in docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md*. The doctrine gate passed `.48` because it runs no Rust tests.
+  **Impact:** the controller refuses its own persisted input, so the trajectory report cannot be derived.
+  Acceptance: resolve an owner in the root or, failing that, in the tree's task-evidence directory, refuse an owner
+  declared in neither, and pass the six tests.
+  **Landed.** `validate_task_owner` accepts an owner the named root declares or, through `task_evidence_declares`,
+  one a Markdown part of the tree's task-evidence directory declares — the directory named after the root in
+  lowercase beside it, which is every migrated contract's declared `collection_directory` (all eight checked) — and
+  its message now says where it looked. ADR 0057's consequences name this consumer. The `.3.d.ii.b.iii.a` work in
+  flight was set aside (`git stash`, with a patch backup) so this lands on its own.
+  Verification: `cargo test -p specforge-conformance --lib trajectory 27 passed (the 6 failures and the new
+  a_closed_owner_is_found_in_its_trees_task_evidence); RED: without the fallback the same 7 fail; cargo fmt --check
+  clean; cargo clippy --workspace --all-targets -D warnings clean; cargo test --workspace --lib --exclude
+  specforge-production-graph 474 / 171 / 1,833 passed; flow_census rolled +1 function, +4 decision sites, +2 helper
+  edges, boundary unchanged`
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.48.a — the trajectory controller finds a closed owner in its tree's evidence`
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6's AHB3 and AHB5 sections map `CSW.Prot` bits 28-24 to `HPROT` in prose; no
