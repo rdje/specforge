@@ -27656,11 +27656,35 @@ pub fn capture_signal_presence_rows(
             .to_string()
     };
 
-    // Data rows = body rows + header-trapped data rows (the shared `.9.11`/`.12a` rule).
+    // EXTRACTION-REPRESENTATION-GAPS.45 — a header row that states presence is data whatever its cells' header flags:
+    // its first cell opens with an identifier and two more of its cells are presence codes. APB5's `table_0018` arrives
+    // with `PSLVERRCHK | 1 | Check_Type | OC | N N | | N` among its header rows, its second cell flagged a header, and
+    // read as a header row it gave the whole matrix its codes as variant labels.
+    let states_presence = |row: &Vec<StructuredTableCellRecord>| -> bool {
+        row.len() >= 2
+            && row
+                .first()
+                .is_some_and(|cell| is_presence_identifier(&first_token(cell)))
+            && row
+                .iter()
+                .skip(1)
+                .filter(|cell| is_presence_code(cell.text.trim()))
+                .count()
+                >= 2
+    };
+
+    // Data rows = body rows + header-trapped data rows (the shared `.9.11`/`.12a` rule) + header rows that state
+    // presence (`.45`), in header order.
     let data_rows: Vec<&Vec<StructuredTableCellRecord>> = table
         .body_rows
         .iter()
-        .chain(recovered_trapped_data_rows(table))
+        .chain(
+            table
+                .header_rows
+                .iter()
+                .skip(1)
+                .filter(|row| is_row_header_data_row(row) || states_presence(row)),
+        )
         .collect();
     if data_rows.is_empty() {
         return empty;
@@ -27683,7 +27707,7 @@ pub fn capture_signal_presence_rows(
                 .header_rows
                 .iter()
                 .skip(1)
-                .filter(|row| !is_trapped_shape(row)),
+                .filter(|row| !is_trapped_shape(row) && !states_presence(row)),
         )
         .collect();
 
@@ -34541,6 +34565,62 @@ mod tests {
                 .map(|v| (v.variant_label.as_str(), v.code.as_str()))
                 .collect::<Vec<_>>(),
             vec![("V1", "O"), ("V2", "N"), ("V3", "N")]
+        );
+    }
+
+    // EXTRACTION-REPRESENTATION-GAPS.45 — APB5's `table_0018`: a converter flags a data row's second cell a header, so
+    // the row stays among the header rows. It is data, and the header keeps its variant labels; only fused rows refuse.
+    #[test]
+    fn a_header_row_that_states_presence_is_data_and_the_labels_stay_the_headers() {
+        let mut table = presence_table(
+            "table_flagged",
+            &["Signal", "Width", "Property", "V5", "V4", "V3", "V2"],
+            &[
+                &["XWDCHK", "1", "Check_Type", "C", "N", "N", "N"],
+                &["XSLVCHK", "1", "Check_Type", "OC", "N N", "", "N"],
+                &["XAUSCHK", "1", "Check_Type", "OC", "N", "N", "N"],
+            ],
+            &[&["XWAKECHK", "1", "Check_Type", "C", "N N", "", "N"]],
+        );
+        for row in &mut table.header_rows[2..] {
+            row[0].is_header = false;
+            row[1].is_header = true;
+        }
+        let capture = super::capture_signal_presence_rows(&table);
+        let read: Vec<(String, Vec<(String, String)>)> = capture
+            .records
+            .iter()
+            .map(|record| {
+                (
+                    record.signal_name.clone(),
+                    record
+                        .variant_presence
+                        .iter()
+                        .map(|v| (v.variant_label.clone(), v.code.clone()))
+                        .collect(),
+                )
+            })
+            .collect();
+        let row = |name: &str, codes: [&str; 4]| {
+            (
+                name.to_string(),
+                ["V5", "V4", "V3", "V2"]
+                    .iter()
+                    .zip(codes)
+                    .map(|(label, code)| (label.to_string(), code.to_string()))
+                    .collect::<Vec<_>>(),
+            )
+        };
+        assert_eq!(
+            read,
+            vec![
+                row("XWDCHK", ["C", "N", "N", "N"]),
+                row("XAUSCHK", ["OC", "N", "N", "N"])
+            ]
+        );
+        assert_eq!(
+            capture.refused_rows, 2,
+            "the two fused `N N` rows are refused"
         );
     }
 

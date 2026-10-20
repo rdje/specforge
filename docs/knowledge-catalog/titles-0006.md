@@ -57,7 +57,7 @@
 | [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
 | [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
-| [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
+| [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-10-20 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md) | 2026-08-27 | `current` | SourceIR ingest is not reproducible across time, and no gate can see it |
 | [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md) | 2026-08-28 | `current` | Re-ingesting the corpus is a trade, not a refresh — it loses caption bindings to gain figure-interior text |
 | [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md) | 2026-06-15 | `current` | source_ir.json is O(pages) at ~9.3 KB/page; downstream stages load it with a full serde deserialize |

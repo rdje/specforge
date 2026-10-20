@@ -47,6 +47,17 @@ mint signals**: existence-in-a-variant is configuration intent about a name, not
 `.12a` gap-fill owns declaration content, with its own width/direction evidence rules).
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.12b`).
 
+**A data row a converter flagged as a header is still data.** APB5's check-signal matrix (*Table B-3*, header
+`Signal | Width | Property | APB5 | APB4 | APB3 | APB2`) arrives with every row among the header rows, and three of
+them with their second cell flagged a header (`PSLVERRCHK | 1 | Check_Type | OC | N N | | N`). Read as genuine header
+rows, they gave the matrix its codes as variant labels: `PWDATACHK`, `PSTRBCHK`, `PREADYCHK` and `PBUSERCHK` held
+`OC`/`N`/`N`/`N` where the document says `APB5`/`APB4`/`APB3`/`APB2`, and `PAUSERCHK` and `PWUSERCHK` held no row.
+Since `EXTRACTION-REPRESENTATION-GAPS.45` (`2026-10-20`) a header row whose first cell opens with an identifier and
+two more of whose cells are presence codes is a data row of the matrix, whatever its cells' header flags, and the
+header keeps its labels. The fused `N N` rows still refuse, so APB5 holds 26 presence records, 6 of them this matrix's
+under its own labels; no other chain moves. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md`
+(`.45`).
+
 **A signal's stated absent value rides its presence record.** A presence matrix says when a signal exists; the
 prose says what it is when it does not: *BRESP is an optional signal. If the BRESP_WIDTH property is 0, it is not
 present and assumed to be 0b000 (OKAY).* Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` (`2026-10-03`) that value

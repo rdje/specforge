@@ -4,6 +4,7 @@ title: Signal-presence matrices — the literal presence-CONDITION typed surface
 answers:
   - "what is signal_presence_records and what does a SignalPresenceRecord hold"
   - "how are signal presence matrices captured into typed records"
+  - "why did APB5 check signals carry variant labels OC/N (a flagged data row read as a header; .45 states_presence)"
   - "are presence codes like Y N O C OC ever interpreted"
   - "what is the presence-matrix structural gate and how many tables fire it"
   - "how are rotated version matrices remapped for presence capture"
@@ -15,7 +16,7 @@ answers:
   - "what is capture_signal_presence_rows and who shares it"
   - "what is PDF-VARIANT-DIGESTION.12b"
   - "does a presence record say what an absent signal is assumed to be (since 2026-10-03, absent_value — see a-signals-stated-absent-value-rides-its-presence-record)"
-date: 2026-06-11
+date: 2026-10-20
 tags: [extraction, signal-presence, configuration-intent, signal-tables, completeness, pdf-variant-digestion]
 evidence: crates/specforge/src/ir/evidence.rs (SignalPresenceRecord, capture_signal_presence_rows, signal_presence_surface); crates/specforge/src/ir/completeness.rs (signal_presence_capture_covers); crates/specforge/test_data/kg_quality/signal_presence_matrix_gold + signal_presence_malformed_refusal_negative; docs/tasks/PDF-VARIANT-DIGESTION.md (.12b)
 reverify: cargo test --workspace --exclude specforge-production-graph --lib presence -- --nocapture ; ./target/release/specforge validate generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json 2>/dev/null | grep unexplained_intent_bearing_tables   # → 31
@@ -65,3 +66,10 @@ refused row keeps the matrix flagged.
 Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` (`2026-10-03`) a record also carries `absent_value`, the
 literal the prose states a signal takes when it is not present or not driven, and the records cross
 SemanticIR and IntentIR unchanged ([[a-signals-stated-absent-value-rides-its-presence-record]]).
+
+**A flagged data row is data (`2026-10-20`, `EXTRACTION-REPRESENTATION-GAPS.45`).** `capture_signal_presence_rows`
+reads a header row after the first as data when its first cell opens with an identifier and two more of its cells
+are presence codes (`states_presence`), whatever its cells' header flags, and leaves it out of the header view whose
+last row gives the variant labels. APB5's `table_0018` had three such rows with a second cell flagged a header: its
+labels were codes (`OC`/`N`/`N`/`N`) and two rows were missing; now `APB5`…`APB2` and 6 rows, the fused `N N` rows
+still refused.

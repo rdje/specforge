@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -296,5 +298,3 @@
   > why does SpecForge not treat Source and Sink as requester and completer (the pair recovers 8 Avalon-ST rows and costs 12 wrong ones - Clock source, Reset source, Interrupt source are not actors - plus one document's complementary relations; 60 percent false positives)
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > why does SpecForge only treat an INTERIOR lower-case position as a placeholder
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh

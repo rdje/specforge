@@ -34,6 +34,8 @@
   > why did APB unexplained_intent_bearing_tables go to zero
 - [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
   > why did APB-E PADDR PWDATA PSEL and AHB HEXOKAY lose their tinv_sc invariants
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why did APB5 check signals carry variant labels OC/N (a flagged data row read as a header; .45 states_presence)
 - [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
   > why did ARBURST have two identical constraints
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -295,5 +297,3 @@
   > why did the Knowledge Map bundle's 512-fact and 4,096-key caps move
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence

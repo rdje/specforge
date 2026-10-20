@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
 - [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
   > why is TCK / SWCLK is the Test Clock signal from ... refused
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
@@ -295,5 +297,3 @@
   > why is the first SPEC-TO-INTENT-ALIGNMENT.7c replay not publishable
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > why is the first trajectory snapshot diverging with insufficient history
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why is the in-repo corpus tree outside the host-library refresh cohort

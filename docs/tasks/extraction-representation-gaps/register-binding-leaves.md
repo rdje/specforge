@@ -61,7 +61,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   (`check_chain_currency.sh` 31 of 31 current).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.45`
-  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a`)
+  Status: `done` (`2026-10-20`; CODE; found by `.3.d.ii.a`; checklist below)
   Goal: **a presence row whose converter fused two code cells keeps the header's variant labels.** APB5
   `table_0018` (*Table B-3*, header `Signal | Width | Property | APB5 | APB4 | APB3 | APB2`) has a row the converter
   rendered as `PWAKEUPCHK | 1 | Check_Type &Wakeup_Signal | C | N N |  | N` — two codes fused into one cell and the next
@@ -75,6 +75,22 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   codes, not versions; a consumer reading `APB5` finds nothing for them, and two always-present signals have no row. Acceptance: find why one fused row moves the fragment's header remap (the
   `.5h` rotation votes, or the fused-pair split), keep the header labels when the header row is a proper
   header, refuse only the fused row, and measure every chain.
+  **Found `2026-10-20`: neither — a data row flagged as a header became the header.** The converter put every row of
+  `table_0018` among its header rows, and three (`PSLVERRCHK`, `PAUSERCHK`, `PWUSERCHK`) with their second cell
+  flagged a header; `is_row_header_data_row` (a row whose only flagged cell is its first) does not lift them, so the
+  capture's header view kept them, and its last row gave the variant labels (`OC`/`N`/`N`/`N`). The fused row only
+  shared the table. **Decided:** in `capture_signal_presence_rows` a header row after the first whose first cell
+  opens with an identifier and two more of whose cells are presence codes (`states_presence`) is a data row of the
+  matrix, whatever its flags, and leaves the header view; the shared `recovered_trapped_data_rows` is unchanged, so no
+  other reader moves. **Measured over all 31 chains** (evidence dry-run against `b2e6027a4`'s): 30 identical; APB5
+  moves only `signal_presence_records` (24 -> 26) and its extraction-manifest counts: `table_0018`'s 4 records keep
+  their signals with labels `APB5`/`APB4`/`APB3`/`APB2`, and `PAUSERCHK` and `PWUSERCHK` gain rows; the 4 fused `N N`
+  rows (`PRDATACHK`, `PSLVERRCHK`, `PRUSERCHK`, `PWAKEUPCHK`) stay refused. Rebuilt stage by stage: SemanticIR and IntentIR
+  carry the 26, the adapter and the `.isf` text byte-identical; no chain re-seals. **Declared residuals:**
+  `PWDATACHK`'s condition reads `DATA_WIDTH/8 Check_Type`, because the converter fused its width into the property
+  cell; and `table_0016`'s `PRESETn` and `PADDR` rows, each with a fused `Y Y` beside an empty cell, stay refused
+  whole, so APB5 still has no presence row for either: splitting a fused pair into the empty neighbour would guess
+  which column it came from.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46`
   Status: `open` (`2026-10-03`; DESIGN then CODE; found by `.3.d.ii.a.i`)
@@ -395,3 +411,26 @@ which leaves are closed.
   field names and ranges; no document, register or signal name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` (the prose bit-map section); KM
   `a-register-field-binding-to-a-wire` amended. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.45` (CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — the leaf's command: `table_0018`'s 4 records with labels `OC`/`N`/`N`/`N`; its
+  SourceIR rows dumped: all 11 among the header rows, three with the second cell flagged a header.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `capture_signal_presence_rows` built its
+  header view from every header row `is_row_header_data_row` refuses, so a flagged data row became the header and its
+  codes the labels. New `states_presence` in the data rows and out of the header view. RED, the file restored
+  byte-identically after each (3 mutations, each failing
+  `a_header_row_that_states_presence_is_data_and_the_labels_stay_the_headers`): not read as data, kept as a header,
+  the code threshold unreachable.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 30 identical, APB5 moves only its presence records
+  and manifest counts. APB5 rebuilt stage by stage, each artifact validated once, the adapter last; only
+  `signal_presence_records` moves (24 -> 26) at each stage; `.isf` byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `b2e6027a4`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 171 / 1,873 passed, 0 failed. `flow_census.json` unchanged (the flow check passes as is). Census: unread
+  records 138, unchanged.
+- [x] **GENERICITY (ADR 0006)** — the capture's own identifier and presence-code tests; no document, table or signal
+  name.
+- [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md` (*A data row a converter flagged as a header is still
+  data*); KM `signal-presence-matrix-capture` amended. No production rule deleted or replaced.

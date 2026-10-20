@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why does shall be unique within the subsystem publish no constraint
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > why does slicing idx minus 2 before signal panic
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -296,5 +298,3 @@
   > why is SWIO not captured as a third SWP signal
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > why is SpecForge called forward specification mining
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
