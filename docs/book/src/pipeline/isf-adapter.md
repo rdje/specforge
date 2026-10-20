@@ -490,6 +490,9 @@ which names the class and, for a label, the encoding table and code it resolves 
 each: a parity check is interface shape rather than a protocol observation, and its lowering — a combinational
 XOR chain, or a request — is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_names`
 (`.3.d.ii.a.ii`) are carried the same way: a name is not a port, and the members it stands for are already ports.
+An equivalence rule (`.3.d.ii.b.ii`) gets a packet, `isf_protocol_equivalence_rule_` plus its id: `.isf` has no
+construct that treats one thing as another under a condition, and the rule's subject and equivalent are phrases no
+`.isf` name stands for yet.
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
 unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,

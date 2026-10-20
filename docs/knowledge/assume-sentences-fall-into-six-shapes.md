@@ -40,7 +40,8 @@ were bound (`.3.d.ii.a`, `.a.i`, `.a.ii`), 106 such records remain on the 31 cha
 
 **Outcome so far.** `.3.d.ii.b.i` (`2026-10-03`) files the convention, diagram-key, narrative and other shapes as
 the `apparatus` statement class ([[an-assume-sentence-about-the-document-is-apparatus]]); the equivalence rules
-and the genuine defaults remain abstractions until `.3.d.ii.b.ii` and `.3.d.ii.b.iii` carry them.
+are typed `equivalence_rules` records since `.3.d.ii.b.ii` (`2026-10-19`, [[an-equivalence-rule-is-a-typed-record]]),
+and the genuine defaults were routed by `.3.d.ii.b.iii` the same day.
 
 **The stated defaults, read one by one `2026-10-19`** (`.3.d.ii.b.iii`). 21 remain after `.3.d.ii.b.i`, and only 3
 are an absent signal's default: AXI's `AxDOMAIN` defaults, each stated for a **class of requests** (*Non-cacheable

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > should a table row declare a signal when it states no direction and no width
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > should an oversized research record be split or should its ceiling be raised
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > should corpus refresh progress be counted from normalized directories
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > should persisted chain currency be a gated doctrine or an advisory report
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -291,9 +297,3 @@
   > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what did the active PDF task containment census find
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > what did the caption repair change in the published constraint count
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what did the corpus promotion sweep measure (gauge deltas per doc)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what did the corpus task evidence containment census find

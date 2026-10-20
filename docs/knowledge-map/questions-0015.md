@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > what is bind_protocol_state_machines
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > what is binding_bearing_clause and why does it find before it locates
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > what is caption_descriptive_text
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -56,6 +62,8 @@
   > what is document_type_declared / front_matter_doc_type_hint
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > what is enum member-column drift
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > what is equivalence_rules / EquivalenceRuleRecord / EquivalenceModality
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > what is every_assume_word_states_no_abstraction / premise_of_a_figure_a_guideline_or_an_analysis
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -96,6 +104,8 @@
   > what is is_verb_shaped
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > what is isf_obligations_not_lowered
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > what is isf_protocol_equivalence_rule_
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > what is isf_protocol_signal_qualified_absent_value_
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
@@ -170,6 +180,8 @@
   > what is source_batch in SourceIR
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > what is split_clauses
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > what is stated_equivalences / equivalence_rule_surface
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > what is swallowed_verb_governance
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -285,15 +297,3 @@
   > what is the caption label prefix
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > what is the cheapest falsification oracle available in this repository
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > what is the claim verification registry schema
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the condition-read-as-obligation error class and its gate
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > what is the constraint-subject-must-be-declared filter
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > what is the control for a persisted-versus-reader comparison

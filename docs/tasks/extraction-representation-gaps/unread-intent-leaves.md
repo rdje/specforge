@@ -227,7 +227,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   `assumed_by_word` 106 -> 53; IntentIR assumptions 78 fewer across the 22 chains, no other IntentIR section moved, adapters and ISF texts byte-identical.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`
-  Status: `open` (`2026-10-03`; DESIGN then CODE; found by `.3.d.ii.b`)
+  Status: `done` (`2026-10-19`; DESIGN then CODE; found by `.3.d.ii.b`; checklist below)
   Goal: **an equivalence rule (X is treated as Y) is typed.** 31 records state that under a condition one thing is
   treated as another: an interrupt class (*LPIs are always treated as Non-secure Group 1 interrupts*), an instruction
   (*treated as a nop*), a request (*may be treated as a no-operation request by hubs*), a register field (*CSW.DbgSwEnable
@@ -236,6 +236,27 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   decide the carrier (a conditional rule whose consequent is an equivalence, or a typed equivalence record with
   subject, equivalent and condition), read the 31 into it citing their statements, keep the ones whose subject is
   software with `.3.d.i`, and measure every chain.
+  **Decided `2026-10-19`: a typed `EquivalenceRuleRecord`, not a conditional rule.** `ConditionalRuleRecord` is
+  signal-centric (an antecedent, a consequent signal, an action), and most equivalences have neither a condition nor a
+  signal, so filing them there would tell every consumer something the sentence does not say. EvidenceIR gains
+  `equivalence_rules` (`EquivalenceRuleRecord { equivalence_id, subject, equivalent, condition, modality,
+  supporting_statement_ids }`, family `evidence.normative`), carried unchanged by SemanticIR and IntentIR; every part
+  is as written and the sentence keeps its `explicit_abstraction` class. **The grammar** was probed on all 39 *treated
+  as* uses before any code (`stated_equivalences`): auxiliaries with a copula before the phrase, the subject from the
+  sentence's last clause break, a condition when the text before that break opens like one, the equivalent to its
+  clause's end, the modality from the auxiliaries. A coordinated predicate ends its subject at the subject's own verb,
+  a parenthesis holds its own subject and a reason clause asserts its equivalence; a contrasted clause (*otherwise*,
+  *else*, *in which case*), a hypothetical, a coordinated predicate without a verb and a use with no copula are
+  refused (5 of 39). None of the 31 has a software subject, so `.3.d.i` takes none. The adapter keeps one
+  `isf_protocol_equivalence_rule_<id>` residual per record, and `validate` counts the records on all three stages.
+  **Measured over all 31 chains:** evidence dry-run against `0e69b1170`'s output, 21 identical; in 10 only
+  `equivalence_rules` appears — 34 records (USB 3.2 10, GICv3 6, IOMMU 4, ADIv6 4, RISC-V debug 3, AXI 3, SMMU guide,
+  TMC, CHI C2C and the USB4 connection-manager guide 1 each). Rebuilt stage by stage, the 10 move only that section at
+  SemanticIR and IntentIR and gain one adapter residual per record; both emitted `.isf` texts byte-identical. The new
+  rule field moves each stage's rule fields, so every chain re-sealed: `rebuild_stage_cascade.sh --write` rebuilt all 31 at every stage,
+  31 content-identical and validated, one seal per stage after. Unread records 345 -> 315 (27 of the 31 *treated as*
+  assumptions and 3 behaviors citing the same statements), `assumed_by_word` 37 -> 10, `treated_as` 31 -> 4: the four
+  refused contrast and hypothetical sentences (IOMMU's *otherwise* and *else*, USB 3.2's *in which case* and *if …*).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`
   Status: `open` (`2026-09-30`; MEASUREMENT then CODE; found by `.3.d`)
@@ -394,3 +415,31 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   `an-assume-sentence-about-the-document-is-apparatus` (new), `assume-sentences-fall-into-six-shapes` (amended). No
   production rule was deleted or replaced: the abstraction arm is narrowed, and the book described it nowhere by
   name.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii` (DESIGN then CODE) — DONE `2026-10-19`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: `assumed_by_word` 37 with shape
+  `treated_as` 31, each an IntentIR assumption no typed record cites; 39 *treated as* uses on the 31 chains.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no carrier: `crates/specforge/src/ir/evidence.rs` had no surface for an equivalence and
+  `ConditionalRuleRecord` (`crates/specforge/src/ir/source.rs`) needs a signal-centric antecedent and consequent. RED, the
+  file restored byte-identically after each (8 mutations, each failing its named test): no contrast refusal, no
+  hypothetical refusal, no copula required (`a_contrasted_or_hypothetical_equivalence_is_refused`); no coordinated cut,
+  no parenthesis subject, no reason clause (`a_coordinated_parenthesised_or_reason_clause_finds_its_own_subject`); no
+  merge, table rows read (`the_surface_merges_repeats_and_skips_rows_and_apparatus`).
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 21 identical, 10 gain `equivalence_rules` (34 records)
+  and nothing else; rebuilt stage by stage, only that section moves downstream, adapter residuals +34, `.isf`
+  byte-identical. Unread records 345 -> 315, `treated_as` 31 -> 4.
+- [x] **NO REGRESSION** — after the cascade, `check_chain_currency.sh` 31 of 31 current at every stage. WIRE-BASED-100:
+  all 11 seeds byte-identical to `0e69b1170`'s reports (temp paths masked), each side on its own binary. `kg-bench`
+  158/158 (`fixtures_failed: 0`). `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D
+  warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 171 / 1,851 passed, 0
+  failed (the rule-field and inventory counts each move by one per stage, 186 -> 189 rules). `flow_census.json` rolled
+  forward (+2 functions, +52 decision sites, +64 helper edges, +4 macros); boundary `rule_roots` 126 -> 127 and
+  `grammar_declassifiers` 67 -> 68 for the one registered producer, `equivalence_rule_surface`, as each earlier new
+  field's producer moved them.
+- [x] **GENERICITY (ADR 0006)** — English auxiliaries, copulas, modals, condition openers, *otherwise*/*else*/*in which
+  case*, *since*/*because*, and punctuation; no document, signal or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*An equivalence rule is a typed record*),
+  `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `quality/validation.md`,
+  `reference/intentir-contract.md`, `source-to-intent-contract.md`; KM `an-equivalence-rule-is-a-typed-record` (new),
+  `assume-sentences-fall-into-six-shapes` (amended). No production rule was deleted or replaced.

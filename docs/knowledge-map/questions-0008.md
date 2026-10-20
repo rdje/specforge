@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > how is a footnote letter beside a check signal name (PSELxCHK b) handled
 - [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
@@ -293,7 +297,3 @@
   > how many corpus/-sourced documents are there and how many are legacy
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim census candidates join exact evidence or registered annotations
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim evidence units are derived registered incomplete or excluded
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > how many current documents are behaviorally measurable

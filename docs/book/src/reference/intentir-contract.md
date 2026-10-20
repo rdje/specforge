@@ -20,7 +20,7 @@ connectivity structure, system contracts, state and behavior, timing and orderin
 assumptions, abstractions, residual decisions, and typed protocol observations. The current protocol
 observations preserve serial-frame fields, operation branches, state observations, stated state transitions, and
 interface-edge timings exactly as promoted by `SemanticIR`, and the signal-presence records with each stated absent
-value and the check-signal records with what each covers, and the collective names with what each stands for; carrying them does not license an adapter to infer missing executable
+value and the check-signal records with what each covers, the collective names with what each stands for, and the equivalence rules with their conditions; carrying them does not license an adapter to infer missing executable
 bindings. The current concrete surface is described in the [IntentIR chapter](../pipeline/intentir.md); this
 chapter defines the stable boundary that surface must respect.
 

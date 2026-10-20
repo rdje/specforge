@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > where does a rule that needs document order belong if SourceIR cannot hold it (EvidenceIR, which reads the whole SourceIR as its input)
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > where does an .isf register var width come from when the document states none
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > where does an active relation verb's object end (at but, and at an infinitive with its own subject: for the Manager to drive)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > where does declared_type come from in validate
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > where does figure interior text go now
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > where does parse_table_width_hint_text refuse a cell
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -286,15 +298,3 @@
   > which cargo profile do the corpus replay checks build
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > which cell did the CoreSight TMC DATA phantom come from
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > which census measures escaped identifier fragments
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > which chains would a parameterised-width adapter change reach
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > which checks pin the retained-bundle population at 24
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control-audit fields are gated and which must be read from the report
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > which claim family owns captured_region_residuals

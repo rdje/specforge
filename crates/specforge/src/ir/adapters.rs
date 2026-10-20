@@ -1218,7 +1218,8 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.protocol_states.len()
             + intent_ir.protocol_transitions.len()
             + intent_ir.interface_edge_timings.len()
-            + stated_absent_values.len(),
+            + stated_absent_values.len()
+            + intent_ir.equivalence_rules.len(),
     );
 
     for record in &intent_ir.serial_frame_fields {
@@ -1274,6 +1275,17 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
         ));
     }
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — a stated absent value has no `.isf` clause yet.
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — `.isf` has no construct that treats one thing as another.
+    for record in &intent_ir.equivalence_rules {
+        residuals.push(protocol_residual_packet(
+            "equivalence_rule",
+            "equivalence rule",
+            &record.equivalence_id,
+            &record.supporting_statement_ids,
+            &[],
+            "a construct that treats one thing as another under a condition, and a subject and equivalent `.isf` can name (a state, a transaction class, a value)",
+        ));
+    }
     for (record, absent_value, class_ordinal) in stated_absent_values {
         residuals.push(absent_value_residual_packet(
             record,
@@ -1429,9 +1441,10 @@ mod tests {
         AdapterArtifact, AdapterLoweringStatus, AdapterMutationKind, AdapterTarget,
     };
     use crate::ir::evidence::{
-        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ParticipantDriveRecord,
-        ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField, SignalPresenceRecord,
-        StatedAbsentValue, StatedValueEncoding, VariantPresenceEntry,
+        EquivalenceModality, EquivalenceRuleRecord, EvidenceIr, InterfaceClockEdge,
+        InterfaceEdgeTimingRecord, ParticipantDriveRecord, ProtocolOperationRecord,
+        ProtocolStateRecord, SerialFrameField, SignalPresenceRecord, StatedAbsentValue,
+        StatedValueEncoding, VariantPresenceEntry,
     };
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
@@ -2561,6 +2574,15 @@ mod tests {
             drive_changes_on_edge: true,
             supporting_statement_ids: vec!["statement_edge".to_string()],
         }];
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — one stated equivalence rule.
+        intent_ir.equivalence_rules = vec![EquivalenceRuleRecord {
+            equivalence_id: "equivalence_0000".to_string(),
+            subject: "Locked requests".to_string(),
+            equivalent: "exclusive requests".to_string(),
+            condition: Some("When the bridge is idle".to_string()),
+            modality: EquivalenceModality::Shall,
+            supporting_statement_ids: vec!["statement_equivalence".to_string()],
+        }];
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — one presence row with a stated absent value, one without.
         intent_ir.signal_presence_records = vec![
             SignalPresenceRecord {
@@ -2636,6 +2658,7 @@ mod tests {
                 "isf_protocol_operation_protocol_operation_0001",
                 "isf_protocol_state_protocol_state_0001",
                 "isf_protocol_interface_edge_timing_interface_edge_timing_0001",
+                "isf_protocol_equivalence_rule_equivalence_0000",
                 "isf_protocol_signal_absent_value_presence_0001",
                 "isf_protocol_signal_qualified_absent_value_presence_0001_1",
             ]
@@ -2682,9 +2705,20 @@ mod tests {
                 .why_unresolved
                 .contains("sample destination")
         );
-        assert!(protocol_residuals[5].question.contains("`0b000`"));
-        assert!(protocol_residuals[5].question.contains("`XRESP`"));
-        assert!(protocol_residuals[5].why_unresolved.contains(
+        assert!(protocol_residuals[5].question.contains("equivalence rule"));
+        assert!(
+            protocol_residuals[5]
+                .why_unresolved
+                .contains("treats one thing as another")
+        );
+        assert!(
+            protocol_residuals[5]
+                .why_unresolved
+                .contains("supporting statements: statement_equivalence")
+        );
+        assert!(protocol_residuals[6].question.contains("`0b000`"));
+        assert!(protocol_residuals[6].question.contains("`XRESP`"));
+        assert!(protocol_residuals[6].why_unresolved.contains(
             "supporting statements: statement_absent; supporting tables: table_presence"
         ));
 

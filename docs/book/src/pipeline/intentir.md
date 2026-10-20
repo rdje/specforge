@@ -123,7 +123,9 @@ and the adapter keeps one residual per value because `.isf` cannot say it yet. `
 the same way (`.3.d.ii.a.i`); a parity check is not lowered, and whether it becomes a combinational rule or a
 request is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_names` cross likewise
 (`.3.d.ii.a.ii`): a name the document defines for several signals, which the absent-value binder already resolves
-and which `EXTRACTION-REPRESENTATION-GAPS.47` will resolve for every rule stated on such a name.
+and which `EXTRACTION-REPRESENTATION-GAPS.47` will resolve for every rule stated on such a name. `equivalence_rules`
+cross likewise (`.3.d.ii.b.ii`): each sentence that treats one thing as another, as written, with its condition and
+modality; the adapter keeps one residual per rule.
 
 These records are canonical product data, but they are not automatically executable behavior. A named protocol
 state without transitions, guards, initial-state identity, or encoding is still incomplete; frame, operation,

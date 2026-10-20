@@ -42,6 +42,8 @@
   > how does a bullet under 'If AxDOMAIN signals are not present:' get its absence clause (the list lead-in)
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > how does a change to how ingest reads tables reach a persisted SourceIR
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > how does a coordinated predicate find its subject ('X shall not be used ... and may be treated as Y')
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does a deliberate normalized-bundle reclamation get authorized
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -250,6 +252,8 @@
   > how good is prose signal capture / .3a quality
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > how is 'CMO transactions are assumed to be Non-shareable' read
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > how is 'LPIs are always treated as Non-secure Group 1 interrupts' read
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > how is 'Lowercase x at the second letter denotes a collective term' read
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
@@ -294,7 +298,3 @@
   > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is a completed oversized task tree contained without losing evidence
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics

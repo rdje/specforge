@@ -391,6 +391,10 @@ pub struct EvidenceIr {
     /// signals it stands for. Empty (serde-skipped) for documents that define none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub collective_signal_names: Vec<CollectiveSignalNameRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states (*X is treated as Y*).
+    /// Empty (serde-skipped) for documents that state none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub equivalence_rules: Vec<EquivalenceRuleRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -784,6 +788,44 @@ pub struct CollectiveSignalNameRecord {
     pub supporting_statement_ids: Vec<String>,
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — an EQUIVALENCE RULE the document states: under an optional condition,
+/// one thing is treated as another (*LPIs are always treated as Non-secure Group 1 interrupts*; *If the instruction
+/// being stepped over would normally stall the hart, then instead the instruction is treated as a nop*). Every part
+/// is as written; nothing is resolved against signals, enums or types, because the sentence names things the
+/// document defines in its own words.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct EquivalenceRuleRecord {
+    /// Stable id, e.g. `equivalence_0004`.
+    pub equivalence_id: String,
+    /// What is treated as something else (`LPIs`, `The Deferred DPH`).
+    pub subject: String,
+    /// What it is treated as (`Non-secure Group 1 interrupts`, `a TP for buffering and credit purposes`).
+    pub equivalent: String,
+    /// The condition the sentence opens with (`If the instruction being stepped over would normally stall the
+    /// hart`); `None` when it states none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub condition: Option<String>,
+    /// How the sentence states it: an obligation (*shall*, *must*), a permission (*may*, *can*), an expectation
+    /// (*should*, *will*), *always*, or plainly (*is treated as*).
+    pub modality: EquivalenceModality,
+    /// The statement(s) that state it.
+    pub supporting_statement_ids: Vec<String>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the word an equivalence rule is stated with.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum EquivalenceModality {
+    Stated,
+    Always,
+    Shall,
+    Must,
+    Should,
+    May,
+    Can,
+    Will,
+}
+
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
 /// one NLI-oracle pass over `signal_constraints` ("does the source sentence entail this constraint
 /// as a claim?"). The not-entailed fraction is a cheap, automatic production-readiness signal that
@@ -1035,6 +1077,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("timing_constraints", "evidence.register_timing"),
     ("signal_constraints", "evidence.normative"),
     ("conditional_rules", "evidence.normative"),
+    ("equivalence_rules", "evidence.normative"),
     ("extracted_contracts", "evidence.contract"),
     ("constrained_extraction_stats", "evidence.contract"),
     (
@@ -1450,6 +1493,7 @@ impl EvidenceIr {
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
         insert_field!(collective_signal_names);
+        insert_field!(equivalence_rules);
         insert_field!(signal_alias_map);
         insert_field!(signal_polarities);
         insert_field!(signal_polarity_conflicts);
@@ -2153,6 +2197,8 @@ impl EvidenceIr {
             &collective_signal_names,
             &source_ir.structured_tables,
         );
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
+        let equivalence_rules = equivalence_rule_surface(&extracted_statements);
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
         // bit ranges and explicit prose composition lists. Both read names and ordering from the current
@@ -2297,6 +2343,7 @@ impl EvidenceIr {
             signal_presence_records,
             check_signal_records,
             collective_signal_names,
+            equivalence_rules,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_transitions,
@@ -20475,6 +20522,217 @@ fn sentence_closes_after_value(rest: &str) -> bool {
     after_label.is_empty() || after_label.starts_with(['.', ',', ';'])
 }
 
+/// The words that stand between an equivalence's subject and *treated as* (*are always treated as*, *shall be treated
+/// as*). English auxiliaries and adverbs, not a vocabulary (ADR 0006).
+const EQUIVALENCE_AUXILIARIES: [&str; 16] = [
+    "is", "are", "be", "being", "been", "always", "also", "shall", "must", "may", "should", "can",
+    "will", "instead", "then", "normally",
+];
+
+/// The modal words that state how an equivalence holds, in the order one is chosen when several stand before
+/// *treated as*.
+const EQUIVALENCE_MODALS: [(&str, EquivalenceModality); 7] = [
+    ("shall", EquivalenceModality::Shall),
+    ("must", EquivalenceModality::Must),
+    ("should", EquivalenceModality::Should),
+    ("may", EquivalenceModality::May),
+    ("can", EquivalenceModality::Can),
+    ("will", EquivalenceModality::Will),
+    ("always", EquivalenceModality::Always),
+];
+
+/// The words a condition clause opens with (*If …*, *When …*, *At reset*, *For the purpose of …*).
+const CONDITION_OPENERS: [&str; 11] = [
+    "if", "when", "at", "for", "unless", "while", "during", "once", "upon", "on", "in",
+];
+
+/// The verbs at which a coordinated predicate's subject ends (*X shall not be used by … and may be treated as*).
+const SUBJECT_VERBS: [&str; 10] = [
+    "is", "are", "shall", "must", "may", "will", "can", "should", "was", "were",
+];
+
+/// One equivalence a sentence states: what, as what, under which condition, and how.
+struct StatedEquivalence {
+    subject: String,
+    equivalent: String,
+    condition: Option<String>,
+    modality: EquivalenceModality,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules a document states, in statement order; the same
+/// rule stated twice is one record citing both statements. A table row lifted as prose and an apparatus statement are
+/// not read.
+fn equivalence_rule_surface(statements: &[ExtractedStatement]) -> Vec<EquivalenceRuleRecord> {
+    let mut records: Vec<EquivalenceRuleRecord> = Vec::new();
+    for statement in statements {
+        if statement.class == StatementClass::Apparatus
+            || statement.text.trim_start().starts_with('|')
+        {
+            continue;
+        }
+        for stated in stated_equivalences(&statement.text) {
+            let same = records.iter_mut().find(|record| {
+                normalized_words(&record.subject) == normalized_words(&stated.subject)
+                    && normalized_words(&record.equivalent) == normalized_words(&stated.equivalent)
+                    && record.condition.as_deref().map(normalized_words)
+                        == stated.condition.as_deref().map(normalized_words)
+                    && record.modality == stated.modality
+            });
+            match same {
+                Some(record) => {
+                    if !record
+                        .supporting_statement_ids
+                        .contains(&statement.statement_id)
+                    {
+                        record
+                            .supporting_statement_ids
+                            .push(statement.statement_id.clone());
+                    }
+                }
+                None => records.push(EquivalenceRuleRecord {
+                    equivalence_id: format!("equivalence_{:04}", records.len()),
+                    subject: stated.subject,
+                    equivalent: stated.equivalent,
+                    condition: stated.condition,
+                    modality: stated.modality,
+                    supporting_statement_ids: vec![statement.statement_id.clone()],
+                }),
+            }
+        }
+    }
+    records
+}
+
+/// Every equivalence a statement states with *treated as*. The subject is the clause before the auxiliaries, from
+/// the last clause break; a condition is the part before that break when it opens like one. Refused, so that no
+/// record says more or less than the sentence: a clause the sentence contrasts with what came before (*otherwise*,
+/// *else*, *in which case*), a hypothetical whose clause opens with *if* or *when* (the equivalence is then a condition
+/// of something else), a coordinated predicate whose subject has no verb to end at, and a *treated as* no copula
+/// precedes. A subject inside a parenthesis is the parenthesis's own (*(request is treated as a no-operation)*), and
+/// a reason clause asserts its equivalence (*since the beginning of the Warm Reset will be treated as …*).
+fn stated_equivalences(text: &str) -> Vec<StatedEquivalence> {
+    // `to_ascii_lowercase` keeps the byte layout, so offsets index `text` too.
+    let lowered = text.to_ascii_lowercase();
+    let mut found = Vec::new();
+    for (lead, _) in lowered.match_indices("treated as") {
+        let starts_word = lowered[..lead]
+            .chars()
+            .next_back()
+            .is_none_or(|c| !c.is_ascii_alphanumeric());
+        let ends_word = lowered[lead + "treated as".len()..]
+            .chars()
+            .next()
+            .is_none_or(|c| !c.is_ascii_alphanumeric());
+        if !starts_word || !ends_word {
+            continue;
+        }
+        let sentence_start = sentence_start_before(&lowered, lead);
+        let mut words: Vec<&str> = text[sentence_start..lead].split_whitespace().collect();
+        let mut auxiliaries: Vec<String> = Vec::new();
+        while let Some(word) = words.last() {
+            let lowered_word = word.trim_end_matches(',').to_ascii_lowercase();
+            if !EQUIVALENCE_AUXILIARIES.contains(&lowered_word.as_str()) {
+                break;
+            }
+            auxiliaries.insert(0, lowered_word);
+            words.pop();
+        }
+        if !auxiliaries
+            .iter()
+            .any(|w| matches!(w.as_str(), "is" | "are" | "be" | "being" | "been"))
+        {
+            continue;
+        }
+        let before = words.join(" ");
+        let (prefix, clause) = match before.rfind([',', ';', ':']) {
+            Some(cut) => (&before[..cut], &before[cut + 1..]),
+            None => ("", before.as_str()),
+        };
+        let mut clause = clause
+            .trim_start_matches(|c: char| !c.is_alphanumeric() && c != '(')
+            .trim();
+        if clause.matches('(').count() > clause.matches(')').count() {
+            clause = clause[clause.rfind('(').map_or(0, |i| i + 1)..].trim();
+        }
+        let mut subject: Vec<&str> = clause.split_whitespace().collect();
+        let lowered_subject = |subject: &[&str]| -> Vec<String> {
+            subject
+                .iter()
+                .map(|w| w.trim_end_matches(',').to_ascii_lowercase())
+                .collect()
+        };
+        let mut low = lowered_subject(&subject);
+        if low.iter().any(|w| w == "otherwise" || w == "else")
+            || clause.to_ascii_lowercase().contains("in which case")
+        {
+            continue;
+        }
+        if let Some(reason) = low.iter().rposition(|w| w == "since" || w == "because") {
+            subject.drain(..=reason);
+            low = lowered_subject(&subject);
+        }
+        if low
+            .first()
+            .is_some_and(|w| matches!(w.as_str(), "if" | "when" | "unless" | "whether"))
+        {
+            continue;
+        }
+        while low
+            .first()
+            .is_some_and(|w| matches!(w.as_str(), "then" | "and" | "instead"))
+        {
+            subject.remove(0);
+            low.remove(0);
+        }
+        if low.last().is_some_and(|w| w == "and") {
+            let Some(verb) = low.iter().position(|w| SUBJECT_VERBS.contains(&w.as_str())) else {
+                continue;
+            };
+            subject.truncate(verb);
+        }
+        if subject.is_empty() {
+            continue;
+        }
+        let rest = text[lead + "treated as".len()..].trim_start();
+        let end = [
+            rest.find(','),
+            rest.find(';'),
+            rest.find('('),
+            rest.find(". "),
+        ]
+        .into_iter()
+        .flatten()
+        .min()
+        .unwrap_or(rest.len());
+        let mut equivalent = rest[..end].trim().trim_end_matches('.').trim();
+        if equivalent.matches(')').count() > equivalent.matches('(').count() {
+            equivalent = equivalent[..equivalent.rfind(')').unwrap_or(equivalent.len())].trim();
+        }
+        if equivalent.is_empty() {
+            continue;
+        }
+        let prefix = prefix
+            .trim_start_matches(|c: char| !c.is_alphanumeric())
+            .trim();
+        let condition = prefix
+            .split_whitespace()
+            .next()
+            .is_some_and(|w| CONDITION_OPENERS.contains(&w.to_ascii_lowercase().as_str()))
+            .then(|| prefix.to_string());
+        let modality = EQUIVALENCE_MODALS
+            .iter()
+            .find(|(word, _)| auxiliaries.iter().any(|a| a == word))
+            .map_or(EquivalenceModality::Stated, |(_, modality)| *modality);
+        found.push(StatedEquivalence {
+            subject: subject.join(" "),
+            equivalent: equivalent.to_string(),
+            condition,
+            modality,
+        });
+    }
+    found
+}
+
 /// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
 /// field name: both strategies emit name-unique lists (the bit-range form upserts by name; the composition
 /// form keeps a per-list `seen` set), so first-wins dedup is a no-op WITHIN each strategy and reproduces the
@@ -38603,7 +38861,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 42);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 43);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -58401,6 +58659,177 @@ mod labeled_absent_value_tests {
             );
             assert!(records[0].qualified_absent_values.is_empty(), "{text}");
         }
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — an equivalence rule (X is treated as Y) is a typed record.
+#[cfg(test)]
+mod equivalence_rule_tests {
+    use super::{
+        EquivalenceModality, EvidenceModality, ExtractedStatement, StatementClass,
+        equivalence_rule_surface, stated_equivalences,
+    };
+
+    /// (subject, equivalent, condition, modality) of every equivalence a sentence states.
+    fn read(text: &str) -> Vec<(String, String, Option<String>, EquivalenceModality)> {
+        stated_equivalences(text)
+            .into_iter()
+            .map(|e| (e.subject, e.equivalent, e.condition, e.modality))
+            .collect()
+    }
+
+    fn one(
+        subject: &str,
+        equivalent: &str,
+        condition: Option<&str>,
+        modality: EquivalenceModality,
+    ) -> Vec<(String, String, Option<String>, EquivalenceModality)> {
+        vec![(
+            subject.to_string(),
+            equivalent.to_string(),
+            condition.map(str::to_string),
+            modality,
+        )]
+    }
+
+    #[test]
+    fn an_equivalence_keeps_its_subject_equivalent_condition_and_modality() {
+        assert_eq!(
+            read("LPIs are always treated as Non-secure Group 1 interrupts."),
+            one(
+                "LPIs",
+                "Non-secure Group 1 interrupts",
+                None,
+                EquivalenceModality::Always
+            )
+        );
+        assert_eq!(
+            read(
+                "If the instruction being stepped over would normally stall the hart, then instead the instruction is treated as a nop . This includes wfi."
+            ),
+            one(
+                "the instruction",
+                "a nop",
+                Some("If the instruction being stepped over would normally stall the hart"),
+                EquivalenceModality::Stated
+            )
+        );
+        assert_eq!(
+            read("The Deferred DPH shall be treated as a TP for buffering and credit purposes."),
+            one(
+                "The Deferred DPH",
+                "a TP for buffering and credit purposes",
+                None,
+                EquivalenceModality::Shall
+            )
+        );
+        assert_eq!(
+            read(
+                "- Non-maskable: Interrupts configured as non-maskable are treated as higher priority than all other interrupts."
+            ),
+            one(
+                "Interrupts configured as non-maskable",
+                "higher priority than all other interrupts",
+                None,
+                EquivalenceModality::Stated
+            )
+        );
+    }
+
+    /// A coordinated predicate's subject ends at its own verb, a parenthesis holds its own subject, and a reason clause
+    /// asserts its equivalence.
+    #[test]
+    fn a_coordinated_parenthesised_or_reason_clause_finds_its_own_subject() {
+        assert_eq!(
+            read(
+                "The ClearPortFeature(PORT_RESET) request shall not be used by the USB system software and may be treated as a no-operation request by hubs."
+            ),
+            one(
+                "The ClearPortFeature(PORT_RESET) request",
+                "a no-operation request by hubs",
+                None,
+                EquivalenceModality::May
+            )
+        );
+        assert_eq!(
+            read(
+                "While local power is off, all SetPortFeature() requests are ignored (request is treated as a no-operation)."
+            ),
+            one(
+                "request",
+                "a no-operation",
+                Some("While local power is off"),
+                EquivalenceModality::Stated
+            )
+        );
+        assert_eq!(
+            read(
+                "The re-timer will not declare Warm Reset since the beginning of the Warm Reset will be treated as the start of the Loopback LFPS exit signal."
+            ),
+            one(
+                "the beginning of the Warm Reset",
+                "the start of the Loopback LFPS exit signal",
+                None,
+                EquivalenceModality::Will
+            )
+        );
+    }
+
+    /// A contrasted clause, a hypothetical, a coordinated verb with no auxiliary, and a *treated as* without a copula
+    /// state nothing a record could carry faithfully.
+    #[test]
+    fn a_contrasted_or_hypothetical_equivalence_is_refused() {
+        for text in [
+            "If EN_ATS is set to 1, IOMMU supports the following transactions; otherwise they are treated as unsupported requests.",
+            "If ENS is 1, transactions are allowed else the transaction is treated as an unsupported request.",
+            "A request will set this bit to one unless both bits are set to one in which case the request is treated as a functional no-operation.",
+            "In U3, if the beginning part of Warm Reset is treated as U3 LFPS exit signal from the host, and the re-timer is not ready, it stays.",
+            "If DeviceEn is 0b0, DbgSwEnable must be ignored and treated as zero.",
+        ] {
+            assert!(read(text).is_empty(), "{text}");
+        }
+    }
+
+    /// The surface reads statement by statement, merges a repeated rule, and skips table rows and apparatus.
+    #[test]
+    fn the_surface_merges_repeats_and_skips_rows_and_apparatus() {
+        let statement = |id: &str, class: StatementClass, text: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        };
+        let records = equivalence_rule_surface(&[
+            statement(
+                "statement_0001",
+                StatementClass::ExplicitAbstraction,
+                "SGIs are always treated as edge-triggered.",
+            ),
+            statement(
+                "statement_0002",
+                StatementClass::ExplicitAbstraction,
+                "SGIs are always treated as edge-triggered.",
+            ),
+            statement(
+                "statement_0003",
+                StatementClass::SourceFact,
+                "| SGI | SGIs are always treated as edge-triggered. |",
+            ),
+            statement(
+                "statement_0004",
+                StatementClass::Apparatus,
+                "This example is treated as a sketch.",
+            ),
+        ]);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].equivalence_id, "equivalence_0000");
+        assert_eq!(
+            records[0].supporting_statement_ids,
+            vec!["statement_0001".to_string(), "statement_0002".to_string()]
+        );
     }
 }
 

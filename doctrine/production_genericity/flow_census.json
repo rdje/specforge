@@ -4,41 +4,41 @@
   "pinned": {
    "boundary_rows": 144,
    "canonical_seams": 12,
-   "grammar_declassifiers": 67,
+   "grammar_declassifiers": 68,
    "non_authoritative_regions": 9,
    "proof_gates": 25,
    "protected_calls": 28,
    "protected_constructions": 19,
    "protected_types": 15,
-   "rule_roots": 126,
+   "rule_roots": 127,
    "source_fields": 13,
    "source_parameters": 3,
    "source_returns": 2,
    "source_types": 22,
    "trusted_regions": 11
   },
-  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact. Moved by EXTRACTION-REPRESENTATION-GAPS.24.b: two rule roots (semantic.rs#document_signal_coreference_records, #document_signal_family_records) register the producers of semantic.statement_lift's two new fields, signal_coreferences and signal_families; each is a registered derivation with proof claims, so its producer is a rule root, not unrooted code. Moved again by EXTRACTION-REPRESENTATION-GAPS.10.g.ii: one rule root (semantic.rs#document_operation_kind_records) registers the producer of semantic.statement_lift's operation_kinds field, by the same reasoning. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: one producer entrypoint (evidence.rs#protocol_transition_surface) registers the producer of evidence.protocol_structure's new field protocol_transitions; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i: one producer entrypoint (evidence.rs#check_signal_surface) registers the producer of evidence.declaration's new field check_signal_records; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii: one producer entrypoint (evidence.rs#collective_signal_name_surface) registers the producer of evidence.declaration's new field collective_signal_names; grammar_introduces, so rule_roots and grammar_declassifiers each move by one."
+  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact. Moved by EXTRACTION-REPRESENTATION-GAPS.24.b: two rule roots (semantic.rs#document_signal_coreference_records, #document_signal_family_records) register the producers of semantic.statement_lift's two new fields, signal_coreferences and signal_families; each is a registered derivation with proof claims, so its producer is a rule root, not unrooted code. Moved again by EXTRACTION-REPRESENTATION-GAPS.10.g.ii: one rule root (semantic.rs#document_operation_kind_records) registers the producer of semantic.statement_lift's operation_kinds field, by the same reasoning. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: one producer entrypoint (evidence.rs#protocol_transition_surface) registers the producer of evidence.protocol_structure's new field protocol_transitions; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i: one producer entrypoint (evidence.rs#check_signal_surface) registers the producer of evidence.declaration's new field check_signal_records; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii: one producer entrypoint (evidence.rs#collective_signal_name_surface) registers the producer of evidence.declaration's new field collective_signal_names; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii: one producer entrypoint (evidence.rs#equivalence_rule_surface) registers the producer of evidence.normative's new field equivalence_rules; grammar_introduces, so rule_roots and grammar_declassifiers each move by one."
  },
  "contract_id": "production-genericity-flow-census",
  "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-49-PLURAL-STATE-BINDING",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-II-B-II-EQUIVALENCE-RULE",
    "baseline": {
     "analyzed_functions": 2750,
-    "decision_sites": 14918,
-    "helper_edges": 18478,
+    "decision_sites": 14931,
+    "helper_edges": 18479,
     "semantic_macros": 1579
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": 13,
-    "helper_edges": 1,
-    "semantic_macros": 0
+    "analyzed_functions": 2,
+    "decision_sites": 52,
+    "helper_edges": 64,
+    "semantic_macros": 4
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.49",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.49: transition_bound_state_names_in reads two or more bare state names joined by or, and or commas before a plural \"states\" after the same trigger and article, locating the trigger from the leftmost name; the singular form and the two-statement guard are unchanged."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii: an equivalence rule is a typed record. equivalence_rule_surface and stated_equivalences read \"X is treated as Y\" into equivalence_rules (subject, equivalent, condition, modality); SemanticIR and IntentIR carry them; the adapter keeps one residual per record."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

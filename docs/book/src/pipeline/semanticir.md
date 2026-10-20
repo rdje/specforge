@@ -604,6 +604,8 @@ Five evidence-grounded protocol collections, and the signal-presence records, cr
   enable cells verbatim (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`)
 - `collective_signal_names` — each collective name the document defines (`AxSIZE`) and the signals it stands for
   (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii`)
+- `equivalence_rules` — each rule the document states with *treated as*: its subject, what it is treated as, the
+  condition it opens with and how it is stated (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`)
 
 This projection is intentionally lossless rather than interpretive. Record order, ids, optional values, and
 every `supporting_statement_ids` and `supporting_table_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
@@ -642,6 +644,7 @@ state, encodings, values, ports, activation conditions, or storage targets.
   signal_presence_records: N
   check_signal_records: N
   collective_signal_names: N
+  equivalence_rules: N
 ```
 
 IntentIR carries the same collections unchanged, and the `.isf` adapter keeps one residual per record rather than

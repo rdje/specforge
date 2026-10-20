@@ -38,9 +38,9 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.d.ii.b.ii` — an equivalence rule (X is treated as Y) is typed.
+`.3.d.iii` — a stated permission is typed intent, and an unread obligation reaches its reader.
 
-Then, in order: `.3.d.iii` (permissions and unread obligations), `.3.d.i` (software intent), `.41.h` (APB4's PPROT
+Then, in order: `.3.d.i` (software intent), `.41.h` (APB4's PPROT
 map), `.45` (a fused presence row keeps the header's labels), `.46` (a parity check signal's lowering), `.47` (a rule stated on a collective name reaches each member), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
 matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
 (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
@@ -72,7 +72,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.i`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`

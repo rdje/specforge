@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii",
-      "literal" : "`.3.d.ii.b.ii` — an equivalence rule (X is treated as Y) is typed.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii",
+      "literal" : "`.3.d.iii` — a stated permission is typed intent, and an unread obligation reaches its reader.",
       "mode" : "eligible",
       "part_id" : "unread-intent-leaves"
    },
@@ -915,7 +915,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -1077,13 +1077,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
          "metrics" : {
-            "bytes" : 40924,
+            "bytes" : 46207,
             "line_bytes" : 639,
-            "lines" : 396
+            "lines" : 445
          },
          "part_id" : "unread-intent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-         "sha256" : "07e43341e52c680d7a0090b983b0447b8d95b8aa4f4e50bd9f5c17ea68ec75a7",
+         "sha256" : "03ad693ffc2f2685e3c1208d3f25b9b62d47ae4f3fc799572556812606c2171a",
          "state" : "active"
       },
       {

@@ -168,11 +168,12 @@
           "intent_ir_surfaces": [
             "signal_constraints",
             "conditional_rules",
+            "equivalence_rules",
             "temporal_rules",
             "actor_contracts",
             "fidelity_findings"
           ],
-          "required_when": "the source states values, stability, ordering, latency, sampling, or handshake obligations"
+          "required_when": "the source states values, stability, ordering, latency, sampling, or handshake obligations, or that one thing is treated as another"
         },
         {
           "family": "protocol_structure_and_state",

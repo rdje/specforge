@@ -1083,6 +1083,34 @@ rule is: AXI's *the CHK signal cannot be used reliably*, USB's hub routing oblig
 cannot assume ordering between bulk and control transfers*. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.iii.b`).
 
+**An equivalence rule is a typed record.** A sentence that treats one thing as another states a rule of the
+hardware, often under a condition, and it stays an abstraction by class. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`
+(`2026-10-19`) EvidenceIR also carries each one as an `equivalence_rules` record, which SemanticIR and IntentIR
+carry unchanged:
+
+```json
+{ "equivalence_id": "equivalence_0000", "subject": "the instruction", "equivalent": "a nop",
+  "condition": "If the instruction being stepped over would normally stall the hart",
+  "modality": "stated", "supporting_statement_ids": ["statement_0906"] }
+```
+
+The subject is the clause before *treated as* and its auxiliaries, from the sentence's last clause break; the
+condition is what comes before that break when it opens like one (*If*, *When*, *At reset*, *For the purpose of*);
+the equivalent runs to the end of its clause; the modality is the auxiliary's word (*shall*, *must*, *should*, *may*,
+*can*, *will*, *always*) or `stated`. Everything is as written, and nothing is resolved against signals or encodings.
+A coordinated predicate ends its subject at the subject's own verb (*The ClearPortFeature(PORT_RESET) request shall not
+be used by the USB system software and may be treated as a no-operation request by hubs*), a parenthesis holds its own
+subject (*(request is treated as a no-operation)*), and a reason clause asserts its equivalence (*since the beginning of
+the Warm Reset will be treated as the start of the Loopback LFPS exit signal*). Five uses are refused, because a record
+would say more or less than the sentence: a clause contrasted with what came before (*otherwise they are treated as
+unsupported requests*; *else the transaction is treated as …*; *in which case the request is treated as …*), a
+hypothetical (*if the beginning part of Warm Reset is treated as U3 LFPS exit signal …, and …*), and a coordinated verb
+with no copula (*must be ignored and treated as one*). A table row and an apparatus statement are not read. On the 31
+chains 34 records in 10 documents, USB 3.2 holding ten and GICv3 six; only that section moves at each stage, the
+adapter keeps one `isf_protocol_equivalence_rule_*` residual per record, and the emitted `.isf` texts are
+byte-identical. The new rule field re-seals every chain. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.ii`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named
