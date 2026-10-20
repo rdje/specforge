@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > how does SpecForge read a table whose rows disagree about their column order
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > how does SpecForge read a temporal condition with an unless or except clause
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -296,5 +298,3 @@
   > how is a captured visual region proven covered or uncovered
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how is a claim's grounding checked beyond a string match
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is a completed oversized task tree contained without losing evidence

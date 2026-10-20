@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > which bit-position columns must a radix repair leave alone
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which block of the live-docs book chapter was moved out and why
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > which boot-volume Rust directories are allowed
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > which canonical Markdown collections still rely only on git query
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > which caption additions are table-reading descriptions rather than requirements
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > which caption does arm B1 lose that arm A admitted
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > which caption grammar can supply a unit to every timing row
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -285,15 +297,3 @@
   > which specforge documents carry an eval gold and which of them are measurable
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > which stage has no read-only canonical probe
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > which stale roadmap statuses were found before migration
-- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
-  > which statement classes are obligations for the completeness count (timing_constraint and derived_rule are not)
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > which statement classes do the obligations about declared signals carry (86 SignalValueConstraint, 195 NormativeStatement, 65 ConditionalRule, 24 TimingConstraint, 5 DerivedRule, 3 ExplicitAbstraction, 1 SourceFact)
-- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
-  > which statements does evidence_normative_residuals_remaining list
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > which strategy is message_fields.byte_location_table
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > which subject does a signal-description row's description cell constrain

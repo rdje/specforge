@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how many current claim census candidates join exact evidence or registered annotations
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim evidence units are derived registered incomplete or excluded
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > how many current documents are behaviorally measurable
@@ -230,6 +232,8 @@
   > how many times has the identity-without-attribute question been answered
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
+- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
+  > how many timing_constraint statements are there on the 31 chains (279 since 2026-10-20)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -294,7 +298,3 @@
   > how much should one closure cost a bounded task root
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > how much writable budget does relocating a sealed region actually return (the active part stops owning any region, so its whole health target becomes spendable rather than the target minus the sealed payload)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should Rust version copies be verified across Cargo README book and CI
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > how should a behavior-preserving evidence refactor be verified given the non-determinism

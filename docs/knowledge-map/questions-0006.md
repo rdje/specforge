@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > how do I clear a live-document line_bytes_each warning (reflow the few widest lines; do not partition, roll over, or raise the ceiling — nothing is running out)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -295,5 +297,3 @@
   > how does SpecForge read a fronted condition like When asserted, X must remain asserted
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > how does SpecForge read a quoted encoding value
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > how does SpecForge read a table whose rows disagree about their column order

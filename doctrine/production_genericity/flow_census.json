@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-II-B-II-EQUIVALENCE-RULE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-III-B-STATED-TIME",
    "baseline": {
-    "analyzed_functions": 2750,
-    "decision_sites": 14931,
-    "helper_edges": 18479,
-    "semantic_macros": 1579
+    "analyzed_functions": 2752,
+    "decision_sites": 14983,
+    "helper_edges": 18543,
+    "semantic_macros": 1583
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 52,
-    "helper_edges": 64,
-    "semantic_macros": 4
+    "analyzed_functions": 1,
+    "decision_sites": 18,
+    "helper_edges": 6,
+    "semantic_macros": 2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii: an equivalence rule is a typed record. equivalence_rule_surface and stated_equivalences read \"X is treated as Y\" into equivalence_rules (subject, equivalent, condition, modality); SemanticIR and IntentIR carry them; the adapter keeps one residual per record."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b: a statement is a timing constraint only when it states a time. states_a_time reads a number and its unit, a counted or placed cycle, a named timing parameter, a setup/hold/propagation time, a clock period or edge as whole words, and gates the timing arm of classify_statement."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

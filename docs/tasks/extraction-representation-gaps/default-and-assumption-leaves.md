@@ -160,7 +160,7 @@ children moved here whole, with their acceptance checklists.
   No code change, so no acceptance checklist applies.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b`
-  Status: `open` (`2026-10-19`; CODE; found by `.3.d.iii`)
+  Status: `done` (`2026-10-20`; CODE; found by `.3.d.iii`; checklist below; opened `.50` and `SCRATCH-RESIDUE-CONTAINMENT.15`)
   Goal: **a statement is a timing constraint only when it states a time.** `classify_statement`'s timing arm matches
   substrings: ` cycle`, `cycles` and `at least` in its first list and `cycle`, `ns`, `ps`, `time` and `edge` in its
   second, so a sentence that mentions bus cycles, a quantity *at least* some size, or a word containing `ns` is filed
@@ -170,6 +170,29 @@ children moved here whole, with their acceptance checklists.
   Acceptance: decide what a time expression is in the document's own terms (a number with a time or cycle unit, a
   named timing parameter, a clock edge or period, a latency), match the words as whole words, measure what every chain
   and every reader of the class loses and gains, and keep all 11 seeds, the temporal golds included.
+  **Decided `2026-10-20`: the timing words admit a sentence only when it also states a time.** The arm keeps its two
+  lists and now also asks `states_a_time`, which reads whole words (an underscore stays in a token, a possessive *'s*
+  is dropped): a number and its unit, apart or fused (*clock* only before *cycle(s)*/*period(s)*, *bit* only as *bit
+  time*, a fused *s* never); a count of cycles, clocks or seconds (*one*-*ten*, *single*, *N*) and of a named clock's
+  cycles (*50 SWCLKTCK cycles*); an event placed at a cycle (*next*, *previous*, *same*, *following*, *subsequent*,
+  *first*, *last*; *cycle N*); the eight timing abbreviations or a token written as a lowercase *t* before a capital
+  (*tSU*, *tPortConfiguration*: all 98 such tokens on the 31 chains are USB 3.2, USB4, I2C and I2S timing parameters);
+  *setup time*, *hold time*, *clock period*, *propagation delay*, *clock edge*; and an edge word with *edge* at most
+  one word later. *The current cycle* (Wishbone's bus cycle under way) and a latency with no value state none. A gate
+  that only narrows was chosen over the test alone: a first draft that used it alone also pulled 529 statements into
+  the class (timers, table rows, data rates) for a label only. **Measured over all 31 chains** (evidence dry-run, `2d61dc479`'s
+  artifacts against the new binary's): 8 identical; 534 of 813 statements leave the class (374 -> `source_fact`, 109 ->
+  `normative_statement`, 51 -> `conditional_rule`; Wishbone 249, USB 3.2 52, ADIv6 41, OpenCAPI DL 23) and 279 keep it,
+  every one attributed to a rule by a Python port of the test. The other readers add 47 conditional rules in 11 chains
+  (Wishbone 18, USB 3.2 9, AXI, ADIv6 and RISC-V debug 4 each) and 9 prose hints in TMC, AHB and Wishbone, and remove
+  nothing; `extract_interface_edge_timings`, the class's own reader, is unchanged. Rebuilt stage by stage (23 chains),
+  SemanticIR and IntentIR move only `conditional_rules` and, in those three, the hinted signals' semantic candidates;
+  Wishbone's adapter gains one `isf_obligations_not_lowered` residual (5 new obligations: no level to drive, or met by
+  another actor), AXI's and ADIv6's residual texts renumber rule ids, and every `.isf` text is byte-identical. Six of
+  the 9 new hints give a role the sentence does not (`ATREADYM`/`ATREADYS`, `HREADY`, `RTY_I`/`RTY_O`, `DAT_O`): the
+  prose hint reader's precision, owned by `.50`. Unread behaviors stay 176 (their timing-classed members 17 -> 4;
+  `.3.d.iii.a` owns the permissions). 728 statements state a time with none of the admitting words and keep their
+  class (273 of them table rows), deliberately: the class has no reader they would reach.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a`
   Status: `open` (`2026-10-19`; DESIGN + CODE; found by `.3.d.iii`)
@@ -262,3 +285,30 @@ children moved here whole, with their acceptance checklists.
   `pipeline/intentir.md` (the unread-assumption passage); KM `an-assume-sentence-about-the-document-is-apparatus` and
   `assume-sentences-fall-into-six-shapes` (amended). No production rule was deleted or replaced: the abstraction arm is
   narrowed and the apparatus test widened, and the book's `.3.d.ii.b.i` text still holds.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` (CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — `.3.d.iii`'s census: 813 `timing_constraint` statements on the 31 chains, 645 with no
+  time expression by the probe (`.project-data/tmp/erg-3diiib/probe.py`), Wishbone 268, among them 17 unread behaviors.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `classify_statement`'s timing arm matched both
+  word lists as substrings (`cycles` satisfies both, `ns` matches *transactions*, `at least` a size). RED, the file
+  restored byte-identically after each: the gate forced open fails
+  `the_timing_words_admit_a_sentence_only_when_it_states_a_time`; `states_a_time` cut short after the parameter test
+  fails that test and `a_number_and_its_unit_a_counted_or_placed_cycle_a_parameter_or_an_edge_states_a_time`.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 534 statements leave the class and none joins; 47
+  conditional rules and 9 hints added, none removed. The 23 changed chains rebuilt stage by stage, each artifact
+  validated once, the adapter last; `.isf` texts byte-identical. `python3 scripts/measure_unread_intent_records.py`:
+  176 unread behaviors, timing-classed 17 -> 4.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current after the rebuilds (no new field, no re-seal).
+  WIRE-BASED-100: the 11 seeds' scores identical to `2d61dc479`'s reports, each side on its own binary; the three
+  temporal golds, I2C, NVMe, RISC-V debug registers and SWD derivation byte-identical; AHB, APB, AXI and SWD differ
+  only in the candidate pool (71 -> 82, 18 -> 20, 545 -> 551, 306 -> 317) and existing-rule counts (AXI 150 -> 154, SWD
+  101 -> 105). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D
+  warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 171 / 1,854 passed, 0
+  failed. `flow_census.json` rolled forward (+1 function, +18 decision sites, +6 helper edges, +2 macros); boundary
+  counts unchanged.
+- [x] **GENERICITY (ADR 0006)** — time units, English number words, relative-order words and the typographic
+  convention for timing parameters; no document, signal or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A timing constraint states a time*); KM
+  `a-timing-constraint-states-a-time` (new) and `unread-behaviors-are-permissions-and-the-timing-class-misfires`
+  (amended). No production rule deleted: the arm is narrowed.

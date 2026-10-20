@@ -140,6 +140,8 @@
   > does 'for one response transfer' count as a condition
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > does 'it can be assumed that no write occurred' stay an abstraction (yes)
+- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
+  > does 'the current cycle' or 'at least 4 bytes' state a time (no)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -296,5 +298,3 @@
   > does a debug build and a release build accept the same persisted artifact
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > does a doc comment change move the production seal

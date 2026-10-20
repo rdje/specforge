@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md) | 2026-08-11 | `current` | EvidenceIR statement text comes from the normalized markdown, where `_` is escaped, so every underscore-beari… |
 | [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md) | 2026-08-13 | `current` | EvidenceIR protocol structure is document-derived and schema-3 proof-carrying |
 | [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md) | 2026-06-08 | `current` | audit-extraction — VLM proposer/verifier precision estimate over the broadened table-driven extraction |
 | [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md) | 2026-06-10 | `current` | The NLI extraction-quality gauge is persisted on EvidenceIR and re-measured by converge |
@@ -60,4 +61,3 @@
 | [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md) | 2026-08-09 | `current` | Derived-state field and copy plane is independently closed |
 | [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md) | 2026-08-31 | `current` | A `line_bytes_each` warning is an extremal bound, not accumulation — narrow the widest lines without changi… |
 | [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md) | 2026-09-29 | `current` | Editing a live surface triggers a fixed chain of derived-state refreshes, and skipping any link fails the doc… |
-| [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md) | 2026-09-18 | `current` | A same-clause appositive is a local declaration — on the deterministic path only, so the LLM path re-refuse… |

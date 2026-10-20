@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b",
-      "literal" : "`.3.d.iii.b` — a statement is a timing constraint only when it states a time.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a",
+      "literal" : "`.3.d.iii.a` — a stated permission is a typed record.",
       "mode" : "eligible",
       "part_id" : "default-and-assumption-leaves"
    },
@@ -112,13 +112,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 25702,
+               "bytes" : 27443,
                "line_bytes" : 281,
-               "lines" : 266
+               "lines" : 284
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "b2cf5c6bcfba1d9000b6cff90e0df18161489eca70d4f1ffadc63bb07c29bf10",
+            "sha256" : "74637ba686cb749ce859ba2894c6b6025a8bd50b43c38fd08d81817084928901",
             "state" : "active"
          },
          {
@@ -136,13 +136,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
             "metrics" : {
-               "bytes" : 27675,
+               "bytes" : 33022,
                "line_bytes" : 967,
-               "lines" : 264
+               "lines" : 314
             },
             "part_id" : "default-and-assumption-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
-            "sha256" : "f41c250c1bef1c0c104c704b38bd7cfac4c7b4f59c3c108fba4b7425791b9d8e",
+            "sha256" : "5eb891a26691941bbf071790c2e462541bd2f8fb4c0b8287c539f6783c404d95",
             "state" : "active"
          },
          {
@@ -1146,7 +1146,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
       },
@@ -1161,6 +1161,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.50",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
       }
    ],
    "limits" : {
@@ -1288,7 +1294,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.iii.b` — a statement is a timing constraint only when it states a time.",
+         "`.3.d.iii.a` — a stated permission is a typed record.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1330,9 +1336,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.45`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.50`"
       ]
    },
    "migration_metadata" : {

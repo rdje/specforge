@@ -1111,6 +1111,25 @@ adapter keeps one `isf_protocol_equivalence_rule_*` residual per record, and the
 byte-identical. The new rule field re-seals every chain. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.ii`).
 
+**A timing constraint states a time.** The timing arm of the statement classifier filed a sentence as a
+`timing_constraint` when it held a word from each of two lists, both matched as substrings: *cycles* alone satisfied
+both, *ns* matched *transactions*, and *at least* matched a size, so 645 of 813 such statements stated no time (most of
+them Wishbone sentences about its bus cycles). Since `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` (`2026-10-20`) those
+words admit a sentence only when it also states a time, read as whole words: a number and its unit (*12 ms*, *a
+2-cycle delay*, *0.3 UI*, *10ms*), a counted cycle, clock or second (*one clock cycle*, *within N cycles*, *three
+seconds*, *50 SWCLKTCK cycles*), an event placed at a cycle (*in the same cycle*, *the next clock cycle*, *Cycle 6*),
+a parameter written the way timing parameters are named (*tSU*, *tPortConfiguration*), a setup, hold or propagation
+time, a clock period, or a clock edge (*the rising ACLK edge*). A bus cycle (*the BLOCK cycles*, *the current cycle*),
+a size (*at least 4 bytes*), a possessive (*2's complement*), a run of bits (*write 1s*) and a latency named without a
+value state none. On the 31 chains 534 of the 813 statements leave the class for the one they would otherwise take
+(374 source facts, 109 normative statements, 51 conditional rules; Wishbone 249, USB 3.2 52, ADIv6 41) and none joins
+it. The readers of those classes then find 47 more conditional rules in 11 documents and 9 more signal hints in 3,
+and nothing is lost. The adapters lower none of the new rules: Wishbone gains one `isf_obligations_not_lowered`
+residual naming five obligations with no level to drive or met by another actor, AXI's and ADIv6's residual texts
+only renumber their rule ids, and the emitted `.isf` texts are byte-identical. A sentence
+that states a time but holds none of the admitting words keeps its class (*A 2 ms timer shall be started*), where its
+own readers find it. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.b`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

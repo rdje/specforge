@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md) | 2026-08-14 | `current` | Proof-bearing chains must validate each stage before building its consumer |
 | [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md) | 2026-08-15 | `current` | Canonical stage artifacts carry one cumulative five-stage proof ledger |
 | [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md) | 2026-08-29 | `current` | The persisted corpus's proof seal is censused totally and probed read-only at gate tier |
 | [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md) | 2026-09-11 | `current` | A configurable-property table whose option name contains "signals" satisfies the signal-caption gate, and onl… |
@@ -60,4 +61,3 @@
 | [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md) | 2026-08-08 | `current` | Git-indexed corpus PDFs are the source-registry membership authority |
 | [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md) | 2026-08-15 | `current` | Source proof migration replays neutral classification context instead of blessing stale labels |
 | [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md) | 2026-08-11 | `current` | The first reviewed source-to-IntentIR result is incomplete in all six categories and fails upstream |
-| [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md) | 2026-08-11 | `current` | The first source-to-IntentIR vertical population locks twelve reviewed documents without extractor tuning |

@@ -6852,7 +6852,8 @@ fn classify_statement(text: &str) -> StatementClass {
     }
 
     // Timing constraints — check before normative so "shall be asserted within 2 cycles"
-    // gets the more specific TimingConstraint class.
+    // gets the more specific TimingConstraint class. EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b: the words below admit a
+    // sentence only when it also states a time; *cycle* or *at least*, matched anywhere in a word, is not one.
     if contains_any(
         &lowered_text,
         &[
@@ -6886,7 +6887,8 @@ fn classify_statement(text: &str) -> StatementClass {
     ) && contains_any(
         &lowered_text,
         &["shall", "must", "cycle", "ns", "ps", "time", "edge"],
-    ) {
+    ) && states_a_time(text)
+    {
         return StatementClass::TimingConstraint;
     }
 
@@ -6959,6 +6961,184 @@ fn classify_statement(text: &str) -> StatementClass {
     }
 
     StatementClass::SourceFact
+}
+
+/// The units a stated time is counted in, as whole words after a number (`12 ms`, `2 cycles`, `1 UI`); *clock* and *bit*
+/// count only as *clock cycle* or *clock period* and *bit time*.
+const TIME_UNITS: [&str; 25] = [
+    "ns",
+    "ps",
+    "us",
+    "µs",
+    "ms",
+    "s",
+    "sec",
+    "secs",
+    "second",
+    "seconds",
+    "nanosecond",
+    "nanoseconds",
+    "microsecond",
+    "microseconds",
+    "millisecond",
+    "milliseconds",
+    "cycle",
+    "cycles",
+    "clock",
+    "clocks",
+    "ui",
+    "hz",
+    "khz",
+    "mhz",
+    "ghz",
+];
+/// The number words a stated count of cycles, clocks or seconds opens with (*one clock cycle*, *a single cycle*,
+/// *within N cycles*).
+const TIME_COUNT_WORDS: [&str; 12] = [
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "single", "n",
+];
+/// The words that place an event at a cycle relative to another (*in the same cycle*, *the next clock cycle*); *the
+/// current cycle* places nothing, and names the bus cycle under way.
+const RELATIVE_CYCLE_WORDS: [&str; 7] = [
+    "next",
+    "previous",
+    "same",
+    "following",
+    "subsequent",
+    "first",
+    "last",
+];
+/// Named timing parameters a specification writes as abbreviations.
+const TIMING_PARAMETERS: [&str; 8] = ["tsu", "thd", "tckh", "tckl", "tco", "tpd", "toh", "tih"];
+/// Two-word phrases that name a time: a setup, hold or propagation time, a clock period, a clock edge. A latency named
+/// with no value (*the maximum latency … to be calculated*) states none.
+const TIME_PHRASES: [(&str, &str); 5] = [
+    ("setup", "time"),
+    ("hold", "time"),
+    ("clock", "period"),
+    ("propagation", "delay"),
+    ("clock", "edge"),
+];
+/// The words an edge of a clock or signal is named by (*the rising edge*, *the rising ACLK edge*).
+const EDGE_WORDS: [&str; 4] = ["rising", "falling", "positive", "negative"];
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b — whether a lowercased sentence states a time, by whole words: a number
+/// followed by a unit (`12 ms`, `2-cycle`, `12ms`), a counted cycle or clock (*one clock cycle*), an event placed at a
+/// cycle (*in the same cycle*, *Cycle 6*), a named timing parameter, a setup, hold or propagation time, a clock period,
+/// a clock edge (*the rising edge*, *the rising ACLK edge*), or a parameter named the way timing parameters
+/// are written, a lowercase *t* before a capital (*tPortConfiguration*, *tSU*). A sentence that only names bus cycles
+/// or a quantity *at least* some size states none, nor does a possessive or a run of bits (*2's complement*, *write
+/// 1s*).
+fn states_a_time(text: &str) -> bool {
+    let names_a_timing_parameter = text
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .any(|token| {
+            token.len() >= 3
+                && token.starts_with('t')
+                && token[1..].starts_with(|c: char| c.is_ascii_uppercase())
+        });
+    if names_a_timing_parameter {
+        return true;
+    }
+    let lowered = text
+        .to_lowercase()
+        .replace("'s", " ")
+        .replace("\u{2019}s", " ");
+    let tokens: Vec<&str> = lowered
+        .split(|c: char| !(c.is_alphanumeric() || c == '.' || c == '_' || c == 'µ'))
+        .map(|token| token.trim_matches('.'))
+        .filter(|token| !token.is_empty())
+        .collect();
+    let is_number = |token: &str| {
+        token.chars().next().is_some_and(|c| c.is_ascii_digit())
+            && token.chars().all(|c| c.is_ascii_digit() || c == '.')
+    };
+    let unit_after = |i: usize| -> bool {
+        match tokens.get(i).copied() {
+            Some("bit") => tokens
+                .get(i + 1)
+                .is_some_and(|t| *t == "time" || *t == "times"),
+            Some("clock") => tokens
+                .get(i + 1)
+                .is_none_or(|t| matches!(*t, "cycle" | "cycles" | "period" | "periods")),
+            Some(token) => TIME_UNITS.contains(&token),
+            None => false,
+        }
+    };
+    tokens.iter().enumerate().any(|(i, token)| {
+        // A number and its unit, apart or fused (`12 ms`, `12ms`, `1.5us`).
+        if is_number(token) && unit_after(i + 1) {
+            return true;
+        }
+        let digits = token
+            .chars()
+            .take_while(|c| c.is_ascii_digit() || *c == '.')
+            .count();
+        if digits > 0 && digits < token.len() && {
+            let unit = &token[digits..];
+            unit != "s" && TIME_UNITS.contains(&unit)
+        } {
+            return true;
+        }
+        // A count of a named clock's cycles (*50 SWCLKTCK cycles*, *two TCK cycles*).
+        if (is_number(token) || TIME_COUNT_WORDS.contains(token))
+            && tokens
+                .get(i + 1)
+                .is_some_and(|t| t.contains("clk") || t.contains("tck"))
+            && tokens
+                .get(i + 2)
+                .is_some_and(|t| matches!(*t, "cycle" | "cycles" | "clocks"))
+        {
+            return true;
+        }
+        // A counted cycle, clock or second (*one clock cycle*, *a single cycle*, *three seconds*).
+        if TIME_COUNT_WORDS.contains(token) {
+            let next = tokens.get(i + 1).copied().unwrap_or("");
+            let after = tokens.get(i + 2).copied().unwrap_or("");
+            if matches!(
+                next,
+                "cycle"
+                    | "cycles"
+                    | "clocks"
+                    | "second"
+                    | "seconds"
+                    | "nanosecond"
+                    | "nanoseconds"
+                    | "microsecond"
+                    | "microseconds"
+                    | "millisecond"
+                    | "milliseconds"
+            ) || (next == "clock" && matches!(after, "cycle" | "cycles"))
+            {
+                return true;
+            }
+        }
+        // An event placed at a cycle (*the same cycle*, *the next clock cycle*, *Cycle 6*).
+        if RELATIVE_CYCLE_WORDS.contains(token) {
+            let next = tokens.get(i + 1).copied().unwrap_or("");
+            let after = tokens.get(i + 2).copied().unwrap_or("");
+            if next == "cycle" || (next == "clock" && after == "cycle") {
+                return true;
+            }
+        }
+        if matches!(*token, "cycle" | "cycles") && tokens.get(i + 1).is_some_and(|t| is_number(t)) {
+            return true;
+        }
+        if TIMING_PARAMETERS.contains(token) {
+            return true;
+        }
+        let next = tokens.get(i + 1).copied().unwrap_or("");
+        if TIME_PHRASES.contains(&(*token, next)) {
+            return true;
+        }
+        // A clock or signal edge, with at most one word between (*the rising ACLK edge*).
+        if EDGE_WORDS.contains(token)
+            && (next == "edge" || tokens.get(i + 2).is_some_and(|t| *t == "edge"))
+        {
+            return true;
+        }
+        false
+    })
 }
 
 fn normalize_text_key(text: &str) -> String {
@@ -59425,5 +59605,78 @@ mod non_contract_assumption_tests {
         ] {
             assert!(is_abstraction(text), "{text}");
         }
+    }
+}
+
+#[cfg(test)]
+mod stated_time_tests {
+    use super::{StatementClass, classify_statement, states_a_time};
+
+    #[test]
+    fn a_number_and_its_unit_a_counted_or_placed_cycle_a_parameter_or_an_edge_states_a_time() {
+        for text in [
+            "The device shall respond within 12 ms of the request.",
+            "A 2-cycle delay is inserted after the write.",
+            "tDRST is 10ms minimum.",
+            "The pulse lasts 1.5us.",
+            "The signal must be asserted for at least one clock cycle.",
+            "The response is returned in the same cycle as the request.",
+            "In Cycle 6 the master samples the data.",
+            "Tsu and Thd are measured at the pin.",
+            "The setup time of the data input is specified by the clock period.",
+            "Data is sampled on the rising ACLK edge.",
+            "Data is sampled on the falling edge of SCL.",
+            "The receiver tolerates a jitter of 0.3 UI.",
+            "A bit time is 2 bit times long for a dominant bit.",
+            "Each symbol lasts 4 clock cycles.",
+            "Send at least 50 SWCLKTCK cycles with SWDIOTMS HIGH.",
+            "When halt or resume is requested, a hart must respond in less than one second.",
+            "If the downstream port does not receive this LMP within tPortConfiguration time, it shall signal an error.",
+            "The data must be stable for tSU before the clock rises.",
+            "The response is returned within N clock cycles.",
+        ] {
+            assert!(states_a_time(text), "{text}");
+        }
+    }
+
+    #[test]
+    fn a_bus_cycle_a_size_a_possessive_or_a_run_of_bits_states_no_time() {
+        for text in [
+            "MASTER and SLAVE interfaces MAY be designed so that they do not support the BLOCK cycles.",
+            "The burst must be at least 4 bytes long.",
+            "A device shall not assume that transactions occur at the same location.",
+            "The value is held in 2's complement form.",
+            "Software writes 1s to clear the status bits.",
+            "The clock domain crossing is handled by the bridge.",
+            "Each 2 clock domains share one reset.",
+            "The interface uses edge triggered interrupts.",
+            "A 16 bit counter holds the count.",
+            "A MASTER MAY issue two BLOCK cycles back to back.",
+            "The second-stage table must be at least 4 KiB aligned.",
+            "The tag field is written to the TLB.",
+            "The Cycle Type Identifier provides additional information about the current cycle.",
+            "| 3.3.1 BLOCK READ Cycle___________________48 | |",
+            "This enables the maximum latency for accessing the bus to be calculated.",
+        ] {
+            assert!(!states_a_time(text), "{text}");
+        }
+    }
+
+    #[test]
+    fn the_timing_words_admit_a_sentence_only_when_it_states_a_time() {
+        assert_eq!(
+            classify_statement("The response shall follow the request after at least 2 cycles."),
+            StatementClass::TimingConstraint
+        );
+        assert_ne!(
+            classify_statement(
+                "MASTER and SLAVE interfaces MAY be designed so that they do not support the BLOCK cycles."
+            ),
+            StatementClass::TimingConstraint
+        );
+        assert_ne!(
+            classify_statement("The burst must be at least 4 bytes long."),
+            StatementClass::TimingConstraint
+        );
     }
 }

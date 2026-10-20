@@ -29,10 +29,12 @@ abbreviations in the first, `shall`, `must`, `cycle`, `ns`, `ps`, `time`, `edge`
 both alone, `ns` matches *transactions*, and `at least` matches a size. Over the 31 chains **645 of 813**
 `timing_constraint` statements (79%) carry no time expression — Wishbone 268, USB 3.2 72, ADIv6 62, AXI 60 — among
 them the 17 unread Wishbone, USB 3.2, I2C and OpenCAPI behaviors (*MASTER and SLAVE interfaces MAY be designed so that
-they do not support the BLOCK cycles*). `.3.d.iii.b` owns the fix and must measure every reader of the class.
+they do not support the BLOCK cycles*). **Fixed `2026-10-20`** by `.3.d.iii.b`: the timing words now admit a
+sentence only with a stated time, and 534 of the 813 left the class ([[a-timing-constraint-states-a-time]]).
 
 **Seven obligations are filed apparatus.** `.3.d.ii.b.i`'s premise phrase *assume that* files a sentence such as *A
 device shall not assume that transactions occur at the same location within each service interval* as apparatus,
 though it states the device's obligation; `.3.d.iii.c` owns them with the 14-record remainder.
 
-Links: [[assume-sentences-fall-into-six-shapes]], [[an-assume-sentence-about-the-document-is-apparatus]].
+Links: [[assume-sentences-fall-into-six-shapes]], [[an-assume-sentence-about-the-document-is-apparatus]],
+[[a-timing-constraint-states-a-time]].

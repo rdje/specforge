@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is a completed oversized task tree contained without losing evidence
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -295,5 +297,3 @@
   > how many corpus task ids and source regions must containment preserve
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > how many corpus/-sourced documents are there and how many are legacy
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim census candidates join exact evidence or registered annotations

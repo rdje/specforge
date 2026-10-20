@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SCRATCH-RESIDUE-CONTAINMENT`
-- Status: `active` (`.0`, `.3`, `.5`-`.14` complete; `.1`, `.2`, `.4` pending)
+- Status: `active` (`.0`, `.3`, `.5`-`.14` complete; `.1`, `.2`, `.4`, `.15` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-10-19`
+- Last updated: `2026-10-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -426,6 +426,23 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   Verification: `every removal path absent; the re-plan is empty on both scripts; every retained root present; chain
   sha256 re-derived 4a05ec3d…, equal`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.14 — the daily sweep: no scratch to reclaim, and 1.5 GiB of rustc sessions`
+
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.15`
+  State: `pending` (`2026-10-20`; found by `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b`)
+  Goal: **every self-test fixture root under `generated/` is in the residue census, and no producer leaks one.**
+  `.14` recorded "no fixture residue under `generated/`", but its census named only `.3`/`.4`'s three prefixes
+  (`live-document-size-tests.*`, `-verifiers.*`, `derived-state-authority-tests.*`). **Reproduce:**
+  `ls -d generated/.*self-test* generated/.knowledge-map-check.*` lists **31 roots / 4,170 files / 26,908 KiB**
+  from six producers, mtimes `2026-08-08` to `2026-09-29`: `scripts/check_corpus_kb_currentness.pl` 10,
+  `check_book_quantitative_claims.pl` 6, `check_claim_verification.pl` 5, `check_fact_card_catalog.pl` 5,
+  `check_current_claim_census.pl` 4, `knowledge-map/scripts/check_knowledge_map.sh` 1. The Perl self-tests remove
+  their fixture only after every case passes (`check_book_quantitative_claims.pl`'s `run_self_test` reaches
+  `remove_tree` last), so a failed case or a killed run leaves it; the knowledge-map check traps `EXIT HUP INT TERM`
+  and leaks only under SIGKILL. **Impact:** the residue grows unseen, and a root under `generated/` deleted
+  mid-walk is `.3`'s nondeterministic gate failure.
+  Acceptance: widen the sweep's census to every dot-prefixed fixture root under `generated/` (derive the prefixes
+  from the producers, not a list), reclaim the 31 after the reachability check, and give each producer `.4`'s chosen
+  remedy (cleanup on every exit path, or stale-sibling reclamation at startup) with a RED control per producer.
 
 ## Open Questions
 
