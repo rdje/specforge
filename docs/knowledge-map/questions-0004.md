@@ -118,6 +118,8 @@
   > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > does corpus prior memory still give a hint a role (a remembered role must pass the same text)
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > does current Docling lose captions
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -296,5 +298,3 @@
   > does the co-reference rule resurrect resolve_indexed_signal_family
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > does the constraint record source_text become the clause
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does the converge NLI pass measure quality or demote unsupported intent

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > why is RACK must be LOW published without during reset
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is RUSERCHK missing from the AXI catalog
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why is Reset value not a semantic phase
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why is SWD per-signal phase membership degenerate / empty
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > why is SWD serial_frame_field left at 0/11 instead of being partially recovered (because every candidate rule that fires often enough to help also mis-assigns the phase on most fields, and a wrong phase is fabrication. A measured zero is the honest result; WIRE-BASED-100.8d is deferred with that consequence stated)
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why is SWD/ADI hard / different from APB AHB AXI
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > why is SWIO not captured as a third SWP signal
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
@@ -18,10 +30,14 @@
   > why is TMC's memory interface table not read
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > why is Table C2-2 ERRNPASS ERRSTOP not read as field values
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why is Valid indicator a valid-like hint for AWVALID even though AXI declares a signal VALID
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why is Vital Product Data (VPD) not a signal
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why is WSTRB or RCHUNKSTRB not valid-like (indicates which byte lanes, a choice)
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -98,6 +114,10 @@
   > why is a sentence containing when not necessarily a semantic gate
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > why is a shipped_behavior aggregate_change rationale rejected (it is capped at 512 bytes; the whole surfaces.jsonl record is bounded by max_scalar_bytes)
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why is a signal not valid-like when the sentence says valid data (presents valid data on its DAT_O lines)
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why is a signal tagged handshake_valid_like or handshake_ready_like
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > why is a stable span after tick zero residual
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
@@ -277,23 +297,3 @@
   > why is the book-behaviour obligation not hard-gated
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > why is the bounded active task root written last
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why is the caption census addition count higher than the published delta
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is the channel role kept verbatim instead of mapped to address/data/response phases
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why is the constraint subject fallback bounded by the obligation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why is the cross-reference refusal anchored to the sentence opening
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why is the default ingest threshold 131 pages on a 24 GiB host
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why is the dynamic path's subject search still statement-scoped
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why is the fact-card catalog about to run out of capacity
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why is the fast doctrine subset an exclusion list rather than an inclusion list

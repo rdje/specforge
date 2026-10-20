@@ -12050,13 +12050,20 @@ fn synthesize_signal_semantic_hints_from_tables(
                 description,
                 known_signals.iter().map(String::as_str),
             );
-            let semantic_tags = infer_signal_semantic_tags_from_description(
+            let mut semantic_tags = infer_signal_semantic_tags_from_description(
                 &sanitized_description,
                 description,
                 SignalSemanticHintSourceKind::SignalDescriptionTable,
                 &BTreeSet::from([signal_name.clone()]),
                 known_actor_names,
                 prior_guidance,
+            );
+            retain_borne_semantic_roles(
+                &mut semantic_tags,
+                description,
+                SemanticRoleSubject::Described(&signal_name),
+                known_signals,
+                &BTreeMap::new(),
             );
             if semantic_tags.is_empty() {
                 continue;
@@ -12121,13 +12128,20 @@ fn synthesize_signal_semantic_hints_from_prose(
                 &target_context.context_text,
                 known_signals.iter().map(String::as_str),
             );
-            let semantic_tags = infer_signal_semantic_tags_from_description(
+            let mut semantic_tags = infer_signal_semantic_tags_from_description(
                 &sanitized_text,
                 &target_context.context_text,
                 source_kind,
                 &BTreeSet::from([target_context.signal_name.clone()]),
                 known_actor_names,
                 prior_guidance,
+            );
+            retain_borne_semantic_roles(
+                &mut semantic_tags,
+                &statement.text,
+                SemanticRoleSubject::Named(&target_context.signal_name, target_context.window),
+                known_signals,
+                signal_alias_map,
             );
             if semantic_tags.is_empty() {
                 continue;
@@ -12252,13 +12266,20 @@ fn push_visual_signal_semantic_hint(
             &target_context.context_text,
             known_signals.iter().map(String::as_str),
         );
-        let semantic_tags = infer_signal_semantic_tags_from_description(
+        let mut semantic_tags = infer_signal_semantic_tags_from_description(
             &sanitized_text,
             &target_context.context_text,
             source_kind,
             &BTreeSet::from([target_context.signal_name.clone()]),
             known_actor_names,
             prior_guidance,
+        );
+        retain_borne_semantic_roles(
+            &mut semantic_tags,
+            source_text,
+            SemanticRoleSubject::Named(&target_context.signal_name, target_context.window),
+            known_signals,
+            signal_alias_map,
         );
         if semantic_tags.is_empty() {
             continue;
@@ -12341,6 +12362,8 @@ struct SignalSemanticTargetContext {
     signal_name: String,
     alias_grounded: bool,
     context_text: String,
+    /// The bytes of the text that speak about the signal.
+    window: (usize, usize),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -12373,14 +12396,15 @@ fn extract_signal_semantic_target_contexts(
             signal_name,
             alias_grounded: mentions.iter().any(|mention| mention.alias_grounded),
             context_text: text.to_string(),
+            window: (0, text.len()),
         });
         return contexts;
     }
 
     let mut seen = BTreeSet::new();
     for (index, mention) in mentions.iter().enumerate() {
-        let context_text = extract_signal_semantic_context_window(text, &mentions, index);
-        let context_text = context_text.trim();
+        let window = extract_signal_semantic_context_window(text, &mentions, index);
+        let context_text = text[window.0..window.1].trim();
         if context_text.is_empty() {
             continue;
         }
@@ -12397,6 +12421,7 @@ fn extract_signal_semantic_target_contexts(
             signal_name: mention.signal_name.clone(),
             alias_grounded: mention.alias_grounded,
             context_text: context_text.to_string(),
+            window,
         });
     }
 
@@ -12426,7 +12451,9 @@ fn collect_signal_semantic_target_mentions(
         }
         if let Some(start) = token_start.take() {
             let token = &text[start..index];
-            if let Some(signal_name) = resolve_declared_signal_identifier(token, known_signals) {
+            if let Some(signal_name) = resolve_declared_signal_identifier(token, known_signals)
+                && (token == signal_name || !is_role_label_word(token))
+            {
                 mentions.push(SignalSemanticTargetMention {
                     signal_name,
                     alias_grounded: false,
@@ -12508,11 +12535,11 @@ fn find_reference_spans(text: &str, token: &str) -> Vec<(usize, usize)> {
     spans
 }
 
-fn extract_signal_semantic_context_window<'a>(
-    text: &'a str,
+fn extract_signal_semantic_context_window(
+    text: &str,
     mentions: &[SignalSemanticTargetMention],
     index: usize,
-) -> &'a str {
+) -> (usize, usize) {
     let lowered = text.to_ascii_lowercase();
     let current = &mentions[index];
 
@@ -12540,7 +12567,7 @@ fn extract_signal_semantic_context_window<'a>(
         text.len()
     };
 
-    text[start..end].trim()
+    (start, end)
 }
 
 fn find_first_clause_separator(text: &str) -> Option<(usize, usize)> {
@@ -12594,42 +12621,13 @@ fn infer_signal_semantic_tags_from_description(
     let lowered = description.to_ascii_lowercase();
     let mut tags = BTreeSet::new();
 
-    if contains_any(
-        &lowered,
-        &[
-            " valid",
-            "valid ",
-            "information is available",
-            "data is available",
-            "address is available",
-            "control is available",
-            "request is pending",
-            "request pending",
-            "request present",
-            "transaction request",
-            "transfer request",
-        ],
-    ) {
-        tags.insert(SignalSemanticTag::HandshakeValidLike);
-    }
-
-    if contains_any(
-        &lowered,
-        &[
-            " ready",
-            "ready ",
-            "can accept",
-            "able to accept",
-            "accept the transfer",
-            "accept transfer",
-            "accept data",
-            "accept address",
-            "complete the transfer",
-            "transfer can complete",
-        ],
-    ) || contains_ready_like_acknowledgment_phrase(&lowered)
-    {
-        tags.insert(SignalSemanticTag::HandshakeReadyLike);
+    for tag in [
+        SignalSemanticTag::HandshakeValidLike,
+        SignalSemanticTag::HandshakeReadyLike,
+    ] {
+        if !semantic_role_phrase_spans(&lowered, tag).is_empty() {
+            tags.insert(tag);
+        }
     }
 
     if let Some(role) = prior_guidance.and_then(|prior_guidance| {
@@ -12656,29 +12654,480 @@ fn looks_like_structural_contents_entry_for_semantic_hint(text: &str) -> bool {
             && text.chars().any(|character| character.is_ascii_digit())
 }
 
-fn contains_ready_like_acknowledgment_phrase(lowered: &str) -> bool {
-    contains_any(
-        lowered,
-        &[
-            "acknowledge the request",
-            "acknowledges the request",
-            "acknowledged the request",
-            "acknowledge request",
-            "acknowledges request",
-            "acknowledged request",
-            "acknowledge the transfer",
-            "acknowledges the transfer",
-            "acknowledged the transfer",
-            "acknowledge transfer",
-            "acknowledges transfer",
-            "acknowledged transfer",
-            "acknowledge receipt",
-            "acknowledges receipt",
-            "acknowledged receipt",
-            "request acknowledged",
-            "transfer acknowledged",
-        ],
-    )
+/// `EXTRACTION-REPRESENTATION-GAPS.50` — the words that state a handshake role. The first of each list is also the
+/// role's LABEL: a description may name its signal by it alone (*Write address valid.*, *Ready indicator*).
+const VALID_ROLE_PHRASES: &[&str] = &[
+    "valid",
+    "information is available",
+    "data is available",
+    "address is available",
+    "control is available",
+    "request is pending",
+    "request pending",
+    "request present",
+    "transaction request",
+    "transfer request",
+];
+const READY_ROLE_PHRASES: &[&str] = &[
+    "ready",
+    "can accept",
+    "able to accept",
+    "accept the transfer",
+    "accept transfer",
+    "accept data",
+    "accept address",
+    "complete the transfer",
+    "transfer can complete",
+    "acknowledge the request",
+    "acknowledges the request",
+    "acknowledged the request",
+    "acknowledge request",
+    "acknowledges request",
+    "acknowledged request",
+    "acknowledge the transfer",
+    "acknowledges the transfer",
+    "acknowledged the transfer",
+    "acknowledge transfer",
+    "acknowledges transfer",
+    "acknowledged transfer",
+    "acknowledge receipt",
+    "acknowledges receipt",
+    "acknowledged receipt",
+    "request acknowledged",
+    "transfer acknowledged",
+];
+/// The verbs by which a signal states a role: a handshake signal INDICATES that something is valid or that a
+/// receiver is ready, where data simply IS valid. A signal ASSERTED WHEN something is valid states it too.
+const INDICATING_VERBS: [&str; 4] = ["indicate", "indicates", "indicated", "indicating"];
+const ASSERTION_WORDS: [&str; 2] = ["asserted", "high"];
+const ASSERTION_CONDITIONS: [&str; 3] = ["when", "while", "whenever"];
+/// A word shortly before a role phrase that denies it (*not ready*, *unable to complete the transfer*).
+const ROLE_NEGATORS: [&str; 6] = ["not", "no", "never", "nor", "unable", "cannot"];
+/// A word before a signal that makes it an object rather than an agent (*in response to STB_O*).
+const AGENT_BLOCKING_PREPOSITIONS: [&str; 13] = [
+    "to", "in", "on", "of", "from", "for", "with", "into", "onto", "at", "than", "via", "using",
+];
+/// A word passed over when reading what precedes a signal (*uses the HTRANS*).
+const ROLE_DETERMINERS: [&str; 9] = [
+    "the", "a", "an", "its", "their", "this", "that", "each", "every",
+];
+/// A word that makes a description a clause rather than a label (*PNSE must be valid when PSEL is asserted*).
+const ROLE_CLAUSE_VERBS: [&str; 20] = [
+    "is", "are", "be", "been", "being", "was", "were", "must", "shall", "should", "can", "could",
+    "may", "might", "will", "would", "has", "have", "does", "do",
+];
+/// The noun a role label names its signal by (*Ready indicator*, *The ready signal used by …*).
+const ROLE_LABEL_NOUNS: [&str; 3] = ["signal", "signals", "indicator"];
+
+/// `EXTRACTION-REPRESENTATION-GAPS.50` — a role label written as a word (*Valid indicator*) is that word, not a
+/// declared signal it only case-folds to (`VALID`): only the signal's own spelling names the signal.
+fn is_role_label_word(token: &str) -> bool {
+    [VALID_ROLE_PHRASES[0], READY_ROLE_PHRASES[0]]
+        .iter()
+        .any(|label| token.eq_ignore_ascii_case(label))
+}
+
+fn semantic_role_phrases(tag: SignalSemanticTag) -> &'static [&'static str] {
+    match tag {
+        SignalSemanticTag::HandshakeValidLike => VALID_ROLE_PHRASES,
+        SignalSemanticTag::HandshakeReadyLike => READY_ROLE_PHRASES,
+    }
+}
+
+/// The whole-word occurrences of a role's phrases in a lowercased text, in reading order. A phrase inside a longer
+/// word or an identifier (*invalid*, *validity*, *already*, *AFVALID*) does not state the role.
+fn semantic_role_phrase_spans(lowered: &str, tag: SignalSemanticTag) -> Vec<(usize, usize)> {
+    let is_word = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let mut spans = Vec::new();
+    for phrase in semantic_role_phrases(tag) {
+        for (start, _) in lowered.match_indices(phrase) {
+            let end = start + phrase.len();
+            if lowered[..start]
+                .chars()
+                .next_back()
+                .is_none_or(|c| !is_word(c))
+                && lowered[end..].chars().next().is_none_or(|c| !is_word(c))
+            {
+                spans.push((start, end));
+            }
+        }
+    }
+    spans.sort_unstable();
+    spans
+}
+
+/// Who a semantic hint's text speaks about.
+#[derive(Debug, Clone, Copy)]
+enum SemanticRoleSubject<'a> {
+    /// A signal-description cell, whose unstated subject is its row's signal.
+    Described(&'a str),
+    /// A text naming the signal among its words; only the bytes in the window speak about it.
+    Named(&'a str, (usize, usize)),
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.50` — keep the handshake roles a text makes its signal the BEARER of.
+///
+/// A handshake signal *indicates* that something is valid or that a receiver is ready; data simply *is* valid. So a
+/// role phrase counts for a signal when the signal is the agent of the predicate that states it: an indicating
+/// predicate whose complement holds it (*STB_O indicates a valid data transfer cycle*; *keeps ACK_I asserted to
+/// indicate that it is ready*; *indicates that it has placed valid data on the data bus by asserting ACK_I*), or a
+/// role stated as a verb phrase with the signal as its subject (*XREADY can accept the transfer*) — never the bare
+/// `valid` or `ready` said of the signal itself (*PNSE must be valid*). It also counts when a description names its
+/// signal by the role (*Write address valid.*, *Ready indicator*, *The ready signal used by …*). It does not count for the data a
+/// validity qualifies (*presents valid data on its DAT_O lines*), for a signal named beside the one that bears it
+/// (*If there is valid data, that is, ATVALID HIGH*), when it is denied (*not ready to accept*), or when what is
+/// indicated is a choice (*indicates which byte lanes contain valid data*). A table row naming one signal is that
+/// signal's description. A role recalled from corpus memory has no position in the text: it holds only when the
+/// text has no phrase of that role of its own and the signal is the agent of one of its predicates — an indicating
+/// one, or the sentence it opens as subject (*XACK can receive the transfer*).
+fn retain_borne_semantic_roles(
+    tags: &mut Vec<SignalSemanticTag>,
+    text: &str,
+    subject: SemanticRoleSubject<'_>,
+    known_signals: &HashSet<String>,
+    signal_alias_map: &BTreeMap<String, String>,
+) {
+    if tags.is_empty() {
+        return;
+    }
+    let reading = SemanticRoleReading::new(text, known_signals, signal_alias_map);
+    tags.retain(|tag| reading.bears(subject, *tag));
+}
+
+/// Who an indicating verb's agent is.
+enum IndicatingAgent<'a> {
+    /// No signal precedes it in its sentence: in a description, the described signal.
+    Unstated,
+    Signal(&'a str),
+    /// A signal precedes it across a clause boundary, so another subject may stand between.
+    Unknown,
+}
+
+/// A text read for who bears a role: its lowercase spelling, the signals it names, its words, and the words that
+/// indicate (an indicating verb, or the assertion word of *asserted when*).
+struct SemanticRoleReading {
+    lowered: String,
+    mentions: Vec<SignalSemanticTargetMention>,
+    words: Vec<(usize, usize)>,
+    signal_words: Vec<(usize, usize)>,
+    indicators: Vec<(usize, usize)>,
+}
+
+impl SemanticRoleReading {
+    fn new(
+        text: &str,
+        known_signals: &HashSet<String>,
+        signal_alias_map: &BTreeMap<String, String>,
+    ) -> Self {
+        let lowered = text.to_ascii_lowercase();
+        let mentions =
+            collect_signal_semantic_target_mentions(text, known_signals, signal_alias_map);
+        let known = known_signals
+            .iter()
+            .map(|signal| signal.to_ascii_lowercase())
+            .collect::<HashSet<_>>();
+        let words = identifier_words(&lowered)
+            .into_iter()
+            .map(|(start, word)| (start, start + word.len()))
+            .collect::<Vec<_>>();
+        let signal_words = words
+            .iter()
+            .copied()
+            .filter(|&(start, end)| {
+                known_signals.contains(&text[start..end])
+                    || known.contains(&lowered[start..end])
+                        && !is_role_label_word(&lowered[start..end])
+            })
+            .collect();
+        let indicators = words
+            .iter()
+            .enumerate()
+            .filter(|&(index, &(start, end))| {
+                let word = &lowered[start..end];
+                INDICATING_VERBS.contains(&word)
+                    || ASSERTION_WORDS.contains(&word)
+                        && words.get(index + 1).is_some_and(|&(start, end)| {
+                            ASSERTION_CONDITIONS.contains(&&lowered[start..end])
+                        })
+            })
+            .map(|(_, &span)| span)
+            .collect();
+        Self {
+            lowered,
+            mentions,
+            words,
+            signal_words,
+            indicators,
+        }
+    }
+
+    fn word(&self, span: (usize, usize)) -> &str {
+        &self.lowered[span.0..span.1]
+    }
+
+    fn bears(&self, subject: SemanticRoleSubject<'_>, tag: SignalSemanticTag) -> bool {
+        let whole = (0, self.lowered.len());
+        let (signal, window, described) = match subject {
+            SemanticRoleSubject::Described(signal) => (signal, whole, true),
+            SemanticRoleSubject::Named(signal, window) => (
+                signal,
+                window,
+                self.lowered.trim_start().starts_with('|')
+                    && self
+                        .mentions
+                        .iter()
+                        .all(|mention| mention.signal_name == signal),
+            ),
+        };
+        let scope = |at: usize| if described { self.cell(at) } else { whole };
+        let cues = semantic_role_phrase_spans(&self.lowered, tag)
+            .into_iter()
+            .filter(|&(start, end)| {
+                start >= window.0 && end <= window.1 && !self.names_a_signal((start, end))
+            })
+            .collect::<Vec<_>>();
+        if cues.is_empty() {
+            return self
+                .indicators
+                .iter()
+                .copied()
+                .filter(|&(start, end)| start >= window.0 && end <= window.1)
+                .any(|verb| {
+                    let sentence = self.sentence(verb.0, scope(verb.0));
+                    !self.indicates_a_choice(verb, sentence)
+                        && self.signal_indicates(verb, sentence, signal, described)
+                })
+                || self
+                    .mentions
+                    .iter()
+                    .filter(|mention| mention.start >= window.0 && mention.end <= window.1)
+                    .any(|mention| {
+                        mention.signal_name == signal
+                            && self.opens_its_sentence(mention, scope(mention.start))
+                    });
+        }
+        let label = semantic_role_phrases(tag)[0];
+        cues.into_iter().any(|cue| {
+            let sentence = self.sentence(cue.0, scope(cue.0));
+            let states_it_as_subject = self.word(cue) != label
+                && self.mentions.iter().any(|mention| {
+                    mention.signal_name == signal
+                        && mention.end <= cue.0
+                        && mention.start >= sentence.0
+                        && self.opens_its_sentence(mention, scope(mention.start))
+                });
+            !self.is_denied(cue, sentence)
+                && ((described && self.labels_role(cue, self.cell(cue.0), tag))
+                    || states_it_as_subject
+                    || self.indicated_by(cue, sentence, signal, described))
+        })
+    }
+
+    /// Whether a signal opens its sentence, after at most a determiner, as its subject.
+    fn opens_its_sentence(
+        &self,
+        mention: &SignalSemanticTargetMention,
+        within: (usize, usize),
+    ) -> bool {
+        let sentence = self.sentence(mention.start, within);
+        self.words_before(mention.start, sentence.0)
+            .all(|word| ROLE_DETERMINERS.contains(&self.word(word)))
+    }
+
+    /// Whether the span spells, or overlaps, a signal's name.
+    fn names_a_signal(&self, span: (usize, usize)) -> bool {
+        self.signal_words
+            .iter()
+            .any(|&(start, end)| start < span.1 && span.0 < end)
+            || self
+                .mentions
+                .iter()
+                .any(|mention| mention.start < span.1 && span.0 < mention.end)
+    }
+
+    /// The table cell around `at` — the whole text when it has no cells.
+    fn cell(&self, at: usize) -> (usize, usize) {
+        let start = self.lowered[..at].rfind('|').map_or(0, |index| index + 1);
+        let end = self.lowered[at..]
+            .find('|')
+            .map_or(self.lowered.len(), |index| at + index);
+        (start, end)
+    }
+
+    /// The sentence around `at`, inside `within`.
+    fn sentence(&self, at: usize, within: (usize, usize)) -> (usize, usize) {
+        let bytes = self.lowered.as_bytes();
+        let ends_sentence = |index: usize| match bytes[index] {
+            b'|' | b';' | b'\n' | b'?' | b'!' => true,
+            b'.' | b':' => bytes
+                .get(index + 1)
+                .is_none_or(|next| next.is_ascii_whitespace()),
+            _ => false,
+        };
+        let start = (within.0..at)
+            .rev()
+            .find(|&index| ends_sentence(index))
+            .map_or(within.0, |index| index + 1);
+        let end = (at..within.1)
+            .find(|&index| ends_sentence(index))
+            .unwrap_or(within.1);
+        (start, end)
+    }
+
+    /// The words before `at` in the sentence starting at `floor`, nearest first.
+    fn words_before(&self, at: usize, floor: usize) -> impl Iterator<Item = (usize, usize)> + '_ {
+        self.words
+            .iter()
+            .rev()
+            .copied()
+            .filter(move |&(start, end)| end <= at && start >= floor)
+    }
+
+    fn is_denied(&self, cue: (usize, usize), sentence: (usize, usize)) -> bool {
+        self.words_before(cue.0, sentence.0)
+            .take(3)
+            .any(|word| ROLE_NEGATORS.contains(&self.word(word)))
+    }
+
+    /// Whether a description names its signal by the role: the label followed by its noun (*Ready indicator*), or
+    /// the label closing a first sentence that has no verb (*Write address valid.*, *Ready.*).
+    fn labels_role(
+        &self,
+        cue: (usize, usize),
+        cell: (usize, usize),
+        tag: SignalSemanticTag,
+    ) -> bool {
+        if self.word(cue) != semantic_role_phrases(tag)[0] {
+            return false;
+        }
+        let next_word = self
+            .words
+            .iter()
+            .copied()
+            .find(|&(start, _)| start >= cue.1 && start < cell.1);
+        if next_word.is_some_and(|word| ROLE_LABEL_NOUNS.contains(&self.word(word))) {
+            return true;
+        }
+        let sentence = self.sentence(cue.0, cell);
+        sentence.0 == cell.0
+            && self.lowered[cue.1..sentence.1].trim().is_empty()
+            && !self
+                .words_before(cue.0, sentence.0)
+                .any(|word| ROLE_CLAUSE_VERBS.contains(&self.word(word)))
+    }
+
+    /// Whether an indicating predicate states the role phrase of `signal`: the signal is its agent (*S indicates …*,
+    /// *uses S to indicate …*, *S is set high, indicating …*), or the means named after the role (*indicates that it
+    /// has placed valid data … by asserting ACK_I*).
+    fn indicated_by(
+        &self,
+        cue: (usize, usize),
+        sentence: (usize, usize),
+        signal: &str,
+        described: bool,
+    ) -> bool {
+        let Some(verb) = self
+            .indicators
+            .iter()
+            .rev()
+            .copied()
+            .find(|&(start, end)| end <= cue.0 && start >= sentence.0)
+        else {
+            return false;
+        };
+        if self.indicates_a_choice(verb, sentence) || self.restricts_a_choice(verb, cue) {
+            return false;
+        }
+        if self.signal_indicates(verb, sentence, signal, described) {
+            return true;
+        }
+        let Some(means) = self
+            .mentions
+            .iter()
+            .find(|mention| mention.start >= cue.1 && mention.end <= sentence.1)
+        else {
+            return false;
+        };
+        means.signal_name == signal
+            && matches!(
+                self.indicating_agent(verb, sentence),
+                IndicatingAgent::Unstated
+            )
+            && self.words.iter().any(|&(start, end)| {
+                start >= cue.1 && end <= means.start && self.word((start, end)) == "by"
+            })
+    }
+
+    /// Whether the role restricts the noun the verb indicates rather than completing a *that* clause: *indicates the
+    /// read data chunks that are valid* names a choice of chunks, as *indicates which* does.
+    fn restricts_a_choice(&self, verb: (usize, usize), cue: (usize, usize)) -> bool {
+        let complement = self
+            .words
+            .iter()
+            .copied()
+            .filter(|&(start, end)| start >= verb.1 && end <= cue.0)
+            .map(|word| self.word(word))
+            .collect::<Vec<_>>();
+        complement.first().is_some_and(|word| *word != "that")
+            && matches!(complement.as_slice(), [.., "that" | "which", "are" | "is"])
+    }
+
+    /// Whether what the verb indicates is a choice rather than a state (*indicates which byte lanes …*).
+    fn indicates_a_choice(&self, verb: (usize, usize), sentence: (usize, usize)) -> bool {
+        self.words
+            .iter()
+            .copied()
+            .filter(|&(start, end)| start >= verb.1 && end <= sentence.1)
+            .map(|word| self.word(word))
+            .find(|word| *word != "that")
+            == Some("which")
+    }
+
+    fn signal_indicates(
+        &self,
+        verb: (usize, usize),
+        sentence: (usize, usize),
+        signal: &str,
+        described: bool,
+    ) -> bool {
+        match self.indicating_agent(verb, sentence) {
+            IndicatingAgent::Signal(agent) => agent == signal,
+            IndicatingAgent::Unstated => described,
+            IndicatingAgent::Unknown => false,
+        }
+    }
+
+    /// The nearest signal before the verb in its sentence that is not a preposition's object. A finite verb's agent
+    /// stands in its own clause; a participle (*…, indicating …*) takes the clause before it.
+    fn indicating_agent(
+        &self,
+        verb: (usize, usize),
+        sentence: (usize, usize),
+    ) -> IndicatingAgent<'_> {
+        let participle = self.word(verb) == "indicating";
+        for mention in self
+            .mentions
+            .iter()
+            .rev()
+            .filter(|mention| mention.end <= verb.0 && mention.start >= sentence.0)
+        {
+            let object_of_preposition = self
+                .words_before(mention.start, sentence.0)
+                .map(|word| self.word(word))
+                .find(|word| !ROLE_DETERMINERS.contains(word))
+                .is_some_and(|word| AGENT_BLOCKING_PREPOSITIONS.contains(&word));
+            if object_of_preposition {
+                continue;
+            }
+            if !participle
+                && !clause_separator_offsets(&self.lowered[mention.end..verb.0]).is_empty()
+            {
+                return IndicatingAgent::Unknown;
+            }
+            return IndicatingAgent::Signal(&mention.signal_name);
+        }
+        IndicatingAgent::Unstated
+    }
 }
 
 fn semantic_tag_for_role(role: InterfaceSignalSemanticRole) -> SignalSemanticTag {
@@ -12692,10 +13141,14 @@ fn strip_signal_mentions_from_semantic_hint_text<'a>(
     text: &str,
     signal_names: impl IntoIterator<Item = &'a str>,
 ) -> String {
-    let signal_tokens = signal_names
+    let signal_names = signal_names
         .into_iter()
-        .map(|name| name.trim().to_ascii_uppercase())
+        .map(str::trim)
         .filter(|name| !name.is_empty())
+        .collect::<HashSet<_>>();
+    let signal_tokens = signal_names
+        .iter()
+        .map(|name| name.to_ascii_uppercase())
         .collect::<HashSet<_>>();
     if signal_tokens.is_empty() {
         return text.to_string();
@@ -12708,7 +13161,9 @@ fn strip_signal_mentions_from_semantic_hint_text<'a>(
         if token.is_empty() {
             return;
         }
-        if signal_tokens.contains(&token.to_ascii_uppercase()) {
+        if signal_names.contains(token.as_str())
+            || signal_tokens.contains(&token.to_ascii_uppercase()) && !is_role_label_word(token)
+        {
             output.push(' ');
         } else {
             output.push_str(token);
@@ -45749,6 +46204,317 @@ The control register.
         );
     }
 
+    /// `EXTRACTION-REPRESENTATION-GAPS.50` — the roles a text gives `signal`, of the ones it was tagged with.
+    fn borne_roles(
+        text: &str,
+        subject: super::SemanticRoleSubject<'_>,
+        tags: &[super::SignalSemanticTag],
+        known: &[&str],
+    ) -> Vec<super::SignalSemanticTag> {
+        let known = known.iter().map(|signal| signal.to_string()).collect();
+        let mut tags = tags.to_vec();
+        super::retain_borne_semantic_roles(
+            &mut tags,
+            text,
+            subject,
+            &known,
+            &std::collections::BTreeMap::new(),
+        );
+        tags
+    }
+
+    #[test]
+    fn a_prose_role_counts_only_for_the_signal_that_indicates_it() {
+        use super::SemanticRoleSubject::Named;
+        use super::SignalSemanticTag::{HandshakeReadyLike as Ready, HandshakeValidLike as Valid};
+        let whole = |text: &str| (0, text.len());
+        let cases: [(&str, &str, super::SignalSemanticTag, bool); 13] = [
+            (
+                "The strobe output [STB_O] indicates a valid data transfer cycle.",
+                "STB_O",
+                Valid,
+                true,
+            ),
+            ("XREADY can accept the transfer.", "XREADY", Ready, true),
+            // The bare role said of the signal itself is its data's validity.
+            (
+                "PNSE must be valid when PSEL is asserted.",
+                "PNSE",
+                Valid,
+                false,
+            ),
+            (
+                "- SLAVE keeps [ACK_I] asserted to indicate that it is ready to send new data",
+                "ACK_I",
+                Ready,
+                true,
+            ),
+            (
+                "3. The SLAVE indicates that it has placed valid data on the data bus by asserting the MASTER's [ACK_I] acknowledge signal.",
+                "ACK_I",
+                Valid,
+                true,
+            ),
+            (
+                "Finally REQ_VALID is set high, indicating to the DM that a valid request is pending.",
+                "REQ_VALID",
+                Valid,
+                true,
+            ),
+            // The data a validity qualifies, not its bearer.
+            (
+                "The SLAVE presents valid data on its [DAT_O()] lines.",
+                "DAT_O",
+                Valid,
+                false,
+            ),
+            // Another signal bears it: STB_O is what ACK_I answers.
+            (
+                "- SLAVE asserts [ACK_I] in response to [STB_O] to indicate valid data.",
+                "STB_O",
+                Valid,
+                false,
+            ),
+            // A finite verb's agent stands in its own clause: here the receiver.
+            (
+                "When XACK is HIGH, the receiver indicates that it can accept the transfer.",
+                "XACK",
+                Ready,
+                false,
+            ),
+            // A denied readiness.
+            (
+                "The retry input [RTY_I] indicates that the interface is not ready to accept or send data.",
+                "RTY_I",
+                Ready,
+                false,
+            ),
+            // HREADY marks the final cycle; the validity is of the data provided in it.
+            (
+                "The Subordinate only has to provide valid data in the final cycle of the transfer, as indicated by HREADY HIGH.",
+                "HREADY",
+                Valid,
+                false,
+            ),
+            // A choice of lanes is not a state, however it is phrased.
+            (
+                "WSTRB indicates which byte lanes of WDATA contain valid data.",
+                "WSTRB",
+                Valid,
+                false,
+            ),
+            (
+                "RCHUNKSTRB indicates the read data chunks that are valid for this transfer.",
+                "RCHUNKSTRB",
+                Valid,
+                false,
+            ),
+        ];
+        let known = [
+            "STB_O",
+            "ACK_I",
+            "REQ_VALID",
+            "DAT_O",
+            "RTY_I",
+            "HREADY",
+            "WSTRB",
+            "WDATA",
+            "XREADY",
+            "PNSE",
+            "PSEL",
+            "RCHUNKSTRB",
+            "XACK",
+        ];
+        for (text, signal, tag, borne) in cases {
+            assert_eq!(
+                borne_roles(text, Named(signal, whole(text)), &[tag], &known) == vec![tag],
+                borne,
+                "{signal} {tag:?} in {text:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_description_names_its_signal_by_the_role_or_indicates_it() {
+        use super::SemanticRoleSubject::Described;
+        use super::SignalSemanticTag::{HandshakeReadyLike as Ready, HandshakeValidLike as Valid};
+        let known = ["PREADY", "PNSE", "PSEL", "ATDATA", "ATVALID"];
+        for (text, tag) in [
+            ("Write address valid.", Valid),
+            ("Ready indicator", Ready),
+            (
+                "The ready signal used by the slave to extend an APB transfer.",
+                Ready,
+            ),
+            (
+                "Ready. PREADY is used to extend an APB transfer by the Completer.",
+                Ready,
+            ),
+            ("Valid signals in this cycle from the trace source", Valid),
+            (
+                "Asserted high to indicate that the signals on the AW channel are valid.",
+                Valid,
+            ),
+            ("Indicates that a valid request is pending", Valid),
+            (
+                "Asserted when transfer information is valid on the channel.",
+                Valid,
+            ),
+        ] {
+            assert_eq!(
+                borne_roles(text, Described("X"), &[tag], &known),
+                vec![tag],
+                "{text:?}"
+            );
+        }
+        for (text, tag) in [
+            ("Number of valid bytes on ATDATA, minus one", Valid),
+            (
+                "Extension to protection type. PNSE must be valid when PSEL is asserted.",
+                Valid,
+            ),
+            (
+                "Deasserted to indicate when active write data byte lanes do not contain valid data.",
+                Valid,
+            ),
+            (
+                "If there is valid data, that is, ATVALID HIGH, the data was accepted this cycle",
+                Valid,
+            ),
+            (
+                "A 4b user-defined descriptor that can be annotated onto a transaction request.",
+                Valid,
+            ),
+        ] {
+            assert!(
+                borne_roles(text, Described("X"), &[tag], &known).is_empty(),
+                "{text:?}"
+            );
+        }
+        // AXI declares a generic VALID: the word *Valid* is the role, only the spelling `VALID` the signal.
+        assert_eq!(
+            borne_roles(
+                "Valid indicator",
+                Described("AWVALID"),
+                &[Valid],
+                &["VALID", "AWVALID"]
+            ),
+            vec![Valid]
+        );
+        assert!(
+            borne_roles(
+                "VALID indicator",
+                Described("AWVALID"),
+                &[Valid],
+                &["VALID", "AWVALID"]
+            )
+            .is_empty()
+        );
+    }
+
+    #[test]
+    fn a_role_inside_a_longer_word_states_nothing() {
+        use super::SignalSemanticTag::{HandshakeReadyLike as Ready, HandshakeValidLike as Valid};
+        for (text, tag) in [
+            (
+                "readoncecleaninvalid is signaled using a value of 0b0100",
+                Valid,
+            ),
+            (
+                "it has the same validity rules as the associated data",
+                Valid,
+            ),
+            (
+                "indicates that the transaction has already undergone translation",
+                Ready,
+            ),
+            ("data flush complete, afvalid can be deasserted", Valid),
+        ] {
+            assert!(
+                super::semantic_role_phrase_spans(text, tag).is_empty(),
+                "{text:?}"
+            );
+        }
+        assert_eq!(
+            super::semantic_role_phrase_spans("write address valid.", Valid),
+            vec![(14, 19)]
+        );
+    }
+
+    #[test]
+    fn a_table_row_naming_one_signal_is_its_description() {
+        use super::SemanticRoleSubject::Named;
+        use super::SignalSemanticTag::HandshakeValidLike as Valid;
+        let row = "| AWVALIDM | Output | Master | Write address valid. |";
+        assert_eq!(
+            borne_roles(
+                row,
+                Named("AWVALIDM", (0, row.len())),
+                &[Valid],
+                &["AWVALIDM"]
+            ),
+            vec![Valid]
+        );
+        let shared = "| AWPBHA, ARPBHA | 4 | - | Write address valid. |";
+        assert!(
+            borne_roles(
+                shared,
+                Named("ARPBHA", (0, shared.len())),
+                &[Valid],
+                &["AWPBHA", "ARPBHA"]
+            )
+            .is_empty(),
+            "a row naming two signals describes neither alone"
+        );
+    }
+
+    #[test]
+    fn a_remembered_role_holds_only_where_the_signal_states_it() {
+        use super::SemanticRoleSubject::Named;
+        use super::SignalSemanticTag::HandshakeReadyLike as Ready;
+        let indicated = "XACK indicates that it can receive the transfer.";
+        assert_eq!(
+            borne_roles(
+                indicated,
+                Named("XACK", (0, indicated.len())),
+                &[Ready],
+                &["XACK"]
+            ),
+            vec![Ready]
+        );
+        let subject = "Figure 1: XACK can receive the transfer.";
+        assert_eq!(
+            borne_roles(
+                subject,
+                Named("XACK", (0, subject.len())),
+                &[Ready],
+                &["XACK"]
+            ),
+            vec![Ready]
+        );
+        let conditioned = "The receiver can receive the transfer when XACK is HIGH.";
+        assert!(
+            borne_roles(
+                conditioned,
+                Named("XACK", (0, conditioned.len())),
+                &[Ready],
+                &["XACK"]
+            )
+            .is_empty()
+        );
+        // The text's own words of the role decide, and here XACK does not bear them.
+        let own_words = "XACK is sampled when the receiver is ready.";
+        assert!(
+            borne_roles(
+                own_words,
+                Named("XACK", (0, own_words.len())),
+                &[Ready],
+                &["XACK"]
+            )
+            .is_empty()
+        );
+    }
+
     #[test]
     fn explicit_signal_mentions_outrank_alias_grounding_for_same_statement() -> Result<()> {
         let tempdir = tempdir()?;
@@ -45818,7 +46584,7 @@ The control register.
             asset_kind: VisualAssetKind::Diagram,
             page_id: Some("page_0001".to_string()),
             image_path: None,
-            caption_text: Some("Figure 1: XREQ valid timing.".to_string()),
+            caption_text: Some("Figure 1: XREQ indicates a valid request.".to_string()),
             caption_source_path: None,
             source_ref: None,
             source_batch: None,
@@ -45832,7 +46598,7 @@ The control register.
             asset_kind: VisualAssetKind::Diagram,
             page_id: Some("page_0002".to_string()),
             image_path: None,
-            caption_text: Some("Figure 2: XACK ready timing.".to_string()),
+            caption_text: Some("Figure 2: XACK indicates that the receiver is ready.".to_string()),
             caption_source_path: None,
             source_ref: None,
             source_batch: None,

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how do I check whether the persisted corpus seal is stale
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > how do I clean up scratch after a slice
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -295,5 +297,3 @@
   > how does SpecForge prove a cited self-test contains a known-bad RED case
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > how does SpecForge prove a reviewed paraphrase is parser equivalent

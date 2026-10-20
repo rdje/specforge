@@ -37,6 +37,19 @@ Role evidence can come from several source kinds:
 Those sources do not all have the same strength.
 For example, direct table/prose evidence is usually stronger than alias-only evidence, and cross-modality support is stronger than repeated support from one modality.
 
+## Who bears the role
+
+A role word near a signal is not yet a role of that signal.
+A handshake signal *indicates* that something is valid or that a receiver is ready; data simply *is* valid.
+So every source kind keeps a role only when its text makes the signal the role's bearer (`EXTRACTION-REPRESENTATION-GAPS.50`):
+
+- the signal is the agent of an indicating predicate whose complement holds the role: *STB_O indicates a valid data transfer cycle*, *keeps ACK_I asserted to indicate that it is ready*, *indicates that it has placed valid data on the data bus by asserting ACK_I*
+- the signal is the subject of a verb-phrase role: *XREADY can accept the transfer*
+- a description names its signal by the role: *Write address valid.*, *Ready indicator*, *The ready signal used by …* (a table row naming one signal is that signal's description)
+
+The role does not count for the data a validity qualifies (*presents valid data on its DAT_O lines*, *PNSE must be valid when PSEL is asserted*), for a signal named beside the bearer (*If there is valid data, that is, ATVALID HIGH*), when it is denied (*not ready to accept*), or when what is indicated is a choice (*indicates which byte lanes contain valid data*).
+Role words match as whole words, so *invalid*, *validity* and *already* state nothing, and a role word written as a word (*Valid*) is not a signal that only case-folds to it (`VALID`).
+
 ## Observations before winners
 
 `specforge` first preserves observations.
@@ -150,6 +163,7 @@ The safety rule is the same as elsewhere:
 - the phrase must still appear in the current document
 - the prior only guides interpretation
 - the prior does not invent a signal, role, or fact by itself
+- the current text must still make the signal the bearer: a remembered role holds only when the text has no words of that role of its own and the signal indicates, or opens the sentence as its subject (*XACK can receive the transfer*)
 
 ## Handshake completion
 

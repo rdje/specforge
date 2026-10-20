@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > what is a base-name template table
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > what is a bracketed metavariable name cell
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > what is a cardinality exemption
 - [contested-priors](../knowledge/contested-priors.md)
@@ -198,6 +202,8 @@
   > what is replay_bytes and what depends on it
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what is residual_gold_law
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > what is retain_borne_semantic_roles / SemanticRoleSubject / SemanticRoleReading / semantic_role_phrase_spans
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is route_catalog_state
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -291,9 +297,3 @@
   > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline

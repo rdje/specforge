@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > how does SpecForge prove a reviewed paraphrase is parser equivalent
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -296,5 +298,3 @@
   > how is SourceIr loaded from disk by downstream commands
 - [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
   > how is USB 3.2 Table 7-12 LTSSM State Transition Timeouts read
-- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
-  > how is a Bit[N] drives HPROT[n] sentence read

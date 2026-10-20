@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-47-COLLECTIVE-POLARITY",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-50-ROLE-BEARER",
    "baseline": {
-    "analyzed_functions": 2785,
-    "decision_sites": 15303,
-    "helper_edges": 19045,
+    "analyzed_functions": 2786,
+    "decision_sites": 15308,
+    "helper_edges": 19060,
     "semantic_macros": 1612
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 5,
-    "helper_edges": 15,
-    "semantic_macros": 0
+    "analyzed_functions": 18,
+    "decision_sites": 213,
+    "helper_edges": 533,
+    "semantic_macros": 2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.47",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.47: a polarity stated on a collective name holds for each member that states none (extend_polarities_through_collective_names)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.50",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.50: a semantic hint keeps a handshake role only when its text makes the signal the bearer (retain_borne_semantic_roles, SemanticRoleReading, semantic_role_phrase_spans)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

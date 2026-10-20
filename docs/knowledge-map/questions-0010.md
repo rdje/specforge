@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > how much of the minted enum surface does the current reader actually produce
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > how much of the reviewed trajectory population has current binary replay evidence
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -296,5 +298,3 @@
   > is rows minus declarations a loss count
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > is running the LLM promotion on a document with no constraints a no-op (no — with zero sentences the surface replace changes nothing, but promote_constraints still records a constraints.llm_primary surface manifest and authorize_mutation still appends a ConstraintPromotion record to the proof ledger, so the artifact claims a surface the model never saw)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > is signal direction faithful to the document now or still defaulted to output

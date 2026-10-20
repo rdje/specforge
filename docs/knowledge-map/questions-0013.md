@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b publish
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.7c.ii publish
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > what did admitting the product's output nouns to the candidate grammar cost (56 new candidate lines, 483 to 539, with candidate files unmoved at 26; individually statements +13, behaviors +12, rows +12, constraints +11, actors +5, declarations +5, invariants +5, subjects +2, spans +1, leaves +1, which sum to 67 because the book counts several on one line)
@@ -295,5 +297,3 @@
   > what does x'0A00' mean in an encoding table
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > what dominates the source_ir.json size (content_elements? page_artifacts?)
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > what drove docs/book/src/reference/live-docs.md to its ceiling before the .34 split

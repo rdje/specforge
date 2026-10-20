@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does the converge NLI pass measure quality or demote unsupported intent
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > does the corpus contain a negated value binding the extractor cannot read
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -296,5 +298,3 @@
   > how do I check whether a named frontier has an owning task-tree leaf
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > how do I check whether a persisted artifact field describes current behaviour
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how do I check whether the persisted corpus seal is stale

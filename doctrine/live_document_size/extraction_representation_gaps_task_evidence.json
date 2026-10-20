@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.50",
-      "literal" : "`.50` — a prose hint gives a signal the role its sentence gives it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.51",
+      "literal" : "`.51` — a sentence defining the document's own notation is apparatus.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 3595,
-               "line_bytes" : 119,
-               "lines" : 42
+               "bytes" : 12875,
+               "line_bytes" : 139,
+               "lines" : 132
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "10c436c4d868ebd955d65f4424f80128efdf38e3db36137aefdb747871d416d1",
+            "sha256" : "0733ac2f9d6b36f6c9eb8e87a7cfbc782f06d98976a2c6b7b6ae91f4fce1e6cf",
             "state" : "active"
          },
          {
@@ -1188,7 +1188,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.50",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
@@ -1245,6 +1245,18 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.53",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
       }
    ],
    "limits" : {
@@ -1372,7 +1384,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.50` — a prose hint gives a signal the role its sentence gives it.",
+         "`.51` — a sentence defining the document's own notation is apparatus.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1409,9 +1421,10 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.37`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.50`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.51`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.53`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54`"
       ]
    },
    "migration_metadata" : {

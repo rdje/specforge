@@ -61,7 +61,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.50` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.50` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.51` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
@@ -71,3 +71,5 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.46.a` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.b` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | `open` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.53` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.54` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |

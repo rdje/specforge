@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md) | 2026-09-12 | `current` | Four producers mint a SignalConstraintRecord and only two reach the kind classifier, so a census of the const… |
 | [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md) | 2026-09-23 | `current` | A signal constraint read from a list item or table row drops the scope its lead-in or caption states — 186… |
 | [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md) | 2026-09-23 | `current` | A containment registry's numbers must be JSON numbers, and the type is checked once at decode because Perl ca… |
 | [contested-priors](../knowledge/contested-priors.md) | 2026-06-04 | `current` | SpecForge detects contested priors (same key, conflicting values across docs) — read-only |
@@ -60,4 +61,3 @@
 | [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md) | 2026-09-18 | `current` | All 18 escape-fragmented catalog names are artefacts and adjudicate to removal — the English-word risk is t… |
 | [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md) | 2026-09-13 | `current` | A Markdown backslash-escape fragments an identifier, the fragment is DECLARED as a signal, and its own synthe… |
 | [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
-| [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md) | 2026-06-07 | `current` | eval-extraction scores the PERSISTED evidence_ir.json — rebuild before trusting a baseline (it can be stale) |

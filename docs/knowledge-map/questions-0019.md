@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which AXI transactions gain channel grouping (atomic/prefetch/writezero/writedeferrable/narrow_transfer)
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > which FSMGen capabilities are supported, requested, anticipated or fixed upstream
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > which IR stages have adopted move safe persisted paths
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
   > which IntentIR assumptions does SpecForge write itself (in this IntentIR pass)
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -291,9 +297,3 @@
   > which registries are at risk from incoherent capacity bounds
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > which registries does the numeric-type check cover
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > which replayable enums publish a colliding code
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > which research record is closest to its line ceiling
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > what is the LLM recall ceiling per document (AXI ihi0022_l_2025_08 209 to 37 = 17.7%, AHB ihi0033_c 57 to 10 = 17.5%, I2C um10204 27 to 3 = 11.1%, APB ihi0024_e 21 to 9 = 42.9%, ADIv6 ihi0074_a 12 to 1 = 8.3%)
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
@@ -292,9 +298,3 @@
   > what makes a source-to-Intent residual actionable
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what makes a valid activate-only opt-in extractor candidate
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > what makes legacy absolute path rebasing safe and unambiguous
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > what message field metrics does validate emit
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > what modal words does obligation_is_negated accept

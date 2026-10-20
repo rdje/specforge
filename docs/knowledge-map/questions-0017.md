@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > what makes legacy absolute path rebasing safe and unambiguous
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > what message field metrics does validate emit
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > what modal words does obligation_is_negated accept
 - [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
   > what modalities does measure_unread_intent_records.py give (obligation, recommendation, permission, capability, description)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -292,9 +298,3 @@
   > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > where do interface_edge_timings stop in the pipeline
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > where do live-document checker test fixtures create temporary files
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
-  > where do minted enum members come from
