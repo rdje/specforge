@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > what fsmgen pin does SpecForge target for temporal properties
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > what gate reports a registry whose byte bound funds fewer records than it declares
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -296,5 +298,3 @@
   > what is bind_protocol_state_machines
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > what is binding_bearing_clause and why does it find before it locates
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > what is caption_descriptive_text

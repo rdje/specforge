@@ -814,6 +814,22 @@ from the 25 rows, and six timing records whose state condition loses its mark (`
 `.isf` has no timer whose expiry is a condition (`FSMGEN-REQUESTS.8`), so the adapter keeps one residual per
 transition. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.b.iii.g`).
 
+**A state bound in a plural phrase is supported by it.** The all-capitals state grammar reads *moves into the
+DEACTIVATE state* — a transition or locative word, an optional article, one name, then *state* — and admits a name
+only when two statements bind it that way, and the document names two such states, so one incidental capital word is
+no state machine. AXI's credited transport binds RUN once that way (*When ACTIVATEACK is asserted, the interface moves
+into the RUN state*) and once in the plural (*ASKSTOP can only be HIGH when ACTIVATEACK is HIGH, that means in the RUN
+or DEACTIVATE states*), so its four states came out as three. Since `EXTRACTION-REPRESENTATION-GAPS.49`
+(`2026-10-19`) a plural binds each of two or more names joined by *or*, *and* or commas before *states* and after the
+same trigger and article; one name before *states*, or a list after a word that is no trigger (*Both RUN and STOP
+states are stable*), binds none, and the two-statement guard is unchanged. On the 31 chains only AXI moves: RUN
+joins DEACTIVATE, STOP and ACTIVATE, citing both sentences, and the adapter keeps one residual for it as for every
+state. The counted enumeration beside it (*an interface can be in one of four states: STOP, ACTIV ATE, RUN,
+DEACTIVATE*) is not read: the converter split *ACTIVATE*, so the list fails its own count, and it is the corpus's
+only such enumeration. AXI's default *the interface is assumed to be running when not in reset* stays an
+assumption, since no record carries a state an interface takes by default and the document never says *running*
+is the RUN state. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.49`).
+
 ### `CORPUS-COVERAGE.2.48a` — one spanned source cell cannot ground several scalar roles
 
 PDF table conversion can preserve a merged cell by expanding it into one positional record for every covered

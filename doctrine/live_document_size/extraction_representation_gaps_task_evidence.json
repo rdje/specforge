@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.49",
-      "literal" : "`.49` — a state the document enumerates and names is a protocol state.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii",
+      "literal" : "`.3.d.ii.b.ii` — an equivalence rule (X is treated as Y) is typed.",
       "mode" : "eligible",
-      "part_id" : "register-binding-leaves"
+      "part_id" : "unread-intent-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -112,13 +112,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 21967,
+               "bytes" : 25702,
                "line_bytes" : 281,
-               "lines" : 228
+               "lines" : 266
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "0c317168528d70699982f027f102f9ebc5a7e7dc0a986c95e387e82bf376821b",
+            "sha256" : "b2cf5c6bcfba1d9000b6cff90e0df18161489eca70d4f1ffadc63bb07c29bf10",
             "state" : "active"
          },
          {
@@ -1140,7 +1140,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.49",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       }
@@ -1270,7 +1270,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.49` — a state the document enumerates and names is a protocol state.",
+         "`.3.d.ii.b.ii` — an equivalence rule (X is treated as Y) is typed.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1313,8 +1313,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.45`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.49`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`"
       ]
    },
    "migration_metadata" : {

@@ -21118,7 +21118,8 @@ fn transition_bound_state_names_in(text: &str) -> Vec<String> {
     let words: Vec<&str> = text.split_whitespace().collect();
     let mut out = Vec::new();
     for i in 2..words.len() {
-        if !strip(words[i]).eq_ignore_ascii_case("state") {
+        let plural = strip(words[i]).eq_ignore_ascii_case("states");
+        if !plural && !strip(words[i]).eq_ignore_ascii_case("state") {
             continue;
         }
         if words
@@ -21127,12 +21128,38 @@ fn transition_bound_state_names_in(text: &str) -> Vec<String> {
         {
             continue;
         }
-        let cand = strip(words[i - 1]);
-        if !is_bare_state_name(cand) {
+        // EXTRACTION-REPRESENTATION-GAPS.49 — before `states`, two or more names joined by `or`, `and` or a comma
+        // (`in the RUN or DEACTIVATE states`); before `state`, the one name.
+        let mut names: Vec<&str> = Vec::new();
+        let mut first = i - 1;
+        let mut j = i - 1;
+        loop {
+            let cand = strip(words[j]);
+            if !is_bare_state_name(cand) {
+                break;
+            }
+            names.push(cand);
+            first = j;
+            if !plural || j == 0 {
+                break;
+            }
+            let joiner = lower(words[j - 1]);
+            if (joiner == "or" || joiner == "and") && j >= 2 {
+                j -= 2;
+            } else if words[j - 1].ends_with(',') {
+                j -= 1;
+            } else {
+                break;
+            }
+        }
+        if names.is_empty() || (plural && names.len() < 2) {
             continue;
         }
-        // The trigger sits at i-2, or at i-3 when one article ("the"/"a"/…) separates it from the name.
-        let mut t = i - 2;
+        // The trigger sits right before the first name, or one word earlier when one article ("the"/"a"/…)
+        // separates them.
+        let Some(mut t) = first.checked_sub(1) else {
+            continue;
+        };
         if ARTICLES.contains(&lower(words[t]).as_str()) {
             if t == 0 {
                 continue;
@@ -21140,7 +21167,7 @@ fn transition_bound_state_names_in(text: &str) -> Vec<String> {
             t -= 1;
         }
         if TRIGGERS.contains(&lower(words[t]).as_str()) {
-            out.push(cand.to_string());
+            out.extend(names.iter().rev().map(|name| name.to_string()));
         }
     }
     out
@@ -52054,6 +52081,95 @@ mod swd_serial_extraction_4d {
     fn singleton_state_reference_is_not_an_inventory() {
         let stmts = vec![stmt("a", "The unit enters the lilac state.")];
         assert!(extract_transition_phrase_states(&stmts).is_empty());
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.49 — a state bound in a plural phrase counts toward its support.
+#[cfg(test)]
+mod plural_state_binding_tests {
+    use super::*;
+
+    fn stmt(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn a_plural_phrase_binds_each_name_it_coordinates() {
+        assert_eq!(
+            transition_bound_state_names_in(
+                "- ASKSTOP can only be HIGH when ACTIVATEACK is HIGH, that means in the RUN or DEACTIVATE states."
+            ),
+            vec!["RUN", "DEACTIVATE"]
+        );
+        assert_eq!(
+            transition_bound_state_names_in("The link can enter the U1, U2 and U3 states."),
+            vec!["U1", "U2", "U3"]
+        );
+        assert_eq!(
+            transition_bound_state_names_in(
+                "- When ACTIVATEACK is asserted, the interface moves into the RUN state."
+            ),
+            vec!["RUN"]
+        );
+    }
+
+    /// A plural binds only two or more names after a trigger; a list after a non-trigger, or one name, binds none.
+    #[test]
+    fn a_plural_needs_two_names_after_a_trigger() {
+        for text in [
+            "Both RUN and STOP states are stable.",
+            "The interface is in the RUN states.",
+            "The bridge sits in x, RUN or STOP states.",
+            "The device enters the RUN or STOP state machines.",
+        ] {
+            assert!(transition_bound_state_names_in(text).is_empty(), "{text}");
+        }
+    }
+
+    /// AXI's credited transport: RUN is bound once singly and once in a plural, so it reaches the two statements the
+    /// inventory asks of a state.
+    #[test]
+    fn a_plural_mention_is_a_supporting_statement() {
+        let stmts = vec![
+            stmt(
+                "a",
+                "- When ACTIVATEACK is asserted, the interface moves into the RUN state.",
+            ),
+            stmt(
+                "b",
+                "- When ACTIVATEREQ is deasserted, the interface moves into the DEACTIVATE state.",
+            ),
+            stmt(
+                "c",
+                "- ASKSTOP can only be HIGH when ACTIVATEACK is HIGH, that means in the RUN or DEACTIVATE states.",
+            ),
+        ];
+        let states = extract_transition_bound_states(&stmts);
+        let support: Vec<(&str, Vec<&str>)> = states
+            .iter()
+            .map(|state| {
+                (
+                    state.state_name.as_str(),
+                    state
+                        .supporting_statement_ids
+                        .iter()
+                        .map(String::as_str)
+                        .collect(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            support,
+            vec![("RUN", vec!["a", "c"]), ("DEACTIVATE", vec!["b", "c"])]
+        );
     }
 }
 

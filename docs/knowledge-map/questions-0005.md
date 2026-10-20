@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > does the current SWD chain come from the tracked ADI PDF
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
@@ -296,5 +298,3 @@
   > how do I clean up scratch after a slice
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > how do I clear a live-document line_bytes_each warning (reflow the few widest lines; do not partition, roll over, or raise the ceiling — nothing is running out)
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > how do I count the records in the status ledger

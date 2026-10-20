@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > which task owns deterministic Rust tests under repository-local TMPDIR
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > which task owns fact-card catalog containment
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -295,5 +297,3 @@
   > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why did HSELx must_be_asserted carry the wrong condition

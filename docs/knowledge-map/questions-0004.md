@@ -24,6 +24,8 @@
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > does a noun use of read or access create a relation
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > does a plural phrase like 'in the RUN or DEACTIVATE states' bind a state (yes since EXTRACTION-REPRESENTATION-GAPS.49)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > does a presence record say what an absent signal is assumed to be (since 2026-10-03, absent_value — see a-signals-stated-absent-value-rides-its-presence-record)
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -296,5 +298,3 @@
   > does the corpus contain a negated value binding the extractor cannot read
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > does the current SWD chain come from the tracked ADI PDF

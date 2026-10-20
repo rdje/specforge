@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > why does the gate refuse when generated/source_ir is missing
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
@@ -296,5 +298,3 @@
   > why is an eighth fact-card title part infeasible
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > why is an emitted-ISF count from an earlier refresh slice not the current number
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > why is an enum called TABLE or FIGURE

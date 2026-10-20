@@ -2,8 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why was AWLOCK lowered as 1 when the spec says deasserted
 - [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
   > why was AXI ARCACHE's DVM Complete constraint not read
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > why was AXI's RUN state missing from protocol_states
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)

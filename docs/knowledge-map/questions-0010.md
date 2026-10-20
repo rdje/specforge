@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how should an AXI gold or extraction be structured (per channel)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > how should the agent-identity / actor noise gate stay agnostic (no name list, ADR 0006)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -295,5 +297,3 @@
   > is the AArch64 External Debug Guide current-binary refresh complete
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > is the APB PSEL canonical false negative still open
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > is the APB PSTRB must be LOW constraint extracted

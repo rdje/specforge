@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how do I decide between partitioning a research record and declaring a rollover for it
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
@@ -295,5 +297,3 @@
   > how does SpecForge read a quoted encoding value
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > how does SpecForge read a table whose rows disagree about their column order
-- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
-  > how does SpecForge read a temporal condition with an unless or except clause

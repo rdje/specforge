@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-II-B-III-B-ASSUME-WORD-STATES-NO-ABSTRACTION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-49-PLURAL-STATE-BINDING",
    "baseline": {
-    "analyzed_functions": 2745,
-    "decision_sites": 14895,
-    "helper_edges": 18452,
+    "analyzed_functions": 2750,
+    "decision_sites": 14918,
+    "helper_edges": 18478,
     "semantic_macros": 1579
    },
    "delta": {
-    "analyzed_functions": 5,
-    "decision_sites": 23,
-    "helper_edges": 26,
+    "analyzed_functions": 0,
+    "decision_sites": 13,
+    "helper_edges": 1,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b: an assume word that states no assumption leaves the abstraction class (every_assume_word_states_no_abstraction: negated, take-on, shall-governed, stated value), and premise_of_a_figure_a_guideline_or_an_analysis files three more premise shapes as apparatus."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.49",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.49: transition_bound_state_names_in reads two or more bare state names joined by or, and or commas before a plural \"states\" after the same trigger and article, locating the trigger from the leftmost name; the singular form and the two-statement guard are unchanged."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

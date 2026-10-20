@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > how does SpecForge read a temporal condition with an unless or except clause
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > how does SpecForge read a timing table with one MIN/MAX pair per operating mode
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -296,5 +298,3 @@
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
-- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
-  > how is a footnote letter beside a check signal name (PSELxCHK b) handled

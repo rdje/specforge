@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > how is a footnote letter beside a check signal name (PSELxCHK b) handled
 - [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
   > how is a footnote mark read when the converter lost its note (Polling.Active 2)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -295,5 +297,3 @@
   > how many current claim evidence units are derived registered incomplete or excluded
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > how many current documents are behaviorally measurable
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)

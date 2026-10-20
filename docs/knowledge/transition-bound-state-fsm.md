@@ -7,7 +7,9 @@ answers:
   - "how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished"
   - "how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)"
   - "why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path"
-date: 2026-06-09
+  - "does a plural phrase like 'in the RUN or DEACTIVATE states' bind a state (yes since EXTRACTION-REPRESENTATION-GAPS.49)"
+  - "why was AXI's RUN state missing from protocol_states"
+date: 2026-10-19
 tags: [swp, fsm, state-machine, serial, extraction, evidence-ir, pdf-variant-digestion, adr-0006]
 evidence: docs/tasks/PDF-VARIANT-DIGESTION.md (.9.7); crates/specforge/src/ir/evidence.rs (extract_transition_bound_states, transition_bound_state_names_in, is_bare_state_name)
 reverify: python3 -c "import json; e=json.load(open('generated/evidence_ir/etsi_ts_102613_v16_0_0_2021_10_smart_cards_uicc_clf_single_wire_protocol_swp/evidence_ir.json')); print([s['state_name'] for s in e.get('protocol_states',[])])"
@@ -48,3 +50,11 @@ FSM eval stays `P=R=F1=1.000`. **CAN gains 0** here (keeps its 3 `.9.3a` quoted 
 `SETUP`/`ACCESS`, AXI low-power `RUN`/`STOP`/`ACTIVATE`/`DEACTIVATE`), an honest correctness gain that
 touches none of the scored constraint/relation/temporal surfaces. kg-bench 151/151; no `protocol_states`
 fixture exists, so no benchmark lock to break.
+
+**A plural binds too (`EXTRACTION-REPRESENTATION-GAPS.49`, `2026-10-19`).** Before *states*, two or more names
+joined by *or*, *and* or commas after the same trigger and article (*that means in the RUN or DEACTIVATE states*)
+each count as a binding; one name before *states*, or a list after a word that is no trigger, counts as none. The
+two-statement and two-state guards are unchanged. AXI's credited transport bound RUN once singly and once only in
+the plural, so its four states came out as three; on the 31 chains it is the only change (RUN, `named_state_0002`,
+citing `statement_3939` and `statement_3952`). The counted enumeration *one of four states: STOP, ACTIV ATE, RUN,
+DEACTIVATE* is not read: its converter-split member fails the count, and it is the corpus's only such list.

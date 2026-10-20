@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > should persisted chain currency be a gated doctrine or an advisory report
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > should specforge connect producer/consumer/etc. to their signals
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -295,5 +297,3 @@
   > what did the corpus promotion sweep measure (gauge deltas per doc)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > what did the corpus task evidence containment census find
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > what did the current claim census find

@@ -158,7 +158,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   Commit: `EXTRACTION-REPRESENTATION-GAPS.48.a — the trajectory controller finds a closed owner in its tree's evidence`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.49`
-  Status: `open` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii.c`)
+  Status: `done` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii.c`; checklist below)
   Goal: **a state the document enumerates and names is a protocol state.** AXI states *When using credit control, an
   interface can be in one of four states: STOP, ACTIV ATE, RUN, DEACTIVATE* (`statement_3926`), *When ACTIVATEACK is
   asserted, the interface moves into the RUN state* (`statement_3939`), *RUN and STOP are stable states*
@@ -171,6 +171,19 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   plural phrase (*the RUN or DEACTIVATE states*) and a state listed by an enumeration whose stated count matches its
   members, keep the two-statement guard's purpose (one incidental capital word is no state machine), measure every
   chain, and decide whether `statement_3903`'s default binds to the RUN state.
+  **Decided `2026-10-19`: a plural binding counts, a counted enumeration is not read, and the default stays an
+  assumption.** A probe of both readers over the 31 chains, before any code: the plural changes one chain, AXI, which
+  gains RUN; the enumeration occurs twice, both in AXI, one with no members and one whose converter-split *ACTIV ATE*
+  fails its own count, so it would read nothing. `transition_bound_state_names_in` now reads, before *states*, two or
+  more bare names joined by *or*, *and* or commas, after the same trigger and article the singular form takes,
+  locating the trigger from the leftmost name; one name before *states*, or a list after a word that is no trigger,
+  binds none, and the two-statement and two-state guards are unchanged. `statement_3903`'s *the interface is assumed
+  to be running when not in reset* stays an IntentIR assumption: no record carries a state an interface takes by
+  default, and the document never writes that *running* is the RUN state.
+  **Measured over all 31 chains** (evidence dry-run, `.3.d.ii.b.iii.b`'s binary against the new one): 30 identical; AXI
+  moves in `protocol_states` (+RUN, `named_state_0002`, citing `statement_3939` and `statement_3952`) and in the
+  extraction manifest's counts. Rebuilt stage by stage: SemanticIR and IntentIR carry the fourth state; the adapter
+  gains one residual, `isf_protocol_state_named_state_0002`; `manager.isf` byte-identical.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
@@ -226,3 +239,28 @@ which leaves are closed.
 > families; a prose bit map binds a field, and every binding keeps its scope; an assumption's shapes are measured; a signal's
 > stated absent value rides its presence record to IntentIR; a check-coverage table is a typed relation that binds the class of
 > covered signals; a document-stated collective name stands for its members; the remaining assume-sentences fall into six shapes; an assume-sentence about the document is apparatus; the remaining stated defaults need three remedies).
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.49` (CODE) — DONE `2026-10-19`
+
+- [x] **REPRODUCE / MEASURE** — AXI's EvidenceIR `protocol_states`: DEACTIVATE, STOP, ACTIVATE (3), against the four
+  states `statement_3926` enumerates.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `transition_bound_state_names_in` read only *the X
+  state*, singular, so RUN had one binding (`statement_3939`) where `extract_transition_bound_states` asks two; the
+  second mention is plural (`statement_3952`). RED, the file restored byte-identically after each (3 mutations, each
+  failing its named test): the plural disabled (`a_plural_phrase_binds_each_name_it_coordinates`,
+  `a_plural_mention_is_a_supporting_statement`), one name accepted as a plural and the trigger taken from the last
+  examined word instead of the leftmost name (`a_plural_needs_two_names_after_a_trigger`).
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 30 identical; AXI `protocol_states` 3 -> 4 (RUN, two
+  statements). Rebuilt stage by stage: SemanticIR and IntentIR `protocol_states` 3 -> 4; adapter residuals 65 -> 66;
+  `manager.isf` byte-identical.
+- [x] **NO REGRESSION** — the state grammar is outside the EvidenceIR seal closure: `check_chain_currency.sh` 31 of 31
+  current at every stage after the rebuild. WIRE-BASED-100: all 11 seeds byte-identical to `9fc463824`'s reports (temp
+  paths masked), each side on its own binary. `kg-bench` 158/158 (`fixtures_failed: 0`). `cargo fmt --check` clean;
+  `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,847 passed, 0 failed. `flow_census.json` rolled forward (+13 decision
+  sites, +1 helper edge, no function added); boundary counts unchanged.
+- [x] **GENERICITY (ADR 0006)** — the existing trigger and article words plus *or*, *and*, a comma and the plural *states*;
+  no state, document or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A state bound in a plural phrase is supported by
+  it*); KM `transition-bound-state-fsm` (amended). No production rule was deleted or replaced: the singular form is
+  read exactly as before.
