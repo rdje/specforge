@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -296,5 +298,3 @@
   > what modal words does obligation_is_negated accept
 - [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
   > what modalities does measure_unread_intent_records.py give (obligation, recommendation, permission, capability, description)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > what model do converge / enrich / nlp-enrich use by default

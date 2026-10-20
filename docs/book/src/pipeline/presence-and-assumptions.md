@@ -106,8 +106,13 @@ of the table's two headers, so each covered signal's presence record takes `LOW`
 the 31 chains AXI gains 123 records, APB5 14 and AHB5 16; APB5 binds
 15 absent values and AHB5 22. The records cross SemanticIR and IntentIR unchanged; no
 check signal is lowered yet, since `.isf` has no parity construct and a check is expressible only as a
-combinational XOR chain — `EXTRACTION-REPRESENTATION-GAPS.46` decides. *Authoritative tracking:*
-`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a.i`).
+combinational XOR chain. `EXTRACTION-REPRESENTATION-GAPS.46` decided the lowering per shape (`2026-10-20`), and
+its first step reads the sense: since `.46.a` every check record carries the parity sense the document states
+(*Odd parity is used*; *Odd parity means that check signals are … driven such that there is always an odd number of
+asserted bits*) and the statements that state it, read from a sentence that is neither apparatus nor a table row (a
+configuration table's *Odd parity checking included for all signals* names a property value); a document stating
+both senses gives none. All 153 records read `odd`. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a.i`, `.46`, `.46.a`).
 
 **A document-stated collective name stands for its members.** AXI writes *Any AxSNOOP bits not driven by an
 interface are assumed to be LOW*, and `AxSNOOP` is no matrix row: the rows are `AWSNOOP` and `ARSNOOP`. The

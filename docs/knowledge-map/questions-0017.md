@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > what model do converge / enrich / nlp-enrich use by default
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what model does the NLI verifier use
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -296,5 +298,3 @@
   > where do minted enum members come from
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR

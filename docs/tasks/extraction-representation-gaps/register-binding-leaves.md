@@ -123,7 +123,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   unrolling at the parameters' defaults.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.a`
-  Status: `open` (`2026-10-20`; CODE; found by `.46`)
+  Status: `done` (`2026-10-20`; CODE; found by `.46`; checklist below)
   Goal: **the parity sense a document states is a typed fact of its check signals.** AXI (*Odd parity is used.
   Odd parity means that check signals are added to groups of signals on the interface and driven such that there is
   always an odd number of asserted bits in that group*), APB5 and AHB5 state it, each beside its check-signal tables,
@@ -132,6 +132,13 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   inventing its polarity. Acceptance: read *odd parity is used* / *even parity is used* (and the definition sentence
   beside it) generically into the document's check-signal records with the citing statement, refuse a document that
   states both or neither, and measure every chain.
+  **Done `2026-10-20`.** `CheckSignalRecord` gains `parity_sense` (`ParitySense`: `odd` | `even`) and
+  `parity_statement_ids`; `stated_parity_sense` reads *odd parity is used*, *odd parity means* (and *even*), as whole
+  words, from statements that are neither apparatus nor table rows, and a document stating both senses gives none.
+  Every check record of a document takes the sense it states. **Measured over all 31 chains** (evidence dry-run
+  against `fcad8847c`'s): 28 identical; AXI, APB5 and AHB5 move only `check_signal_records`, all 153 reading `odd`
+  (AXI citing `statement_4765` and `statement_4766`, APB5 `statement_0380`, AHB5 `statement_1038`). Rebuilt stage by stage: SemanticIR and IntentIR carry the
+  sense unchanged, the adapters and every `.isf` text byte-identical; no chain re-seals.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.b`
   Status: `open` (`2026-10-20`; CODE; found by `.46`)
@@ -482,3 +489,24 @@ which leaves are closed.
   name.
 - [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md` (*A data row a converter flagged as a header is still
   data*); KM `signal-presence-matrix-capture` amended. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.46.a` (CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — the three documents' sense statements (`statement_4765`/`4766`, `0380`, `1038`, all
+  `source_fact`), and the 153 records carrying no sense.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `CheckSignalRecord` had no sense field and
+  nothing read the statement. New `ParitySense`, the two fields, `stated_parity_sense`, applied after
+  `check_signal_surface`. RED, the file restored byte-identically after each (5 mutations, each failing its named
+  test): table rows and apparatus read, *parity means* not read (`the_stated_parity_sense_is_read_with_its_statements`);
+  a joined word and odd winning over both (`both_senses_or_none_or_a_joined_word_state_no_sense`).
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 28 identical, the 3 AMBA chains move only their
+  check records, all 153 `odd`. The 3 chains rebuilt stage by stage, each artifact validated once, the
+  adapter last; only `check_signal_records` moves; `.isf` byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `fcad8847c`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 171 / 1,875 passed, 0 failed. `flow_census.json` rolled (+1 function, +10 decision sites, +28 helper edges); boundary unchanged. Census: unread
+  records 138, unchanged.
+- [x] **GENERICITY (ADR 0006)** — the English phrases *odd/even parity is used/means*; no document or signal name.
+- [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md` (the check-signal entry); KM
+  `a-check-coverage-table-binds-the-class-of-covered-signals` amended. No production rule deleted or replaced.

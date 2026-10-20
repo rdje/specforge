@@ -781,6 +781,22 @@ pub struct CheckSignalRecord {
     pub check_enable: Option<String>,
     /// The structured table (page fragment) that carried this row.
     pub table_id: String,
+    /// EXTRACTION-REPRESENTATION-GAPS.46.a — the parity sense the document states for its check signals (*Odd parity is
+    /// used*); `None` when it states none, or both.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parity_sense: Option<ParitySense>,
+    /// The statement(s) that state the parity sense.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub parity_statement_ids: Vec<String>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.46.a — the parity a check signal keeps over the signals it covers: an odd or an even
+/// number of asserted bits across them and the check.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ParitySense {
+    Odd,
+    Even,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — a COLLECTIVE signal name the document defines: *In this
@@ -2266,7 +2282,14 @@ impl EvidenceIr {
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — the check-coverage tables (a check signal and the
         // signals it covers), read once: they feed the typed records and the class-scoped absent values.
         let check_coverage = check_coverage_tables(&source_ir.structured_tables);
-        let check_signal_records = check_signal_surface(&check_coverage);
+        let mut check_signal_records = check_signal_surface(&check_coverage);
+        // EXTRACTION-REPRESENTATION-GAPS.46.a — the parity sense the document states holds for each of its check signals.
+        if let Some((sense, statement_ids)) = stated_parity_sense(&extracted_statements) {
+            for record in &mut check_signal_records {
+                record.parity_sense = Some(sense);
+                record.parity_statement_ids = statement_ids.clone();
+            }
+        }
         let mut signal_presence_records =
             signal_presence_surface(source_ir, &mut extraction_manifest);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii — the collective names the document defines (`AxSIZE` for
@@ -20208,6 +20231,45 @@ fn literal_cell(cell: &str) -> Option<String> {
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — one typed record per check-coverage row, in table and row order.
+/// EXTRACTION-REPRESENTATION-GAPS.46.a — the parity sense a document states, and the statements that state it: *odd
+/// parity is used* or *odd parity means* (and the same with *even*), in a statement that is neither apparatus nor a
+/// table row (a configuration table's *Odd parity checking included for all signals* names a property value). A
+/// document that states both senses states none a record can carry.
+fn stated_parity_sense(statements: &[ExtractedStatement]) -> Option<(ParitySense, Vec<String>)> {
+    let mut odd = Vec::new();
+    let mut even = Vec::new();
+    for statement in statements {
+        if statement.class == StatementClass::Apparatus
+            || statement.text.trim_start().starts_with('|')
+        {
+            continue;
+        }
+        let lowered = statement.text.to_ascii_lowercase();
+        let states = |sense: &str| {
+            [" parity is used", " parity means"].iter().any(|tail| {
+                let phrase = format!("{sense}{tail}");
+                lowered.match_indices(&phrase).any(|(at, _)| {
+                    lowered[..at]
+                        .chars()
+                        .next_back()
+                        .is_none_or(|c| !c.is_ascii_alphanumeric())
+                })
+            })
+        };
+        if states("odd") {
+            odd.push(statement.statement_id.clone());
+        }
+        if states("even") {
+            even.push(statement.statement_id.clone());
+        }
+    }
+    match (odd.is_empty(), even.is_empty()) {
+        (false, true) => Some((ParitySense::Odd, odd)),
+        (true, false) => Some((ParitySense::Even, even)),
+        _ => None,
+    }
+}
+
 fn check_signal_surface(tables: &[CheckCoverageTable<'_>]) -> Vec<CheckSignalRecord> {
     tables
         .iter()
@@ -20220,6 +20282,8 @@ fn check_signal_surface(tables: &[CheckCoverageTable<'_>]) -> Vec<CheckSignalRec
                 granularity: row.granularity.clone(),
                 check_enable: row.check_enable.clone(),
                 table_id: table.table.table_id.clone(),
+                parity_sense: None,
+                parity_statement_ids: Vec::new(),
             })
         })
         .collect()
@@ -62016,5 +62080,88 @@ mod software_intent_tests {
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].intent_id, "software_intent_0000");
         assert_eq!(records[0].supporting_statement_ids, vec!["s1", "s2"]);
+    }
+}
+
+#[cfg(test)]
+mod parity_sense_tests {
+    use super::{
+        EvidenceModality, ExtractedStatement, ParitySense, StatementClass, stated_parity_sense,
+    };
+
+    fn statement(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        }
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.46.a — AXI states the sense twice, APB5 and AHB5 once.
+    #[test]
+    fn the_stated_parity_sense_is_read_with_its_statements() {
+        assert_eq!(
+            stated_parity_sense(&[
+                statement("s1", StatementClass::SourceFact, "- Odd parity is used."),
+                statement(
+                    "s2",
+                    StatementClass::SourceFact,
+                    "Odd parity means that check signals are added to groups of signals on the interface."
+                ),
+                statement(
+                    "s3",
+                    StatementClass::SourceFact,
+                    "| Odd_Parity_Byte_All | | Odd parity means a property here. |"
+                ),
+                statement(
+                    "s4",
+                    StatementClass::Apparatus,
+                    "In this guide even parity is used."
+                ),
+            ]),
+            Some((ParitySense::Odd, vec!["s1".to_string(), "s2".to_string()]))
+        );
+        assert_eq!(
+            stated_parity_sense(&[statement(
+                "s1",
+                StatementClass::NormativeStatement,
+                "Even parity is used across each byte."
+            )]),
+            Some((ParitySense::Even, vec!["s1".to_string()]))
+        );
+    }
+
+    #[test]
+    fn both_senses_or_none_or_a_joined_word_state_no_sense() {
+        for statements in [
+            vec![
+                statement(
+                    "s1",
+                    StatementClass::SourceFact,
+                    "Odd parity is used on the address.",
+                ),
+                statement(
+                    "s2",
+                    StatementClass::SourceFact,
+                    "Even parity is used on the data.",
+                ),
+            ],
+            vec![statement(
+                "s1",
+                StatementClass::SourceFact,
+                "Parity checking is optional.",
+            )],
+            vec![statement(
+                "s1",
+                StatementClass::SourceFact,
+                "The Synodd parity is used here.",
+            )],
+        ] {
+            assert_eq!(stated_parity_sense(&statements), None);
+        }
     }
 }

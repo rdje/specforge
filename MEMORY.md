@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.46.a` (parity sense), `.46.b` (emit), `.46.c` (FSMGen request), `.47`, `.50`, `.51`,
+- Next action: ERG `.46.b` (emit one-bit parity rules), `.46.c` (FSMGen request), `.47`, `.50`, `.51`,
   `.3.g.iii`-`.3.f.iii`, `.44`, SRC `.15` (self-test fixtures in `generated/`), KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`,
   EGF `.14`/`.12`, TLIS `.3`-`.5`, LDPH `.17a`/`.34c`/`.42`. Score all 11 seeds every slice. Book regions: `adjudicate_book_quantity_regions.py`. Pin
   `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our

@@ -12,8 +12,9 @@ answers:
   - "why does a check table headed Name (AXI Table A16.4) still read"
   - "how is a footnote letter beside a check signal name (PSELxCHK b) handled"
   - "is a parity check signal lowered to isf (not yet: .46 decided per shape, .46.a-.46.c)"
+  - "what is parity_sense / ParitySense / stated_parity_sense on check_signal_records (.46.a)"
   - "why did adding check_signal_records re-seal every chain"
-date: 2026-10-03
+date: 2026-10-20
 status: current
 tags: [evidence-ir, parity, check-signal, signal-presence, absent-value, table, carried-evidence, adr-0006, adr-0016]
 evidence: crates/specforge/src/ir/evidence.rs (CheckSignalRecord; check_coverage_tables; check_signal_surface; sentence_names_relation; bind_stated_absent_values); crates/specforge/src/ir/semantic.rs and intent.rs (check_signal_records); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a.i); docs/gaps/specforge.md (S25)
@@ -51,7 +52,9 @@ binds). APB5 14 records, 15 presence rows take `LOW` (16 covered; `PADDR`'s matr
 covered signals under its enable. `EXTRACTION-REPRESENTATION-GAPS.46` decided per shape (`2026-10-20`): the
 documents' stated parity sense (*Odd parity is used*) is read first (`.46.a`); the 104 one-bit checks over signals of
 fixed width lower as one rule `(! (^ …))` under a readable enable (`.46.b`); the 49 byte-granular checks over a
-parameterised width need a per-byte reduction `.isf` cannot state and are requested from FSMGen (`.46.c`). The
+parameterised width need a per-byte reduction `.isf` cannot state and are requested from FSMGen (`.46.c`). Since
+`.46.a` every record carries `parity_sense` (`odd` on all 153) and `parity_statement_ids`, from `stated_parity_sense`:
+*odd/even parity is used* or *… means* in a non-apparatus, non-table statement; both senses give none. The
 records carry no residual each: a check signal is interface shape, like a presence row, not a protocol observation.
 
 **Cost.** `check_signal_records` joins `EVIDENCE_RULE_FIELDS`, inside the EvidenceIR seal closure

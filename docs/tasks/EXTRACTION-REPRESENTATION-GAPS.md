@@ -38,9 +38,9 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.46.a` — the parity sense a document states is a typed fact of its check signals.
+`.46.b` — a one-bit check over signals of fixed width lowers as one parity rule under its enable.
 
-Then, in order: `.46.b` (a one-bit check lowers as one parity rule), `.46.c` (a byte-granular parity is requested from
+Then, in order: `.46.c` (a byte-granular parity is requested from
 FSMGen), `.47` (a rule stated on a collective name reaches each member), `.50` (a prose hint gives a signal the role
 its sentence gives it), `.51` (a sentence defining the document's notation is apparatus), `.3.g.iii` (multi-column
 encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables),
@@ -104,7 +104,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.47`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.50`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.51`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.46.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.b`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
 

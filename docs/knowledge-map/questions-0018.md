@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > where do parameter defaults like ADDR_WIDTH 32 come from in the IR
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
@@ -296,5 +298,3 @@
   > which IR stages have adopted move safe persisted paths
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
   > which IntentIR assumptions does SpecForge write itself (in this IntentIR pass)
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > which IntentIR families does the isf adapter never read

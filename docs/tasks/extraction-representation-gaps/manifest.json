@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46.a",
-      "literal" : "`.46.a` — the parity sense a document states is a typed fact of its check signals.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46.b",
+      "literal" : "`.46.b` — a one-bit check over signals of fixed width lowers as one parity rule under its enable.",
       "mode" : "eligible",
       "part_id" : "register-binding-leaves"
    },
@@ -1023,7 +1023,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       },
@@ -1143,13 +1143,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
          "metrics" : {
-            "bytes" : 47006,
+            "bytes" : 49822,
             "line_bytes" : 281,
-            "lines" : 484
+            "lines" : 512
          },
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-         "sha256" : "8b8844346b3793f674ba2f6ffe88a86096178d727fb9013b181cd382c99cc1ee",
+         "sha256" : "7aa9416e7ebf3404636c5a17f181c7704a9bcf0930faef160dc6dee6cd189b03",
          "state" : "active"
       },
       {

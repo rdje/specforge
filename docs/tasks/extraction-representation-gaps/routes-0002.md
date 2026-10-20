@@ -68,6 +68,6 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.52` | `closed` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.46.a` | `open` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.46.a` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.b` | `open` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | `open` | [Register binding leaves](register-binding-leaves.md) |
