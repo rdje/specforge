@@ -141,7 +141,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   sense unchanged, the adapters and every `.isf` text byte-identical; no chain re-seals.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.b`
-  Status: `open` (`2026-10-20`; CODE; found by `.46`)
+  Status: `done` (`2026-10-20`; CODE; found by `.46`; checklist below)
   Goal: **a one-bit check over signals of fixed width lowers as one parity rule under its enable.** 104 records
   (80 one-bit over one bit, 24 over several or wider fixed-width signals) reach `.isf` as ports driven by `val`.
   **Reproduce:** `grep CHK generated/adapters/isf/ihi0024_e_2023_02_amba_5_apb_protocol_specification/requester.isf`.
@@ -150,6 +150,25 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   only when every covered width is fixed in the actor and the enable is a signal or an expression the adapter reads;
   keep a phase-worded enable and any other shape a residual; measure every emitting chain under FSMGen `--strict
   --check` and the WIRE-BASED-100 seeds.
+  **Probed first** on a copy of APB5's `requester.isf` with the pinned FSMGen (`--strict --check --json`):
+  `(PSELxCHK (! PSELx))`, an XOR chain over bit indices and a guard `(& (== A 1) (== B 1))` are strict-clean, and a
+  bit index past a signal's declared width is not (FSMGen widens the signal). **Done `2026-10-20`.** In
+  `isf_ir.rs` `lower_parity_checks` runs after the value gates (which admit only a scalar level) and before dedup: a
+  record lowers when its sense is stated (`.46.a`), its width is `1`, the check signal and every covered signal are
+  outputs of this actor, every covered width is stated as a number (`stated_numeric_widths`, over interface records
+  and actor ports, one included, conflicts dropped: the adapter's width 1 is also its default for a symbolic width),
+  and the enable is declared signals or the actor's reset joined by `&`; the value is `(! (^ …))` over every covered
+  bit for odd parity, the chain for even. Everything else goes to one `isf_parity_checks_not_lowered` packet per
+  document, by reason. A first build refused every check enabled by the reset (*ARESETn*, *PRESETn*, *HRESETn*),
+  which `.isf` declares as `(reset …)`, not a signal; the guard may test it, as `lower_obligations` lets it.
+  **Measured** on the three chains with check records (adapters rebuilt; the other 28 hold none): AXI 45 of 123
+  lowered (rules 8 -> 53), APB5 2 of 14 (`PSELxCHK`, `PWAKEUPCHK`; 5 -> 7), AHB5 1 of 16 (`HTRANSCHK` over
+  `HTRANS[1:0]`; 0 -> 1); against the pre-`.46.b` binary's dry-run, each `.isf` gains only the parity rules and each
+  adapter one residual; every `.isf` FSMGen `--strict --check` clean. Refused, 105: 49 byte-granular (`.46.c`), 35
+  not driven by this actor (the responder's checks), 18 with a covered width not stated as a number, 3 with an enable
+  that is no declared signal (APB5's `PCTRLCHK` and `PENABLECHK` say *PSEL*, which the actor declares as `PSELx`;
+  AXI's `SYSCOREQCHK`). **Declared residuals:** the 18 and the 3 wait on the document stating a width or naming a
+  declared signal; IntentIR carries no coreference (`PSEL` -> `PSELx`), which SemanticIR reads but does not pass on.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
   Status: `open` (`2026-10-20`; REQUEST; found by `.46`)
@@ -509,4 +528,28 @@ which leaves are closed.
   records 138, unchanged.
 - [x] **GENERICITY (ADR 0006)** — the English phrases *odd/even parity is used/means*; no document or signal name.
 - [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md` (the check-signal entry); KM
+  `a-check-coverage-table-binds-the-class-of-covered-signals` amended. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.46.b` (CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — the leaf's grep: every check signal a port driven by `val`; FSMGen probes on a copy of
+  APB5's `requester.isf` before any code.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/isf_ir.rs` lowered obligations to levels only; no path
+  read `check_signal_records`. New `lower_parity_checks`, `stated_numeric_widths`, `ParityRefusal`,
+  `parity_checks_not_lowered_packet`. RED, the file restored byte-identically after each (6 mutations, each failing its
+  named test): the reset refused as an enable, even parity inverted
+  (`a_one_bit_check_over_stated_widths_lowers_as_one_parity_rule`); any width lowered, a covered input lowered, the
+  adapter's default width trusted, a check input lowered (`a_check_this_actor_cannot_state_is_refused_with_its_reason`).
+- [x] **ADDRESSED (verified)** — the three chains' adapters rebuilt: AXI 45, APB5 2, AHB5 1 parity rules; each `.isf`
+  differs from the pre-`.46.b` binary's only by those rules (3 lines each, none removed); each adapter one residual;
+  FSMGen `--strict --check` clean on all three.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `6fb38d2b3`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 171 / 1,877 passed, 0 failed. `flow_census.json` rolled (+4 functions, +10 decision sites, +81 helper edges,
+  +1 macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the records' own fields, the actor's declared signals, directions and stated widths;
+  no document or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the check-signal passage), `reference/representation-gaps.md`
+  (the parity row, now owned by `.46.c`, and its ownership citation); KM
   `a-check-coverage-table-binds-the-class-of-covered-signals` amended. No production rule deleted or replaced.

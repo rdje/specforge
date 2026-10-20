@@ -13,6 +13,7 @@ answers:
   - "how is a footnote letter beside a check signal name (PSELxCHK b) handled"
   - "is a parity check signal lowered to isf (not yet: .46 decided per shape, .46.a-.46.c)"
   - "what is parity_sense / ParitySense / stated_parity_sense on check_signal_records (.46.a)"
+  - "what is lower_parity_checks / isf_parity_checks_not_lowered / parity_<CHK> rules (.46.b)"
   - "why did adding check_signal_records re-seal every chain"
 date: 2026-10-20
 status: current
@@ -54,7 +55,12 @@ documents' stated parity sense (*Odd parity is used*) is read first (`.46.a`); t
 fixed width lower as one rule `(! (^ …))` under a readable enable (`.46.b`); the 49 byte-granular checks over a
 parameterised width need a per-byte reduction `.isf` cannot state and are requested from FSMGen (`.46.c`). Since
 `.46.a` every record carries `parity_sense` (`odd` on all 153) and `parity_statement_ids`, from `stated_parity_sense`:
-*odd/even parity is used* or *… means* in a non-apparatus, non-table statement; both senses give none. The
+*odd/even parity is used* or *… means* in a non-apparatus, non-table statement; both senses give none. Since
+`.46.b` the adapter lowers a one-bit check as `(rule parity_<CHK> <enable> (<CHK> (! (^ …))))` in the actor that
+drives its covered signals (`lower_parity_checks`): every covered bit, a covered width only when stated as a number
+(`stated_numeric_widths`; the adapter's width 1 is also a default), the enable as declared signals or the actor's
+reset; the rest go to one `isf_parity_checks_not_lowered` packet by reason. AXI 45 of 123, APB5 2 of 14, AHB5 1 of
+16, FSMGen-strict clean. The
 records carry no residual each: a check signal is interface shape, like a presence row, not a protocol observation.
 
 **Cost.** `check_signal_records` joins `EVIDENCE_RULE_FIELDS`, inside the EvidenceIR seal closure

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46.b",
-      "literal" : "`.46.b` — a one-bit check over signals of fixed width lowers as one parity rule under its enable.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46.c",
+      "literal" : "`.46.c` — a byte-granular parity over a parameterised width is requested from FSMGen.",
       "mode" : "eligible",
       "part_id" : "register-binding-leaves"
    },
@@ -112,13 +112,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 49822,
+               "bytes" : 54157,
                "line_bytes" : 281,
-               "lines" : 512
+               "lines" : 555
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "7aa9416e7ebf3404636c5a17f181c7704a9bcf0930faef160dc6dee6cd189b03",
+            "sha256" : "992bcce523924774c2365d867fbbdc9a9656c1a649f677a00564fbfd5e3d3796",
             "state" : "active"
          },
          {
@@ -1224,7 +1224,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       },
@@ -1360,7 +1360,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.46.b` — a one-bit check over signals of fixed width lowers as one parity rule under its enable.",
+         "`.46.c` — a byte-granular parity over a parameterised width is requested from FSMGen.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1400,7 +1400,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.50`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.51`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`"
       ]
    },

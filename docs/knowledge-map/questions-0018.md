@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
@@ -296,5 +298,3 @@
   > which FSMGen capabilities are supported, requested, anticipated or fixed upstream
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > which IR stages have adopted move safe persisted paths
-- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
-  > which IntentIR assumptions does SpecForge write itself (in this IntentIR pass)

@@ -486,9 +486,15 @@ carries everything the sentence states, and what is missing is the `.isf` clause
 reads (`(absent-value V)`, `sf-isf-optional-signal` R3), so the value stays exact in IntentIR, is not rendered, and
 no tie-off is inferred. A value that holds for one class of requests only gets its own packet,
 `isf_protocol_signal_qualified_absent_value_` plus the presence id and its position on the record (`.3.d.ii.b.iii.a`),
-which names the class and, for a label, the encoding table and code it resolves to. `check_signal_records` (`.3.d.ii.a.i`) are carried and not lowered, without a residual
-each: a parity check is interface shape rather than a protocol observation, and its lowering — a combinational
-XOR chain, or a request — is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_names`
+which names the class and, for a label, the encoding table and code it resolves to. `check_signal_records`
+(`.3.d.ii.a.i`) state a parity, and since `.46.b` (`2026-10-20`) a one-bit check lowers as one rule in the actor
+that drives the signals it covers: `(! (^ …))` over every covered bit for the odd parity the document states
+(`.46.a`), guarded by its enable read as declared signals or the actor's reset (`(rule parity_AWLENCHK (== AWVALID 1)
+(AWLENCHK (! (^ … AWLEN[7]))))`). A covered width counts only when the document states it as a number, because the
+adapter's width of 1 is also its default for a symbolic one. Every other check is named, by reason, in one
+`isf_parity_checks_not_lowered` packet: a byte-granular check over a parameterised width (`.46.c`), one this actor
+does not drive, one whose covered width is not stated, or one whose enable is a phase or an expression. AXI lowers 45
+of its 123, APB5 2 of 14, AHB5 1 of 16, each `.isf` FSMGen-strict clean. `collective_signal_names`
 (`.3.d.ii.a.ii`) are carried the same way: a name is not a port, and the members it stands for are already ports.
 An equivalence rule (`.3.d.ii.b.ii`) gets a packet, `isf_protocol_equivalence_rule_` plus its id: `.isf` has no
 construct that treats one thing as another under a condition, and the rule's subject and equivalent are phrases no

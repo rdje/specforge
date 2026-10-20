@@ -10,7 +10,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::ir::evidence::{SignalPolarity, SignalPolarityRecord};
+use crate::ir::evidence::{CheckSignalRecord, ParitySense, SignalPolarity, SignalPolarityRecord};
 use crate::ir::intent::{
     ConstraintLevel, IntentIr, TemporalInvariantKind, TransactionStep, signal_constraint_level,
 };
@@ -1487,6 +1487,26 @@ impl IsfIr {
             let (aligned, width_residuals) = align_rule_drive_widths(rules, &signal_widths);
             rules = aligned;
             temporal_residuals.extend(width_residuals);
+        }
+
+        // --- Parity checks (EXTRACTION-REPRESENTATION-GAPS.46.b) ---
+        // A check signal keeps the parity its document states over the signals it covers. Its value is an
+        // expression over those signals, not a level, so it joins after the value gates above, which admit only
+        // a renderable scalar level; dedup below still sees it.
+        {
+            let (parity_rules, refused) = lower_parity_checks(
+                &intent_ir.check_signal_records,
+                &signals,
+                &stated_numeric_widths(intent_ir),
+                intent_ir
+                    .system_contract
+                    .as_ref()
+                    .map(|contract| contract.reset_signal.as_str()),
+            );
+            rules.extend(parity_rules);
+            if !refused.is_empty() {
+                temporal_residuals.push(parity_checks_not_lowered_packet(&refused));
+            }
         }
 
         // --- Dedup: remove rules that conflict on the same signal+guard ---
@@ -3574,6 +3594,189 @@ fn refused_obligations_residual_packet(refused: &[RefusedObligation]) -> Residua
             downstream_impact: "Owned by EXTRACTION-REPRESENTATION-GAPS (.17 polarity extraction, .10 and .22 \
                                 conditions, .11 assertions)."
                 .to_string(),
+        }],
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.46.b — the widths a document states as a number for each signal, over its interface
+/// records and actor ports, one included; a signal whose stated numbers disagree has none. The adapter's own width of
+/// 1 is also its default for a width the document writes symbolically (`DATA_WIDTH/8`), so a parity over every bit
+/// uses only a width stated here.
+fn stated_numeric_widths(intent_ir: &IntentIr) -> BTreeMap<String, u32> {
+    let mut by_signal: BTreeMap<String, BTreeSet<u32>> = BTreeMap::new();
+    let records = intent_ir
+        .interfaces
+        .iter()
+        .flat_map(|interface| interface.signal_records.iter())
+        .map(|record| (record.signal_name.as_str(), record.width_hint.as_ref()));
+    let ports = intent_ir
+        .actor_ports
+        .iter()
+        .map(|port| (port.signal_name.as_str(), port.width_hint.as_ref()));
+    for (name, hint) in records.chain(ports) {
+        if let Some(WidthHint::Numeric(n)) = hint {
+            by_signal.entry(name.to_string()).or_default().insert(*n);
+        }
+    }
+    by_signal
+        .into_iter()
+        .filter_map(
+            |(name, widths)| match widths.into_iter().collect::<Vec<_>>().as_slice() {
+                [width] => Some((name, *width)),
+                _ => None,
+            },
+        )
+        .collect()
+}
+
+/// Why a check signal's parity was not lowered (`.46.b`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum ParityRefusal {
+    NoStatedSense,
+    ByteGranular,
+    NotDrivenHere,
+    CoveredNotDrivenHere,
+    CoveredWidthNotStated,
+    EnableNotSignals,
+}
+
+impl ParityRefusal {
+    fn describe(self) -> &'static str {
+        match self {
+            Self::NoStatedSense => "the document states no parity sense",
+            Self::ByteGranular => {
+                "a check wider than one bit, one per byte of a parameterised width (`.46.c`)"
+            }
+            Self::NotDrivenHere => "the check signal is not an output of this actor",
+            Self::CoveredNotDrivenHere => "a covered signal is not an output of this actor",
+            Self::CoveredWidthNotStated => "a covered signal's width is not stated as a number",
+            Self::EnableNotSignals => {
+                "the enable is not a declared signal or a conjunction of them"
+            }
+        }
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.46.b — the parity rule each one-bit check signal states over the signals it
+/// covers, in the actor that drives them: `(! (^ …))` over every covered bit for odd parity, the chain itself for
+/// even, guarded by its enable read as declared signals or the actor's reset, each `1` (*AWVALID*; *PSELx &
+/// PWRITE*; *ARESETn*, which a guard may test as `lower_obligations` lets it). A check wider than
+/// one bit, one whose covered widths the document does not state as numbers, one this actor does not drive, or one
+/// whose enable is a phase or an expression (*Write data phase*; *HTRANS != IDLE*) is refused, never approximated.
+fn lower_parity_checks(
+    records: &[CheckSignalRecord],
+    signals: &BTreeSet<IsfSignal>,
+    stated_widths: &BTreeMap<String, u32>,
+    reset: Option<&str>,
+) -> (Vec<IsfRule>, Vec<(String, ParityRefusal)>) {
+    let declared: BTreeMap<&str, &IsfSignal> = signals
+        .iter()
+        .map(|signal| (signal.name.as_str(), signal))
+        .collect();
+    let is_output = |name: &str| {
+        declared
+            .get(name)
+            .is_some_and(|signal| signal.direction == IsfDirection::Output)
+    };
+    let mut rules = Vec::new();
+    let mut refused = Vec::new();
+    for record in records {
+        let lowered = (|| {
+            let sense = record.parity_sense.ok_or(ParityRefusal::NoStatedSense)?;
+            if record.width.as_deref().map(str::trim) != Some("1") {
+                return Err(ParityRefusal::ByteGranular);
+            }
+            if !is_output(&record.check_signal) {
+                return Err(ParityRefusal::NotDrivenHere);
+            }
+            let mut bits: Vec<String> = Vec::new();
+            for covered in &record.covered_signals {
+                if !is_output(covered) {
+                    return Err(ParityRefusal::CoveredNotDrivenHere);
+                }
+                let signal = declared[covered.as_str()];
+                match stated_widths.get(covered) {
+                    Some(&width) if width == signal.width && signal.width_param.is_none() => {
+                        if width == 1 {
+                            bits.push(covered.clone());
+                        } else {
+                            bits.extend((0..width).map(|bit| format!("{covered}[{bit}]")));
+                        }
+                    }
+                    _ => return Err(ParityRefusal::CoveredWidthNotStated),
+                }
+            }
+            let enable = record.check_enable.as_deref().unwrap_or("");
+            let terms: Vec<&str> = enable.split('&').map(str::trim).collect();
+            if terms.iter().any(|term| {
+                term.is_empty()
+                    || !term.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+                    || !(declared.contains_key(term) || reset == Some(*term))
+            }) {
+                return Err(ParityRefusal::EnableNotSignals);
+            }
+            let condition = terms
+                .iter()
+                .map(|term| format!("(== {term} 1)"))
+                .reduce(|left, right| format!("(& {left} {right})"))
+                .ok_or(ParityRefusal::EnableNotSignals)?;
+            let chain = bits
+                .into_iter()
+                .reduce(|left, right| format!("(^ {left} {right})"))
+                .ok_or(ParityRefusal::CoveredWidthNotStated)?;
+            let value = match sense {
+                ParitySense::Odd => format!("(! {chain})"),
+                ParitySense::Even => chain,
+            };
+            Ok(IsfRule {
+                name: format!("parity_{}", record.check_signal),
+                condition,
+                drives: vec![(record.check_signal.clone(), value)],
+            })
+        })();
+        match lowered {
+            Ok(rule) => rules.push(rule),
+            Err(refusal) => refused.push((record.check_signal.clone(), refusal)),
+        }
+    }
+    (rules, refused)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.46.b — one residual naming every check signal whose parity was not lowered, by
+/// reason.
+fn parity_checks_not_lowered_packet(refused: &[(String, ParityRefusal)]) -> ResidualDecisionPacket {
+    let mut by_refusal: BTreeMap<ParityRefusal, Vec<&str>> = BTreeMap::new();
+    for (signal, refusal) in refused {
+        by_refusal.entry(*refusal).or_default().push(signal);
+    }
+    let listed = by_refusal
+        .iter()
+        .map(|(refusal, signals)| {
+            format!(
+                "{} {}: {}",
+                signals.len(),
+                refusal.describe(),
+                signals.join(", ")
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("; ");
+    ResidualDecisionPacket {
+        packet_id: "isf_parity_checks_not_lowered".to_string(),
+        question: "How should these check signals' parity be stated in `.isf`?".to_string(),
+        why_unresolved: format!(
+            "{} check signal(s) were not lowered to a parity rule, because a rule's value must be the parity the \
+             document states over every bit it covers and its guard the enable the document states: {listed}. \
+             Approximating a width, an enable or a driver would state what the document never did.",
+            refused.len()
+        ),
+        automation_confidence: AutomationConfidence::High,
+        candidate_interpretations: vec![CandidateInterpretation {
+            interpretation_id: "state_the_parity_form".to_string(),
+            description: "Lower a byte-granular check once `.isf` states a per-byte reduction over a parameterised \
+                          width; read a phase or an expression enable as a guard on declared signals."
+                .to_string(),
+            downstream_impact: "Owned by EXTRACTION-REPRESENTATION-GAPS (.46.c the FSMGen request).".to_string(),
         }],
     }
 }
@@ -8065,5 +8268,167 @@ mod tests {
         let (deduped, residuals) = dedup_conflicting_rules(rules);
         assert_eq!(deduped.len(), 2);
         assert!(residuals.is_empty());
+    }
+}
+
+#[cfg(test)]
+mod parity_check_tests {
+    use super::{
+        CheckSignalRecord, IsfDirection, IsfSignal, ParityRefusal, ParitySense, lower_parity_checks,
+    };
+    use std::collections::{BTreeMap, BTreeSet};
+
+    fn signal(name: &str, direction: IsfDirection, width: u32) -> IsfSignal {
+        IsfSignal {
+            name: name.to_string(),
+            direction,
+            width,
+            width_param: None,
+        }
+    }
+
+    fn check(
+        name: &str,
+        covered: &[&str],
+        width: &str,
+        enable: &str,
+        sense: Option<ParitySense>,
+    ) -> CheckSignalRecord {
+        CheckSignalRecord {
+            check_id: format!("check_{name}"),
+            check_signal: name.to_string(),
+            covered_signals: covered.iter().map(|s| s.to_string()).collect(),
+            width: Some(width.to_string()),
+            granularity: None,
+            check_enable: Some(enable.to_string()),
+            table_id: "table_0001".to_string(),
+            parity_sense: sense,
+            parity_statement_ids: Vec::new(),
+        }
+    }
+
+    fn actor() -> (BTreeSet<IsfSignal>, BTreeMap<String, u32>) {
+        use IsfDirection::{Input, Output};
+        let signals = [
+            signal("AWVALID", Output, 1),
+            signal("AWVALIDCHK", Output, 1),
+            signal("PSELx", Output, 1),
+            signal("PWRITE", Output, 1),
+            signal("PNSE", Output, 1),
+            signal("PPROT", Output, 3),
+            signal("PCTRLCHK", Output, 1),
+            signal("PSTRB", Output, 1),
+            signal("PSTRBCHK", Output, 1),
+            signal("PREADY", Input, 1),
+            signal("PREADYCHK", Input, 1),
+            signal("PRDATACHK", Output, 1),
+        ]
+        .into_iter()
+        .collect();
+        let stated = [
+            ("AWVALID", 1),
+            ("PSELx", 1),
+            ("PWRITE", 1),
+            ("PNSE", 1),
+            ("PPROT", 3),
+            ("PREADY", 1),
+        ]
+        .into_iter()
+        .map(|(name, width)| (name.to_string(), width))
+        .collect();
+        (signals, stated)
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.46.b — a one-bit odd parity over one signal is its inversion, over several the
+    /// inverted XOR of every bit, under the enable read as declared signals; even parity is the chain itself.
+    #[test]
+    fn a_one_bit_check_over_stated_widths_lowers_as_one_parity_rule() {
+        let (signals, stated) = actor();
+        let (rules, refused) = lower_parity_checks(
+            &[
+                check(
+                    "AWVALIDCHK",
+                    &["AWVALID"],
+                    "1",
+                    "ARESETn",
+                    Some(ParitySense::Odd),
+                ),
+                check(
+                    "PCTRLCHK",
+                    &["PPROT", "PWRITE", "PNSE"],
+                    "1",
+                    "PSELx & PWRITE",
+                    Some(ParitySense::Even),
+                ),
+            ],
+            &signals,
+            &stated,
+            Some("ARESETn"),
+        );
+        assert!(refused.is_empty(), "{refused:?}");
+        let read: Vec<(&str, &str, &str, &str)> = rules
+            .iter()
+            .map(|rule| {
+                (
+                    rule.name.as_str(),
+                    rule.condition.as_str(),
+                    rule.drives[0].0.as_str(),
+                    rule.drives[0].1.as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            vec![
+                (
+                    "parity_AWVALIDCHK",
+                    "(== ARESETn 1)",
+                    "AWVALIDCHK",
+                    "(! AWVALID)"
+                ),
+                (
+                    "parity_PCTRLCHK",
+                    "(& (== PSELx 1) (== PWRITE 1))",
+                    "PCTRLCHK",
+                    "(^ (^ (^ (^ PPROT[0] PPROT[1]) PPROT[2]) PWRITE) PNSE)"
+                ),
+            ]
+        );
+    }
+
+    #[test]
+    fn a_check_this_actor_cannot_state_is_refused_with_its_reason() {
+        let (signals, stated) = actor();
+        let odd = Some(ParitySense::Odd);
+        let (rules, refused) = lower_parity_checks(
+            &[
+                check("AWVALIDCHK", &["AWVALID"], "1", "ARESETn", None),
+                check("PRDATACHK", &["PSELx"], "ceil(DATA_WIDTH/8)", "PSELx", odd),
+                check("PREADYCHK", &["PREADY"], "1", "PSELx", odd),
+                check("PRDATACHK", &["PREADY"], "1", "PSELx", odd),
+                check("PSTRBCHK", &["PSTRB"], "1", "PSELx & PWRITE", odd),
+                check("PCTRLCHK", &["PWRITE"], "1", "Write data phase", odd),
+                check("PCTRLCHK", &["PWRITE"], "1", "PSEL", odd),
+            ],
+            &signals,
+            &stated,
+            Some("ARESETn"),
+        );
+        assert!(rules.is_empty());
+        assert_eq!(
+            refused
+                .iter()
+                .map(|(_, refusal)| *refusal)
+                .collect::<Vec<_>>(),
+            vec![
+                ParityRefusal::NoStatedSense,
+                ParityRefusal::ByteGranular,
+                ParityRefusal::NotDrivenHere,
+                ParityRefusal::CoveredNotDrivenHere,
+                ParityRefusal::CoveredWidthNotStated,
+                ParityRefusal::EnableNotSignals,
+                ParityRefusal::EnableNotSignals,
+            ]
+        );
     }
 }

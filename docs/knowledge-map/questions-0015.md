@@ -154,6 +154,8 @@
   > what is keyed_row_value_predicate
 - [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
   > what is leaf_route_exemption in a task-evidence contract
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > what is lower_parity_checks / isf_parity_checks_not_lowered / parity_<CHK> rules (.46.b)
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > what is max_records times max_record_bytes supposed to equal
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -295,5 +297,3 @@
   > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > what is the LLM recall ceiling per document (AXI ihi0022_l_2025_08 209 to 37 = 17.7%, AHB ihi0033_c 57 to 10 = 17.5%, I2C um10204 27 to 3 = 11.1%, APB ihi0024_e 21 to 9 = 42.9%, ADIv6 ihi0074_a 12 to 1 = 8.3%)
