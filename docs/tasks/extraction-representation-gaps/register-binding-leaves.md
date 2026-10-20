@@ -219,7 +219,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   EnterDormantState describes the function of the JTAG-to-DS sequence detector*) where it is, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.52`
-  Status: `open` (`2026-10-20`; DESIGN + CODE; found by `.3.d.i`)
+  Status: `done` (`2026-10-20`; DESIGN + CODE; found by `.3.d.i`; checklist below)
   Goal: **a software agent's statement mints no hardware rule.** `.3.d.i` types what the document's software agents
   do (`software_intent`, 342 records in 11 chains), but the readers that ran before it still read the same statements
   as hardware: 137 IntentIR records cite one, 102 `temporal_invariants` (the USB4 connection-manager guide 64, ADIv6
@@ -232,6 +232,23 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   Acceptance: decide, per surface, whether a record minted only from software-intent statements is withheld, marked,
   or kept; keep a record where the software agent is the hardware's external actor (*the debugger drives TDI*) or one
   citation of several; and measure every chain's invariants, rules and adapters.
+  **Decided `2026-10-20`: withhold what a software statement alone mints; keep what the hardware also states.** A
+  statement `software_intent` reads mints no SemanticIR invariant (`build_invariants` skips it through
+  `SemanticContext::software_statement_ids`), so no IntentIR temporal invariant either; and a conditional rule every
+  cited statement of which is software intent is dropped in EvidenceIR (`withhold_software_rules`; a rule citing none
+  is kept). Not marked: a marked invariant would still be an executable fact to every reader that does not look, and
+  the statement is already carried, typed, as software intent. Kept on purpose: the 8 multi-statement records (5
+  transactions, 2 interfaces, a protocol state), where the software statement is one citation of several, and ADIv6's
+  2 actor relations (*the debugger* drives `TDI`, samples `TDO`), where the software agent is the hardware's external
+  actor. **Measured over all 31 chains** (evidence dry-run against `404ebb4eb`'s): 25 identical in EvidenceIR; 6 lose
+  only conditional rules, 25 in all (USB4 connection-manager guide 18 -> 6, ADIv6 110 -> 104, RISC-V debug 80 -> 77,
+  IOMMU 49 -> 47, SMMU guide 8 -> 7, GIC guide 12 -> 11). Rebuilt stage by stage (the 11
+  `software_intent` chains): SemanticIR invariants and IntentIR temporal invariants -102 in 10 (USB4
+  connection-manager guide 166 -> 102, ADIv6 552 -> 536, IOMMU 165 -> 158, RISC-V debug 163 -> 158, GIC guide 35 -> 32,
+  CoreSight TMC and USB 3.2 2 each, AXI, SMMU guide and external debug guide 1 each), the IntentIR constraints derived
+  from them -86, conditional rules -25 at every stage; ADIv6's adapter only renumbers one rule
+  (`isf_obligations_not_lowered`: `rule_79` -> `rule_74`); every `.isf` text byte-identical. The changed semantic rule
+  re-sealed every chain (`rebuild_stage_cascade.sh --write`, 31 content-identical).
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
@@ -312,3 +329,30 @@ which leaves are closed.
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A state bound in a plural phrase is supported by
   it*); KM `transition-bound-state-fsm` (amended). No production rule was deleted or replaced: the singular form is
   read exactly as before.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.52` (DESIGN + CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — IntentIR records whose `supporting_statement_ids` meet a `software_intent` record's:
+  137, of which 129 cite only such statements (102 temporal invariants, 25 conditional rules, 2 actor relations) and 8
+  cite hardware statements too (`.project-data/tmp/erg-52`, before any code).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` `build_invariants` and
+  `crates/specforge/src/ir/evidence.rs` `extract_conditional_rules` ran over every statement, so a software agent's
+  procedure became hardware invariants and rules. Changed: `SemanticContext::software_statement_ids` (from EvidenceIR's
+  `software_intent`) and the skip in `build_invariants`; `withhold_software_rules` after `extract_conditional_rules`.
+  RED, both files restored byte-identically after each (4 mutations, each failing its named test): any citation enough,
+  an uncited rule dropped and an empty software set (`a_conditional_rule_read_only_from_software_statements_is_withheld`);
+  the invariant skip off (`a_statement_about_a_software_agent_mints_no_invariant`). The two call sites are wired as
+  measured: the rebuild removes exactly the 102 invariants and 25 rules.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 25 identical, 6 lose only conditional rules (25). The 11
+  chains rebuilt stage by stage, each artifact validated once, the adapter last: -102 invariants, -102 temporal
+  invariants, -86 derived constraints, -25 conditional rules, nothing added; `.isf` byte-identical; then
+  `rebuild_stage_cascade.sh --write` re-sealed all 31 content-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: 10 seed reports byte-identical to
+  `404ebb4eb`'s (temp paths masked); `seed_swd` differs only in its context line `existing_conditional_rules` 109 ->
+  103 (ADIv6's six withheld rules), its scores unchanged. `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,871 passed, 0 failed. `flow_census.json` rolled (+1 function, +4 decision
+  sites, +7 helper edges); boundary unchanged. Census: unread records 138, unchanged (the withheld records were typed).
+- [x] **GENERICITY (ADR 0006)** — no new words: the set is `software_intent`'s, whose grammar `.3.d.i` measured.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A software agent's statement mints no hardware
+  rule*); KM `a-software-agents-statement-is-software-intent` amended. No production rule deleted; two readers narrowed.

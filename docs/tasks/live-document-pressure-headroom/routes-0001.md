@@ -103,3 +103,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a` | `closed` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.45` | `open` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17a` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34d` | `closed` | [Warning assignment](warning-assignment.md) |

@@ -2828,6 +2828,9 @@ struct SemanticContext {
     visual_roles_by_id: HashMap<String, VisualEvidenceRole>,
     actor_signal_relations: Vec<ActorSignalRelation>,
     signal_semantic_hints: Vec<SignalSemanticHintRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.52 — the statements EvidenceIR's `software_intent` reads: what an agent the
+    /// document makes software does is no hardware invariant.
+    software_statement_ids: BTreeSet<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -2954,6 +2957,11 @@ impl SemanticContext {
             visual_roles_by_id,
             actor_signal_relations: evidence_ir.actor_signal_relations.clone(),
             signal_semantic_hints: evidence_ir.signal_semantic_hints.clone(),
+            software_statement_ids: evidence_ir
+                .software_intent
+                .iter()
+                .flat_map(|record| record.supporting_statement_ids.iter().cloned())
+                .collect(),
         }
     }
 }
@@ -4916,6 +4924,7 @@ fn build_explicit_module_record(accumulator: ExplicitModuleAccumulator) -> Expli
         visual_roles_by_id: HashMap::new(),
         actor_signal_relations: Vec::new(),
         signal_semantic_hints: Vec::new(),
+        software_statement_ids: BTreeSet::new(),
     };
     let system_contract = build_system_contract(&scoped_context);
     let (interfaces, _interface_signal_conflicts) =
@@ -6382,7 +6391,13 @@ fn build_invariants(
     let mut seen = BTreeSet::new();
 
     for statement in &context.statements {
-        if !is_invariant_like(statement, context, interface_ids_by_signal) {
+        // EXTRACTION-REPRESENTATION-GAPS.52 — a statement about a software agent is software intent, carried as such;
+        // as an invariant it would hold the hardware to the software's procedure.
+        if context
+            .software_statement_ids
+            .contains(&statement.statement_id)
+            || !is_invariant_like(statement, context, interface_ids_by_signal)
+        {
             continue;
         }
 
@@ -15201,6 +15216,7 @@ mod tests {
             )]),
             actor_signal_relations: Vec::new(),
             signal_semantic_hints: Vec::new(),
+            software_statement_ids: std::collections::BTreeSet::new(),
         };
         let interfaces = vec![super::InterfaceRecord {
             interface_id: "if_req".to_string(),
@@ -15250,6 +15266,7 @@ mod tests {
             visual_roles_by_id: HashMap::new(),
             actor_signal_relations: Vec::new(),
             signal_semantic_hints: Vec::new(),
+            software_statement_ids: std::collections::BTreeSet::new(),
         };
         let interfaces = vec![super::InterfaceRecord {
             interface_id: "if_req".to_string(),
@@ -26349,6 +26366,7 @@ mod tests {
             visual_roles_by_id: HashMap::new(),
             actor_signal_relations: Vec::new(),
             signal_semantic_hints: Vec::new(),
+            software_statement_ids: std::collections::BTreeSet::new(),
         }
     }
 
@@ -26775,6 +26793,7 @@ mod tests {
             visual_roles_by_id: HashMap::new(),
             actor_signal_relations: vec![],
             signal_semantic_hints: vec![],
+            software_statement_ids: std::collections::BTreeSet::new(),
         }
     }
 
@@ -27007,6 +27026,22 @@ mod tests {
             super::is_invariant_like(&stmt, &ctx, &interfaces),
             "must (no signals) should return true via first phrase check"
         );
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.52 — a statement `software_intent` reads is software intent, not an invariant.
+    #[test]
+    fn a_statement_about_a_software_agent_mints_no_invariant() {
+        let mut context = make_semantic_context();
+        context.statements = vec![make_statement_context(
+            super::StatementClass::NormativeStatement,
+            "Software must clear the bit before the next transfer.",
+            vec![],
+        )];
+        assert_eq!(super::build_invariants(&context, &HashMap::new()).len(), 1);
+        context
+            .software_statement_ids
+            .insert("test_stmt".to_string());
+        assert!(super::build_invariants(&context, &HashMap::new()).is_empty());
     }
 
     #[test]
@@ -27942,6 +27977,7 @@ mod tests {
             visual_roles_by_id: HashMap::new(),
             actor_signal_relations: vec![],
             signal_semantic_hints: vec![],
+            software_statement_ids: std::collections::BTreeSet::new(),
         }
     }
 
@@ -28509,6 +28545,7 @@ mod tests {
             visual_roles_by_id: HashMap::new(),
             actor_signal_relations: Vec::new(),
             signal_semantic_hints: Vec::new(),
+            software_statement_ids: std::collections::BTreeSet::new(),
         };
 
         // Declared-signal inventory (the document's own signals) — `IDLE` is absent
@@ -28580,6 +28617,7 @@ mod tests {
             visual_roles_by_id: HashMap::new(),
             actor_signal_relations: Vec::new(),
             signal_semantic_hints: Vec::new(),
+            software_statement_ids: std::collections::BTreeSet::new(),
         };
         let declared: std::collections::HashSet<String> =
             ["PCLK", "PSEL", "PADDR", "PENABLE", "PWRITE", "PRDATA"]

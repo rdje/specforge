@@ -10,6 +10,7 @@ answers:
   - "what is software_intent_surface / software_subject / glossary_software_name / implemented_in_software_names"
   - "what is isf_software_intent_not_applicable"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.d.i and .52"
+  - "why did 102 invariants leave the USB4 connection-manager guide and ADIv6 (withhold_software_rules, software_statement_ids)"
 date: 2026-10-20
 status: current
 tags: [evidence-ir, software-intent, non-applicable, carried-evidence, isf-adapter, census, category-contract, adr-0006, adr-0016, extraction-representation-gaps]
@@ -47,8 +48,11 @@ IOMMU 15, external debug guide 13); 185 descriptions, 61 obligations, 54 capabil
 recommendations; a Python port produced the same 342. Each changed chain moves only `software_intent` at every stage;
 each of the 11 adapters gains the residual; `.isf` byte-identical; the new field re-sealed every chain. Unread IntentIR
 records 145 -> 138 (census `software_agent` 12 -> 5: four of its list's hardware or human names, one participle).
-**Not decided here (`.52`):** 137 IntentIR records the earlier readers minted from these statements (102 temporal
-invariants, 25 conditional rules, 10 multi-statement records).
+**`.52` (`2026-10-20`): no hardware rule from a software statement.** A statement `software_intent` reads mints no
+SemanticIR invariant (`build_invariants` skips `SemanticContext::software_statement_ids`), and a conditional rule read
+only from such statements is withheld (`withhold_software_rules`): -102 invariants and temporal invariants, -86 derived
+constraints, -25 conditional rules; `.isf` byte-identical. Kept: 8 records that also cite hardware statements and
+ADIv6's 2 actor relations (*the debugger* drives `TDI`, samples `TDO`).
 
 Links: [[a-stated-permission-is-a-typed-record]], [[unread-intent-records-fall-into-six-families]],
 [[stage-seal-closure-membership]].

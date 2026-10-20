@@ -15,6 +15,7 @@
   - [EvidenceIR](pipeline/evidenceir.md)
   - [How Each EvidenceIR Rule Was Found And Verified](pipeline/evidence-rule-chronology.md)
   - [Register And Bit-Layout Table Shapes](pipeline/register-tables.md)
+  - [Presence, Defaults, Assumptions And Software Intent](pipeline/presence-and-assumptions.md)
   - [Reading A Normative Obligation](pipeline/obligation-reading.md)
   - [Evidence-Level Failure Modes](pipeline/evidence-failure-modes.md)
   - [Multimodal Evidence And Visual Grounding](pipeline/multimodal-evidence.md)

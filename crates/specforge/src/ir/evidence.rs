@@ -22261,6 +22261,26 @@ fn software_agent<'a>(
     })
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.52 — drop a conditional rule read only from statements about a software agent: it is
+/// software intent, which `software_intent` carries, and as a conditional rule it would bind the hardware to the
+/// software's procedure. A rule that also cites a hardware statement, or cites none, is kept.
+fn withhold_software_rules(
+    rules: &mut Vec<ConditionalRuleRecord>,
+    statements: &[ExtractedStatement],
+) {
+    let software_statement_ids: BTreeSet<String> = software_intent_surface(statements)
+        .into_iter()
+        .flat_map(|record| record.supporting_statement_ids)
+        .collect();
+    rules.retain(|rule| {
+        rule.supporting_statement_ids.is_empty()
+            || !rule
+                .supporting_statement_ids
+                .iter()
+                .all(|id| software_statement_ids.contains(id))
+    });
+}
+
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.i — every statement whose subject is an agent the document makes software, in
 /// statement order: an English software noun, a name a glossary row defines as software, or a name the document says
 /// is implemented in software (each defining statement read first, in order). A table row and an apparatus statement
@@ -29600,8 +29620,9 @@ fn converge_evidence_extractions(
         apply_signal_polarity_to_constraints(&mut row_constraints, &signal_polarity.resolved);
         signal_constraints.extend(row_constraints);
         dedup_appended_signal_constraints(&mut signal_constraints, established_constraints);
-        let conditional_rules =
+        let mut conditional_rules =
             extract_conditional_rules(&extracted_statements, &mut constraint_counter);
+        withhold_software_rules(&mut conditional_rules, &extracted_statements);
 
         // EXTRACTOR-ARCHITECTURE.9c — the relations surface runs through the unified concat driver with
         // its two ordered post-passes (check-signal augmentation reads the full pre-dedup list, THEN
@@ -61518,8 +61539,9 @@ mod optional_feature_tests {
 #[cfg(test)]
 mod software_intent_tests {
     use super::{
-        EvidenceModality, ExtractedStatement, SoftwareAgentBasis, SoftwareIntentModality,
-        SoftwareIntentRecord, StatementClass, software_intent_surface,
+        AutomationConfidence, ConditionalRuleRecord, EvidenceModality, ExtractedStatement,
+        SoftwareAgentBasis, SoftwareIntentModality, SoftwareIntentRecord, StatementClass,
+        software_intent_surface, withhold_software_rules,
     };
 
     fn statement(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
@@ -61655,6 +61677,47 @@ mod software_intent_tests {
                 ],
             )
             .is_empty()
+        );
+    }
+
+    /// `.52` — a rule read only from statements about a software agent is withheld; one that also cites a hardware
+    /// statement, or cites none, is kept.
+    #[test]
+    fn a_conditional_rule_read_only_from_software_statements_is_withheld() {
+        let statements = [
+            statement(
+                "s1",
+                StatementClass::ConditionalRule,
+                "If the bit is set, software must clear it.",
+            ),
+            statement(
+                "s2",
+                StatementClass::ConditionalRule,
+                "If the bit is set, the device must clear it.",
+            ),
+        ];
+        let rule = |id: &str, cites: &[&str]| ConditionalRuleRecord {
+            rule_id: id.to_string(),
+            antecedent_text: "the bit is set".to_string(),
+            consequent_signal: None,
+            consequent_action: "must".to_string(),
+            source_text: String::new(),
+            supporting_statement_ids: cites.iter().map(|id| id.to_string()).collect(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut rules = vec![
+            rule("r1", &["s1"]),
+            rule("r2", &["s2"]),
+            rule("r3", &["s1", "s2"]),
+            rule("r4", &[]),
+        ];
+        withhold_software_rules(&mut rules, &statements);
+        assert_eq!(
+            rules
+                .iter()
+                .map(|rule| rule.rule_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["r2", "r3", "r4"]
         );
     }
 

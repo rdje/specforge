@@ -48,10 +48,12 @@ route catalog below, so this landing measures work in flight rather than project
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.42` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.45` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17a` | [Pointer index and ownership](pointer-index-and-ownership.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34e` | [Warning assignment](warning-assignment.md) |
 
 ## Complete route catalog
 
 - [Route catalog part 0001](routes-0001.md)
+- [Route catalog part 0002](routes-0002.md)
 
 ## Exact provenance
 

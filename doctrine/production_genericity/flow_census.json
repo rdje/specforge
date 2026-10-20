@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-I-SOFTWARE-INTENT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-52-SOFTWARE-STATEMENT-NO-HARDWARE-RULE",
    "baseline": {
-    "analyzed_functions": 2771,
-    "decision_sites": 15182,
-    "helper_edges": 18758,
-    "semantic_macros": 1601
+    "analyzed_functions": 2779,
+    "decision_sites": 15269,
+    "helper_edges": 18929,
+    "semantic_macros": 1611
    },
    "delta": {
-    "analyzed_functions": 8,
-    "decision_sites": 87,
-    "helper_edges": 171,
-    "semantic_macros": 10
+    "analyzed_functions": 1,
+    "decision_sites": 4,
+    "helper_edges": 7,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.i: what a software agent does is software intent. software_intent_surface reads every statement whose subject is an agent the document makes software into EvidenceIR software_intent, carried by SemanticIR and IntentIR, with one non-applicable adapter residual per document."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.52",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.52: a software agent's statement mints no hardware rule. build_invariants skips the statements software_intent reads (SemanticContext::software_statement_ids), and withhold_software_rules drops a conditional rule read only from them."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

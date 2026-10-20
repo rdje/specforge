@@ -352,3 +352,35 @@ owner's `Status` line rather than from any mention of the surface.
   open section may partition by status. Measure the per-record lines first, and leave headroom for the next
   batch of requests.
 
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34d`
+  Status: `done` (`2026-10-20`; opened and closed by `EXTRACTION-REPRESENTATION-GAPS.52`)
+  Goal: cut `docs/book/src/pipeline/evidence-rule-chronology.md` by reader concern; `.34a`'s trigger, at its 80% band,
+  had no open owner
+  Acceptance: `.34a` left the chronology at 83,519 bytes (63.7%) on `2026-09-21` and set the trigger: at 104,857 bytes
+  cut again, by reader concern. No open leaf carried it, and `EXTRACTION-REPRESENTATION-GAPS.52`'s section took the
+  chapter to **131,553 bytes against its 131,072 ceiling**, so `shipped_behavior` failed closed and the slice could not
+  commit. Trimming its section would have left the chapter at 99%, the reprieve the containment doctrine refuses.
+  **The cut is by reader concern, not by size.** Per `###` section, the two that grew with the `.3.d` programme are one
+  subject: what a specification states beyond its wires and their timing (`PDF-VARIANT-DIGESTION.12b`'s presence
+  matrices with the defaults, check-signal and collective-name entries after it, 14,243 bytes; *Which assume-sentences
+  are abstractions, and which are apparatus* with the equivalence, permission, option, environment-assumption and
+  software-intent entries, 20,433). Moving only the second would have left 84.8%, inside the warning band. Both moved
+  **byte-identically, no heading promoted**, to `docs/book/src/pipeline/presence-and-assumptions.md` (`#` title, a
+  two-paragraph intro, then the block's own `###` headings), with a `SUMMARY.md` route after *Register And Bit-Layout
+  Table Shapes* and a pointer section in place. Verification: the chronology **131,553 -> 97,305 bytes (100.4% ->
+  74.2%)**, the new chapter 35,434 (27.0%); the 44 pinned regions on the chronology: **15 re-pointed to the new
+  chapter, 6 line-shifted, 23 untouched**, every digest checked at its new location before the registry was written;
+  registry denominators 47 -> 48 book files and 33 -> 34 candidate files with the `book_summary` pin refreshed;
+  candidate lines unchanged at 840. No anchor link crossed the cut. The `shipped_behavior` aggregate change (+1 file)
+  is authorised under this leaf; no ceiling or milestone moved. **Trigger:** at the chronology's 80% band (104,857
+  bytes) cut again; the recall and completeness gauges (`COMPLETENESS-*`, `RECALL-*`) are the next block by concern.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34e`
+  Status: `open` (`2026-10-20`; opened by `.34d`)
+  Goal: own `docs/book/src/direction/temporal-intent-capture.md`'s line warning
+  Acceptance: `shipped_behavior` warns on `lines_each` at **80.1% (2,003 of 2,500)**, and the chapter, unchanged
+  since `2026-09-26`, is the line maximum while its bytes are well inside their band; no open leaf owns the warning.
+  The file does not accrete today, so decide from measurement whether the warning marks a stop compliant work will
+  reach (then cut by reader concern under `.34`'s rule) or a static chapter whose line bound and byte bound disagree
+  (then say which bound binds, as `.28` did for the fact plane). Do not raise a ceiling.

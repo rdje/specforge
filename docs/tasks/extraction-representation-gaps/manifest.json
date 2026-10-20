@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.52",
-      "literal" : "`.52` — a software agent's statement mints no hardware rule.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.h",
+      "literal" : "`.41.h` — APB4's PPROT map binds `CSW.Prot[2:0]`.",
       "mode" : "eligible",
       "part_id" : "register-binding-leaves"
    },
@@ -1017,7 +1017,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.52",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       }
@@ -1125,13 +1125,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
          "metrics" : {
-            "bytes" : 30377,
+            "bytes" : 35057,
             "line_bytes" : 281,
-            "lines" : 314
+            "lines" : 358
          },
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-         "sha256" : "203183e0f7ad9091ab17d0a6052d25ab780f2a2497b967b8150a6535423f7cec",
+         "sha256" : "c7eaf7795e4b4b560624fb2f78638ce9ce192926d60dcfc0a62f83b1d2a4b751",
          "state" : "active"
       },
       {
