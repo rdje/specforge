@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b",
-      "literal" : "`.3.d.ii.b.iii.b` — an *assume* word that states no abstraction does not make the sentence one.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c",
+      "literal" : "`.3.d.ii.b.iii.c` — a default whose subject is no presence-record signal reaches the record that owns it.",
       "mode" : "eligible",
-      "part_id" : "unread-intent-leaves"
+      "part_id" : "default-and-assumption-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -923,25 +923,25 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii",
          "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "unread-intent-leaves"
+         "part_id" : "default-and-assumption-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a",
          "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "unread-intent-leaves"
+         "part_id" : "default-and-assumption-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "unread-intent-leaves"
+         "part_id" : "default-and-assumption-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "unread-intent-leaves"
+         "part_id" : "default-and-assumption-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.48",
@@ -1071,13 +1071,25 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
          "metrics" : {
-            "bytes" : 56782,
-            "line_bytes" : 967,
-            "lines" : 537
+            "bytes" : 40924,
+            "line_bytes" : 639,
+            "lines" : 396
          },
          "part_id" : "unread-intent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-         "sha256" : "6d79896160f3a3b2f008c2375567c99f49493408e31da9d28c6e12a9b3984959",
+         "sha256" : "07e43341e52c680d7a0090b983b0447b8d95b8aa4f4e50bd9f5c17ea68ec75a7",
+         "state" : "active"
+      },
+      {
+         "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
+         "metrics" : {
+            "bytes" : 22185,
+            "line_bytes" : 967,
+            "lines" : 206
+         },
+         "part_id" : "default-and-assumption-leaves",
+         "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
+         "sha256" : "c75312cd065ded2f143324379f44723f074bb8bd9a6c2c7af0959cae0e6c21b1",
          "state" : "active"
       },
       {

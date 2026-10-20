@@ -11,7 +11,11 @@ answers:
   - "is 'treated as' still an abstraction after .3.d.ii.b.i (yes, whatever the sentence says)"
   - "why does Assumer no longer classify as an abstraction (whole-word match)"
   - "which readers exclude the apparatus class (is_invariant_like, and every class-filtered reader by construction)"
-date: 2026-10-03
+  - "why is 'the missing input cannot be assumed to take a fixed value' no longer an abstraction (a negated assume is a rule)"
+  - "why is 'the bits … assume a valid but otherwise UNSPECIFIED value' no longer an abstraction (assume means take on)"
+  - "what is every_assume_word_states_no_abstraction / premise_of_a_figure_a_guideline_or_an_analysis"
+  - "why is 'the hub shall ignore the route string and assume all packets are routed directly to the hub' an invariant now"
+date: 2026-10-19
 status: current
 tags: [evidence-ir, statement-class, apparatus, assumptions, classifier, measured, extraction-representation-gaps]
 evidence: crates/specforge/src/ir/evidence.rs (StatementClass::Apparatus; abstraction_class; is_non_contract_assumption; ABSTRACTION_WORDS; MODELLING_PHRASES; DOCUMENT_SUBJECTS); crates/specforge/src/ir/semantic.rs (is_invariant_like); crates/specforge/src/commands/validate.rs (the class-name table); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b.i)
@@ -43,5 +47,19 @@ mention the word as a fragment or an adjective (read as ordinary prose, two of t
 apparatus too); every other
 evidence record is byte-identical; their IntentIR assumptions are gone (78 fewer across the 22 chains, no other IntentIR section moved, adapters and ISF texts byte-identical). The class is outside the
 EvidenceIR seal closure, so no chain re-seals; the changed chains are rebuilt stage by stage.
+
+
+**`.3.d.ii.b.iii.b` (`2026-10-19`): an assume word that states no assumption, and three more premises.** A
+sentence leaves the abstraction class, keeping the class it would have without the word, when **every** assume word
+in it is negated (*cannot be assumed*, *should not assume*), is an active *assume* whose object ends in a value, a
+state or a configuration (*take on*), is an active *assume* governed by *shall* in its clause, or is *assumed* after
+*value* (`every_assume_word_states_no_abstraction`); one ordinary use keeps it an abstraction, and a modelling phrase
+always does. `premise_of_a_figure_a_guideline_or_an_analysis` adds a figure named in the assume clause, a document
+noun after *this* (with *guideline*), and an analysis noun in the clause (*procedure*, *curves*); *assumed to be
+approximately* and *examples* join the premise phrases. Measured on the 31 chains: 19 statements in 7 documents change
+class (13 targets, two example premises, two Wishbone legal sentences, a three-state buffer that *can assume a logic
+low state*, an endpoint that *cannot assume a rate*); no other evidence record moves; 15 IntentIR assumptions go, and
+three reclassified rules become ordinary invariants and constraints (AXI 1, USB 2). Unlike `.3.d.ii.b.i`'s refused
+fall-through, nothing junk is minted, because these sentences are rules or behaviour.
 
 Links: [[assume-sentences-fall-into-six-shapes]], [[a-signals-stated-absent-value-rides-its-presence-record]].

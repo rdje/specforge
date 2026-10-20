@@ -6979,7 +6979,13 @@ fn abstraction_class(lowered: &str) -> Option<StatementClass> {
             "treated as",
         ],
     );
-    if uses_word && (sentence.contains("treated as") || !is_non_contract_assumption(sentence)) {
+    let treated_as = sentence.contains("treated as");
+    if uses_word && (treated_as || !is_non_contract_assumption(sentence)) {
+        // `.3.d.ii.b.iii.b` — a sentence whose every assume word states a rule, a behaviour or a value is none of
+        // these classes: it takes the class it would take without the word.
+        if !treated_as && every_assume_word_states_no_abstraction(sentence) {
+            return None;
+        }
         Some(StatementClass::ExplicitAbstraction)
     } else if uses_word || mentions_word {
         Some(StatementClass::Apparatus)
@@ -7016,7 +7022,9 @@ fn is_non_contract_assumption(sentence: &str) -> bool {
     ) || sentence.trim_end().ends_with("are assumed:");
     let diagram_key = contains_any(sentence, &["timing diagram", "shaded", "waveform"]);
     let premise = contains_whole_identifier(sentence, "example")
+        || contains_whole_identifier(sentence, "examples")
         || contains_whole_identifier(sentence, "assuming")
+        || premise_of_a_figure_a_guideline_or_an_analysis(sentence)
         || contains_any(
             sentence,
             &[
@@ -7031,9 +7039,141 @@ fn is_non_contract_assumption(sentence: &str) -> bool {
                 "assumed to using",
                 "assumed to sent",
                 "assumed to received",
+                "assumed to be approximately",
             ],
         );
     document_subject || reader_subject || diagram_key || premise
+}
+
+/// The byte offsets of every *assume*, *assumes* and *assumed* the sentence uses as a whole word.
+fn assume_word_offsets(sentence: &str) -> Vec<(usize, &'static str)> {
+    let mut found = Vec::new();
+    for word in ["assume", "assumes", "assumed"] {
+        for (at, _) in sentence.match_indices(word) {
+            let before_ok = sentence[..at]
+                .chars()
+                .next_back()
+                .is_none_or(|c| !c.is_ascii_alphanumeric());
+            let after_ok = sentence[at + word.len()..]
+                .chars()
+                .next()
+                .is_none_or(|c| !c.is_ascii_alphanumeric());
+            if before_ok && after_ok {
+                found.push((at, word));
+            }
+        }
+    }
+    found.sort_unstable();
+    found
+}
+
+/// The clause an assume word sits in, up to the word: from the last sentence or clause break before it.
+fn clause_before(sentence: &str, at: usize) -> &str {
+    let start = sentence[..at]
+        .rfind(['.', ';', ':', ','])
+        .map_or(0, |break_at| break_at + 1);
+    &sentence[start..at]
+}
+
+/// The words after an assume word, up to the end of its clause or a parenthesis.
+fn clause_after<'a>(sentence: &'a str, at: usize, word: &str) -> &'a str {
+    let rest = &sentence[at + word.len()..];
+    let end = rest.find(['.', ';', ':', ',', '(']).unwrap_or(rest.len());
+    &rest[..end]
+}
+
+/// The nouns of an analysis or a measurement method; English, not a vocabulary (ADR 0006).
+const ANALYSIS_NOUNS: [&str; 8] = [
+    "procedure",
+    "method",
+    "analysis",
+    "calculation",
+    "simulation",
+    "model",
+    "curve",
+    "curves",
+];
+
+/// `.3.d.ii.b.iii.b` — three premise shapes `.3.d.ii.b.i`'s test did not see: a figure named in the assume
+/// clause (*the conceptual clocking architecture shown in Figure E-15 is assumed*), a document noun after *this* in
+/// the sentence (*One ×8 cable is assumed for this guideline*; *The user of this document assumes all
+/// responsibility*), and an analysis method in the assume clause (*The moving average smoothing procedure assumes a
+/// window size of 1 GHz*).
+fn premise_of_a_figure_a_guideline_or_an_analysis(sentence: &str) -> bool {
+    assume_word_offsets(sentence).into_iter().any(|(at, _)| {
+        let clause = clause_before(sentence, at);
+        let sentence_text = &sentence[sentence[..at].rfind(". ").map_or(0, |i| i + 2)..];
+        let sentence_text = sentence_text
+            .find(". ")
+            .map_or(sentence_text, |end| &sentence_text[..end]);
+        contains_whole_identifier(clause, "figure")
+            || ANALYSIS_NOUNS
+                .iter()
+                .any(|noun| contains_whole_identifier(clause, noun))
+            || DOCUMENT_SUBJECTS
+                .iter()
+                .chain(std::iter::once(&"guideline"))
+                .any(|noun| contains_whole_identifier(sentence_text, &format!("this {}", noun)))
+    })
+}
+
+/// The nouns of what a device or signal takes on when *assume* means *take on* (*the bits … assume a valid but
+/// otherwise UNSPECIFIED value*; *causes the device to assume the described configuration*). English, not a
+/// vocabulary (ADR 0006).
+const TAKE_ON_NOUNS: [&str; 9] = [
+    "value",
+    "values",
+    "state",
+    "states",
+    "configuration",
+    "configurations",
+    "mode",
+    "role",
+    "responsibility",
+];
+
+/// `.3.d.ii.b.iii.b` — every assume word in the sentence states something other than an assumption: a negated
+/// one is a rule that forbids the assumption (*the missing input cannot be assumed to take a fixed value*), an
+/// active one whose object is a value, state or configuration means *take on*, an active one governed by *shall*
+/// is the device's obligation (*The hub shall ignore the route string and assume all packets are routed directly
+/// to the hub*), and *assumed* after *value* states a value (*the DTF value assumed for reporting such faults is
+/// 0*). A sentence with one ordinary use is still an abstraction; a modelling phrase always is.
+fn every_assume_word_states_no_abstraction(sentence: &str) -> bool {
+    if contains_any(sentence, &MODELLING_PHRASES) {
+        return false;
+    }
+    let offsets = assume_word_offsets(sentence);
+    !offsets.is_empty()
+        && offsets.into_iter().all(|(at, word)| {
+            let before = clause_before(sentence, at).trim_end();
+            let active = word != "assumed";
+            let negated = [
+                "cannot be",
+                "can not be",
+                "cannot",
+                "can not",
+                "should not",
+                "must not",
+                "may not",
+                "shall not",
+            ]
+            .iter()
+            .any(|lead| before.ends_with(lead));
+            let takes_on = active
+                && clause_after(sentence, at, word)
+                    .split_whitespace()
+                    .last()
+                    .is_some_and(|noun| TAKE_ON_NOUNS.contains(&noun));
+            let obligation = active
+                && contains_whole_identifier(before, "shall")
+                && !contains_whole_identifier(before, "not");
+            let stated_value = !active
+                && before
+                    .split_whitespace()
+                    .last()
+                    .is_some_and(|noun| noun == "value" || noun == "values");
+            negated || takes_on || obligation || stated_value
+        })
 }
 
 fn contains_reference_token(text: &str, token: &str) -> bool {
@@ -58687,6 +58827,58 @@ mod non_contract_assumption_tests {
             "IPMI defines a standardized, abstracted, message-based interface for platform management hardware.",
         ] {
             assert!(is_apparatus(text), "{text}");
+        }
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b — premises the first apparatus test did not see: a figure in the
+    /// assume clause, a document noun after *this*, an analysis method, an approximation, and examples in the plural.
+    #[test]
+    fn a_premise_of_a_figure_a_guideline_or_an_analysis_is_not_an_abstraction() {
+        for text in [
+            "In specifying the bit-level re-timer JTF requirements, the conceptual clocking architecture shown in Figure E-15 is assumed.",
+            "The transfer function may be first order or second order. The reference JTF curves in Figure E-17 assume a second order filter with transfer function expressed as:",
+            "There are two connector slots on the CPU board. One ×8 cable is assumed for this guideline.",
+            "The moving average smoothing procedure assumes a window size of 1 GHz centered at the point under consideration.",
+            "Any cooling airflow must be assumed to be approximately 5 ⁰C above ambient inlet air temperature.",
+            "All examples assume XLEN=32.",
+            "The user of this document assumes all responsibility for determining if products designed to this specification infringe.",
+        ] {
+            assert!(is_apparatus(text), "{text}");
+        }
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b — an assume word that forbids an assumption, means *take on*, is a
+    /// device's obligation, or states a value makes the sentence no abstraction: it keeps the class it would have.
+    #[test]
+    fn an_assume_word_that_states_no_abstraction_leaves_the_sentence_its_own_class() {
+        for text in [
+            "If there is an output signal with no corresponding input, the missing input cannot be assumed to take a fixed value.",
+            "The status of bits 31:cqb.LOG2SZ in cqt following a write to cqb is 0 and the bits cqb.LOG2SZ-1:0 in cqt assume a valid but otherwise UNSPECIFIED value.",
+            "The descriptor contains a bConfigurationValue field with a value that, when used as a parameter to the SetConfiguration() request, causes the device to assume the described configuration.",
+            "The hub shall ignore the route string and assume all packets are routed directly to the hub, until the hub enters the configured state.",
+            "If a fault condition prevents locating a valid device context then the DTF value assumed for reporting such faults is 0.",
+        ] {
+            let class = classify_statement(text);
+            assert!(
+                !matches!(
+                    class,
+                    StatementClass::ExplicitAbstraction | StatementClass::Apparatus
+                ),
+                "{text}: {class:?}"
+            );
+        }
+    }
+
+    /// One ordinary use keeps a sentence an abstraction, and a hub that *shall not assume* states no device behaviour
+    /// the take-on reading could claim.
+    #[test]
+    fn one_ordinary_assume_keeps_the_sentence_an_abstraction() {
+        for text in [
+            "The status bits assume a reset value. Incoming trace data is assumed to be from a single trace source.",
+            "If the XRESP_WIDTH property is 0, it is not present and assumed to be 0b000 (OKAY).",
+            "This operation assumes signed data.",
+        ] {
+            assert!(is_abstraction(text), "{text}");
         }
     }
 }

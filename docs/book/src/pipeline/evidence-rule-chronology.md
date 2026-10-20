@@ -1047,6 +1047,26 @@ too: read as ordinary prose, two of them minted invariants. On the 31 chains 83 
 apparatus, every other evidence record is byte-identical, and the IntentIR assumptions
 they produced are gone. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.i`).
 
+**An assume word that states no assumption.** Some sentences use the word and still assume nothing. Since
+`.3.d.ii.b.iii.b` (`2026-10-19`) such a sentence keeps the class it would have without the word, provided **every**
+assume word in it is one of four uses. A negated assumption is a rule that forbids one (*the missing input cannot be
+assumed to take a fixed value*). An active *assume* whose object is a value, a state or a configuration means *take
+on* (*the bits cqb.LOG2SZ-1:0 in cqt assume a valid but otherwise UNSPECIFIED value*; *causes the device to assume
+the described configuration*; *Three state buffers can assume a logic low state*). An active *assume* governed by
+*shall* is the device's obligation (*The hub shall ignore the route string and assume all packets are routed directly
+to the hub*). And *assumed* after *value* states a value (*the DTF value assumed for reporting such faults is 0*). One
+ordinary use keeps the sentence an abstraction: USB's *The interrupt endpoint should not assume a fixed spacing …
+The interrupt endpoint can assume only that it will receive a transaction* stays one. Three more premise shapes are
+apparatus: a figure named in the assume clause (*the conceptual clocking architecture shown in Figure E-15 is
+assumed*), a document noun after *this* (*One ×8 cable is assumed for this guideline*; *The user of this document
+assumes all responsibility*), and an analysis method in the clause (*The moving average smoothing procedure assumes a
+window size of 1 GHz*); so are *assumed to be approximately* and *examples* in the plural. On the 31 chains 19
+statements in 7 documents change class and no other evidence record moves. The IntentIR assumptions they produced
+are gone (15), and three of the reclassified rules are now carried as invariants and constraints, as every other
+rule is: AXI's *the CHK signal cannot be used reliably*, USB's hub routing obligation, and its *client software
+cannot assume ordering between bulk and control transfers*. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.iii.b`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

@@ -38,9 +38,9 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.d.ii.b.iii.b` — an *assume* word that states no abstraction does not make the sentence one.
+`.3.d.ii.b.iii.c` — a default whose subject is no presence-record signal reaches the record that owns it.
 
-Then, in order: `.3.d.ii.b.iii.c` (a default whose subject is no presence-record signal), `.3.d.ii.b.ii` (an equivalence rule is typed), `.3.d.iii` (permissions and unread obligations), `.3.d.i` (software intent), `.41.h` (APB4's PPROT
+Then, in order: `.3.d.ii.b.ii` (an equivalence rule is typed), `.3.d.iii` (permissions and unread obligations), `.3.d.i` (software intent), `.41.h` (APB4's PPROT
 map), `.45` (a fused presence row keeps the header's labels), `.46` (a parity check signal's lowering), `.47` (a rule stated on a collective name reaches each member), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
 matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
 (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
@@ -48,10 +48,10 @@ matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted si
 legacy register-map document's re-ingest. Closed leaves are read from the route catalog's lifecycles, not
 restated here; the list this paragraph carried until `2026-10-19` is in the `register-binding-leaves` part.
 
-New records of the `.3.d` family go to the `unread-intent-leaves` part and other `.3` records to `table-census-leaves`
-(`program-and-census` and `census-leaves` are at their size warning); every other new leaf and dated entry goes to the
-`register-binding-leaves` part (`recent-leaves` and `clause-and-register-leaves` reached their rollover). The seven are
-the active parts.
+New records of the `.3.d` family go to the `default-and-assumption-leaves` part (`unread-intent-leaves` reached its
+rollover on `2026-10-19`) and other `.3` records to `table-census-leaves` (`program-and-census` and `census-leaves` are
+at their size warning); every other new leaf and dated entry goes to the `register-binding-leaves` part
+(`recent-leaves` and `clause-and-register-leaves` reached their rollover). The eight are the active parts.
 
 ## Detailed task evidence
 
@@ -105,7 +105,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.45`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.47`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c`
 
 ## Changelog
