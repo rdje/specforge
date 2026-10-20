@@ -89,7 +89,7 @@ examples and its reader, and the unread-record census that measures them. `.3.d.
   `table_row` 39 -> 40 (the circuit's row, `.3.b`'s).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g`
-  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.e`)
+  Status: `done` (`2026-10-20`; CODE, measurement only; found by `.3.d.iii.e`)
   Goal: **the census files a note as apparatus only when the note is about the document.** The unread-record census
   (`scripts/measure_unread_intent_records.py`) puts a record in its `apparatus` family, routed non-contract, when the
   cited statement opens with *Note* (`DOCUMENT_REFERENCE`), and in these documents a note states protocol behavior:
@@ -103,6 +103,20 @@ examples and its reader, and the unread-record census that measures them. `.3.d.
   records that state behavior, so the `permission_or_description` and `assumed_by_word` counts and their owners miss
   them. Acceptance: let *Note* open a document reference only when what follows speaks about the document (a figure,
   a table, a section, this specification), re-measure every family, and route each moved record to its owner.
+  **Decided `2026-10-20`: a note label is read past, not taken as a reference.** `DOCUMENT_REFERENCE` no longer holds
+  `note`; `without_note_label` strips a leading `Note:`, `Note 1:`, `Note -` or `Note that` before that test and
+  before `subject_region`, so a note is apparatus only when what follows refers to the document (*Note: See …*), and a
+  note's subject is found past its label. No product code changed; the census reads the same IntentIR. **Measured on
+  the 31 chains** (`scripts/measure_unread_intent_records.py`, against `ff5dda775`'s run): unread records 145, as
+  before; exactly the 10 records move and no other: `apparatus` 22 -> 12; `assumed_by_word` 9 -> 11 (AXI's MEC,
+  shape `environment` 2 -> 3; AXI's *Note that the burst type is assumed to be INCR*, `stated_default` 4 -> 5);
+  `software_agent` 11 -> 12 (the guide's *Note: If Wake Events are not enabled … the Connection Manager may set …*,
+  found past its label, `.3.d.i`'s); `permission_or_description` 46 -> 53 (permission 32 -> 38, obligation 3 -> 4:
+  the burst note's *this must be taken into account*). **The six permissions are `.3.d.iii.a`'s declared refusals**,
+  replayed through its grammar probe: three pronoun subjects (*It may optionally be enabled*; *it may immediately
+  transition*), two consequences (*may* before a verb of what can happen), a relative clause, and a subject split across
+  commas (*the terminations, and therefore ability for Rx.Detect to complete, may be disabled due to …*, also a
+  consequence); none is refused for its label.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e` (CODE) — DONE `2026-10-20`
 

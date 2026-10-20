@@ -10,7 +10,7 @@ answers:
   - "where are software obligations like the USB4 Connection Manager's procedures carried"
   - "why is a stated default like the DTF value assumed 0 an assumption"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.d"
-date: 2026-09-30
+date: 2026-10-20
 status: current
 tags: [intent-ir, semantic-ir, census, assumptions, behaviors, software-intent, extraction-representation-gaps, measured]
 evidence: scripts/measure_unread_intent_records.py; scripts/measure_category_family_census.py (untyped_not_understood); docs/research/category-family-census.md (What the unread assumptions and behaviors are); docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.d, .3.d.i-.3.d.iii); crates/specforge/src/ir/intent.rs (the pass assumptions)
@@ -37,5 +37,10 @@ that says *assume* or *treated as*, so *the DTF value assumed for reporting such
 is filed as an assumption no reader lowers. **No IR field says whether an agent is software**: SemanticIR actors are
 role nouns (`agent`, `controller`, `host`, `manager`), so the census's software class rests on a closed list of
 agent words the script declares, and it is 6 of 7 precise on its sample (I2C's *output drivers* are hardware).
+
+**A note is not apparatus by its label (`2026-10-20`, `.3.d.iii.g`).** The `apparatus` family took every statement
+opening with *Note*, though a note in these documents usually states behavior. The census now reads past a note label
+(`Note:`, `Note 1:`, `Note that`) both for the document-reference test and for the subject: 10 records moved out of
+`apparatus` (22 -> 12) into `permission_or_description` (7), `assumed_by_word` (2) and `software_agent` (1).
 
 Links: [[untyped-uncited-tables-fall-into-fifteen-families]], [[captured-region-residual-carrier]].

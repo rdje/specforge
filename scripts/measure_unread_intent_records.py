@@ -11,7 +11,8 @@ placed in one family, the first whose test matches, in this order:
                             pass.`, written by `crates/specforge/src/ir/intent.rs`), by design and not document intent;
   table_row                 the statement is a Markdown table row the statement extractor lifted as prose;
   apparatus                 it sits in a glossary or contents section, or opens by referring to the document itself
-                            (`This specification …`, `Figure 4-10 …`, `Note …`);
+                            (`This specification …`, `Figure 4-10 …`, `Note: See …`; a note label alone is not
+                            one: EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g);
   software_agent            its subject, after a list marker and a leading `If`/`When` clause, names a software agent
                             from the closed list SOFTWARE_AGENTS;
   assumed_by_word           an assumption no earlier family took: SemanticIR lifts a statement to an abstraction by its
@@ -55,9 +56,12 @@ SOFTWARE_AGENTS = re.compile(
     r"programmers?|applications?|users?)\b"
 )
 DOCUMENT_REFERENCE = re.compile(
-    r"^(this (specification|document|section|chapter|appendix|table|figure)\b|(figure|table) [a-z]?\d|note\b|"
+    r"^(this (specification|document|section|chapter|appendix|table|figure)\b|(figure|table) [a-z]?\d|"
     r"see\b|for (more|further) information\b|the following (table|figure)\b)"
 )
+# A note's label (`Note:`, `Note 1:`, `Note that`): what follows it is the statement, which a note in these documents
+# usually gives about the hardware (EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g).
+NOTE_LABEL = re.compile(r"^note(?:\s+\d+)?\s*(?::|-|\bthat\b)?\s*")
 SHAPES = (
     ("convention", re.compile(
         r"^(this|the) (guide|document|specification|example|section|chapter|appendix|figure|table)\b[^.]*\bassum"
@@ -83,9 +87,18 @@ def unmarked(text: str) -> str:
     return LIST_MARKER.sub("", text.strip()).strip()
 
 
+def without_note_label(text: str) -> str:
+    """The lowercased statement after its note label, if it has one: a note is apparatus only when what follows the
+    label refers to the document (`Note: See Section 4`), not when it states behavior (`Note: A device will receive an
+    isochronous timestamp if …`)."""
+    lowered = text.lower()
+    return NOTE_LABEL.sub("", lowered, count=1)
+
+
 def subject_region(text: str) -> str:
-    """The words before the statement's first modal or finite verb, after a leading `If`/`When` clause."""
-    lowered = unmarked(text).lower()
+    """The words before the statement's first modal or finite verb, after a note label and a leading `If`/`When`
+    clause."""
+    lowered = without_note_label(unmarked(text))
     lowered = re.sub(r"^(if|when|while|unless)\b[^,]*,\s*", "", lowered)
     return re.split(r"[,:;]|\b(must|shall|should|may|can|will|is|are|does|do|sets|waits|reads|writes)\b", lowered,
                     maxsplit=1)[0]
@@ -109,7 +122,7 @@ def family(record: dict) -> str:
     text = unmarked(record["text"])
     if text.startswith("|"):
         return "table_row"
-    if record["section_kind"] in NON_CONTRACT_SECTIONS or DOCUMENT_REFERENCE.search(text.lower()):
+    if record["section_kind"] in NON_CONTRACT_SECTIONS or DOCUMENT_REFERENCE.search(without_note_label(text)):
         return "apparatus"
     if SOFTWARE_AGENTS.search(subject_region(record["text"])):
         return "software_agent"

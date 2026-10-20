@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g",
-      "literal" : "`.3.d.iii.g` — the census files a note as apparatus only when it is about the document.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.i",
+      "literal" : "`.3.d.i` — a software agent's obligation is recorded as software intent, not as an untyped behavior.",
       "mode" : "eligible",
-      "part_id" : "environment-assumption-leaves"
+      "part_id" : "unread-intent-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -1011,7 +1011,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "environment-assumption-leaves"
       }
@@ -1155,13 +1155,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — environment assumption leaves",
          "metrics" : {
-            "bytes" : 16045,
+            "bytes" : 17618,
             "line_bytes" : 123,
-            "lines" : 163
+            "lines" : 177
          },
          "part_id" : "environment-assumption-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/environment-assumption-leaves.md",
-         "sha256" : "03437430244a960acb4f7fe315bb9fc1d152021a2670e98eee7c7c4fe9b41b4e",
+         "sha256" : "370221b96dff614a8193c32bef27625e2a455760b83ce1aba7e5d5f25cf9a088",
          "state" : "active"
       },
       {
