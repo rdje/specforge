@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.h",
-      "literal" : "`.41.h` — APB4's PPROT map binds `CSW.Prot[2:0]`.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.45",
+      "literal" : "`.45` — a fused presence row keeps the header's labels.",
       "mode" : "eligible",
       "part_id" : "register-binding-leaves"
    },
@@ -112,13 +112,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 35057,
+               "bytes" : 38757,
                "line_bytes" : 281,
-               "lines" : 358
+               "lines" : 397
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "c7eaf7795e4b4b560624fb2f78638ce9ce192926d60dcfc0a62f83b1d2a4b751",
+            "sha256" : "c13c4bb614c1f0995f7b92d127401518ee204b5c888272ff5ec3b6049af621e2",
             "state" : "active"
          },
          {
@@ -1056,7 +1056,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.h",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       },
@@ -1342,7 +1342,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.41.h` — APB4's PPROT map binds `CSW.Prot[2:0]`.",
+         "`.45` — a fused presence row keeps the header's labels.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1378,7 +1378,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.36.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.37`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.h`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.45`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",

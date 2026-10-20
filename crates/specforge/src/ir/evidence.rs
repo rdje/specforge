@@ -25132,6 +25132,14 @@ fn fill_field_signal_prose_bit_bindings(source_ir: &SourceIr, registers: &mut [R
             section_fields.entry(*id).or_default().push(field);
         }
     }
+    // `.41.h` — the selection headings a section writes (`Prot[2:0], bits[30:28]`), of any element kind: a converter
+    // can put the *Drives* sentence that maps one many elements after it.
+    let mut section_selections: BTreeMap<usize, Vec<SignalBitsHeading>> = BTreeMap::new();
+    for (element, section) in elements.iter().zip(&section_of) {
+        if let (Some((id, _)), Some(sub)) = (section, signal_bits_heading(element.text.trim())) {
+            section_selections.entry(*id).or_default().push(sub);
+        }
+    }
     for (index, element) in elements.iter().enumerate() {
         let text = element.text.trim();
         let heading = matches!(element.kind, ContentElementKind::SectionHeader);
@@ -25158,6 +25166,43 @@ fn fill_field_signal_prose_bit_bindings(source_ir: &SourceIr, registers: &mut [R
                     .collect()
             } else {
                 Vec::new()
+            }
+        } else if let Some((signal, signal_high, signal_low)) =
+            drives_selection(text).filter(|_| {
+                index == 0 || signal_bits_heading(elements[index - 1].text.trim()).is_none()
+            })
+        {
+            // `.41.h` — a *Drives SIG[h:l]* no selection heading stands right before binds to the one selection
+            // heading of its section that names the same bits `[h:l]` (APB4's *Prot[2:0], bits[30:28]* … *Drives
+            // PPROT[2:0]*), when that heading names the driven signal or a field of the section's register. Two such
+            // headings, or none, bind nothing: a sentence is never paired with a heading by position alone.
+            let matching: Vec<&SignalBitsHeading> = section_selections
+                .get(section)
+                .into_iter()
+                .flatten()
+                .filter(|sub| sub.signal_high == signal_high && sub.signal_low == signal_low)
+                .collect();
+            let names_the_field = |sub: &SignalBitsHeading| {
+                sub.signal == signal
+                    || registers.iter().any(|candidate| {
+                        (candidate.register_name == register_name
+                            || candidate
+                                .register_name
+                                .strip_prefix(register_name)
+                                .is_some_and(|rest| rest.starts_with('@')))
+                            && candidate
+                                .fields
+                                .iter()
+                                .any(|field| field.field_name.eq_ignore_ascii_case(&sub.signal))
+                    })
+            };
+            match matching.as_slice() {
+                [sub] if names_the_field(sub) => (sub.field_low..=sub.field_high)
+                    .rev()
+                    .zip((signal_low..=signal_high).rev())
+                    .map(|(field_bit, signal_bit)| (field_bit, signal.clone(), signal_bit))
+                    .collect(),
+                _ => Vec::new(),
             }
         } else {
             Vec::new()
@@ -32286,6 +32331,149 @@ mod tests {
         assert!(registers[1].fields[0].signal_bindings.is_empty());
         assert!(
             registers[2]
+                .fields
+                .iter()
+                .all(|field| field.signal_bindings.is_empty())
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_drives_sentence_far_from_its_selection_heading_binds_to_the_only_heading_naming_its_bits()
+    -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.41.h — ADIv6's APB4 appendix heads *Prot[2:0], bits[30:28]* among its field
+        // headings and says *Drives PPROT[2:0].* thirteen elements later, as a section header.
+        use crate::ir::source::{
+            ContentElementKind, ContentElementRecord, ContentSectionRecord, RegisterFieldRecord,
+            RegisterRecord, SectionKind,
+        };
+        let build = |elements: &[(u32, ContentElementKind, &str)]| -> Result<Vec<RegisterRecord>> {
+            let tempdir = tempdir()?;
+            let source = tempdir.path().join("spec.md");
+            fs::write(&source, "# Appendix\n")?;
+            let mut source_ir =
+                SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+            source_ir.content_elements.clear();
+            source_ir.document_sections.clear();
+            for &(order, kind, text) in elements {
+                if matches!(kind, ContentElementKind::SectionHeader) {
+                    source_ir.document_sections.push(ContentSectionRecord {
+                        section_id: format!("section_{order}"),
+                        title: text.to_string(),
+                        heading_level: 1,
+                        page_id: None,
+                        source_ref: None,
+                        source_batch: None,
+                        reading_order: order,
+                        section_kind: SectionKind::Normative,
+                    });
+                }
+                source_ir.content_elements.push(ContentElementRecord {
+                    element_id: format!("element_{order}"),
+                    kind,
+                    text: text.to_string(),
+                    heading_level: None,
+                    page_id: None,
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: order,
+                });
+            }
+            let field = |name: &str, high: u32, low: u32| RegisterFieldRecord {
+                field_name: name.to_string(),
+                bits_high: Some(high),
+                bits_low: Some(low),
+                bit_width: Some(high - low + 1),
+                access_type: None,
+                reset_value: None,
+                description: None,
+                enumerated_values: Vec::new(),
+                signal_bindings: Vec::new(),
+            };
+            let mut registers = vec![RegisterRecord {
+                register_id: "reg_CSW".to_string(),
+                register_name: "CSW@MEM-AP".to_string(),
+                access_type: None,
+                reset_value: None,
+                offset_address: None,
+                size_bits: None,
+                fields: vec![field("Prot", 30, 24), field("Mode", 11, 8)],
+                supporting_table_ids: Vec::new(),
+                supporting_statement_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            }];
+            super::fill_field_signal_prose_bit_bindings(&source_ir, &mut registers);
+            Ok(registers)
+        };
+        use ContentElementKind::{BodyText, SectionHeader};
+        let registers = build(&[
+            (10, SectionHeader, "E1.7 AMBA APB4"),
+            (11, SectionHeader, "E1.7.1 CSW register implementation"),
+            (12, BodyText, "DbgSwEnable, bit[31]"),
+            (13, BodyText, "Prot[2:0], bits[30:28]"),
+            (14, BodyText, "SDeviceEn, bit[23]"),
+            (15, BodyText, "TrInProg, bit[7]"),
+            (16, SectionHeader, "Drives PPROT[2:0] ."),
+        ])?;
+        let read: Vec<(u32, String, u32)> = registers[0].fields[0]
+            .signal_bindings
+            .iter()
+            .map(|binding| {
+                (
+                    binding.field_bit.unwrap_or(99),
+                    binding.signal_name.clone(),
+                    binding.signal_bit.unwrap_or(99),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                (30, "PPROT".to_string(), 2),
+                (29, "PPROT".to_string(), 1),
+                (28, "PPROT".to_string(), 0),
+            ]
+        );
+        assert_eq!(
+            registers[0].fields[0].signal_bindings[0].scopes,
+            vec!["E1.7 AMBA APB4 / E1.7.1 CSW register implementation".to_string()]
+        );
+        // Two headings name the bits [2:0]: the sentence is paired with neither.
+        let registers = build(&[
+            (11, SectionHeader, "E1.7.1 CSW register implementation"),
+            (13, BodyText, "Prot[2:0], bits[30:28]"),
+            (14, BodyText, "Mode[2:0], bits[10:8]"),
+            (15, BodyText, "TrInProg, bit[7]"),
+            (16, SectionHeader, "Drives PPROT[2:0] ."),
+        ])?;
+        assert!(
+            registers[0]
+                .fields
+                .iter()
+                .all(|field| field.signal_bindings.is_empty())
+        );
+        // The only selection heading names other bits than the sentence drives.
+        let registers = build(&[
+            (11, SectionHeader, "E1.7.1 CSW register implementation"),
+            (13, BodyText, "Prot[3:0], bits[30:27]"),
+            (15, BodyText, "TrInProg, bit[7]"),
+            (16, SectionHeader, "Drives PPROT[2:0] ."),
+        ])?;
+        assert!(
+            registers[0]
+                .fields
+                .iter()
+                .all(|field| field.signal_bindings.is_empty())
+        );
+        // A heading that names neither the signal nor a field of the register binds nothing.
+        let registers = build(&[
+            (11, SectionHeader, "E1.7.1 CSW register implementation"),
+            (13, BodyText, "Foo[2:0], bits[30:28]"),
+            (15, BodyText, "TrInProg, bit[7]"),
+            (16, SectionHeader, "Drives PPROT[2:0] ."),
+        ])?;
+        assert!(
+            registers[0]
                 .fields
                 .iter()
                 .all(|field| field.signal_bindings.is_empty())

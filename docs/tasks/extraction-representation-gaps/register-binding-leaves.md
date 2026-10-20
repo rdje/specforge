@@ -39,7 +39,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   name their register-description sections).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.h`
-  Status: `open` (`2026-09-30`; CODE; found by `.41.g`)
+  Status: `done` (`2026-10-20`; CODE; found by `.41.g`; checklist below)
   Goal: **APB4's PPROT map binds `CSW.Prot[2:0]`.** ADIv6 *E1.7 AMBA APB4* heads *Prot[2:0], bits[30:28]* and says
   *Drives PPROT[2:0].*, but the conversion puts the sentence 13 elements after its heading, as a section header,
   and puts field headings for later bits in between; *Bit[29], Non-secure, corresponds to Prot[1] … PPROT[1] is
@@ -47,6 +47,18 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   protection bits reach no wire. Acceptance: decide whether the heading's field selection (`Prot[2:0]`) with a
   later *Drives SIG[2:0]* of the same width in the same register section binds, without pairing a sentence with
   the wrong heading, and measure every chain.
+  **Decided `2026-10-20`: it binds when the section holds exactly one selection heading naming the same bits.** In
+  `fill_field_signal_prose_bit_bindings` a *Drives SIG[h:l]* that no selection heading stands right before (that case
+  is `.41.g`'s, and a different selection there is refused) binds to the one selection heading of its register
+  section, of any element kind, whose selection is `[h:l]`, when that heading names the driven signal or a field of
+  the section's register (*Prot*); the heading's register bits map to the signal's bits in order, and the binding
+  keeps its numbered heading path. Two such headings, one naming other bits, or one naming neither the signal nor a
+  field bind nothing: position alone never pairs a sentence with a heading. **Measured over all 31 chains** (evidence
+  dry-run against `f258b7cda`'s): 30 identical; ADIv6 moves only `register_records`, one record:
+  `CSW@MEM-AP.Prot` gains `PPROT[2]`, `[1]`, `[0]` from bits 30, 29, 28, scoped `E1.7 AMBA APB4 / E1.7.1 CSW register
+  implementation` (21 -> 24 bindings). Rebuilt stage by stage: only
+  `register_records` moves at each stage, the adapter and every `.isf` text byte-identical; no chain re-seals
+  (`check_chain_currency.sh` 31 of 31 current).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.45`
   Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a`)
@@ -356,3 +368,30 @@ which leaves are closed.
 - [x] **GENERICITY (ADR 0006)** — no new words: the set is `software_intent`'s, whose grammar `.3.d.i` measured.
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A software agent's statement mints no hardware
   rule*); KM `a-software-agents-statement-is-software-intent` amended. No production rule deleted; two readers narrowed.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.h` (CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6's SourceIR: *E1.7.1 CSW register implementation*, *Prot[2:0], bits[30:28]* as
+  body text among the field headings, *Drives PPROT[2:0] .* thirteen elements later as a section header;
+  `CSW@MEM-AP.Prot` has no `PPROT` binding.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `fill_field_signal_prose_bit_bindings`
+  bound a selection heading only to the element right after it. New branch for a *Drives* element no selection heading
+  stands right before, over the section's selection headings (`section_selections`). RED, the file restored
+  byte-identically after each (4 mutations, each failing its named test): the adjacency exclusion off
+  (`an_implementation_section_binds_field_bits_in_prose_with_its_scope`: AHB3's *Drives ARPROT[2:0]* would bind); two
+  headings allowed, any heading name, any selection
+  (`a_drives_sentence_far_from_its_selection_heading_binds_to_the_only_heading_naming_its_bits`). The last three first
+  survived because each refusal case put its heading right before the sentence, where the adjacency exclusion refuses
+  it first; separating them killed all three.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 30 identical, ADIv6's one register record gains
+  the three bindings and nothing else moves. ADIv6 rebuilt stage by stage, each artifact validated once, the adapter last; only
+  `register_records` moves; `.isf` byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `f258b7cda`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 171 / 1,872 passed, 0 failed. `flow_census.json` rolled (+10 decision sites); boundary unchanged. Census:
+  unread records 138, unchanged.
+- [x] **GENERICITY (ADR 0006)** — the heading and sentence grammar `.41.g` already reads, and the register records' own
+  field names and ranges; no document, register or signal name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (the prose bit-map section); KM
+  `a-register-field-binding-to-a-wire` amended. No production rule deleted or replaced.

@@ -38,9 +38,9 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.41.h` — APB4's PPROT map binds `CSW.Prot[2:0]`.
+`.45` — a fused presence row keeps the header's labels.
 
-Then, in order: `.45` (a fused presence row keeps the header's labels), `.46` (a parity check signal's lowering), `.47` (a rule stated on a collective name reaches each member), `.50` (a prose hint gives a signal the role its sentence gives it), `.51` (a sentence defining the document's notation is apparatus), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
+Then, in order: `.46` (a parity check signal's lowering), `.47` (a rule stated on a collective name reaches each member), `.50` (a prose hint gives a signal the role its sentence gives it), `.51` (a sentence defining the document's notation is apparatus), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
 matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
 (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
 `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a
@@ -96,7 +96,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.36.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.37`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.41.h`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.45`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46`

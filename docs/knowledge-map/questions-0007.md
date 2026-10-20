@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > how does SpecForge read a fronted condition like When asserted, X must remain asserted
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
@@ -296,5 +298,3 @@
   > how is USB 3.2 Table 7-12 LTSSM State Transition Timeouts read
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
   > how is a Bit[N] drives HPROT[n] sentence read
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how is a CI-tier doctrine registered without slowing down the pre-commit hook

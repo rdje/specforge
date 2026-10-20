@@ -678,6 +678,13 @@ The two variants map `HPROT[4]` from different bits: bit 28 in AHB3, bit 27 in A
 table or from prose, now keeps `scopes`: the numbered heading path that states it
 (`E1.4 AMBA AHB3 / E1.4.1 CSW register implementation`). The numbers carry the nesting even where the converter
 flattened every heading to one level. `CSW@MEM-AP.Prot` now holds 21 bindings, 7 of them `HPROT`, each scoped to
-AHB3, AHB5 or both. APB4's `Drives PPROT[2:0].` lands far from its field heading once converted, so it stays a
-stated residual (`.41.h`).
-*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.41`, `.41.a`, `.41.e`).
+AHB3, AHB5 or both.
+
+APB4's map lands far from its heading once converted: *Prot[2:0], bits[30:28]* sits among the section's field
+headings, and *Drives PPROT[2:0].* comes thirteen elements later, itself converted to a section header. Since `.41.h`
+(`2026-10-20`) a *Drives SIG[h:l]* that no selection heading stands right before binds to the one selection heading of
+its register section that names the same bits `[h:l]`, when that heading names the driven signal or a field of the
+register. Two such headings, or one naming other bits, bind nothing, so a sentence is never paired with a heading by
+position alone. `CSW@MEM-AP.Prot` gains `PPROT[2:0]` from bits 30-28, scoped
+`E1.7 AMBA APB4 / E1.7.1 CSW register implementation`; no other chain moves.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.41`, `.41.a`, `.41.e`, `.41.h`).

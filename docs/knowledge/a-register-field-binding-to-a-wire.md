@@ -5,13 +5,14 @@ answers:
   - "where does specforge record that a register bit controls a signal"
   - "what is RegisterFieldRecord.signal_bindings"
   - "what is fill_field_signal_bindings"
+  - "how does APB4's Drives PPROT[2:0] bind CSW.Prot when it lands far from its heading (.41.h)"
   - "which ADIv6 fields are bound to wires"
   - "why is ADIv6 Table B2-7's bit-to-signal mapping not read"
   - "how is a table mapping a register field's bits to signal bits read (CSW.Prot mapping to ARPROT)"
   - "what are field_bit and signal_bit on a signal binding"
   - "why does a register field signal binding carry scopes"
   - "how is a Bit[N] drives HPROT[n] sentence read"
-date: 2026-09-29
+date: 2026-10-20
 status: current
 tags: [evidence-ir, registers, register-fields, signals, adiv6, extraction-representation-gaps, measured]
 evidence: crates/specforge/src/ir/source.rs (RegisterFieldRecord.signal_bindings, RegisterFieldSignalBinding, RegisterFieldSignalRelation); crates/specforge/src/ir/evidence.rs (fill_field_signal_bindings, field_signal_bindings_in); docs/tasks/extraction-representation-gaps/recent-leaves.md (.41, .41.a); docs/book/src/pipeline/register-tables.md (A field bound to a wire)
@@ -46,4 +47,8 @@ SIG[n], …* and a *SIG[h:l], bits[H:L]* heading followed by *Drives SIG[h:l]*, 
 implementation* heading; a numbered heading naming no register ends the section, and when several registers share
 the name the section's field headings (*Prot, bits[30:24]*) pick one. Every binding records `scopes`, its numbered
 heading path (`numbered_heading_path`), because ADIv6's AHB3 and AHB5 drive `HPROT[4]` from bits 28 and 27. ADIv6
-`CSW@MEM-AP.Prot`: 21 bindings, 7 `HPROT`. APB4's scrambled PPROT map is `.41.h`.
+`CSW@MEM-AP.Prot`: 21 bindings, 7 `HPROT`. **`.41.h` (`2026-10-20`):** APB4's *Drives PPROT[2:0].* lands thirteen
+elements after its heading *Prot[2:0], bits[30:28]*; a *Drives SIG[h:l]* with no selection heading right before it
+binds to the one selection heading of its section naming the same bits `[h:l]`, when that heading names the signal
+or a register field (two, or one naming other bits, bind nothing). `CSW@MEM-AP.Prot` gains `PPROT[2:0]` from bits
+30-28, 24 bindings; no other chain moves.

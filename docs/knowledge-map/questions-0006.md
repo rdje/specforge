@@ -223,6 +223,8 @@
   > how does .10g differ from .10f (register vs message routing)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does / will SpecForge reuse extraction patterns across different PDFs
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > how does APB4's Drives PPROT[2:0] bind CSW.Prot when it lands far from its heading (.41.h)
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -295,5 +297,3 @@
   > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > how does SpecForge prove a reviewed paraphrase is parser equivalent
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
