@@ -40,7 +40,9 @@ parenthetical label (`0b000 (OKAY)`). The signal is the one presence-record name
 disagreeing statements bind nothing.
 
 **What is not read, each a measured residual with an owner.** A value the sentence goes on to qualify (AXI's
-*ARMMUVALID is assumed to be 0b0 for a DVMComplete request*) — the record cannot carry the qualification. A class
+*ARMMUVALID is assumed to be 0b0 for a DVMComplete request*) — the record cannot carry the qualification. (A
+value stated for a class of requests *before* it, and a value written as a label of the signal's encoding, are read
+since `.3.d.ii.b.iii.a`: [[an-absent-value-may-be-a-label-and-hold-for-a-class]].) A class
 of signals (*If some of the signals covered by a check signal are not present …, the missing signals are assumed
 to be LOW*, APB5 and AHB5) — bound since `.3.d.ii.a.i` the same day through the check-coverage table
 ([[a-check-coverage-table-binds-the-class-of-covered-signals]]). A generic name no matrix row carries (*Any AxSNOOP bits not

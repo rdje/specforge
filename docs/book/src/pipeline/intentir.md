@@ -117,7 +117,8 @@ The projection preserves record order, identifiers, optional values, and support
 provenance. It does not sort, filter,
 reinterpret, or complete the observations. Empty collections are omitted when serialized and default to empty
 when older artifacts are loaded. `signal_presence_records` cross the same way, each with its `absent_value` and
-the statements that state it (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`); a stated absent value is exact here,
+the statements that state it (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`), and with the `qualified_absent_values`
+that hold for one class of requests only (`.3.d.ii.b.iii.a`); a stated absent value is exact here,
 and the adapter keeps one residual per value because `.isf` cannot say it yet. `check_signal_records` cross
 the same way (`.3.d.ii.a.i`); a parity check is not lowered, and whether it becomes a combinational rule or a
 request is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_names` cross likewise

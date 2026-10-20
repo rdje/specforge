@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `TEXT-LAYER-IDENTIFIER-SPLIT`
-- Status: `active` (`2026-09-14`; `.0`/`.2` done — no rule from either; **`.1` open** — the VLM/figure leg; `.3` open)
+- Status: `active` (`2026-09-14`; `.0`/`.2` done — no rule from either; **`.1` open** — the VLM/figure leg; `.3`, `.4`, `.5` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall), with an ingest leg in `R15`
 - Created: `2026-09-14`
-- Last updated: `2026-09-14`
+- Last updated: `2026-10-19`
 - Owner: repo-local workflow
 
 ## Goal
@@ -78,7 +78,7 @@ truncate and nothing to unescape.
 
 ## Task Tree
 
-- ID: `TEXT-LAYER-IDENTIFIER-SPLIT` · Status: `active` (`2026-09-14`) · Children: `.0`–`.4`
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT` · Status: `active` (`2026-09-14`) · Children: `.0`–`.5`
 
 - ID: `TEXT-LAYER-IDENTIFIER-SPLIT.0` · Status: `done` (`2026-09-14`, PROBE/DOC) · **Measured; no rule,
   and the measurement is why.** Both legs ran.
@@ -189,6 +189,23 @@ truncate and nothing to unescape.
   population as `.2` did the signal one; join only where the document writes the concatenation; every chain
   measured.
 
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.5` · Status: `open` (opened `2026-10-19` by
+  `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`) · Goal: **the inverse of the split: an identifier and the word
+  after it read as one token.** The text layer drops the space after an uppercase identifier set in a code font,
+  so AXI's change history reads *… if the AxDOMAIN signals are missing, a CMOis assumed to be Non-shareable* and
+  *the CMOis considered to be shareable*. Measured `2026-10-19` over the 31 current chains, counting only an
+  identifier of two or more capitals fused with one of eleven function words (*is, has, are, was, must, can, and,
+  the, of, to, in*), so a lower bound: **52 tokens in 8 chains** — AXI 15, RISC-V IOMMU 11, CoreSight TMC 11, ADIv6
+  7, RISC-V debug 4, AHB5 2, USB4 connection manager 1, USB 3.2 1 — among them `IOMMUto` (7), `AWand` (5), `TMCis`,
+  `CMOis` and `MEMTYPEand` (4 each), and the signal names `AWMMUFLOWis` and `LOWto`. **Reproduce:** the regex
+  `\b[A-Z][A-Z0-9_]{1,}(is|has|are|was|must|can|and|the|of|to|in)\b` over each chain's EvidenceIR statements,
+  synthesized `Enum`/`Signal`/`Parameter` statements excluded. **Impact:** every identifier-based reader misses the
+  fused name (a signal, actor or class), and a reader that takes the words before a verb takes the fused token as
+  a subject — `.3.d.ii.b.iii.a` refused table rows partly because of *a CMOis*. Acceptance: census the population
+  with `.2`'s in-document test (the document writes the identifier alone elsewhere, and the fused tail is a word),
+  decide on evidence whether the split belongs in SourceIR (a re-seal of every chain) or in the shared identifier
+  reader, and measure every chain.
+
 ## Current Frontier
 
 1. `TEXT-LAYER-IDENTIFIER-SPLIT.1` — read the three TileLink timing diagrams and decide whether a name
@@ -202,6 +219,8 @@ truncate and nothing to unescape.
    spelling test.
 3. `TEXT-LAYER-IDENTIFIER-SPLIT.4` — the timing-table name cells a line wrap cut mid-word
    (`BusIntervalAdjustmentGranula rity`), under the same test.
+4. `TEXT-LAYER-IDENTIFIER-SPLIT.5` — the inverse: an identifier fused with the word after it (`CMOis`, `IOMMUto`;
+   52 tokens in 8 chains).
 
 ## Decisions
 
@@ -285,3 +304,4 @@ None.
   cause is a name cell holding one identifier the text layer split in two.
 - `2026-09-28` — `.3` opened by `EXTRACTION-GAP-FIX.10`: RISC-V IOMMU's register field `fence_w_ip` reads `fence_w_i p`.
 - `2026-09-30` — `.4` opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`: three USB 3.2 timing names cut mid-word.
+- `2026-10-19` — `.5` opened by `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`: 52 identifiers fused with the word after them in 8 chains.

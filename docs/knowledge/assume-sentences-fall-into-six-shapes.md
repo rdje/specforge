@@ -16,7 +16,7 @@ date: 2026-10-19
 status: current
 tags: [intent-ir, assumptions, abstraction, classification, census, measured, extraction-representation-gaps]
 evidence: scripts/measure_unread_intent_records.py (SHAPES, shape); crates/specforge/src/ir/evidence.rs (classify_statement, the ExplicitAbstraction arm); crates/specforge/src/ir/semantic.rs (build_abstractions); crates/specforge/src/ir/intent.rs (build_assumptions); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b)
-reverify: "python3 scripts/measure_unread_intent_records.py | rg 'assumed_by_word|shapes'   # 2026-10-19: 53; treated_as 31, stated_default 21, narrative 1 (2026-10-03, before .3.d.ii.b.i: 106; treated_as 31, narrative 30, stated_default 25, diagram_convention 10, convention 6, other 4)"
+reverify: "python3 scripts/measure_unread_intent_records.py | rg 'assumed_by_word|shapes'   # 2026-10-19 after .3.d.ii.b.iii.a: 50; treated_as 31, stated_default 18, narrative 1 (before it 53 and 21; 2026-10-03, before .3.d.ii.b.i: 106; treated_as 31, narrative 30, stated_default 25, diagram_convention 10, convention 6, other 4)"
 ---
 
 `classify_statement` in `crates/specforge/src/ir/evidence.rs` files any sentence holding *assume*, *assuming*,
@@ -45,7 +45,8 @@ and the genuine defaults remain abstractions until `.3.d.ii.b.ii` and `.3.d.ii.b
 **The stated defaults, read one by one `2026-10-19`** (`.3.d.ii.b.iii`). 21 remain after `.3.d.ii.b.i`, and only 3
 are an absent signal's default: AXI's `AxDOMAIN` defaults, each stated for a **class of requests** (*Non-cacheable
 requests … System domain*, *Cacheable requests … Shareable domain*, *CMO transactions … Non-shareable*) and written
-as a label of the signal's encoding (`.3.d.ii.b.iii.a`). 13 use an *assume* word without stating an abstraction —
+as a label of the signal's encoding (`.3.d.ii.b.iii.a`, bound the same day as class-scoped values,
+[[an-absent-value-may-be-a-label-and-hold-for-a-class]]). 13 use an *assume* word without stating an abstraction —
 premises the apparatus test misses, *assume* meaning *take on*, a negation, and IOMMU's two field values under a fault
 (`.3.d.ii.b.iii.b`). 4 are defaults whose subject is no presence-record signal (a flow, an interface state, a
 removed signal, *Domain signaling*; `.3.d.ii.b.iii.c`), and one is a USB4 software procedure (`.3.d.i`). The AXI

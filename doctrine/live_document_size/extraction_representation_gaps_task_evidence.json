@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a",
-      "literal" : "`.3.d.ii.b.iii.a` — a stated absent value may be a label of the signal's own encoding, and may hold for a class of requests only.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b",
+      "literal" : "`.3.d.ii.b.iii.b` — an *assume* word that states no abstraction does not make the sentence one.",
       "mode" : "eligible",
       "part_id" : "unread-intent-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
             "metrics" : {
-               "bytes" : 49131,
+               "bytes" : 56782,
                "line_bytes" : 967,
-               "lines" : 465
+               "lines" : 537
             },
             "part_id" : "unread-intent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-            "sha256" : "ba6e9fc9077b08d345cf5c8894e5711f50fee69ac64c5e4cf2766175d0794dce",
+            "sha256" : "6d79896160f3a3b2f008c2375567c99f49493408e31da9d28c6e12a9b3984959",
             "state" : "active"
          },
          {
@@ -1098,7 +1098,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -1252,7 +1252,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.ii.b.iii.a` — a stated absent value may be a label of the signal's own encoding, and may hold for a class of requests only.",
+         "`.3.d.ii.b.iii.b` — an *assume* word that states no abstraction does not make the sentence one.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1296,7 +1296,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c`"
       ]

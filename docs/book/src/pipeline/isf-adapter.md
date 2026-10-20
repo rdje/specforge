@@ -484,7 +484,9 @@ schedule is inferred. A presence record whose signal has a stated absent value g
 `isf_protocol_signal_absent_value_` plus the presence id (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`): the record
 carries everything the sentence states, and what is missing is the `.isf` clause for the value an absent input
 reads (`(absent-value V)`, `sf-isf-optional-signal` R3), so the value stays exact in IntentIR, is not rendered, and
-no tie-off is inferred. `check_signal_records` (`.3.d.ii.a.i`) are carried and not lowered, without a residual
+no tie-off is inferred. A value that holds for one class of requests only gets its own packet,
+`isf_protocol_signal_qualified_absent_value_` plus the presence id and its position on the record (`.3.d.ii.b.iii.a`),
+which names the class and, for a label, the encoding table and code it resolves to. `check_signal_records` (`.3.d.ii.a.i`) are carried and not lowered, without a residual
 each: a parity check is interface shape rather than a protocol observation, and its lowering — a combinational
 XOR chain, or a request — is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_names`
 (`.3.d.ii.a.ii`) are carried the same way: a name is not a port, and the members it stands for are already ports.

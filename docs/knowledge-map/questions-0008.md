@@ -2,12 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > how is a footnote mark read when the converter lost its note (Polling.Active 2)
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
+- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
+  > how is a label like 'Non-shareable' resolved to a code (through the table the document's Enum statements for the signal or its collective name cite)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > how is a leaf route lifecycle verified
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -291,9 +297,3 @@
   > how many current documents are behaviorally measurable
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current governed Markdown surfaces are in the claim census
-- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
-  > how many decision records can docs/decisions hold
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > how many declaration rows does the current reader lose on the frozen set

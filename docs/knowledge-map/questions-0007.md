@@ -36,6 +36,8 @@
   > how does SpecForge verify an extracted claim semantically / catch hallucination
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a VLM timing note become a FigureRegion
+- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
+  > how does a bullet under 'If AxDOMAIN signals are not present:' get its absence clause (the list lead-in)
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > how does a change to how ingest reads tables reach a persisted SourceIR
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -244,6 +246,8 @@
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
+- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
+  > how is 'CMO transactions are assumed to be Non-shareable' read
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > how is 'Lowercase x at the second letter denotes a collective term' read
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
@@ -294,7 +298,3 @@
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > how is a footnote letter beside a check signal name (PSELxCHK b) handled
-- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
-  > how is a footnote mark read when the converter lost its note (Polling.Active 2)
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)

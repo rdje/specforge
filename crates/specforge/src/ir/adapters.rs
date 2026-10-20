@@ -1123,24 +1123,54 @@ fn protocol_residual_packet(
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the residual for a signal whose absent value the document
 /// states. The record carries everything the sentence states; what is missing is the `.isf` clause that
 /// could say it (`(absent-value V)`, requested as `sf-isf-optional-signal` R3 and acknowledged by
-/// FSMGen), so the packet says that rather than naming a binding the record lacks.
+/// FSMGen), so the packet says that rather than naming a binding the record lacks. `.3.d.ii.b.iii.a`: a value
+/// that holds for one class of requests gets its own packet, numbered in the record's order, and says so.
 fn absent_value_residual_packet(
     record: &SignalPresenceRecord,
     absent_value: &StatedAbsentValue,
+    class_ordinal: Option<usize>,
 ) -> ResidualDecisionPacket {
-    ResidualDecisionPacket {
-        packet_id: format!(
-            "isf_protocol_signal_absent_value_{}",
-            crate::ir::isf_ir::sanitize_isf_name(&record.presence_id)
+    let presence = crate::ir::isf_ir::sanitize_isf_name(&record.presence_id);
+    let packet_id = match class_ordinal {
+        None => format!("isf_protocol_signal_absent_value_{}", presence),
+        Some(ordinal) => format!(
+            "isf_protocol_signal_qualified_absent_value_{}_{}",
+            presence, ordinal
         ),
+    };
+    let class = absent_value
+        .applies_to
+        .as_ref()
+        .map(|class| format!(" for {}", class))
+        .unwrap_or_default();
+    let class_clause = if absent_value.applies_to.is_some() {
+        " The value holds for one class of requests only, which `.isf` has no clause to scope either."
+    } else {
+        ""
+    };
+    let encoding = absent_value
+        .encoding
+        .as_ref()
+        .map(|encoding| {
+            format!(
+                "; encoding table: {} (code {})",
+                encoding.table_id,
+                encoding.codes.join(" or ")
+            )
+        })
+        .unwrap_or_default();
+    ResidualDecisionPacket {
+        packet_id,
         question: format!(
-            "How should the value `{}` that signal `{}` takes when absent be represented downstream of `.isf`?",
-            absent_value.value, record.signal_name
+            "How should the value `{}` that signal `{}` takes when absent{} be represented downstream of `.isf`?",
+            absent_value.value, record.signal_name, class
         ),
         why_unresolved: format!(
-            "`.isf` has no port clause for the value an absent input reads (`(absent-value V)`, requested as `sf-isf-optional-signal` R3). The value remains exact in IntentIR and is not rendered; no tie-off is inferred. Source provenance: supporting statements: {}; supporting tables: {}.",
+            "`.isf` has no port clause for the value an absent input reads (`(absent-value V)`, requested as `sf-isf-optional-signal` R3).{} The value remains exact in IntentIR and is not rendered; no tie-off is inferred. Source provenance: supporting statements: {}; supporting tables: {}{}.",
+            class_clause,
             absent_value.supporting_statement_ids.join(", "),
-            record.table_id
+            record.table_id,
+            encoding
         ),
         automation_confidence: AutomationConfidence::Low,
         candidate_interpretations: vec![
@@ -1164,10 +1194,23 @@ fn absent_value_residual_packet(
 /// construct. Keep one stable residual packet per input record, in schema and record order, instead
 /// of silently dropping observations or fabricating transitions, values, ports, storage, or timing.
 fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPacket> {
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a / .3.d.ii.b.iii.a — every stated absent value, the signal's own and
+    // each class-scoped one, in record order.
     let stated_absent_values = intent_ir
         .signal_presence_records
         .iter()
-        .filter_map(|record| record.absent_value.as_ref().map(|value| (record, value)))
+        .flat_map(|record| {
+            let own = record
+                .absent_value
+                .iter()
+                .map(move |value| (record, value, None));
+            let scoped = record
+                .qualified_absent_values
+                .iter()
+                .enumerate()
+                .map(move |(index, value)| (record, value, Some(index + 1)));
+            own.chain(scoped)
+        })
         .collect::<Vec<_>>();
     let mut residuals = Vec::with_capacity(
         intent_ir.serial_frame_fields.len()
@@ -1231,8 +1274,12 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
         ));
     }
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — a stated absent value has no `.isf` clause yet.
-    for (record, absent_value) in stated_absent_values {
-        residuals.push(absent_value_residual_packet(record, absent_value));
+    for (record, absent_value, class_ordinal) in stated_absent_values {
+        residuals.push(absent_value_residual_packet(
+            record,
+            absent_value,
+            class_ordinal,
+        ));
     }
 
     residuals
@@ -1384,7 +1431,7 @@ mod tests {
     use crate::ir::evidence::{
         EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ParticipantDriveRecord,
         ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField, SignalPresenceRecord,
-        StatedAbsentValue, VariantPresenceEntry,
+        StatedAbsentValue, StatedValueEncoding, VariantPresenceEntry,
     };
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
@@ -2526,6 +2573,7 @@ mod tests {
                 }],
                 table_id: "table_presence".to_string(),
                 absent_value: None,
+                qualified_absent_values: Vec::new(),
             },
             SignalPresenceRecord {
                 presence_id: "presence_0001".to_string(),
@@ -2541,7 +2589,20 @@ mod tests {
                     supporting_statement_ids: vec!["statement_absent".to_string()],
                     supporting_table_ids: Vec::new(),
                     collective_name: None,
+                    applies_to: None,
+                    encoding: None,
                 }),
+                qualified_absent_values: vec![StatedAbsentValue {
+                    value: "Exclusive".to_string(),
+                    supporting_statement_ids: vec!["statement_scoped".to_string()],
+                    supporting_table_ids: Vec::new(),
+                    collective_name: None,
+                    applies_to: Some("Locked requests".to_string()),
+                    encoding: Some(StatedValueEncoding {
+                        table_id: "table_encoding".to_string(),
+                        codes: vec!["0b1".to_string()],
+                    }),
+                }],
             },
         ];
         intent_ir.write_to_disk()?;
@@ -2576,7 +2637,19 @@ mod tests {
                 "isf_protocol_state_protocol_state_0001",
                 "isf_protocol_interface_edge_timing_interface_edge_timing_0001",
                 "isf_protocol_signal_absent_value_presence_0001",
+                "isf_protocol_signal_qualified_absent_value_presence_0001_1",
             ]
+        );
+        let scoped = protocol_residuals
+            .last()
+            .expect("the class-scoped absent value");
+        assert!(scoped.question.contains("`Exclusive`"));
+        assert!(scoped.question.contains("for Locked requests"));
+        assert!(scoped.why_unresolved.contains("one class of requests only"));
+        assert!(
+            scoped
+                .why_unresolved
+                .contains("encoding table: table_encoding (code 0b1)")
         );
         for packet in &protocol_residuals {
             assert_eq!(packet.automation_confidence.as_str(), "low");

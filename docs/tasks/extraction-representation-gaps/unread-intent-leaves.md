@@ -268,7 +268,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   domain*). No code change here, so no acceptance checklist applies.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`
-  Status: `open` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii`)
+  Status: `done` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii`; checklist below; opened `TEXT-LAYER-IDENTIFIER-SPLIT.5`)
   Goal: **a stated absent value may be a label of the signal's own encoding, and may hold for a class of requests
   only.** AXI states `AxDOMAIN`'s defaults per request class, in a list under a lead-in that carries the absence
   clause (*If AxDOMAIN signals are not present:* / *- Non-cacheable requests are assumed to be in the System domain.*)
@@ -279,6 +279,37 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   the document's enum for that signal (or its collective name) cites, naming the member; keep the class a value holds
   for as written and never fold a class-scoped value into the signal's one absent value; read a list lead-in's
   absence clause into the bullets it introduces; and measure every chain.
+  **Decided `2026-10-19`: a class-scoped value is a qualified value on the presence record, and a label carries the
+  code its encoding row gives it.** `SignalPresenceRecord` gains `qualified_absent_values` (serialised only when
+  non-empty), and `StatedAbsentValue` gains `applies_to` (the class as written) and `encoding: StatedValueEncoding {
+  table_id, codes }`; the records still cross SemanticIR and IntentIR unchanged. **A label** is the clause's words
+  after *assumed to be* without a leading *in the*; it binds only when a row of a table the document's `Enum`
+  statements for the signal, or for a collective name it is a member of, cite carries it as a cell, and every such
+  row's code is kept as written (*Shareable domain* is `0b01` and `0b10`). The convergent loop writes those `Enum`
+  statements, so `bind_stated_absent_values` now runs after it. **A class** is the subject of the value's clause
+  when the absence is stated in another clause or in the list's lead-in and the subject is not the signal (a pronoun,
+  a final noun for a signal or its value, a name, or a subject itself said to be absent). **A list**: a bullet
+  stating no absence takes the absence of the statement that introduces its list, when that statement ends with a
+  colon and states one, with only bullets between; both are cited. Agreement is settled per class. A literal still
+  wins wherever it occurs in a statement, so no existing binding can move. **A table row is not read**: the first
+  measurement bound a fourth AXI class from the change history's *| Cache maintenance operations | Clarification |
+  It is clarified that if the AxDOMAIN signals are missing, a CMOis assumed to be Non-shareable. |*, whose fused
+  *CMOis* became the class *a CMOis*; a row belongs to its table's reader, as for the other prose readers that skip
+  rows. The adapter keeps one `isf_protocol_signal_qualified_absent_value_<presence>_<n>` residual per class-scoped
+  value, and `validate` reports `signal_presence_qualified_absent_values`.
+  **Measured over all 31 chains:** evidence dry-run with the HEAD and the new binary, 30 identical; AXI moves only in
+  `signal_presence_records`: `AWDOMAIN` (`presence_0033`) and `ARDOMAIN` (`presence_0112`) each take *System domain*
+  for *Non-cacheable requests* (`0b11`, `statement_2358` + `statement_2359`), *Shareable domain* for *Cacheable
+  requests* (`0b01`, `0b10`, `statement_2358` + `statement_2360`) and *Non-shareable* for *CMO transactions* (`0b00`,
+  `statement_2701`), all through `AxDOMAIN` and `table_0111`. The rebuilt chain moves only that field at SemanticIR
+  and IntentIR; the adapter gains six residuals, and `manager.isf` is byte-identical.
+  **Issues uncovered, owned:** the text layer fuses an identifier with the word after it (`CMOis`, `IOMMUto`,
+  `AWMMUFLOWis`): 52 tokens in 8 chains by a lower-bound census, `TEXT-LAYER-IDENTIFIER-SPLIT.5`. The producer-graph
+  analyser hides a value captured inside a format string (`format!("…{presence}")`; one controlled edit moves
+  `semantic_macros` by exactly 1), so this slice passes such values as explicit arguments and
+  `PRODUCTION-GRAPH-CENSUS-PIN.5` owns the analyser; its name fallback (`.4`) attached 374 false edges to a first
+  draft's `AbsentValueEncodings::new`, which is therefore named `read`. The workspace test run also exposed `.48`'s
+  regression in the trajectory controller, fixed first as `.48.a`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b`
   Status: `open` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii`)
@@ -463,3 +494,44 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   `an-assume-sentence-about-the-document-is-apparatus` (new), `assume-sentences-fall-into-six-shapes` (amended). No
   production rule was deleted or replaced: the abstraction arm is narrowed, and the book described it nowhere by
   name.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` (CODE) — DONE `2026-10-19`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: `assumed_by_word` 53, `stated_default`
+  21, among them AXI `statement_2359`, `statement_2360` and `statement_2701`; `validate` on AXI's EvidenceIR:
+  `signal_presence_absent_values` 4 and no value on `AWDOMAIN` (`presence_0033`) or `ARDOMAIN` (`presence_0112`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `stated_absent_value_literal` read one token
+  after *assumed to be* and required a literal (`is_absent_value_literal`), required the absence predicate in the same
+  sentence, and had no carrier for a class: *Non-shareable* is a label, *Non-cacheable requests* a class, and the
+  bullets' absence is in their lead-in (`statement_2358`). The labels' encoding is `table_0111`, which only the
+  convergent loop's `Enum AxDOMAIN …` statements name. RED, with the file restored byte-identically after each (6
+  mutations, each failing its named test): a label bound without the encoding (`a_label_no_encoding_of_the_signal_names_binds_nothing`,
+  `a_qualified_or_prose_absent_value_is_not_read`), a class folded into the signal's own value
+  (`a_value_stated_for_a_class_of_requests_is_qualified`), no list lead-in
+  (`a_list_lead_in_states_the_absence_for_its_bullets`), table rows read (`a_table_row_is_not_read_as_a_sentence`),
+  a self noun taken as a class (`a_subject_that_is_the_signal_is_no_class`), agreement across classes
+  (`classes_settle_agreement_apart`).
+- [x] **ADDRESSED (verified)** — Evidence dry-run of all 31 chains, HEAD binary against new: 30 identical; AXI moves
+  only in `signal_presence_records`, `AWDOMAIN` and `ARDOMAIN` 0 -> 3 class-scoped values each (`validate`:
+  `signal_presence_qualified_absent_values` 6, `signal_presence_absent_values` 4 unchanged). Rebuilt stage by stage,
+  each validated once, the adapter last: SemanticIR and IntentIR move only `signal_presence_records`; the adapter
+  gains 6 `isf_protocol_signal_qualified_absent_value_*` residuals and removes none; `manager.isf` byte-identical.
+  Unread records 364 -> 361, `assumed_by_word` 53 -> 50, `stated_default` 21 -> 18.
+- [x] **NO REGRESSION** — `check_chain_currency.sh`: 31 of 31 current at every stage, the retained set exact (the
+  binder is outside the EvidenceIR seal closure; the new fields are nested and serialised only when present).
+  WIRE-BASED-100: all 11 seeds byte-identical (temp paths masked), the HEAD binary scored on the HEAD artifacts and the
+  new one on the rebuilt chain. `kg-bench` 158/158 (`fixtures_failed: 0`). `cargo fmt --check` clean; `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 171 /
+  1,841 passed, 0 failed, on the final binary, after which `check_chain_currency.sh` reported 31 of 31 current again.
+  `flow_census.json` rolled forward (+8 functions, +88 decision sites, +129 helper edges, +1 semantic macro); boundary
+  counts unchanged.
+- [x] **GENERICITY (ADR 0006)** — the absence predicates, English auxiliaries, pronouns and nouns for a signal or its
+  value, a leading preposition and article, a colon closing a lead-in, and a bullet marker; a label resolves only
+  through the document's own `Enum` statements and encoding table. No document, signal or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A label of the signal's own encoding, and a value that
+  holds for one class of requests*), `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`,
+  `reference/representation-gaps.md` (the *Signal absent by default* row); KM
+  `an-absent-value-may-be-a-label-and-hold-for-a-class` (new),
+  `a-signals-stated-absent-value-rides-its-presence-record` and `assume-sentences-fall-into-six-shapes` (amended). No
+  production rule was deleted or replaced: the literal reader is kept and wins wherever a literal occurs; the book
+  text that said a qualified value is not read still holds for a qualification after the value.

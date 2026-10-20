@@ -2614,6 +2614,12 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         .iter()
         .filter(|r| r.absent_value.is_some())
         .count();
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a — the values stated for one class of requests only.
+    let signal_presence_qualified_absent_values: usize = ir
+        .signal_presence_records
+        .iter()
+        .map(|r| r.qualified_absent_values.len())
+        .sum();
     println!(
         "  signal_presence_records (from matrices): {}",
         ir.signal_presence_records.len()
@@ -2622,6 +2628,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("    conditioned: {signal_presence_conditioned}");
     println!("    variant_labels: {signal_presence_variant_labels}");
     println!("    absent_values: {signal_presence_absent_values}");
+    println!("    qualified_absent_values: {signal_presence_qualified_absent_values}");
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — the check-coverage inventory beside it.
     let check_signal_covered = ir
         .check_signal_records
@@ -3270,12 +3277,13 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ValidationFindingSeverity::Info,
             "signal_presence",
             format!(
-                "typed signal-presence inventory: {} matrix row(s) across {} signal(s) ({} property-conditioned, {} variant label(s), {} with a stated absent value); names, conditions, presence codes, and absent values are document-literal, never interpreted",
+                "typed signal-presence inventory: {} matrix row(s) across {} signal(s) ({} property-conditioned, {} variant label(s), {} with a stated absent value, {} class-scoped absent value(s)); names, conditions, presence codes, and absent values are document-literal, never interpreted",
                 ir.signal_presence_records.len(),
                 signal_presence_signals,
                 signal_presence_conditioned,
                 signal_presence_variant_labels,
-                signal_presence_absent_values
+                signal_presence_absent_values,
+                signal_presence_qualified_absent_values
             ),
             Vec::new(),
         ));
@@ -3892,6 +3900,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "signal_presence_absent_values",
                 signal_presence_absent_values.to_string(),
+            ),
+            metric(
+                "signal_presence_qualified_absent_values",
+                signal_presence_qualified_absent_values.to_string(),
             ),
             metric(
                 "check_signal_records",

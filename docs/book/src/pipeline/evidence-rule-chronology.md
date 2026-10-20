@@ -979,6 +979,50 @@ three-letter run); `AWSNOOP` and `ARSNOOP` take `LOW`. Wishbone's *When the gap 
 '-WSM-' or '-WSS-' …* is the shape's trap: a capitalised word is a lowercase run with nothing after it, so a name
 must carry an uppercase letter after its run. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.a.ii`).
 
+**A label of the signal's own encoding, and a value that holds for one class of requests.** AXI states what a
+request's domain is when the interface has no domain signals, and it never states it for the signal as a whole:
+*If AxDOMAIN signals are not present:* / *- Non-cacheable requests are assumed to be in the System domain.* /
+*- Cacheable requests are assumed to be in the Shareable domain.*, and *If AxDOMAIN is omitted from the
+interface, CMO transactions are assumed to be Non-shareable.* Each value is a label of `AxDOMAIN`'s own encoding,
+not a literal, and each holds for one class of requests. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`
+(`2026-10-19`) the binder reads both. Such a value lands in the presence record's `qualified_absent_values`, never in
+its `absent_value`, which would extend it to every other request:
+
+```json
+{ "presence_id": "presence_0033", "signal_name": "AWDOMAIN", "…": "…",
+  "qualified_absent_values": [
+    { "value": "System domain", "applies_to": "Non-cacheable requests", "collective_name": "AxDOMAIN",
+      "encoding": { "table_id": "table_0111", "codes": ["0b11"] },
+      "supporting_statement_ids": ["statement_2358", "statement_2359"] },
+    { "value": "Shareable domain", "applies_to": "Cacheable requests", "collective_name": "AxDOMAIN",
+      "encoding": { "table_id": "table_0111", "codes": ["0b01", "0b10"] },
+      "supporting_statement_ids": ["statement_2358", "statement_2360"] },
+    { "value": "Non-shareable", "applies_to": "CMO transactions", "collective_name": "AxDOMAIN",
+      "encoding": { "table_id": "table_0111", "codes": ["0b00"] },
+      "supporting_statement_ids": ["statement_2701"] } ] }
+```
+
+*A label* is the clause's words after *assumed to be*, without a leading *in the*. It binds only when a row of the
+table the document's enum for that signal cites carries it as a cell, compared without case or spacing; the enum may
+be named by the signal itself or by a collective name it is a member of. Every row carrying the label contributes its
+code as written, so *Shareable domain* keeps both of its codes, and choosing one would fabricate. A label no encoding
+of the signal names (*Inner shareable*, or any label for a signal with no encoding) binds nothing. *A class* is the
+subject of the clause that states the value, when the absence is stated in another clause or in the list's lead-in
+and the subject is not the signal itself: not a pronoun (*it is not present and assumed to be 0b000*), not a noun for
+a signal or its value (*the value*, *these signals*), not a name, and not itself said to be absent (*the missing
+signals*). *A list* gives a bullet that states no absence of its own the absence of the statement that introduces
+it, when that statement ends with a colon and states one; only bullets may stand between them, and both statements
+are cited. Agreement is settled per class, so *Cacheable requests* and *Non-cacheable requests* never conflict. A
+table row lifted as prose is not read at all: it belongs to its table's reader, and AXI's change history restates
+the CMO default in a row whose converter-fused *a CMOis* would otherwise have become a class. A value qualified
+*after* it (*assumed to be 0b0 for a DVMComplete request*) is still not read. On the 31 chains only AXI moves:
+`AWDOMAIN` and `ARDOMAIN` each take three class-scoped values, SemanticIR and IntentIR carry them unchanged, the
+adapter gains one residual for each (`isf_protocol_signal_qualified_absent_value_<presence>_<n>`), and the emitted
+`.isf` is byte-identical. AXI also disagrees with itself here: its domain-signaling overview puts a cacheable
+request in the Non-shareable domain, and *Domain signaling* names no signal, so that sentence is not read.
+`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c` owns surfacing the disagreement. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.iii.a`).
+
 ### Which assume-sentences are abstractions, and which are apparatus
 
 Every sentence holding *assume*, *assuming*, *modeled as*, *abstracted* or *treated as* was classified an explicit

@@ -689,6 +689,13 @@ pub struct SignalPresenceRecord {
     /// statements; `None` when no statement gives one, or when the statements disagree.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub absent_value: Option<StatedAbsentValue>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a — the values the document states this signal takes when it
+    /// is absent for one class of requests only (*If AxDOMAIN is omitted from the interface, CMO transactions
+    /// are assumed to be Non-shareable*), each naming its class in `applies_to`, in the order the document first
+    /// states them. A class-scoped value is never folded into `absent_value`, which would extend it to every
+    /// other request.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub qualified_absent_values: Vec<StatedAbsentValue>,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the value a document states a signal takes when it is
@@ -698,7 +705,7 @@ pub struct SignalPresenceRecord {
 /// sentence can be read.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct StatedAbsentValue {
-    /// The literal as written.
+    /// The literal as written, or (`.3.d.ii.b.iii.a`) the label of the signal's own encoding as written.
     pub value: String,
     /// The statement(s) that state it; several when the document repeats the sentence.
     pub supporting_statement_ids: Vec<String>,
@@ -712,6 +719,25 @@ pub struct StatedAbsentValue {
     /// `AxSNOOP`); `None` for a value stated on the signal by name or through a class.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub collective_name: Option<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a — the class of requests the value holds for, as the
+    /// sentence writes it (`CMO transactions`, `Non-cacheable requests`); `None` for a value of the signal itself.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub applies_to: Option<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a — for a value written as a label (*System domain*), the
+    /// encoding-table row(s) that label names and their codes; `None` for a literal.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub encoding: Option<StatedValueEncoding>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a — where a label value comes from: the table the document's enum
+/// for the signal cites, and the code each row carrying the label gives, as written (`0b11`). A label two rows
+/// share keeps both codes (AXI's *Shareable domain* is `0b01` and `0b10`); choosing one would fabricate.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct StatedValueEncoding {
+    /// The encoding table.
+    pub table_id: String,
+    /// The code of each row whose cell is the label, in row order.
+    pub codes: Vec<String>,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i — one row of a CHECK-COVERAGE table: a check (parity) signal and
@@ -2088,15 +2114,6 @@ impl EvidenceIr {
             .collect();
         let collective_signal_names =
             collective_signal_name_surface(&extracted_statements, &known_collective_members);
-        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a / .a.i / .a.ii — the value a signal takes when absent, bound to its
-        // presence records from the sentences that state it: by name, through a collective name, or through the
-        // class a check-coverage table defines.
-        bind_stated_absent_values(
-            &mut signal_presence_records,
-            &extracted_statements,
-            &check_coverage,
-            &collective_signal_names,
-        );
         let timing_constraints = synthesize_timing_constraints(source_ir, prior_guidance.as_ref());
         // EXTRACTION-REPRESENTATION-GAPS.17 — the section each document statement sits in, for a section's polarity rule.
         let statement_sections =
@@ -2123,6 +2140,18 @@ impl EvidenceIr {
             &table_declaration_catalog,
             statement_sections,
             &mut extraction_manifest,
+        );
+
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a / .a.i / .a.ii — the value a signal takes when absent, bound to its
+        // presence records from the sentences that state it: by name, through a collective name, or through the
+        // class a check-coverage table defines. `.3.d.ii.b.iii.a`: bound after the convergent loop, whose `Enum`
+        // statements name the encoding tables a label value resolves against.
+        bind_stated_absent_values(
+            &mut signal_presence_records,
+            &extracted_statements,
+            &check_coverage,
+            &collective_signal_names,
+            &source_ir.structured_tables,
         );
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
@@ -19539,17 +19568,23 @@ fn check_signal_surface(tables: &[CheckCoverageTable<'_>]) -> Vec<CheckSignalRec
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — one statement's reading of the value a signal takes when it
-/// is absent: the presence-record signal the statement names, the literal it writes, and the statement.
+/// is absent: the presence-record signal the statement names, the value it writes, and the statement.
 /// `.3.d.ii.a.i`: a class-scoped sentence yields one reading per covered signal, each naming the
-/// check-coverage table it came through.
+/// check-coverage table it came through. `.3.d.ii.b.iii.a`: a value may be a label of the signal's own
+/// encoding, and may hold for one class of requests only.
 struct StatedAbsentValueReading {
     signal_name: String,
     value: String,
-    statement_id: String,
+    /// The statement, preceded by the list lead-in that stated the absence when there is one.
+    statement_ids: Vec<String>,
     /// Empty when the sentence names the signal itself; the coverage table(s) when it names the class.
     table_ids: Vec<String>,
     /// The collective name the sentence used, when it reached the signal through one (`.3.d.ii.a.ii`).
     collective_name: Option<String>,
+    /// The class of requests the value holds for, as written; `None` for the signal's own value.
+    applies_to: Option<String>,
+    /// The encoding row(s) a label names; `None` for a literal.
+    encoding: Option<StatedValueEncoding>,
 }
 
 impl StatedAbsentValueReading {
@@ -19564,10 +19599,16 @@ impl StatedAbsentValueReading {
     }
 }
 
-/// What `stated_absent_value_literal` found: the literal, and where the sentence that states it begins and
-/// where its `assumed to be` lead starts, as byte offsets into the statement text.
+/// What `stated_absent_value` found: the value as written, whether it is a literal or a label, the subject of
+/// the clause that states it when that subject may be a class of requests, and where the sentence and its
+/// `assumed to be` lead start, as byte offsets into the statement text.
 struct AbsentValueSentence {
     value: String,
+    /// `false` for a label, which binds only where the signal's own encoding names it.
+    literal: bool,
+    /// The value clause's subject, when the absence is stated in another clause and the subject is not the
+    /// absent signal by grammar; whether it names a signal is decided against the document's names.
+    class_subject: Option<String>,
     sentence_start: usize,
     lead: usize,
 }
@@ -19586,6 +19627,21 @@ const ABSENCE_PHRASES: [&str; 6] = [
 /// The lead that introduces the stated value: `… assumed to be 0b000`.
 const ASSUMED_VALUE_LEAD: &str = "assumed to be";
 
+/// `.3.d.ii.b.iii.a` — the words that stand between a clause's subject and its `assumed to be` lead (`CMO
+/// transactions are`, `all requests … can be`). English auxiliaries and adverbs, not a vocabulary (ADR 0006).
+const VALUE_CLAUSE_AUXILIARIES: [&str; 12] = [
+    "is", "are", "be", "been", "can", "may", "must", "shall", "should", "will", "always", "also",
+];
+
+/// `.3.d.ii.b.iii.a` — a value clause whose subject is one of these is about the absent signal itself, never a
+/// class of requests: a pronoun (*it is not present and assumed to be*) or, as the subject's last word, a noun
+/// for a signal or its value (*the value is assumed to be*). English grammar, not a vocabulary (ADR 0006).
+const SIGNAL_SELF_PRONOUNS: [&str; 6] = ["it", "they", "this", "these", "that", "those"];
+const SIGNAL_SELF_NOUNS: [&str; 14] = [
+    "signal", "signals", "bit", "bits", "value", "values", "input", "inputs", "output", "outputs",
+    "wire", "wires", "field", "fields",
+];
+
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — bind the value a document states for an absent signal to
 /// that signal's presence records.
 ///
@@ -19599,74 +19655,286 @@ const ASSUMED_VALUE_LEAD: &str = "assumed to be";
 /// a statement naming no presence record (a class of signals, a generic name no matrix row carries) or
 /// more than one binds nothing. When several statements state the same value they are all cited; when
 /// they disagree, nothing is bound, since choosing would fabricate.
+///
+/// `.3.d.ii.b.iii.a` widens what is read in three ways, each held to the document's own structure. **A label**:
+/// a value that is no literal (*Non-shareable*, *in the System domain*) is read only when a row of the table the
+/// document's enum for that signal cites (by the signal's name or a collective name it is a member of) carries it
+/// as a cell, and the row's code travels with it. **A class**: when the absence is stated in one clause and the
+/// value in another whose subject is neither the signal nor said to be absent (*If AxDOMAIN is omitted from the
+/// interface, CMO transactions are assumed to be Non-shareable*), the value holds for that class of requests only
+/// and is bound as a qualified value, never as the signal's own. **A list**: a bullet whose sentence states no
+/// absence takes it from the statement that introduces its list, when that statement ends with a colon and states
+/// one (*If AxDOMAIN signals are not present:* / *- Non-cacheable requests are assumed to be in the System
+/// domain.*); both statements are cited. Agreement is settled per class, so two classes never conflict.
 fn bind_stated_absent_values(
     records: &mut [SignalPresenceRecord],
     statements: &[ExtractedStatement],
     check_coverage: &[CheckCoverageTable<'_>],
     collectives: &[CollectiveSignalNameRecord],
+    structured_tables: &[StructuredTableRecord],
 ) {
     let signal_names: BTreeSet<&str> = records.iter().map(|r| r.signal_name.as_str()).collect();
     if signal_names.is_empty() {
         return;
     }
-    // signal -> rank (by name 0, collective 1, class 2) -> value -> (statement ids, table ids, collective)
-    type Statements = BTreeMap<String, (Vec<String>, BTreeSet<String>, Option<String>)>;
-    let mut by_signal: BTreeMap<String, BTreeMap<u8, Statements>> = BTreeMap::new();
-    for reading in stated_absent_values(statements, &signal_names, check_coverage, collectives) {
-        let rank = reading.rank();
-        let (statement_ids, table_ids, collective) = by_signal
-            .entry(reading.signal_name)
+    let encodings = AbsentValueEncodings::read(statements, structured_tables, collectives);
+    let mut by_signal: BTreeMap<String, Vec<StatedAbsentValueReading>> = BTreeMap::new();
+    for reading in stated_absent_values(
+        statements,
+        &signal_names,
+        check_coverage,
+        collectives,
+        &encodings,
+    ) {
+        by_signal
+            .entry(reading.signal_name.clone())
             .or_default()
-            .entry(rank)
-            .or_default()
-            .entry(reading.value)
-            .or_default();
-        statement_ids.push(reading.statement_id);
-        table_ids.extend(reading.table_ids);
-        *collective = reading.collective_name;
+            .push(reading);
     }
     for record in records.iter_mut() {
-        let Some(ranks) = by_signal.get(&record.signal_name) else {
+        let Some(readings) = by_signal.get(&record.signal_name) else {
             continue;
         };
-        // The closest naming wins: the signal itself, then a collective name, then a class.
-        let values = ranks.values().next().expect("one rank");
-        if values.len() != 1 {
-            continue;
+        // One group per class, in the order the document first states it; the signal's own value is the
+        // group without a class.
+        let mut classes: Vec<Option<String>> = Vec::new();
+        for reading in readings {
+            let class = reading.applies_to.as_deref().map(normalized_words);
+            if !classes.contains(&class) {
+                classes.push(class);
+            }
         }
-        let (value, (statement_ids, table_ids, collective)) =
-            values.iter().next().expect("one stated value");
-        record.absent_value = Some(StatedAbsentValue {
-            value: value.clone(),
-            supporting_statement_ids: statement_ids.clone(),
-            supporting_table_ids: table_ids.iter().cloned().collect(),
-            collective_name: collective.clone(),
-        });
+        for class in classes {
+            let group: Vec<&StatedAbsentValueReading> = readings
+                .iter()
+                .filter(|r| r.applies_to.as_deref().map(normalized_words) == class)
+                .collect();
+            let Some(value) = agreed_absent_value(&group) else {
+                continue;
+            };
+            if class.is_none() {
+                record.absent_value = Some(value);
+            } else {
+                record.qualified_absent_values.push(value);
+            }
+        }
     }
 }
 
+/// The one value a group of readings for the same signal and class agrees on: the closest naming wins (the
+/// signal itself, then a collective name, then a class of signals), and within it every statement must state
+/// the same value, or nothing is bound. Statements that agree are all cited, in the order they state it.
+fn agreed_absent_value(group: &[&StatedAbsentValueReading]) -> Option<StatedAbsentValue> {
+    let rank = group.iter().map(|r| r.rank()).min()?;
+    let closest: Vec<&StatedAbsentValueReading> =
+        group.iter().copied().filter(|r| r.rank() == rank).collect();
+    let first = closest.first()?;
+    if closest
+        .iter()
+        .any(|r| normalized_words(&r.value) != normalized_words(&first.value))
+    {
+        return None;
+    }
+    let mut statement_ids: Vec<String> = Vec::new();
+    for id in closest.iter().flat_map(|r| r.statement_ids.iter()) {
+        if !statement_ids.contains(id) {
+            statement_ids.push(id.clone());
+        }
+    }
+    let table_ids: BTreeSet<String> = closest
+        .iter()
+        .flat_map(|r| r.table_ids.iter().cloned())
+        .collect();
+    Some(StatedAbsentValue {
+        value: first.value.clone(),
+        supporting_statement_ids: statement_ids,
+        supporting_table_ids: table_ids.into_iter().collect(),
+        collective_name: closest.iter().rev().find_map(|r| r.collective_name.clone()),
+        applies_to: first.applies_to.clone(),
+        encoding: first.encoding.clone(),
+    })
+}
+
+/// Lowercase words joined by single spaces, so `Shareable  Domain` and `shareable domain` compare equal.
+fn normalized_words(text: &str) -> String {
+    text.split_whitespace()
+        .map(str::to_ascii_lowercase)
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+/// `.3.d.ii.b.iii.a` — the encodings a label can resolve against: for each enum name, the tables its `Enum <name>
+/// <member> = <code>.` statements cite (`AxDOMAIN` -> `table_0111`), and for each signal the collective names it
+/// is a member of, so `AWDOMAIN` reaches the encoding the document states for `AxDOMAIN`.
+struct AbsentValueEncodings<'a> {
+    tables_by_enum: BTreeMap<String, Vec<&'a StructuredTableRecord>>,
+    collectives_of: BTreeMap<String, Vec<String>>,
+}
+
+impl<'a> AbsentValueEncodings<'a> {
+    // Named `read`, not `new`: the producer-graph analyser links every unresolved `Vec::new()`-style call to the
+    // one production function of a bare name (`PRODUCTION-GRAPH-CENSUS-PIN.4`).
+    fn read(
+        statements: &[ExtractedStatement],
+        structured_tables: &'a [StructuredTableRecord],
+        collectives: &[CollectiveSignalNameRecord],
+    ) -> Self {
+        let by_id: BTreeMap<&str, &'a StructuredTableRecord> = structured_tables
+            .iter()
+            .map(|table| (table.table_id.as_str(), table))
+            .collect();
+        let mut tables_by_enum: BTreeMap<String, Vec<&'a StructuredTableRecord>> = BTreeMap::new();
+        for statement in statements {
+            let Some(name) = statement
+                .text
+                .strip_prefix("Enum ")
+                .and_then(|rest| rest.split_whitespace().next())
+            else {
+                continue;
+            };
+            for table_id in &statement.supporting_table_ids {
+                let Some(table) = by_id.get(table_id.as_str()) else {
+                    continue;
+                };
+                let tables = tables_by_enum.entry(name.to_string()).or_default();
+                if !tables.iter().any(|t| t.table_id == table.table_id) {
+                    tables.push(table);
+                }
+            }
+        }
+        let mut collectives_of: BTreeMap<String, Vec<String>> = BTreeMap::new();
+        for record in collectives {
+            for member in &record.member_names {
+                collectives_of
+                    .entry(member.clone())
+                    .or_default()
+                    .push(record.collective_name.clone());
+            }
+        }
+        Self {
+            tables_by_enum,
+            collectives_of,
+        }
+    }
+
+    /// The encoding row(s) a label names for `signal`: the first table, of the enum named by the signal and then
+    /// of each collective name it belongs to, with a row carrying the label as a cell. `None` when no encoding
+    /// the document states for the signal names it.
+    fn resolve(&self, signal: &str, label: &str) -> Option<StatedValueEncoding> {
+        let wanted = normalized_words(label);
+        std::iter::once(signal.to_string())
+            .chain(
+                self.collectives_of
+                    .get(signal)
+                    .into_iter()
+                    .flatten()
+                    .cloned(),
+            )
+            .flat_map(|name| {
+                self.tables_by_enum
+                    .get(&name)
+                    .into_iter()
+                    .flatten()
+                    .map(move |table| (name.clone(), *table))
+            })
+            .find_map(|(name, table)| label_encoding(table, &name, &wanted))
+    }
+}
+
+/// The codes an encoding table gives a label: the value cell, as written, of every row that carries the label
+/// as another cell, compared without case or spacing.
+fn label_encoding(
+    table: &StructuredTableRecord,
+    enum_name: &str,
+    wanted: &str,
+) -> Option<StatedValueEncoding> {
+    let (_, value_col) = infer_encoding_column_indices(table, enum_name);
+    let codes: Vec<String> = table
+        .body_rows
+        .iter()
+        .filter(|row| {
+            row.iter()
+                .enumerate()
+                .any(|(col, cell)| col != value_col && normalized_words(&cell.text) == wanted)
+        })
+        .filter_map(|row| row.get(value_col).map(|cell| cell.text.trim().to_string()))
+        .filter(|code| !code.is_empty())
+        .collect();
+    (!codes.is_empty()).then(|| StatedValueEncoding {
+        table_id: table.table_id.clone(),
+        codes,
+    })
+}
+
+/// `.3.d.ii.b.iii.a` — the statement that introduces the list `statements[index]` is a bullet of, when that
+/// statement ends with a colon and states an absence (*If AxDOMAIN signals are not present:*). Only bullets may
+/// stand between the two; anything else ends the list.
+fn absence_list_lead_in(
+    statements: &[ExtractedStatement],
+    index: usize,
+) -> Option<&ExtractedStatement> {
+    let is_bullet = |statement: &ExtractedStatement| statement.text.trim_start().starts_with('-');
+    if !is_bullet(&statements[index]) {
+        return None;
+    }
+    let lead_in = statements[..index]
+        .iter()
+        .rev()
+        .find(|statement| !is_bullet(statement))?;
+    let lowered = lead_in.text.trim_end().to_ascii_lowercase();
+    let states_absence = ABSENCE_PHRASES
+        .iter()
+        .any(|phrase| contains_whole_identifier(&lowered, phrase));
+    (lowered.ends_with(':') && states_absence).then_some(lead_in)
+}
+
 /// Every statement that states an absent value, in statement order: one reading when it names exactly one
-/// of `signal_names`; one reading per covered signal when, naming none, its sentence names a check-coverage
-/// relation by the words of that table's two headers (`.3.d.ii.a.i`).
+/// of `signal_names`; one reading per member when it names none but one collective name (`.3.d.ii.a.ii`); one
+/// reading per covered signal when, naming neither, its sentence names a check-coverage relation by the words
+/// of that table's two headers (`.3.d.ii.a.i`). A label binds a signal only where the signal's own encoding names
+/// it (`.3.d.ii.b.iii.a`).
 fn stated_absent_values(
     statements: &[ExtractedStatement],
     signal_names: &BTreeSet<&str>,
     check_coverage: &[CheckCoverageTable<'_>],
     collectives: &[CollectiveSignalNameRecord],
+    encodings: &AbsentValueEncodings<'_>,
 ) -> Vec<StatedAbsentValueReading> {
     let collective_by_name: BTreeMap<&str, &CollectiveSignalNameRecord> = collectives
         .iter()
         .map(|record| (record.collective_name.as_str(), record))
         .collect();
     let mut readings = Vec::new();
-    for statement in statements {
-        let Some(sentence) = stated_absent_value_literal(&statement.text) else {
+    for (index, statement) in statements.iter().enumerate() {
+        // A table row lifted as prose is its table's to read, not a sentence (`.3.d.ii.b.iii.a`: AXI's change
+        // history restates a CMO's default in a row whose cells this grammar does not see).
+        if statement.text.trim_start().starts_with('|') {
             continue;
+        }
+        // A bullet that states no absence of its own takes its list's lead-in (`.3.d.ii.b.iii.a`).
+        let (sentence, lead_in) = match stated_absent_value(&statement.text, false) {
+            Some(sentence) => (sentence, None),
+            None => {
+                let Some(lead_in) = absence_list_lead_in(statements, index) else {
+                    continue;
+                };
+                let Some(sentence) = stated_absent_value(&statement.text, true) else {
+                    continue;
+                };
+                (sentence, Some(lead_in))
+            }
         };
-        let words: Vec<&str> = identifier_words(&statement.text)
+        let mut words: Vec<&str> = lead_in
+            .map(|lead_in| identifier_words(&lead_in.text))
+            .unwrap_or_default()
             .into_iter()
             .map(|(_, word)| word)
             .collect();
+        words.extend(
+            identifier_words(&statement.text)
+                .into_iter()
+                .map(|(_, word)| word),
+        );
         let named: BTreeSet<&str> = words
             .iter()
             .copied()
@@ -19678,34 +19946,54 @@ fn stated_absent_values(
             .copied()
             .filter(|word| collective_by_name.contains_key(word))
             .collect();
+        // The value clause's subject is a class of requests only when it names no signal of the document.
+        let applies_to = sentence.class_subject.clone().filter(|subject| {
+            !identifier_words(subject).into_iter().any(|(_, word)| {
+                signal_names.contains(word) || collective_by_name.contains_key(word)
+            })
+        });
+        let statement_ids: Vec<String> = lead_in
+            .map(|lead_in| lead_in.statement_id.clone())
+            .into_iter()
+            .chain(std::iter::once(statement.statement_id.clone()))
+            .collect();
+        // A literal binds as written; a label only through the signal's own encoding.
+        let reading = |signal: &str, table_ids: Vec<String>, collective_name: Option<String>| {
+            let encoding = if sentence.literal {
+                None
+            } else {
+                Some(encodings.resolve(signal, &sentence.value)?)
+            };
+            Some(StatedAbsentValueReading {
+                signal_name: signal.to_string(),
+                value: sentence.value.clone(),
+                statement_ids: statement_ids.clone(),
+                table_ids,
+                collective_name,
+                applies_to: applies_to.clone(),
+                encoding,
+            })
+        };
         match (named.len(), collective.len()) {
-            (1, _) => readings.push(StatedAbsentValueReading {
-                signal_name: (*named.iter().next().expect("one named signal")).to_string(),
-                value: sentence.value,
-                statement_id: statement.statement_id.clone(),
-                table_ids: Vec::new(),
-                collective_name: None,
-            }),
+            (1, _) => {
+                let signal = *named.iter().next().expect("one named signal");
+                readings.extend(reading(signal, Vec::new(), None));
+            }
             (0, 1) => {
                 let name = *collective.iter().next().expect("one collective name");
                 for member in &collective_by_name[name].member_names {
                     if signal_names.contains(member.as_str()) {
-                        readings.push(StatedAbsentValueReading {
-                            signal_name: member.clone(),
-                            value: sentence.value.clone(),
-                            statement_id: statement.statement_id.clone(),
-                            table_ids: Vec::new(),
-                            collective_name: Some(name.to_string()),
-                        });
+                        readings.extend(reading(member, Vec::new(), Some(name.to_string())));
                     }
                 }
             }
             (0, 0) => {
-                let window = &statement.text[sentence.sentence_start..sentence.lead];
+                let mut window = lead_in.map(|l| format!("{} ", l.text)).unwrap_or_default();
+                window.push_str(&statement.text[sentence.sentence_start..sentence.lead]);
                 let mut covered: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
                 for table in check_coverage
                     .iter()
-                    .filter(|t| sentence_names_relation(window, t))
+                    .filter(|t| sentence_names_relation(&window, t))
                 {
                     for row in &table.rows {
                         for signal in &row.covered_signals {
@@ -19719,13 +20007,7 @@ fn stated_absent_values(
                     }
                 }
                 for (signal, table_ids) in covered {
-                    readings.push(StatedAbsentValueReading {
-                        signal_name: signal.to_string(),
-                        value: sentence.value.clone(),
-                        statement_id: statement.statement_id.clone(),
-                        table_ids: table_ids.into_iter().collect(),
-                        collective_name: None,
-                    });
+                    readings.extend(reading(signal, table_ids.into_iter().collect(), None));
                 }
             }
             _ => {}
@@ -19884,20 +20166,24 @@ fn sentence_names_relation(window: &str, table: &CheckCoverageTable<'_>) -> bool
         .all(|word| words.contains(word))
 }
 
-/// The literal a statement states unconditionally for an absent signal, read from the first sentence
-/// in which an absence predicate precedes `assumed to be`, with that sentence's bounds; `None` when no
-/// sentence states one.
-fn stated_absent_value_literal(text: &str) -> Option<AbsentValueSentence> {
+/// The value a statement states for an absent signal, read from the sentences in which an absence predicate
+/// precedes `assumed to be` (any sentence, for a bullet whose list's lead-in states the absence), with that
+/// sentence's bounds; `None` when no sentence states one. A literal the sentence closes on is read as before
+/// (`.3.d.ii.a`) and wins wherever it occurs; otherwise the first sentence's words up to its clause's end are a
+/// label, which binds only where the signal's own encoding names it (`.3.d.ii.b.iii.a`).
+fn stated_absent_value(text: &str, absence_in_lead_in: bool) -> Option<AbsentValueSentence> {
     // `to_ascii_lowercase` keeps the byte layout, so offsets index `text` too.
     let lowered = text.to_ascii_lowercase();
     let mut scan = 0usize;
+    let mut label = None;
     while let Some(found) = lowered[scan..].find(ASSUMED_VALUE_LEAD) {
         let lead = scan + found;
         scan = lead + ASSUMED_VALUE_LEAD.len();
         let sentence_start = sentence_start_before(&lowered, lead);
-        let absence_before = ABSENCE_PHRASES
-            .iter()
-            .any(|phrase| contains_whole_identifier(&lowered[sentence_start..lead], phrase));
+        let absence_before = absence_in_lead_in
+            || ABSENCE_PHRASES
+                .iter()
+                .any(|phrase| contains_whole_identifier(&lowered[sentence_start..lead], phrase));
         if !absence_before {
             continue;
         }
@@ -19906,15 +20192,90 @@ fn stated_absent_value_literal(text: &str) -> Option<AbsentValueSentence> {
             .find(|c: char| c.is_whitespace() || matches!(c, '.' | ',' | ';' | ':' | ')'))
             .unwrap_or(after.len());
         let token = &after[..token_end];
+        let class_subject = value_clause_class_subject(text, &lowered, sentence_start, lead);
         if is_absent_value_literal(token) && sentence_closes_after_value(&after[token_end..]) {
             return Some(AbsentValueSentence {
                 value: token.to_string(),
+                literal: true,
+                class_subject,
+                sentence_start,
+                lead,
+            });
+        }
+        if label.is_none() {
+            label = absent_value_label(after).map(|value| AbsentValueSentence {
+                value,
+                literal: false,
+                class_subject,
                 sentence_start,
                 lead,
             });
         }
     }
-    None
+    label
+}
+
+/// `.3.d.ii.b.iii.a` — the label a value clause writes: its words after the lead, up to the clause's end, with a
+/// leading preposition and article dropped (`in the System domain` -> `System domain`, `Non-shareable`).
+fn absent_value_label(after: &str) -> Option<String> {
+    let end = after.find(['.', ',', ';', ':', '(']).unwrap_or(after.len());
+    let mut words: Vec<&str> = after[..end].split_whitespace().collect();
+    if words.first().is_some_and(|w| w.eq_ignore_ascii_case("in")) {
+        words.remove(0);
+    }
+    if words
+        .first()
+        .is_some_and(|w| ["the", "a", "an"].iter().any(|a| w.eq_ignore_ascii_case(a)))
+    {
+        words.remove(0);
+    }
+    (!words.is_empty()).then(|| words.join(" "))
+}
+
+/// `.3.d.ii.b.iii.a` — the subject of the clause that states the value, when it may be a class of requests: the
+/// clause after the sentence's last clause break before the lead, without a bullet marker, a leading `then` or
+/// `and`, or the auxiliaries before the lead. `None` when the clause itself states the absence (*it is not present
+/// and assumed to be*, *the missing signals are assumed to be*), or when its subject is a pronoun or ends with a
+/// noun for the signal or its value — the signal itself, not a class.
+fn value_clause_class_subject(
+    text: &str,
+    lowered: &str,
+    sentence_start: usize,
+    lead: usize,
+) -> Option<String> {
+    let clause_start = sentence_start
+        + lowered[sentence_start..lead]
+            .rfind([',', ';', ':'])
+            .map_or(0, |break_at| break_at + 1);
+    if ABSENCE_PHRASES
+        .iter()
+        .any(|phrase| contains_whole_identifier(&lowered[clause_start..lead], phrase))
+    {
+        return None;
+    }
+    let mut words: Vec<&str> = text[clause_start..lead].split_whitespace().collect();
+    while words.first().is_some_and(|w| w.chars().all(|c| c == '-')) {
+        words.remove(0);
+    }
+    if words
+        .first()
+        .is_some_and(|w| w.eq_ignore_ascii_case("then") || w.eq_ignore_ascii_case("and"))
+    {
+        words.remove(0);
+    }
+    while words
+        .last()
+        .is_some_and(|w| VALUE_CLAUSE_AUXILIARIES.contains(&w.to_ascii_lowercase().as_str()))
+    {
+        words.pop();
+    }
+    let first = words.first()?.to_ascii_lowercase();
+    let last = words.last()?.to_ascii_lowercase();
+    if SIGNAL_SELF_PRONOUNS.contains(&first.as_str()) || SIGNAL_SELF_NOUNS.contains(&last.as_str())
+    {
+        return None;
+    }
+    Some(words.join(" "))
 }
 
 /// The byte offset where the sentence containing `position` begins: after the last period that is
@@ -25475,6 +25836,7 @@ pub fn capture_signal_presence_rows(
             variant_presence,
             table_id: table.table_id.clone(),
             absent_value: None,
+            qualified_absent_values: Vec::new(),
         });
     }
 
@@ -57198,6 +57560,7 @@ mod stated_absent_value_tests {
             }],
             table_id: "table_presence".to_string(),
             absent_value: None,
+            qualified_absent_values: Vec::new(),
         }
     }
 
@@ -57223,7 +57586,7 @@ mod stated_absent_value_tests {
             "statement_0001",
             "XRESP is an optional signal. If the XRESP_WIDTH property is 0, it is not present and assumed to be 0b000 (OKAY).",
         )];
-        bind_stated_absent_values(&mut records, &statements, &[], &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[], &[]);
         assert_eq!(
             bound(&records, "XRESP"),
             Some(("0b000".to_string(), vec!["statement_0001".to_string()]))
@@ -57243,7 +57606,7 @@ mod stated_absent_value_tests {
             "statement_0007",
             "Any XSNOOP bits not driven by an interface are assumed to be LOW.",
         )];
-        bind_stated_absent_values(&mut records, &statements, &[], &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[], &[]);
         assert!(records.iter().all(|record| {
             record.absent_value.as_ref().map(|v| v.value.as_str()) == Some("LOW")
         }));
@@ -57258,7 +57621,13 @@ mod stated_absent_value_tests {
             "If XRESP is not present it is assumed to be LOW unless a packet has started.",
         ] {
             let mut records = vec![presence("presence_0000", "XRESP", None)];
-            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[], &[]);
+            bind_stated_absent_values(
+                &mut records,
+                &[statement("statement_0001", text)],
+                &[],
+                &[],
+                &[],
+            );
             assert_eq!(bound(&records, "XRESP"), None, "{text}");
         }
     }
@@ -57272,7 +57641,13 @@ mod stated_absent_value_tests {
             "XRESP may be not present. The burst type is assumed to be INCR.",
         ] {
             let mut records = vec![presence("presence_0000", "XRESP", None)];
-            bind_stated_absent_values(&mut records, &[statement("statement_0001", text)], &[], &[]);
+            bind_stated_absent_values(
+                &mut records,
+                &[statement("statement_0001", text)],
+                &[],
+                &[],
+                &[],
+            );
             assert_eq!(bound(&records, "XRESP"), None, "{text}");
         }
     }
@@ -57296,7 +57671,7 @@ mod stated_absent_value_tests {
                 "If XRESP and XACK are not present they are assumed to be LOW.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements, &[], &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[], &[]);
         assert!(records.iter().all(|record| record.absent_value.is_none()));
     }
 
@@ -57325,7 +57700,7 @@ mod stated_absent_value_tests {
                 "If XACK is omitted it is assumed to be LOW.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements, &[], &[]);
+        bind_stated_absent_values(&mut records, &statements, &[], &[], &[]);
         assert_eq!(
             bound(&records, "XRESP"),
             Some((
@@ -57353,6 +57728,422 @@ mod stated_absent_value_tests {
         }
         for prose in ["", "the", "zero", "0b", "0x", "0b102", "Low", "x'F'", "L"] {
             assert!(!super::is_absent_value_literal(prose), "{prose}");
+        }
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a — a stated absent value may be a label of the signal's own encoding,
+/// and may hold for a class of requests only.
+#[cfg(test)]
+mod labeled_absent_value_tests {
+    use super::{
+        CollectiveSignalNameRecord, EvidenceModality, ExtractedStatement, SignalPresenceRecord,
+        StatedAbsentValue, StatementClass, VariantPresenceEntry, bind_stated_absent_values,
+    };
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord, TableKind};
+
+    fn cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    /// AXI *Table A6.2*'s shape: the code column is headed by the signal, then a label and a meaning.
+    fn domain_encoding(enum_name: &str) -> StructuredTableRecord {
+        let rows: [[&str; 3]; 4] = [
+            ["0b00", "Non-shareable", "Non-shareable domain"],
+            ["0b01", "Shareable", "Shareable domain"],
+            ["0b10", "Shareable", "Shareable domain"],
+            ["0b11", "System", "System domain"],
+        ];
+        StructuredTableRecord {
+            table_id: "table_encoding".to_string(),
+            asset_id: "table_encoding".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::default(),
+            header_rows: vec![
+                [enum_name, "Label", "Meaning"]
+                    .iter()
+                    .map(|t| cell(t, true))
+                    .collect(),
+            ],
+            body_rows: rows
+                .iter()
+                .map(|row| row.iter().map(|t| cell(t, false)).collect())
+                .collect(),
+            row_count: 5,
+            col_count: 3,
+        }
+    }
+
+    fn statement(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        }
+    }
+
+    /// The `Enum` statement the convergent loop writes for an encoding row, citing its table.
+    fn member(id: &str, enum_name: &str, text: &str) -> ExtractedStatement {
+        let mut statement = statement(id, &format!("Enum {enum_name} {text}."));
+        statement.supporting_table_ids = vec!["table_encoding".to_string()];
+        statement
+    }
+
+    fn presence(id: &str, signal: &str) -> SignalPresenceRecord {
+        SignalPresenceRecord {
+            presence_id: id.to_string(),
+            signal_name: signal.to_string(),
+            presence_condition: None,
+            variant_presence: vec![VariantPresenceEntry {
+                variant_label: "V1".to_string(),
+                code: "O".to_string(),
+            }],
+            table_id: "table_presence".to_string(),
+            absent_value: None,
+            qualified_absent_values: Vec::new(),
+        }
+    }
+
+    fn with_encoding(
+        enum_name: &str,
+        statements: &[ExtractedStatement],
+    ) -> Vec<ExtractedStatement> {
+        let mut all = statements.to_vec();
+        all.push(member(
+            "statement_0900",
+            enum_name,
+            "NON_SHAREABLE_DOMAIN = 0",
+        ));
+        all.push(member("statement_0901", enum_name, "SHAREABLE_DOMAIN = 1"));
+        all.push(member("statement_0902", enum_name, "SHAREABLE_DOMAIN = 2"));
+        all.push(member("statement_0903", enum_name, "SYSTEM_DOMAIN = 3"));
+        all
+    }
+
+    /// (class, value, codes, statements) of a stated value, for comparison.
+    fn summary(value: &StatedAbsentValue) -> (Option<&str>, &str, Vec<&str>, Vec<&str>) {
+        (
+            value.applies_to.as_deref(),
+            value.value.as_str(),
+            value
+                .encoding
+                .iter()
+                .flat_map(|e| e.codes.iter().map(String::as_str))
+                .collect(),
+            value
+                .supporting_statement_ids
+                .iter()
+                .map(String::as_str)
+                .collect(),
+        )
+    }
+
+    #[test]
+    fn a_label_value_binds_through_the_signals_own_encoding() {
+        let mut records = vec![presence("presence_0000", "XDOMAIN")];
+        let statements = with_encoding(
+            "XDOMAIN",
+            &[statement(
+                "statement_0001",
+                "If XDOMAIN is omitted from the interface, it is assumed to be Non-shareable.",
+            )],
+        );
+        bind_stated_absent_values(
+            &mut records,
+            &statements,
+            &[],
+            &[],
+            &[domain_encoding("XDOMAIN")],
+        );
+        let value = records[0].absent_value.as_ref().expect("an absent value");
+        assert_eq!(
+            summary(value),
+            (None, "Non-shareable", vec!["0b00"], vec!["statement_0001"])
+        );
+        assert_eq!(value.encoding.as_ref().unwrap().table_id, "table_encoding");
+        assert!(records[0].qualified_absent_values.is_empty());
+    }
+
+    /// A label the encoding does not carry, or a label for a signal the document gives no encoding, is prose.
+    #[test]
+    fn a_label_no_encoding_of_the_signal_names_binds_nothing() {
+        let mut records = vec![
+            presence("presence_0000", "XDOMAIN"),
+            presence("presence_0001", "XRESP"),
+        ];
+        let statements = with_encoding(
+            "XDOMAIN",
+            &[
+                statement(
+                    "statement_0001",
+                    "If XDOMAIN is omitted, it is assumed to be Inner shareable.",
+                ),
+                statement(
+                    "statement_0002",
+                    "If XRESP is omitted, it is assumed to be Non-shareable.",
+                ),
+            ],
+        );
+        bind_stated_absent_values(
+            &mut records,
+            &statements,
+            &[],
+            &[],
+            &[domain_encoding("XDOMAIN")],
+        );
+        assert!(records.iter().all(|r| r.absent_value.is_none()));
+        assert!(records.iter().all(|r| r.qualified_absent_values.is_empty()));
+    }
+
+    /// AXI: *If AxDOMAIN is omitted from the interface, CMO transactions are assumed to be Non-shareable.* The value
+    /// holds for CMO transactions only, so it is no value of the signal itself.
+    #[test]
+    fn a_value_stated_for_a_class_of_requests_is_qualified() {
+        let mut records = vec![presence("presence_0000", "XDOMAIN")];
+        let statements = with_encoding(
+            "XDOMAIN",
+            &[statement(
+                "statement_0001",
+                "- -If XDOMAIN is omitted from the interface, CMO transactions are assumed to be Non-shareable.",
+            )],
+        );
+        bind_stated_absent_values(
+            &mut records,
+            &statements,
+            &[],
+            &[],
+            &[domain_encoding("XDOMAIN")],
+        );
+        assert!(records[0].absent_value.is_none());
+        assert_eq!(
+            records[0]
+                .qualified_absent_values
+                .iter()
+                .map(summary)
+                .collect::<Vec<_>>(),
+            vec![(
+                Some("CMO transactions"),
+                "Non-shareable",
+                vec!["0b00"],
+                vec!["statement_0001"]
+            )]
+        );
+    }
+
+    /// AXI: *If AxDOMAIN signals are not present:* / *- Non-cacheable requests are assumed to be in the System
+    /// domain.* / *- Cacheable requests are assumed to be in the Shareable domain.* The lead-in states the absence
+    /// and names the collective name; each bullet states one class's value, and a label two rows share keeps both
+    /// codes.
+    #[test]
+    fn a_list_lead_in_states_the_absence_for_its_bullets() {
+        let mut records = vec![
+            presence("presence_0000", "XWDOMAIN"),
+            presence("presence_0001", "XRDOMAIN"),
+        ];
+        let collectives = [CollectiveSignalNameRecord {
+            collective_id: "collective_0000".to_string(),
+            collective_name: "XxDOMAIN".to_string(),
+            member_names: vec!["XRDOMAIN".to_string(), "XWDOMAIN".to_string()],
+            supporting_statement_ids: vec!["statement_0000".to_string()],
+        }];
+        let statements = with_encoding(
+            "XxDOMAIN",
+            &[
+                statement("statement_0001", "If XxDOMAIN signals are not present:"),
+                statement(
+                    "statement_0002",
+                    "- Non-cacheable requests are assumed to be in the System domain.",
+                ),
+                statement(
+                    "statement_0003",
+                    "- Cacheable requests are assumed to be in the Shareable domain.",
+                ),
+            ],
+        );
+        bind_stated_absent_values(
+            &mut records,
+            &statements,
+            &[],
+            &collectives,
+            &[domain_encoding("XxDOMAIN")],
+        );
+        for record in &records {
+            assert!(record.absent_value.is_none());
+            assert_eq!(
+                record
+                    .qualified_absent_values
+                    .iter()
+                    .map(summary)
+                    .collect::<Vec<_>>(),
+                vec![
+                    (
+                        Some("Non-cacheable requests"),
+                        "System domain",
+                        vec!["0b11"],
+                        vec!["statement_0001", "statement_0002"]
+                    ),
+                    (
+                        Some("Cacheable requests"),
+                        "Shareable domain",
+                        vec!["0b01", "0b10"],
+                        vec!["statement_0001", "statement_0003"]
+                    ),
+                ]
+            );
+            assert!(
+                record
+                    .qualified_absent_values
+                    .iter()
+                    .all(|v| v.collective_name.as_deref() == Some("XxDOMAIN"))
+            );
+        }
+    }
+
+    /// A paragraph between the lead-in and the bullet ends the list; a bullet without a lead-in states nothing.
+    #[test]
+    fn a_bullet_outside_an_absence_list_reads_nothing() {
+        for statements in [
+            vec![
+                statement("statement_0001", "If XDOMAIN signals are not present:"),
+                statement("statement_0002", "The following applies to every request."),
+                statement(
+                    "statement_0003",
+                    "- Non-cacheable requests are assumed to be in the System domain.",
+                ),
+            ],
+            vec![
+                statement("statement_0001", "XDOMAIN signals are described below:"),
+                statement(
+                    "statement_0002",
+                    "- Non-cacheable requests are assumed to be in the System domain.",
+                ),
+            ],
+        ] {
+            let mut records = vec![presence("presence_0000", "XDOMAIN")];
+            let statements = with_encoding("XDOMAIN", &statements);
+            bind_stated_absent_values(
+                &mut records,
+                &statements,
+                &[],
+                &[],
+                &[domain_encoding("XDOMAIN")],
+            );
+            assert!(records[0].absent_value.is_none());
+            assert!(records[0].qualified_absent_values.is_empty());
+        }
+    }
+
+    /// Agreement is settled per class: two statements disagreeing about one class bind nothing for it, and leave
+    /// another class and the signal's own value alone.
+    #[test]
+    fn classes_settle_agreement_apart() {
+        let mut records = vec![presence("presence_0000", "XDOMAIN")];
+        let statements = with_encoding(
+            "XDOMAIN",
+            &[
+                statement(
+                    "statement_0001",
+                    "If XDOMAIN is omitted, Cacheable requests are assumed to be in the Shareable domain.",
+                ),
+                statement(
+                    "statement_0002",
+                    "If XDOMAIN is omitted, cacheable requests are assumed to be in the Non-shareable domain.",
+                ),
+                statement(
+                    "statement_0003",
+                    "If XDOMAIN is omitted, Non-cacheable requests are assumed to be in the System domain.",
+                ),
+                statement(
+                    "statement_0004",
+                    "If XDOMAIN is omitted, it is assumed to be 0b00.",
+                ),
+            ],
+        );
+        bind_stated_absent_values(
+            &mut records,
+            &statements,
+            &[],
+            &[],
+            &[domain_encoding("XDOMAIN")],
+        );
+        assert_eq!(
+            records[0].absent_value.as_ref().map(summary),
+            Some((None, "0b00", vec![], vec!["statement_0004"]))
+        );
+        assert_eq!(
+            records[0]
+                .qualified_absent_values
+                .iter()
+                .map(summary)
+                .collect::<Vec<_>>(),
+            vec![(
+                Some("Non-cacheable requests"),
+                "System domain",
+                vec!["0b11"],
+                vec!["statement_0003"]
+            )]
+        );
+    }
+
+    /// A table row lifted as prose belongs to its table's reader: AXI's change history restates a CMO's default as
+    /// *| Cache maintenance operations | Clarification | It is clarified that if the AxDOMAIN signals are missing, a
+    /// CMOis assumed to be Non-shareable. |*, and its converter-fused *CMOis* would become a class.
+    #[test]
+    fn a_table_row_is_not_read_as_a_sentence() {
+        let mut records = vec![presence("presence_0000", "XDOMAIN")];
+        let statements = with_encoding(
+            "XDOMAIN",
+            &[statement(
+                "statement_0001",
+                "| Cache maintenance operations | Clarification | It is clarified that if the XDOMAIN signals are missing, a CMOis assumed to be Non-shareable. |",
+            )],
+        );
+        bind_stated_absent_values(
+            &mut records,
+            &statements,
+            &[],
+            &[],
+            &[domain_encoding("XDOMAIN")],
+        );
+        assert!(records[0].absent_value.is_none());
+        assert!(records[0].qualified_absent_values.is_empty());
+    }
+
+    /// A clause whose subject is the signal — by a pronoun, a noun for the signal or its value, or its name — states
+    /// the signal's own value, whatever clause the absence is in.
+    #[test]
+    fn a_subject_that_is_the_signal_is_no_class() {
+        for text in [
+            "If XRESP is not present, the value is assumed to be LOW.",
+            "If XRESP is omitted, XRESP is assumed to be LOW.",
+            "If XRESP is omitted, these signals are assumed to be LOW.",
+        ] {
+            let mut records = vec![presence("presence_0000", "XRESP")];
+            bind_stated_absent_values(
+                &mut records,
+                &[statement("statement_0001", text)],
+                &[],
+                &[],
+                &[],
+            );
+            assert_eq!(
+                records[0].absent_value.as_ref().map(|v| v.value.as_str()),
+                Some("LOW"),
+                "{text}"
+            );
+            assert!(records[0].qualified_absent_values.is_empty(), "{text}");
         }
     }
 }
@@ -57418,6 +58209,7 @@ mod check_coverage_tests {
             }],
             table_id: "table_presence".to_string(),
             absent_value: None,
+            qualified_absent_values: Vec::new(),
         }
     }
 
@@ -57526,7 +58318,7 @@ mod check_coverage_tests {
             "statement_0388",
             "- If some of the signals covered by a check signal are not present on an interface, then the missing signals are assumed to be LOW.",
         )];
-        bind_stated_absent_values(&mut records, &statements, &coverage, &[]);
+        bind_stated_absent_values(&mut records, &statements, &coverage, &[], &[]);
         for record in &records[1..] {
             let value = record.absent_value.as_ref().expect("covered signal bound");
             assert_eq!(value.value, "LOW");
@@ -57556,7 +58348,7 @@ mod check_coverage_tests {
             "statement_0001",
             "If some of the optional signals are not present on an interface, then the missing signals are assumed to be LOW.",
         )];
-        bind_stated_absent_values(&mut records, &statements, &coverage, &[]);
+        bind_stated_absent_values(&mut records, &statements, &coverage, &[], &[]);
         assert!(records[0].absent_value.is_none());
     }
 
@@ -57583,7 +58375,7 @@ mod check_coverage_tests {
                 "If XPROT is not present it is assumed to be HIGH.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements, &coverage, &[]);
+        bind_stated_absent_values(&mut records, &statements, &coverage, &[], &[]);
         let prot = records[0].absent_value.as_ref().expect("XPROT bound");
         assert_eq!(
             (prot.value.as_str(), prot.supporting_table_ids.len()),
@@ -57631,6 +58423,7 @@ mod collective_signal_name_tests {
             }],
             table_id: "table_presence".to_string(),
             absent_value: None,
+            qualified_absent_values: Vec::new(),
         }
     }
 
@@ -57803,7 +58596,7 @@ mod collective_signal_name_tests {
                 "If XRSNOOP is not present it is assumed to be HIGH.",
             ),
         ];
-        bind_stated_absent_values(&mut records, &statements, &[], &collectives);
+        bind_stated_absent_values(&mut records, &statements, &[], &collectives, &[]);
         let write = records[0].absent_value.as_ref().expect("XWSNOOP bound");
         assert_eq!(write.value, "LOW");
         assert_eq!(write.collective_name.as_deref(), Some("XxSNOOP"));

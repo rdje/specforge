@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-48-A-CLOSED-OWNER-LOOKUP",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-II-B-III-A-LABELED-CLASS-ABSENT-VALUE",
    "baseline": {
-    "analyzed_functions": 2736,
-    "decision_sites": 14803,
-    "helper_edges": 18321,
+    "analyzed_functions": 2737,
+    "decision_sites": 14807,
+    "helper_edges": 18323,
     "semantic_macros": 1578
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 4,
-    "helper_edges": 2,
-    "semantic_macros": 0
+    "analyzed_functions": 8,
+    "decision_sites": 88,
+    "helper_edges": 129,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.48.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.48.a: the trajectory controller finds a closed owner where ADR 0057 put it. validate_task_owner accepts an owner declared in the named root or, through task_evidence_declares, in the tree's task-evidence directory, and refuses one declared in neither."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a: a stated absent value may be a label of the signal's own encoding and may hold for one class of requests. The binder runs after the convergent loop, reads labels through AbsentValueEncodings, class subjects, list lead-ins and per-class agreement; the adapter adds a residual per class-scoped value; validate counts them."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

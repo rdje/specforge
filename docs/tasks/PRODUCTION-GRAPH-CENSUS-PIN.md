@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `PRODUCTION-GRAPH-CENSUS-PIN`
-- Status: `active` (`2026-09-24`; `.0`-`.3` done; `.4` open: a name-fallback edge inflates the census)
+- Status: `active` (`2026-09-24`; `.0`-`.3` done; `.4` open: a name-fallback edge inflates the census; `.5` open: a
+  value captured inside a format string is invisible to the flow analysis)
 - Roadmap lane: `process / doctrine enforcement`
 - Created: `2026-09-12`
-- Last updated: `2026-09-24`
+- Last updated: `2026-10-19`
 - Owner: repo-local workflow
 
 ## Goal
@@ -71,7 +72,7 @@ been able to move them without any local signal.
 
 ## Task Tree
 
-- ID: `PRODUCTION-GRAPH-CENSUS-PIN` · Status: `active` (`2026-09-24`) · Children: `.0`-`.4`
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN` · Status: `active` (`2026-09-24`) · Children: `.0`-`.5`
 
 - ID: `PRODUCTION-GRAPH-CENSUS-PIN.0` · Status: `done` (`2026-09-12`) · Goal: **re-pin at measured
   truth, and say what the drift was.** The four pins are set to the values the current tree derives,
@@ -499,13 +500,32 @@ message, and it generalises — a number printed into a void is not evidence of 
   either way count how many current edges come only from the fallback and read which closures move.
   Gates: `cargo test -p specforge-production-graph`, `--only PRODUCTION-GENERICITY`, and a boundary-count
   diff of zero or one explained per moved count.
+  **Hit again `2026-10-19`** by `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`'s private `AbsentValueEncodings::new`:
+  +503 helper edges where +129 were its own, so that slice named the constructor `read`, as `.c.ii` did.
+
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN.5` · Status: `open` (`2026-10-19`; CODE, tool-side; found by
+  `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`) · Goal: **a value captured inside a format string is a
+  dependency of the macro.** `macro_dependencies` (`tools/production-genericity-graph/src/flow.rs`) unions the
+  dependencies of every identifier token and group in a macro's tokens and skips literals, so the inline
+  capture in `format!("…{presence}")` is invisible: the macro is not a semantic macro, the string it builds
+  carries no dependency, and a sensitive value can flow through it unseen. **Reproduce:** in
+  `absent_value_residual_packet` (`crates/specforge/src/ir/adapters.rs`), write `format!("isf_protocol_signal_absent_value_{}",
+  presence)` as `format!("isf_protocol_signal_absent_value_{presence}")` and run `bash
+  scripts/check_production_genericity_flow.sh`: `semantic_macros` falls by exactly 1 (1,579 -> 1,578) and nothing
+  else moves (measured `2026-10-19`). **Impact:** the information-flow census, and every check that reads a
+  macro's dependencies, under-counts wherever production code uses an inline capture — at least 426 production
+  macro invocations with 549 inline captures by a source scan that stops at each file's first `#[cfg(test)]`, so
+  a lower bound. **Fix direction, to be measured first:** parse a format-family macro's first string literal for
+  `{name}` and `{name:spec}` placeholders and union `env[name]` for each (`{{` is an escape), then re-derive the
+  census and read every closure and boundary count that moves before re-pinning, under its own owning leaf.
 
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
 1. `.4` — an unresolved call must not borrow a same-named local function as its target.
-2. `.0`-`.3` are closed. The census is declared and compared at commit cadence, the
+2. `.5` — a value captured inside a format string is a dependency of the macro.
+3. `.0`-`.3` are closed. The census is declared and compared at commit cadence, the
    registry sweep is done, and every check that reports a self-test count now fails closed when one is
    removed. A future leaf would be about the 15 further report lines the broadened producer surfaces
    beyond the 16 adjudicated here.
@@ -603,6 +623,10 @@ None.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
 
 ## Changelog
+
+- `2026-10-19` — `.5` opened by `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a`: an inline format capture hides a
+  sensitive value from `macro_dependencies` (one controlled edit, `semantic_macros` -1); `.4`'s name fallback hit
+  again (+503 helper edges, +129 own) and was avoided by naming the constructor `read`.
 
 - `2026-09-24` — `.4` opened by `KG-ISF-COMPLETENESS.2a.vii.c.ii`, whose one private constructor named `new`
   moved `helper_edges` by +429 where +84 was its own: the name fallback in `local_edges` attached 345

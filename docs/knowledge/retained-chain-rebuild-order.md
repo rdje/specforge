@@ -11,6 +11,7 @@ answers:
   - "how do I rebuild every retained chain after a production change"
   - "why is my rebuilt chain stale even though the content matches"
   - "why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary"
+  - "why did PROOF-SEAL-CURRENCY refuse a commit after I stashed a code change (its rebuilt chain is still on disk)"
 date: 2026-08-27
 status: current
 tags: [chain-currency, proof-ledger, validation, corpus, operations, rebuild]
@@ -64,3 +65,10 @@ Regenerating it for that run, and then regenerating the new one, leaves Evidence
 ledger, so the SemanticIR, IntentIR and adapter built before it no longer hold its prefix, and
 `check_chain_currency.sh` fails at the adapter. After any such detour, rebuild every downstream stage in the order
 above before running currency.
+
+**The same trap, sideways (`2026-10-19`, `EXTRACTION-REPRESENTATION-GAPS.48.a`).** Setting a code change aside with
+`git stash` to land something else first leaves the chain that change rebuilt in `generated/`. The HEAD build then
+refuses it — `PROOF-SEAL-CURRENCY` fails the commit with *registered derivation 'evidence.claim.schema_version.root'
+output or input topology is stale* — because the artifact carries fields the HEAD code does not know. Snapshot the
+chain before rebuilding, restore the snapshot before committing the other change, and rebuild again after the
+stash comes back; the rebuild is deterministic, so the second one is byte-identical in content to the first.
