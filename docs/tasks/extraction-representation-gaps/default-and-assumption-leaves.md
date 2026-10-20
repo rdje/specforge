@@ -120,7 +120,7 @@ children moved here whole, with their acceptance checklists.
   record), `assumed_by_word` 50 -> 37, `stated_default` 18 -> 5.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c`
-  Status: `open` (`2026-10-19`; DESIGN + CODE; found by `.3.d.ii.b.iii`)
+  Status: `done` (`2026-10-19`; DESIGN, re-scoped from DESIGN + CODE; found by `.3.d.ii.b.iii`; opened `.49`)
   Goal: **a default whose subject is no presence-record signal reaches the record that owns it.** 4 AXI records: the
   SMMU flow default (the statement names `MMUFLOW_Present`, a term of the presence conditions of `AWMMUFLOW`,
   `ARMMUFLOW`, `AWMMUATST` and `ARMMUATST`, and *Stall* labels code 0 of `AxMMUFLOW`'s encoding), the interface
@@ -132,6 +132,32 @@ children moved here whole, with their acceptance checklists.
   decide each carrier (a default reached through the property that gates the signal, an interface-state default, a
   removed signal's rationale as non-contract), surface the disagreement as a conflict record, and measure every
   chain.
+  **Decided `2026-10-19`: no reader for any of the four, because none of their shapes recurs, and the one defect
+  underneath is owned on its own.** Measured over the 31 chains: *If no … is indicated, … is assumed* occurs once
+  (`statement_3715`), *the interface is assumed to be* once (`statement_3903`), a list of signals *no longer required*
+  once (`statement_5202`, the lead-in of `statement_5203`), and *<word> signaling* 252 times, almost all of them
+  section titles and contents rows, so it is no handle on a group of signals. A reader for any of them would read
+  one AXI sentence, which ADR 0006's genericity forbids in all but name. Dispositions, each recorded where a reader
+  of the census will find it:
+  - **The Stall flow** (`statement_3715`) stays an IntentIR assumption. Binding *Stall* to `AWMMUFLOW`/`ARMMUFLOW`
+    would need two inferences no structure grounds: that *no flow is indicated* means the signals are absent, and
+    that *flow* names them (only the second sentence's `MMUFLOW_Present`, a term of their presence condition, hints
+    at it). A label alone would resolve, through `AxMMUFLOW`'s encoding (`table_0198`), if a second document wrote
+    the shape.
+  - **The interface state without credit control** (`statement_3903`, *running when not in reset*) waits on a carrier
+    that does not exist: AXI enumerates four credit-control states (*STOP, ACTIV ATE, RUN, DEACTIVATE*,
+    `statement_3926`) and writes *the interface moves into the RUN state* (`statement_3939`), but `protocol_states`
+    holds only DEACTIVATE, STOP and ACTIVATE. That recall defect is `.49`, which also decides whether the default
+    binds to RUN.
+  - **`ACSNOOP`'s rationale** (`statement_5203`) stays an IntentIR assumption: a bullet under *the following signals
+    described in earlier issues … are no longer required*, about a signal this issue neither declares nor lists in a
+    presence matrix.
+  - **The disagreement** (`statement_2337` puts a cacheable request in the Non-shareable domain without domain
+    signaling, `statement_2360` in the Shareable domain) is not a conflict record: `statement_2337` names no signal,
+    only *Domain signaling*, so no binder reads it and there is nothing structural to conflict with. It is surfaced in
+    the book (`pipeline/evidence-rule-chronology.md`, the label and class section) and in
+    [[assume-sentences-fall-into-six-shapes]]; the class-scoped value `.3.d.ii.b.iii.a` bound is `statement_2360`'s.
+  No code change, so no acceptance checklist applies.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` (CODE) — DONE `2026-10-19`
 

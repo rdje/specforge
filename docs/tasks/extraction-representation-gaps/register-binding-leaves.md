@@ -157,6 +157,21 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   edges, boundary unchanged`
   Commit: `EXTRACTION-REPRESENTATION-GAPS.48.a — the trajectory controller finds a closed owner in its tree's evidence`
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.49`
+  Status: `open` (`2026-10-19`; CODE; found by `.3.d.ii.b.iii.c`)
+  Goal: **a state the document enumerates and names is a protocol state.** AXI states *When using credit control, an
+  interface can be in one of four states: STOP, ACTIV ATE, RUN, DEACTIVATE* (`statement_3926`), *When ACTIVATEACK is
+  asserted, the interface moves into the RUN state* (`statement_3939`), *RUN and STOP are stable states*
+  (`statement_3928`) and *in the RUN or DEACTIVATE states* (`statement_3952`), yet `protocol_states` holds DEACTIVATE,
+  STOP and ACTIVATE only. `extract_transition_bound_states` keeps a name only when two statements bind it as *the X
+  state*; RUN's second mention is plural, its third unbound, and the counted enumeration is read by no grammar.
+  **Reproduce:** AXI's EvidenceIR `protocol_states`. **Impact:** the credited-transport state machine lacks the
+  state it spends its time in, and `.3.d.ii.b.iii.c`'s default (*If credit control signals are not included, the
+  interface is assumed to be running when not in reset*) has no state to name. Acceptance: count a state bound in a
+  plural phrase (*the RUN or DEACTIVATE states*) and a state listed by an enumeration whose stated count matches its
+  members, keep the two-statement guard's purpose (one incidental capital word is no state machine), measure every
+  chain, and decide whether `statement_3903`'s default binds to the RUN state.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6's AHB3 and AHB5 sections map `CSW.Prot` bits 28-24 to `HPROT` in prose; no

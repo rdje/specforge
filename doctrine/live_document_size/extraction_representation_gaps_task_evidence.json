@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c",
-      "literal" : "`.3.d.ii.b.iii.c` — a default whose subject is no presence-record signal reaches the record that owns it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.49",
+      "literal" : "`.49` — a state the document enumerates and names is a protocol state.",
       "mode" : "eligible",
-      "part_id" : "default-and-assumption-leaves"
+      "part_id" : "register-binding-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -112,13 +112,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 20520,
+               "bytes" : 21967,
                "line_bytes" : 281,
-               "lines" : 213
+               "lines" : 228
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "8bba6ba86281e61f6eed7cc23b498b60e3889e1ead377d0adfec9bbd12dc6354",
+            "sha256" : "0c317168528d70699982f027f102f9ebc5a7e7dc0a986c95e387e82bf376821b",
             "state" : "active"
          },
          {
@@ -136,13 +136,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
             "metrics" : {
-               "bytes" : 22185,
+               "bytes" : 24755,
                "line_bytes" : 967,
-               "lines" : 206
+               "lines" : 232
             },
             "part_id" : "default-and-assumption-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
-            "sha256" : "c75312cd065ded2f143324379f44723f074bb8bd9a6c2c7af0959cae0e6c21b1",
+            "sha256" : "350a50c535045221d94631ddcf2c001ef3c36877373c94f30b0efd3ea0cbcec8",
             "state" : "active"
          },
          {
@@ -1122,7 +1122,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
       },
@@ -1135,6 +1135,12 @@
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.48.a",
          "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.49",
+         "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       }
@@ -1264,7 +1270,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.ii.b.iii.c` — a default whose subject is no presence-record signal reaches the record that owns it.",
+         "`.49` — a state the document enumerates and names is a protocol state.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1308,7 +1314,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.49`"
       ]
    },
    "migration_metadata" : {
