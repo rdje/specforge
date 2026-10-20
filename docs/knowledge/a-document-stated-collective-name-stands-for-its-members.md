@@ -11,8 +11,8 @@ answers:
   - "does a collective name's sentence have to name declared signals (no, the sentence declares them)"
   - "what is collective_name on a StatedAbsentValue"
   - "which naming outranks which for an absent value (the signal itself, then a collective name, then a class)"
-  - "are rules stated on a collective name applied to each member (not yet: EXTRACTION-REPRESENTATION-GAPS.47)"
-date: 2026-10-03
+  - "are rules stated on a collective name applied to each member (.47: a polarity reaches each member that states none; the rest are descriptions members already state)"
+date: 2026-10-20
 status: current
 tags: [evidence-ir, collective-name, generic-name, signal-presence, absent-value, carried-evidence, adr-0006, adr-0016]
 evidence: crates/specforge/src/ir/evidence.rs (CollectiveSignalNameRecord; collective_signal_name_surface; collective_marker; is_collective_member; StatedAbsentValueReading::rank); crates/specforge/src/ir/semantic.rs and intent.rs (collective_signal_names); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a.ii)
@@ -50,9 +50,14 @@ from the rule; `AxCACHE` cites both) and ADIv6 2 (`CxxxPWRUPREQ`, `CxxxPWRUPACK`
 CDBGPWRUPREQ*). `AWSNOOP` and `ARSNOOP` take `LOW` from `statement_2207` through `AxSNOOP`; the unread
 `assumed_by_word` family falls 107 -> 106. The shape's trap, found on Wishbone: *When the gap indicates a
 wait state, the symbols '-WSM-' or '-WSS-' …* reads as `When` -> `WSM`, `WSS` unless a name must carry an uppercase
-letter after its run — `collective_marker` requires one. Every other
-rule stated on a collective name (AXI uses one in 245 statements) still reaches no member; that is
-`EXTRACTION-REPRESENTATION-GAPS.47`.
+letter after its run — `collective_marker` requires one.
+
+**`.47` (`2026-10-20`): measured, the gap was a polarity.** Of AXI's 250 statements naming a collective, the
+normative and conditional ones are already read (their consequents are descriptions, not drives), no signal
+constraint comes from one, and making collective-shaped tokens subjects of the convergent loop added only junk
+(`SubstreamID`, `Num_RP`). The records keyed on a collective name have members carrying their own, except one
+polarity: `extend_polarities_through_collective_names` gives `AWMMUATST` and `ARMMUATST` the active-high polarity
+stated on `AxMMUATST`, only to a member that states none; enum definitions stay on the collective name.
 
 Links: [[a-signals-stated-absent-value-rides-its-presence-record]],
 [[a-check-coverage-table-binds-the-class-of-covered-signals]], [[signal-presence-matrix-capture]].

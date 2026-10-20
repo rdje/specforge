@@ -2318,7 +2318,7 @@ impl EvidenceIr {
             extracted_statements,
             signal_constraints,
             conditional_rules,
-            signal_polarities,
+            mut signal_polarities,
             signal_polarity_conflicts,
             actor_signal_relations,
             convergence_report,
@@ -2334,6 +2334,11 @@ impl EvidenceIr {
             &mut extraction_manifest,
         );
 
+        // EXTRACTION-REPRESENTATION-GAPS.47 — a polarity stated on a collective name holds for each member that states none.
+        extend_polarities_through_collective_names(
+            &mut signal_polarities,
+            &collective_signal_names,
+        );
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a / .a.i / .a.ii — the value a signal takes when absent, bound to its
         // presence records from the sentences that state it: by name, through a collective name, or through the
         // class a check-coverage table defines. `.3.d.ii.b.iii.a`: bound after the convergent loop, whose `Enum`
@@ -20759,6 +20764,38 @@ fn collective_marker(name: &str) -> Option<std::ops::Range<usize>> {
         .all(|b| b.is_ascii_uppercase() || b.is_ascii_digit() || *b == b'_');
     let uppercase_follows = bytes[end..].iter().any(u8::is_ascii_uppercase);
     (start > 0 && rest_is_plain && uppercase_follows).then_some(start..end)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.47 — a polarity the document states on a collective name it defines (*When AxMMUATST
+/// is asserted HIGH, the ATST flow is used*) holds for each member (`AWMMUATST`, `ARMMUATST`) that has no polarity of
+/// its own, citing the same statements and tables; the collective's own record stays as written, and a member that
+/// states a polarity keeps it.
+fn extend_polarities_through_collective_names(
+    polarities: &mut Vec<SignalPolarityRecord>,
+    collective_names: &[CollectiveSignalNameRecord],
+) {
+    let mut stated: BTreeSet<String> = polarities
+        .iter()
+        .map(|record| record.signal_name.clone())
+        .collect();
+    let mut added = Vec::new();
+    for record in polarities.iter() {
+        let Some(collective) = collective_names
+            .iter()
+            .find(|collective| collective.collective_name == record.signal_name)
+        else {
+            continue;
+        };
+        for member in &collective.member_names {
+            if stated.insert(member.clone()) {
+                added.push(SignalPolarityRecord {
+                    signal_name: member.clone(),
+                    ..record.clone()
+                });
+            }
+        }
+    }
+    polarities.extend(added);
 }
 
 /// `member` is `collective` with its lowercase run replaced by one or more uppercase letters.
@@ -61022,11 +61059,66 @@ mod check_coverage_tests {
 #[cfg(test)]
 mod collective_signal_name_tests {
     use super::{
-        CollectiveSignalNameRecord, EvidenceModality, ExtractedStatement, SignalPresenceRecord,
-        StatementClass, VariantPresenceEntry, bind_stated_absent_values,
-        collective_signal_name_surface,
+        AutomationConfidence, CollectiveSignalNameRecord, EvidenceModality, ExtractedStatement,
+        SignalPolarity, SignalPolarityRecord, SignalPresenceRecord, StatementClass,
+        VariantPresenceEntry, bind_stated_absent_values, collective_signal_name_surface,
+        extend_polarities_through_collective_names,
     };
     use std::collections::BTreeSet;
+
+    /// EXTRACTION-REPRESENTATION-GAPS.47 — AXI's *When AxMMUATST is asserted HIGH, the ATST flow is used*: the
+    /// polarity holds for each member that states none, and a member stating its own keeps it.
+    #[test]
+    fn a_polarity_stated_on_a_collective_name_reaches_each_member_that_states_none() {
+        let polarity =
+            |name: &str, polarity: SignalPolarity, statement: &str| SignalPolarityRecord {
+                signal_name: name.to_string(),
+                polarity,
+                supporting_statement_ids: vec![statement.to_string()],
+                supporting_table_ids: Vec::new(),
+                automation_confidence: AutomationConfidence::Medium,
+            };
+        let collective = |name: &str, members: &[&str]| CollectiveSignalNameRecord {
+            collective_id: format!("collective_{name}"),
+            collective_name: name.to_string(),
+            member_names: members.iter().map(|m| m.to_string()).collect(),
+            supporting_statement_ids: Vec::new(),
+        };
+        let mut polarities = vec![
+            polarity("AxMMUATST", SignalPolarity::ActiveHigh, "s1"),
+            polarity("ARQOSACCEPT", SignalPolarity::ActiveLow, "s3"),
+            polarity("VAxQOSACCEPT", SignalPolarity::ActiveHigh, "s2"),
+        ];
+        extend_polarities_through_collective_names(
+            &mut polarities,
+            &[
+                collective("AxMMUATST", &["ARMMUATST", "AWMMUATST"]),
+                collective("VAxQOSACCEPT", &["VARQOSACCEPT", "ARQOSACCEPT"]),
+                collective("AxLEN", &["ARLEN", "AWLEN"]),
+            ],
+        );
+        let read: Vec<(&str, SignalPolarity, &str)> = polarities
+            .iter()
+            .map(|r| {
+                (
+                    r.signal_name.as_str(),
+                    r.polarity,
+                    r.supporting_statement_ids[0].as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            vec![
+                ("AxMMUATST", SignalPolarity::ActiveHigh, "s1"),
+                ("ARQOSACCEPT", SignalPolarity::ActiveLow, "s3"),
+                ("VAxQOSACCEPT", SignalPolarity::ActiveHigh, "s2"),
+                ("ARMMUATST", SignalPolarity::ActiveHigh, "s1"),
+                ("AWMMUATST", SignalPolarity::ActiveHigh, "s1"),
+                ("VARQOSACCEPT", SignalPolarity::ActiveHigh, "s2"),
+            ]
+        );
+    }
 
     fn statement(id: &str, text: &str) -> ExtractedStatement {
         ExtractedStatement {

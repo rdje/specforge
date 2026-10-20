@@ -4,7 +4,8 @@
 - State: `active`
 
 New leaves outside the `.3` family continue here, from `.41.g` on, after `clause-and-register-leaves` reached its
-mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers and their residuals.
+mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers and their residuals. `.50` and `.51` moved on to `hint-and-notation-leaves`
+(`2026-10-20`).
 
 ## Post-migration records
 
@@ -186,7 +187,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   a pin carries the form and the adapter lowers them.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.47`
-  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a.ii`)
+  Status: `done` (`2026-10-20`; DESIGN + CODE; found by `.3.d.ii.a.ii`; checklist below)
   Goal: **a rule stated on a collective name reaches each member.** `.3.d.ii.a.ii` carries the collective names
   AXI defines (`collective_signal_names`) and resolves them for one reader, the absent-value binder. Every other
   reader still takes `AxVALID`, `AxADDR` or `AxMMUATST` as a name of its own: AXI uses a collective name in 245 of
@@ -198,6 +199,24 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   (a SemanticIR projection that duplicates a record per member, or each reader consulting the records), apply it to
   the readers that resolve a condition's or constraint's signal, keep enum definitions on the collective name where
   the document defines them there, and measure every chain and the 11 seeds.
+  **Measured first, `2026-10-20`, and the gap is narrower than the statement count.** Of AXI's 250 statements naming
+  one of its 37 collective names, 152 are cited by no IntentIR record and are source facts (147: table rows and
+  descriptions) or apparatus; the 27 normative and 19 conditional-rule statements are already read, the rules with
+  no consequent signal, because their consequents are descriptions (*When AxCACHE[1] is asserted, the transaction
+  is Modifiable*), not drives; no signal constraint comes from one. An experiment that made every collective-shaped
+  token a known subject of the convergent loop added no constraint, only junk (`SubstreamID`, `Num_RP` pass the
+  shape) and renumbering, so the readers keep their vocabulary. The records already keyed on a collective name are
+  18 in IntentIR: 9 presence rows whose members carry their own rows, 2 relations whose members already carry
+  theirs (and one with a junk actor, *instruction*), 2 actor ports and connectivity on the same names, and one
+  polarity, `AxMMUATST` (*When AxMMUATST is asserted HIGH, the ATST flow is used*), whose members carry none.
+  **Decided:** resolution lives in EvidenceIR after the convergent loop and reaches a member only where the member
+  states nothing of that kind; the collective's record stays as written, as do enum definitions on the collective
+  name (`AxBURST`, `AxDOMAIN`, … in `.isf` `types`/`enums`). `extend_polarities_through_collective_names` is the one
+  kind that needs it. **Measured over all 31 chains** (evidence dry-run against `6fb38d2b3`'s): 30 identical; AXI
+  gains `ARMMUATST` and `AWMMUATST` active high (`signal_polarities` 44 -> 46), carried into SemanticIR and IntentIR,
+  where the two signals' interface records resolve their polarity; `manager.isf` byte-identical. **Declared
+  residuals:** the 19 descriptions stated on collective names, and the presence, relation and port records on them,
+  whose members already carry their own.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.48`
   Status: `done` (`2026-10-19`; DATA + CODE; found by `.3.d.ii.b.iii`, whose three children took the root to its
@@ -291,39 +310,6 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   moves in `protocol_states` (+RUN, `named_state_0002`, citing `statement_3939` and `statement_3952`) and in the
   extraction manifest's counts. Rebuilt stage by stage: SemanticIR and IntentIR carry the fourth state; the adapter
   gains one residual, `isf_protocol_state_named_state_0002`; `manager.isf` byte-identical.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.50`
-  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.b`)
-  Goal: **a prose hint gives a signal the role its sentence gives it.** The prose hint reader
-  (`synthesize_signal_semantic_hints_from_prose`, source facts only) tags a signal from the words near it. When
-  `.3.d.iii.b` returned 534 misfiled timing statements to their own classes it read them for the first time, and of
-  its 9 new hints 6 give a role the sentence does not: TMC's `ATREADYM`/`ATREADYS` -> `handshake_valid_like` from *If
-  there is valid data, that is, ATVALID HIGH, the data was accepted this cycle* (the valid signal is another named
-  one), AHB's `HREADY` -> `handshake_valid_like` from *provide valid data in the final cycle of the transfer, as
-  indicated by HREADY HIGH*, Wishbone's `RTY_I`/`RTY_O` -> `handshake_ready_like` from *indicates that the interface is
-  not ready to accept or send data* (a negated readiness: a retry), and Wishbone's `DAT_O` (already tagged from another
-  sentence) from *presents valid data on its [DAT_O()] lines* (the data the validity qualifies). **Reproduce:**
-  `signal_semantic_hints` of those three chains, `statement_1727`/`1751`, `statement_0733`, `statement_0398`/`0412`,
-  `statement_1232`. **Impact:** interfaces' signal records carry a handshake role the document does not give (TMC's
-  table tags were already wrong and are now `cross_modality`); no transaction, temporal record or `.isf` text moves
-  today. Acceptance: tag a signal valid- or ready-like only when the sentence makes that signal the bearer of the
-  validity or readiness (not the data it qualifies, not another named signal, not a negated readiness), and measure
-  every chain's hints and interfaces.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.51`
-  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.d`)
-  Goal: **a sentence defining the document's own notation is apparatus.** ADIv6's appendix E3 (*Pseudocode
-  Definition*) explains the pseudocode language the document uses, and its sentences are read as protocol content:
-  `.3.d.iii.d` read *The block of lines consisting of elsif and its indented statements is optional* as an optional
-  feature (`option_0006`), and *This statement indicates a special case that replaces the behavior defined by the
-  current pseudocode* is classed `normative_statement` five times and `derived_rule` once. **Reproduce:** statements
-  on the 31 chains not classed `apparatus` that name *pseudocode*, *elsif*, *indented statements* or *indentation*:
-  55, 46 of them ADIv6's (39 `source_fact`, 6 `normative_statement`, 1 `derived_rule`), AXI 6, ACE 2, CHI C2C 1.
-  **Impact:** a notation rule becomes a requirement or an option the hardware is held to, and an obligation reader
-  can take it. Acceptance: tell a section that defines the document's notation (pseudocode, typographic or
-  numbering conventions) from one that uses it, by its heading and its own words rather than a document's name, file
-  its sentences as apparatus, keep a pseudocode function that describes hardware behavior (*The pseudocode function
-  EnterDormantState describes the function of the JTAG-to-DS sequence detector*) where it is, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.52`
   Status: `done` (`2026-10-20`; DESIGN + CODE; found by `.3.d.i`; checklist below)
@@ -558,3 +544,25 @@ which leaves are closed.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the check-signal passage), `reference/representation-gaps.md`
   (the parity row, now owned by `.46.c`, and its ownership citation); KM
   `a-check-coverage-table-binds-the-class-of-covered-signals` amended. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.47` (DESIGN + CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — the leaf's count (250 statements with a collective name in AXI), their classes and
+  citations, the IntentIR records keyed on a collective name (18), and a reverted experiment adding collective-shaped
+  tokens to the convergent loop's subjects (`.project-data/tmp/erg-47/exp`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: only `bind_stated_absent_values` read
+  `collective_signal_names`; a polarity on a collective name reached no member. New
+  `extend_polarities_through_collective_names` after `converge_evidence_extractions`. RED, the file restored
+  byte-identically after each (2 mutations, each failing
+  `a_polarity_stated_on_a_collective_name_reaches_each_member_that_states_none`): a member's own polarity overwritten,
+  and no expansion. The call site is wired as measured: AXI's two records.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 30 identical, AXI +2 polarities. AXI rebuilt stage
+  by stage: polarities and the two interface records move; `manager.isf` byte-identical and FSMGen `--strict --check`
+  clean.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `737590692`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,878 passed, 0 failed. `flow_census.json` rolled; boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the document's own collective-name records; no document or signal name.
+- [x] **LOCKSTEP** — book `pipeline/intentir.md` (the collective-name sentence), KM
+  `a-document-stated-collective-name-stands-for-its-members` amended. No production rule deleted or replaced.

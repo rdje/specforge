@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-46-B-PARITY-RULE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-47-COLLECTIVE-POLARITY",
    "baseline": {
-    "analyzed_functions": 2781,
-    "decision_sites": 15293,
-    "helper_edges": 18964,
-    "semantic_macros": 1611
+    "analyzed_functions": 2785,
+    "decision_sites": 15303,
+    "helper_edges": 19045,
+    "semantic_macros": 1612
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 10,
-    "helper_edges": 81,
-    "semantic_macros": 1
+    "analyzed_functions": 1,
+    "decision_sites": 5,
+    "helper_edges": 15,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.46.b",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.46.b: a one-bit check over signals of stated width lowers as one parity rule under its enable. lower_parity_checks emits (! (^ ...)) for odd parity in the driving actor; parity_checks_not_lowered_packet names the rest by reason."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.47",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.47: a polarity stated on a collective name holds for each member that states none (extend_polarities_through_collective_names)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

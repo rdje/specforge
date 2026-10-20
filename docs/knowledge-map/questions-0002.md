@@ -39,7 +39,7 @@
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > are reference lists allowed to establish semantic intent
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > are rules stated on a collective name applied to each member (not yet: EXTRACTION-REPRESENTATION-GAPS.47)
+  > are rules stated on a collective name applied to each member (.47: a polarity reaches each member that states none; the rest are descriptions members already state)
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > are temporal rules silently dropped when lowering IntentIR to .isf
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)

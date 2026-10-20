@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.47",
-      "literal" : "`.47` — a rule stated on a collective name reaches each member.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.50",
+      "literal" : "`.50` — a prose hint gives a signal the role its sentence gives it.",
       "mode" : "eligible",
-      "part_id" : "register-binding-leaves"
+      "part_id" : "hint-and-notation-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -903,7 +903,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.47",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
       },
@@ -983,7 +983,7 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.50",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "register-binding-leaves"
+         "part_id" : "hint-and-notation-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d",
@@ -1001,7 +1001,7 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.51",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "register-binding-leaves"
+         "part_id" : "hint-and-notation-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f",
@@ -1143,13 +1143,25 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
          "metrics" : {
-            "bytes" : 54718,
+            "bytes" : 55552,
             "line_bytes" : 281,
-            "lines" : 560
+            "lines" : 568
          },
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-         "sha256" : "85af5ff9ef5e7d00169bb3e9e8c6d72f2ab0db7461f96a7b760c17f5ee37f5de",
+         "sha256" : "d2e31710729e46b03f52c8cb59e29ff9d72aea208ffb8e09bcbb046cbd24936f",
+         "state" : "active"
+      },
+      {
+         "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
+         "metrics" : {
+            "bytes" : 3595,
+            "line_bytes" : 119,
+            "lines" : 42
+         },
+         "part_id" : "hint-and-notation-leaves",
+         "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
+         "sha256" : "10c436c4d868ebd955d65f4424f80128efdf38e3db36137aefdb747871d416d1",
          "state" : "active"
       },
       {

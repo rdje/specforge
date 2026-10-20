@@ -48,7 +48,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.45` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46` | `closed` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.47` | `open` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.47` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
@@ -61,10 +61,10 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.50` | `open` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.50` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.51` | `open` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.51` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.52` | `closed` | [Register binding leaves](register-binding-leaves.md) |
