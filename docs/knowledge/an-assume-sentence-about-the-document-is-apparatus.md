@@ -16,9 +16,11 @@ answers:
   - "what is every_assume_word_states_no_abstraction / premise_of_a_figure_a_guideline_or_an_analysis"
   - "why is 'the hub shall ignore the route string and assume all packets are routed directly to the hub' an invariant now"
   - "why is 'The WISHBONE interface logic assumes that a low-skew clock distribution scheme is used' an assumption, not apparatus"
-  - "what is states_only_premises_with_assume_that / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS"
+  - "what is states_only_premises_with_a_premise_phrase / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS"
   - "why does 'These rules assume that the TS Delays are zero' stay apparatus (a rule's premise)"
   - "why does a 'For example' after an assumption not make it an example's premise"
+  - "what is object_head / OBJECT_ENDS (why is 'a host assumes the initial … sequence number and burst size' a take-on)"
+  - "why is 'Connection Manager assumes the configuration of Asymmetric Link failed' an assumption (of stays in the object)"
 date: 2026-10-20
 status: current
 tags: [evidence-ir, statement-class, apparatus, assumptions, classifier, measured, extraction-representation-gaps]
@@ -69,15 +71,23 @@ fall-through, nothing junk is minted, because these sentences are rules or behav
 **`.3.d.iii.e` (`2026-10-20`): what the hardware assumes of its environment is an assumption.** *Assume that* and
 *assumes that* were premise phrases whatever their subject, so *The WISHBONE interface logic assumes that a low-skew
 clock distribution scheme is used on the target device* was apparatus. Since then
-(`states_only_premises_with_assume_that`) a sentence is a premise by those phrases only when **every** use has, in
-its own sentence (a table cell counts as one), a document noun, an analysis noun or a `PREMISE_SUBJECT_WORDS` word
+(`states_only_premises_with_a_premise_phrase`) a sentence is a premise by those phrases only when **every** use has,
+in its own sentence (a table cell counts as one), a document noun, an analysis noun or a `PREMISE_SUBJECT_WORDS` word
 before it (*rules*, *limitation*,
 *descriptions*, *shown*, *we*, *we'll*, *you*, *reader*), or no subject at all (*Assume that a target or line error
 has occurred*). An *example* counts only before an assume word (`names_an_example_before_its_assumptions`): AXI's
 *This MEC implementation assumes that Managers and caches do not perform any MECID checks. For example, …* is
-illustrated, not premised. *Assumes the* is unchanged (`.3.d.iii.f`). Measured on the 31 chains: 5 statements in 4
+illustrated, not premised. *Assumes the* joined the test in `.3.d.iii.f`. Measured on the 31 chains: 5 statements in 4
 documents become abstractions (Wishbone's clock-skew and FASM read-data sentences, AXI's MEC, SMBus's timeout, RISC-V
 debug's *Debuggers may assume that a hardware platform has no harts with indexes higher than the first nonexistent
 one*, which `permission_rules` also reads); no other evidence record moves.
+
+**`.3.d.iii.f` (`2026-10-20`): *assumes the* and an object's head.** *Assumes the* (with *these*, *then*, *there*, as
+its old substring did) takes the same subject test, and an active *assume* takes on (`TAKE_ON_NOUNS`, now with
+*number(s)* and *size(s)*) when the clause's last word **or** its object's head is one of them: `object_head` is the
+last word before the first of `OBJECT_ENDS`, the prepositions and subordinators; *of* is not one, so *assumes the
+configuration of Asymmetric Link failed* is a conclusion, not a take-on. Measured on the 31 chains: 5 statements in 3
+documents (USB 3.2's host sequence state and a Wishbone patent disclaimer -> source facts; the USB4 connection-manager
+guide's two conclusions and a Wishbone example circuit's table row -> assumptions); nothing else moves.
 
 Links: [[assume-sentences-fall-into-six-shapes]], [[a-signals-stated-absent-value-rides-its-presence-record]].

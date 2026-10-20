@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f",
-      "literal" : "`.3.d.iii.f` — an *assumes the* whose subject is no premise's states what its subject does.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g",
+      "literal" : "`.3.d.iii.g` — the census files a note as apparatus only when it is about the document.",
       "mode" : "eligible",
       "part_id" : "environment-assumption-leaves"
    },
@@ -1005,7 +1005,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "environment-assumption-leaves"
       },
@@ -1155,13 +1155,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — environment assumption leaves",
          "metrics" : {
-            "bytes" : 11242,
+            "bytes" : 16045,
             "line_bytes" : 123,
-            "lines" : 115
+            "lines" : 163
          },
          "part_id" : "environment-assumption-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/environment-assumption-leaves.md",
-         "sha256" : "78219665d6817cc47c2dcc250b4e3714a3b1eb34f5ae1446e1d1ddc1fb136370",
+         "sha256" : "03437430244a960acb4f7fe315bb9fc1d152021a2670e98eee7c7c4fe9b41b4e",
          "state" : "active"
       },
       {

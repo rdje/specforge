@@ -7372,11 +7372,10 @@ fn is_non_contract_assumption(sentence: &str) -> bool {
     let premise = names_an_example_before_its_assumptions(sentence)
         || contains_whole_identifier(sentence, "assuming")
         || premise_of_a_figure_a_guideline_or_an_analysis(sentence)
-        || states_only_premises_with_assume_that(sentence)
+        || states_only_premises_with_a_premise_phrase(sentence)
         || contains_any(
             sentence,
             &[
-                "assumes the",
                 "assumed as",
                 "shown assume",
                 "assumed to be using",
@@ -7438,17 +7437,22 @@ fn names_an_example_before_its_assumptions(sentence: &str) -> bool {
     })
 }
 
-/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e — whether the sentence says *assume that* or *assumes that* and every
-/// such use states a premise: the words of its sentence before it name the document, a figure, an example, a rule,
-/// an analysis, the reader or *we* (*This table assumes that GICD_CTLR.DS==0*; *these rules assume that the Tx and
-/// Rx TS Delays … are zero*; *For now, we'll assume that the clock comes from off-chip*), or no subject at all
-/// (*Assume that a target or line error has occurred*). What a component, an interface, an implementation or a
-/// protocol assumes of its environment is an assumption, not apparatus (*The WISHBONE interface logic assumes that a
-/// low-skew clock distribution scheme is used on the target device*).
-fn states_only_premises_with_assume_that(sentence: &str) -> bool {
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e — whether the sentence says *assume that*, *assumes that* or (since
+/// `.3.d.iii.f`) *assumes the* and every such use states a premise: the words of its sentence before it name the
+/// document, a figure, an example, a rule, an analysis, the reader or *we* (*This table assumes that GICD_CTLR.DS==0*;
+/// *these rules assume that the Tx and Rx TS Delays … are zero*; *For now, we'll assume that the clock comes from
+/// off-chip*), or no subject at all (*Assume that a target or line error has occurred*). What a component, an
+/// interface, an implementation or a protocol assumes of its environment is an assumption, not apparatus (*The
+/// WISHBONE interface logic assumes that a low-skew clock distribution scheme is used on the target device*), and
+/// what it takes on is its behavior (*a host assumes the initial … sequence number and burst size*).
+fn states_only_premises_with_a_premise_phrase(sentence: &str) -> bool {
     let uses: Vec<usize> = assume_word_offsets(sentence)
         .into_iter()
-        .filter(|&(at, word)| word != "assumed" && sentence[at + word.len()..].starts_with(" that"))
+        .filter(|&(at, word)| {
+            let rest = &sentence[at + word.len()..];
+            word != "assumed"
+                && (rest.starts_with(" that") || (word == "assumes" && rest.starts_with(" the")))
+        })
         .map(|(at, _)| at)
         .collect();
     !uses.is_empty()
@@ -7549,9 +7553,10 @@ fn premise_of_a_figure_a_guideline_or_an_analysis(sentence: &str) -> bool {
 }
 
 /// The nouns of what a device or signal takes on when *assume* means *take on* (*the bits … assume a valid but
-/// otherwise UNSPECIFIED value*; *causes the device to assume the described configuration*). English, not a
-/// vocabulary (ADR 0006).
-const TAKE_ON_NOUNS: [&str; 9] = [
+/// otherwise UNSPECIFIED value*; *causes the device to assume the described configuration*; since `.3.d.iii.f` a
+/// number or a size, *a host assumes the initial … sequence number and burst size*). English, not a vocabulary
+/// (ADR 0006).
+const TAKE_ON_NOUNS: [&str; 13] = [
     "value",
     "values",
     "state",
@@ -7561,7 +7566,28 @@ const TAKE_ON_NOUNS: [&str; 9] = [
     "mode",
     "role",
     "responsibility",
+    "number",
+    "numbers",
+    "size",
+    "sizes",
 ];
+
+/// The words that end an assume word's object (*the initial … sequence number and burst size* **for** *bulk pipes*):
+/// prepositions and subordinators of English (`.3.d.iii.f`). *Of* is not one, so an object that a clause completes
+/// keeps its verb (*assumes the configuration of Asymmetric Link failed* concludes; it takes nothing on).
+const OBJECT_ENDS: [&str; 25] = [
+    "for", "after", "before", "when", "whenever", "if", "in", "on", "at", "to", "from", "with",
+    "until", "as", "because", "while", "since", "unless", "during", "upon", "by", "within", "once",
+    "that", "which",
+];
+
+/// The head of an assume word's object: the last word before the first of `OBJECT_ENDS` (`.3.d.iii.f`).
+fn object_head(clause: &str) -> Option<&str> {
+    clause
+        .split_whitespace()
+        .take_while(|word| !OBJECT_ENDS.contains(word))
+        .last()
+}
 
 /// `.3.d.ii.b.iii.b` — every assume word in the sentence states something other than an assumption: a negated
 /// one is a rule that forbids the assumption (*the missing input cannot be assumed to take a fixed value*), an
@@ -7590,11 +7616,12 @@ fn every_assume_word_states_no_abstraction(sentence: &str) -> bool {
             ]
             .iter()
             .any(|lead| before.ends_with(lead));
+            let object = clause_after(sentence, at, word);
             let takes_on = active
-                && clause_after(sentence, at, word)
-                    .split_whitespace()
-                    .last()
-                    .is_some_and(|noun| TAKE_ON_NOUNS.contains(&noun));
+                && [object.split_whitespace().last(), object_head(object)]
+                    .into_iter()
+                    .flatten()
+                    .any(|noun| TAKE_ON_NOUNS.contains(&noun));
             let obligation = active
                 && contains_whole_identifier(before, "shall")
                 && !contains_whole_identifier(before, "not");
@@ -60511,6 +60538,31 @@ mod non_contract_assumption_tests {
         ] {
             assert!(is_apparatus(text), "{text}");
         }
+    }
+
+    /// `.3.d.iii.f` — *assumes the* with no premise subject: a take-on whose object is headed by a value noun keeps
+    /// the sentence's own class, a software conclusion is an assumption the census routes to `.3.d.i`, and a table's
+    /// premise stays apparatus.
+    #[test]
+    fn assumes_the_is_a_premise_only_with_a_premise_subject() {
+        for text in [
+            "Likewise, a host assumes the initial transmit or receive sequence number and burst size for bulk pipes after it has successfully completed the appropriate control transfer as mentioned above.",
+            "Designers assume all responsibility for determining if their WISHBONE design infringes on the rights of others.",
+        ] {
+            assert!(
+                !matches!(
+                    classify_statement(text),
+                    StatementClass::Apparatus | StatementClass::ExplicitAbstraction
+                ),
+                "{text}"
+            );
+        }
+        assert!(is_abstraction(
+            "7. Connection Manager waits at least 2 seconds to receive the Notification Packet, else Connection Manager assumes the configuration of Asymmetric Link failed."
+        ));
+        assert!(is_apparatus(
+            "Remark: Table 9 assumes the Hs devices are isolated from the Fm and Sm devices."
+        ));
     }
 
     fn is_abstraction(text: &str) -> bool {

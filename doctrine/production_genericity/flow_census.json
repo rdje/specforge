@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-III-E-ENVIRONMENT-ASSUMPTION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-III-F-ASSUMES-THE-TAKE-ON",
    "baseline": {
-    "analyzed_functions": 2768,
-    "decision_sites": 15165,
-    "helper_edges": 18748,
+    "analyzed_functions": 2770,
+    "decision_sites": 15180,
+    "helper_edges": 18756,
     "semantic_macros": 1601
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 15,
-    "helper_edges": 8,
+    "analyzed_functions": 1,
+    "decision_sites": 2,
+    "helper_edges": 2,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e: what the hardware assumes of its environment is an assumption. states_only_premises_with_assume_that and names_an_example_before_its_assumptions let assume that / assumes that make a premise only with a premise subject before them."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f: assumes the takes the premise-subject test of assume that, and an active assume takes on when its object head (object_head, OBJECT_ENDS) is a value, state, configuration, number or size."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

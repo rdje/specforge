@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)

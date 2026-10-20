@@ -152,6 +152,8 @@
   > what is max_unverified_routes
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is name_and_size_registers_from_layout
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > what is object_head / OBJECT_ENDS (why is 'a host assumes the initial … sequence number and burst size' a take-on)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > what is obligation_subject / ObligationSubject
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -223,7 +225,7 @@
 - [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
   > what is states_an_obligation_beside_its_assumptions
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > what is states_only_premises_with_assume_that / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS
+  > what is states_only_premises_with_a_premise_phrase / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > what is swallowed_verb_governance
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -295,5 +297,3 @@
   > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)

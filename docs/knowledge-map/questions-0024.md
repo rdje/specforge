@@ -158,6 +158,8 @@
   > why is 'A 2 ms timer shall be started' not timing_constraint (none of the admitting words)
 - [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
   > why is 'A device shall not assume that transactions occur at the same location' filed apparatus
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why is 'Connection Manager assumes the configuration of Asymmetric Link failed' an assumption (of stays in the object)
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
   > why is 'Dotted transistors are optional open-drain outputs' not an option (an adjective)
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
@@ -296,5 +298,3 @@
   > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why is a bit slice not a spelling heuristic

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is the repaired USB 3.2 ISF adapter blocked
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why is the reviewed dataset review-locked
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)

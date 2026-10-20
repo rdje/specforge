@@ -1209,6 +1209,17 @@ SMBus's timeout, and RISC-V debug's *Debuggers may assume that a hardware platfo
 than the first nonexistent one*. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md`
 (`.3.d.iii.e`).
 
+**What a subject takes on.** Since `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f` (`2026-10-20`) *assumes the* takes the
+same subject test as *assume that*, and an active *assume* means *take on* also when the head of its object, the
+last word before the first preposition or subordinator, is a value, state, configuration, number or size (*a host
+assumes the initial transmit or receive sequence number and burst size for bulk pipes after …*). *Of* stays inside
+the object, so *else Connection Manager assumes the configuration of Asymmetric Link failed* concludes rather than
+takes on, and is an assumption the census routes to the software-intent leaf. On the 31 chains 5 statements in 3
+documents change class: the host's sequence state and a Wishbone patent disclaimer become source facts, the two
+connection-manager conclusions and a Wishbone example circuit's *Circuit assumes the use of synchronous RAM
+primitives* become assumptions. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md`
+(`.3.d.iii.f`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

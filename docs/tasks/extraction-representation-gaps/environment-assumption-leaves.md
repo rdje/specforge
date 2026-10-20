@@ -52,7 +52,7 @@ examples and its reader, and the unread-record census that measures them. `.3.d.
   `apparatus` for its opening *Note that*, with 9 behaviors the same way: **opened `.3.d.iii.g`**.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f`
-  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.e`)
+  Status: `done` (`2026-10-20`; CODE; found by `.3.d.iii.e`; checklist below)
   Goal: **an *assumes the* whose subject is no premise's states what its subject does.** `.3.d.ii.b.i`'s premise
   phrase *assumes the* files a sentence as apparatus whatever its subject; `.3.d.iii.e` left it so, because the three
   uses whose subject is no document noun, figure, example, rule or reader are no environment assumption a record
@@ -65,6 +65,28 @@ examples and its reader, and the unread-record census that measures them. `.3.d.
   read a *take on* whose object is a value phrase (*the initial … sequence number and burst size*) the way
   `.3.d.ii.b.iii.b` reads one ending in *value* or *state*, route the software conclusion to `.3.d.i`, keep the
   premise shapes apparatus, and measure every chain.
+  **Decided `2026-10-20`: *assumes the* takes `.3.d.iii.e`'s subject test, and a take-on is also read from its
+  object's head.** `states_only_premises_with_a_premise_phrase` (renamed from `.3.d.iii.e`'s
+  `states_only_premises_with_assume_that`) now counts *assumes the* among its phrases, matched as the old substring
+  was (so *assumes these* and *assumes there* too), and `is_non_contract_assumption` no longer lists it. In
+  `every_assume_word_states_no_abstraction` an active *assume* takes on when the clause's last word **or** its
+  object's head (`object_head`: the last word before the first of `OBJECT_ENDS`, English prepositions and
+  subordinators) is one of `TAKE_ON_NOUNS`, which gains *number(s)* and *size(s)*. *Of* is not an object end, so
+  *assumes the configuration of Asymmetric Link failed* has the head *failed*: a conclusion, which stays an
+  abstraction, and the census files it under `software_agent` for `.3.d.i`. **Measured over all 31 chains**
+  (evidence dry-run against `61d5b3929`'s): 28 identical; 5 statements in 3 change class: USB 3.2's `statement_1706`
+  `apparatus` -> `source_fact`, the connection-manager guide's `statement_1079` and `statement_1087` `apparatus` ->
+  `explicit_abstraction`, and two Wishbone statements: the patents chapter's *… designers assume all
+  responsibility for determining if their WISHBONE design infringes on the rights of others* (`statement_1140`,
+  `explicit_abstraction` -> `source_fact`, the legal take-on `.3.d.ii.b.iii.b` meant and missed because the clause
+  ends in *others*), and an example circuit's datasheet row, which the prose probe skipped, *| Special requirements: |
+  Circuit assumes the use of synchronous RAM primitives with asynchronous read capability. |* (`statement_1339`,
+  `apparatus` -> `explicit_abstraction`: the circuit's requirement on its environment, as `.3.d.iii.e` reads its prose
+  twin, and a table row, which the census leaves to `.3.b`). No other evidence record moves. Rebuilt stage by stage: the
+  guide's SemanticIR abstractions 1 -> 3 and IntentIR assumptions 2 -> 4, Wishbone's 2 -> 3 and 3 -> 4 (its patent
+  disclaimer was never lifted by SemanticIR), USB 3.2 unchanged past EvidenceIR; adapters unchanged, `.isf`
+  byte-identical. Unread IntentIR records 142 -> 145: `software_agent` 9 -> 11 (the two conclusions, `.3.d.i`'s) and
+  `table_row` 39 -> 40 (the circuit's row, `.3.b`'s).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g`
   Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.e`)
@@ -113,3 +135,29 @@ examples and its reader, and the unread-record census that measures them. `.3.d.
   `an-obligation-stated-with-assume-keeps-its-class` amended. A new active part, `environment-assumption-leaves`,
   holds `.3.d.iii.e` and `.3.d.iii.f` (`default-and-assumption-leaves` at 81.4% of its bytes): manifest, contract,
   route catalog, index and parts surface. No production rule deleted; two premise phrases replaced by the narrower test.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f` (CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — apparatus statements on the 31 chains saying *assumes the* with no premise subject: 3
+  (`.project-data/tmp/erg-3diiie/probe.py`); the object-head probe (`.project-data/tmp/erg-3diiif/probe.py`, prose
+  only) listed the two a head reading changes: USB 3.2's host sentence and Wishbone's patent disclaimer.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `is_non_contract_assumption` listed
+  *assumes the* whatever its subject, and `every_assume_word_states_no_abstraction` read a take-on only from the
+  clause's last word. Changed: `states_only_premises_with_a_premise_phrase`, `object_head`, `OBJECT_ENDS`,
+  `TAKE_ON_NOUNS`. RED, the file restored byte-identically after each (5 mutations, each failing
+  `assumes_the_is_a_premise_only_with_a_premise_subject`): the blanket phrase back, *assumes the* dropped from the
+  subject test, no object head, *of* ending the object, and no size nouns.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 28 identical, 5 statements in 3 change class,
+  nothing else. The 3 chains rebuilt stage by stage, each artifact validated once, the
+  adapter last; only abstractions and assumptions move; `.isf` byte-identical. The classifier is outside the
+  stage-seal closure, so no chain re-seals.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `61d5b3929`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 171 / 1,866 passed, 0 failed. `flow_census.json` rolled (+1 function, +2 decision sites, +2 helper edges);
+  boundary unchanged. Census: unread 142 -> 145, `software_agent` 11, `table_row` 40.
+- [x] **GENERICITY (ADR 0006)** — English prepositions, subordinators and value nouns; no document, component, signal or
+  protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*What a subject takes on*); KM
+  `an-assume-sentence-about-the-document-is-apparatus` amended (the rename too). No production rule deleted; one
+  premise phrase replaced by the subject test.
