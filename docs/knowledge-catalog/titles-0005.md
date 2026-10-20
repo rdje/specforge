@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md) | 2026-09-29 | `current` | Editing a live surface triggers a fixed chain of derived-state refreshes, and skipping any link fails the doc… |
 | [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md) | 2026-09-18 | `current` | A same-clause appositive is a local declaration — on the deterministic path only, so the LLM path re-refuse… |
 | [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |
 | [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md) | 2026-06-10 | `current` | LLM-primary constraint dedup — provenance-merging, condition-aware (AXI 54→50 live) |
@@ -60,4 +61,3 @@
 | [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md) | 2026-09-18 | `current` | Composing a new reader into a registered evidence derivation invalidates every proof-carrying artifact — a… |
 | [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |
 | [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |
-| [project-scratch-location](../knowledge/project-scratch-location.md) | 2026-08-31 | `current` | Temporary files go in `.project-data/tmp/` on the repository volume — never in an agent harness's own scrat… |

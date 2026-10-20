@@ -254,6 +254,8 @@
   > how good is prose signal capture / .3a quality
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > how is 'CMO transactions are assumed to be Non-shareable' read
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > how is 'If the aborted transaction is a write then the IO bridge may discard the write' read
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > how is 'LPIs are always treated as Non-secure Group 1 interrupts' read
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
@@ -296,5 +298,3 @@
   > how is a captured table region proven covered or uncovered
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how is a captured visual region proven covered or uncovered
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how is a claim's grounding checked beyond a string match

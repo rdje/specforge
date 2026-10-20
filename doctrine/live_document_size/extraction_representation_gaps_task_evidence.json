@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a",
-      "literal" : "`.3.d.iii.a` — a stated permission is a typed record.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c",
+      "literal" : "`.3.d.iii.c` — an obligation stated with *assume that* is no apparatus, and the remaining behaviors have a disposition.",
       "mode" : "eligible",
       "part_id" : "default-and-assumption-leaves"
    },
@@ -136,13 +136,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
             "metrics" : {
-               "bytes" : 33022,
+               "bytes" : 40060,
                "line_bytes" : 967,
-               "lines" : 314
+               "lines" : 382
             },
             "part_id" : "default-and-assumption-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
-            "sha256" : "5eb891a26691941bbf071790c2e462541bd2f8fb4c0b8287c539f6783c404d95",
+            "sha256" : "66107b43be9d72d7fef29ead4948f225e26836793e4c6c4808c0da5bcfd74fc5",
             "state" : "active"
          },
          {
@@ -1152,7 +1152,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
       },
@@ -1167,6 +1167,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "default-and-assumption-leaves"
       }
    ],
    "limits" : {
@@ -1294,7 +1300,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.iii.a` — a stated permission is a typed record.",
+         "`.3.d.iii.c` — an obligation stated with *assume that* is no apparatus, and the remaining behaviors have a disposition.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1336,9 +1342,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.45`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.50`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.50`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d`"
       ]
    },
    "migration_metadata" : {

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md) | 2026-09-26 | `current` | An IntentIR temporal invariant lifted from a statement carries the kind its text states, or not_stated (Tempo… |
 | [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md) | 2026-09-17 | `current` | An LLM constraint record carries no clause span, so a positional subject gate judges it against the wrong obl… |
 | [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md) | 2026-09-26 | `current` | A kind of operation a declared signal's level states (APB's PWRITE indicates an APB write access when HIGH an… |
 | [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md) | 2026-09-26 | `current` | validate's completeness summary counts as candidate misses the normative statements AND the statements classe… |
@@ -60,4 +61,3 @@
 | [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md) | 2026-09-23 | `current` | A signal constraint read from a list item or table row drops the scope its lead-in or caption states — 186… |
 | [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md) | 2026-09-23 | `current` | A containment registry's numbers must be JSON numbers, and the type is checked once at decode because Perl ca… |
 | [contested-priors](../knowledge/contested-priors.md) | 2026-06-04 | `current` | SpecForge detects contested priors (same key, conflicting values across docs) — read-only |
-| [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md) | 2026-08-09 | `current` | CoreSight Base System refresh is portable, authority-empty, and honestly under-extracted |

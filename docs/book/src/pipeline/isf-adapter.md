@@ -492,7 +492,9 @@ XOR chain, or a request — is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `
 (`.3.d.ii.a.ii`) are carried the same way: a name is not a port, and the members it stands for are already ports.
 An equivalence rule (`.3.d.ii.b.ii`) gets a packet, `isf_protocol_equivalence_rule_` plus its id: `.isf` has no
 construct that treats one thing as another under a condition, and the rule's subject and equivalent are phrases no
-`.isf` name stands for yet.
+`.isf` name stands for yet. A document's permissions (`.3.d.iii.a`) share one packet, `isf_protocol_permission_rules`,
+which names them by their id range: `.isf` has no construct for an optional behavior, and a permission's subject and
+permitted part are phrases, not an actor and an action.
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
 unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,

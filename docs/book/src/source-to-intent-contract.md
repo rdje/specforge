@@ -78,7 +78,7 @@ The content families are:
 | --- | --- | --- |
 | Interface inventory and shape | `interfaces`, `actor_ports`, `signal_polarities`, `signal_presence_records`, `check_signal_records`, `collective_signal_names` | Boundary signals or pins are declared, or the source states which signals exist per configuration, what an absent one is assumed to be, which signals a check signal covers, or a collective name for several signals |
 | Actors and connectivity | `actors`, `actor_signal_relations`, `signal_connectivity` | Producer/consumer or endpoint responsibilities are stated |
-| Normative and temporal behavior | `signal_constraints`, `conditional_rules`, `equivalence_rules`, `temporal_rules`, `actor_contracts`, `fidelity_findings` | Values, stability, ordering, latency, sampling, or handshakes are stated, or one thing is treated as another |
+| Normative and temporal behavior | `signal_constraints`, `conditional_rules`, `equivalence_rules`, `permission_rules`, `temporal_rules`, `actor_contracts`, `fidelity_findings` | Values, stability, ordering, latency, sampling, or handshakes are stated, one thing is treated as another, or a subject may do something |
 | Protocol structure and state | `transactions`, `protocol_graph`, `regular_states`, `state_transitions`, `control_blocks` | Transactions, phases, handshakes, states, or transitions are named |
 | Frame and protocol observations | `serial_frame_fields`, `protocol_operations`, `protocol_states`, `protocol_transitions`, `interface_edge_timings` | Frames, response branches, states, state transitions, or edge timing are stated |
 | Symbols and secondary storage | `symbol_definitions`, `register_records` | Encodings or register-backed secondary content exists |

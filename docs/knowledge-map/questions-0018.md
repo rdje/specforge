@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > where does SpecForge read a document-wide or class-wide polarity statement
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > where does SpecForge record a captured region that produced no fact
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where does SpecForge store temporary files and caches
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > where does SpecForge withhold template declarations
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > where does TileLink spell a_opcode
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -290,11 +298,3 @@
   > which admissibility routes run before the relational test
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > which architecture owns work and which one verifies published claims
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > which arrow spellings does the declaration reader accept
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > which banded registries are coherent
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > which behavioral genericity transforms cover rich PDF capture
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which binary does check_proof_seal_currency.sh probe with

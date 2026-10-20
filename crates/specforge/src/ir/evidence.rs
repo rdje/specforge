@@ -395,6 +395,10 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents that state none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub equivalence_rules: Vec<EquivalenceRuleRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states (*X may Y*, *X is permitted to
+    /// Y*). Empty (serde-skipped) for documents that state none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub permission_rules: Vec<PermissionRuleRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -826,6 +830,41 @@ pub enum EquivalenceModality {
     Will,
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — a PERMISSION the document states: under an optional condition, a subject
+/// may do or be something (*A MASTER MAY signal Classic Cycle indefinitely*; *If the aborted transaction is a write
+/// then the IO bridge may discard the write*; *It is permitted to signal an error with no Poison violation*). Every
+/// part is as written; nothing is resolved against signals or actors, and *may* is not told apart from a possibility
+/// beyond the refusals `stated_permissions` names.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct PermissionRuleRecord {
+    /// Stable id, e.g. `permission_0012`.
+    pub permission_id: String,
+    /// Who or what is permitted (`A MASTER`, `the IO bridge`); `None` when the sentence names nobody (*It is
+    /// permitted to …*; *There may be …*).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub subject: Option<String>,
+    /// What the sentence permits (`signal Classic Cycle indefinitely`, `discard the write`).
+    pub permitted: String,
+    /// The condition the sentence states it under (`If the aborted transaction is a write`); `None` when it states
+    /// none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub condition: Option<String>,
+    /// The word the permission is stated with.
+    pub modality: PermissionModality,
+    /// The statement(s) that state it.
+    pub supporting_statement_ids: Vec<String>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the word a permission is stated with: *may* (*MAY*), *is permitted to*,
+/// *is allowed to*.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum PermissionModality {
+    May,
+    Permitted,
+    Allowed,
+}
+
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
 /// one NLI-oracle pass over `signal_constraints` ("does the source sentence entail this constraint
 /// as a claim?"). The not-entailed fraction is a cheap, automatic production-readiness signal that
@@ -1078,6 +1117,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("signal_constraints", "evidence.normative"),
     ("conditional_rules", "evidence.normative"),
     ("equivalence_rules", "evidence.normative"),
+    ("permission_rules", "evidence.normative"),
     ("extracted_contracts", "evidence.contract"),
     ("constrained_extraction_stats", "evidence.contract"),
     (
@@ -1494,6 +1534,7 @@ impl EvidenceIr {
         insert_field!(check_signal_records);
         insert_field!(collective_signal_names);
         insert_field!(equivalence_rules);
+        insert_field!(permission_rules);
         insert_field!(signal_alias_map);
         insert_field!(signal_polarities);
         insert_field!(signal_polarity_conflicts);
@@ -2199,6 +2240,8 @@ impl EvidenceIr {
         );
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
         let equivalence_rules = equivalence_rule_surface(&extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
+        let permission_rules = permission_rule_surface(&extracted_statements);
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
         // bit ranges and explicit prose composition lists. Both read names and ordering from the current
@@ -2344,6 +2387,7 @@ impl EvidenceIr {
             check_signal_records,
             collective_signal_names,
             equivalence_rules,
+            permission_rules,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_transitions,
@@ -20913,6 +20957,489 @@ fn stated_equivalences(text: &str) -> Vec<StatedEquivalence> {
     found
 }
 
+/// The adverbs that may stand between *may* and the verb it permits (*may also*, *may optionally*). English, not a
+/// vocabulary (ADR 0006).
+const PERMISSION_ADVERBS: [&str; 19] = [
+    "also",
+    "optionally",
+    "only",
+    "then",
+    "now",
+    "additionally",
+    "still",
+    "either",
+    "therefore",
+    "instead",
+    "even",
+    "subsequently",
+    "simultaneously",
+    "alternatively",
+    "further",
+    "thus",
+    "freely",
+    "always",
+    "safely",
+];
+
+/// The verbs after which *may* states what can happen to something, not what someone is permitted to do (*may lead
+/// to reduced container packing efficiency*; *Bandwidth allocated to a DP tunnel may change*).
+const POSSIBILITY_VERBS: [&str; 27] = [
+    "lead",
+    "result",
+    "cause",
+    "vary",
+    "differ",
+    "change",
+    "occur",
+    "happen",
+    "affect",
+    "appear",
+    "exceed",
+    "become",
+    "seem",
+    "fail",
+    "lose",
+    "degrade",
+    "take",
+    "require",
+    "need",
+    "experience",
+    "prevent",
+    "arise",
+    "depend",
+    "increase",
+    "decrease",
+    "overlap",
+    "conflict",
+];
+
+/// The words a permission's condition clause opens with: `CONDITION_OPENERS` and the two of order.
+const PERMISSION_CONDITION_OPENERS: [&str; 13] = [
+    "if", "when", "at", "for", "unless", "while", "during", "once", "upon", "on", "in", "after",
+    "before",
+];
+
+/// The words that open a clause stating a hypothesis or a concession rather than a permission.
+const HYPOTHETICAL_OPENERS: [&str; 6] = ["if", "when", "unless", "whether", "although", "though"];
+
+/// The connectives and markers a permission's subject is read past (*Therefore the Manager may …*; *Note that the
+/// host may …*; *since a translation request … may be satisfied*).
+const PERMISSION_LEADING_WORDS: [&str; 12] = [
+    "then",
+    "and",
+    "but",
+    "so",
+    "thus",
+    "also",
+    "therefore",
+    "however",
+    "note",
+    "that",
+    "since",
+    "because",
+];
+
+/// A one-word subject that names nobody the sentence states (*it may*, *they may*, *which may*).
+const PERMISSION_PRONOUNS: [&str; 14] = [
+    "it", "this", "they", "these", "that", "those", "he", "she", "we", "you", "one", "which",
+    "who", "what",
+];
+
+/// The words that, before a copula in the permitted part, make the copula a clause of its own (*may transmit SCD1
+/// if Compliance Mode is enabled*) rather than the main verb of a sentence the permission is embedded in (*The amount
+/// of power that the device block may draw is limited …*).
+const PERMISSION_SUBORDINATORS: [&str; 29] = [
+    "if",
+    "when",
+    "whenever",
+    "while",
+    "until",
+    "unless",
+    "as",
+    "because",
+    "since",
+    "after",
+    "before",
+    "once",
+    "that",
+    "which",
+    "who",
+    "whom",
+    "where",
+    "whatever",
+    "whichever",
+    "and",
+    "or",
+    "but",
+    "so",
+    "provided",
+    "even",
+    "though",
+    "although",
+    "whether",
+    "than",
+];
+
+/// The phrases a permission is stated with, and the modality each states.
+const PERMISSION_MARKERS: [(&str, PermissionModality); 9] = [
+    ("may", PermissionModality::May),
+    ("is permitted to", PermissionModality::Permitted),
+    ("are permitted to", PermissionModality::Permitted),
+    ("is also permitted to", PermissionModality::Permitted),
+    ("are also permitted to", PermissionModality::Permitted),
+    ("is allowed to", PermissionModality::Allowed),
+    ("are allowed to", PermissionModality::Allowed),
+    ("is also allowed to", PermissionModality::Allowed),
+    ("are also allowed to", PermissionModality::Allowed),
+];
+
+/// One permission a sentence states: who, what, under which condition, and how.
+struct StatedPermission {
+    subject: Option<String>,
+    permitted: String,
+    condition: Option<String>,
+    modality: PermissionModality,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions a document states, in statement order; the same
+/// permission stated twice is one record citing both statements. A table row lifted as prose and an apparatus
+/// statement are not read.
+fn permission_rule_surface(statements: &[ExtractedStatement]) -> Vec<PermissionRuleRecord> {
+    let mut records: Vec<PermissionRuleRecord> = Vec::new();
+    for statement in statements {
+        if statement.class == StatementClass::Apparatus
+            || statement.text.trim_start().starts_with('|')
+        {
+            continue;
+        }
+        for stated in stated_permissions(&statement.text) {
+            let same = records.iter_mut().find(|record| {
+                record.subject.as_deref().map(normalized_words)
+                    == stated.subject.as_deref().map(normalized_words)
+                    && normalized_words(&record.permitted) == normalized_words(&stated.permitted)
+                    && record.condition.as_deref().map(normalized_words)
+                        == stated.condition.as_deref().map(normalized_words)
+                    && record.modality == stated.modality
+            });
+            match same {
+                Some(record) => {
+                    if !record
+                        .supporting_statement_ids
+                        .contains(&statement.statement_id)
+                    {
+                        record
+                            .supporting_statement_ids
+                            .push(statement.statement_id.clone());
+                    }
+                }
+                None => records.push(PermissionRuleRecord {
+                    permission_id: format!("permission_{:04}", records.len()),
+                    subject: stated.subject,
+                    permitted: stated.permitted,
+                    condition: stated.condition,
+                    modality: stated.modality,
+                    supporting_statement_ids: vec![statement.statement_id.clone()],
+                }),
+            }
+        }
+    }
+    records
+}
+
+/// The whole-word occurrences of each permission marker in a lowercased text, in text order: (start, end, modality).
+fn permission_marker_spans(lowered: &str) -> Vec<(usize, usize, PermissionModality)> {
+    let is_word = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let mut spans = Vec::new();
+    for (marker, modality) in PERMISSION_MARKERS {
+        for (start, _) in lowered.match_indices(marker) {
+            let end = start + marker.len();
+            let starts_word = lowered[..start]
+                .chars()
+                .next_back()
+                .is_none_or(|c| !is_word(c));
+            let ends_word = lowered[end..].chars().next().is_none_or(|c| !is_word(c));
+            if starts_word && ends_word {
+                spans.push((start, end, modality));
+            }
+        }
+    }
+    spans.sort_by_key(|span| span.0);
+    spans
+}
+
+/// The offset of a phrase's first whole-word occurrence in a lowercased text.
+fn whole_phrase_offset(lowered: &str, phrase: &str) -> Option<usize> {
+    let is_word = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    lowered
+        .match_indices(phrase)
+        .map(|(start, _)| start)
+        .find(|&start| {
+            lowered[..start]
+                .chars()
+                .next_back()
+                .is_none_or(|c| !is_word(c))
+                && lowered[start + phrase.len()..]
+                    .chars()
+                    .next()
+                    .is_none_or(|c| !is_word(c))
+        })
+}
+
+/// A word with the punctuation around it dropped, lowercased (`(may` -> `may`).
+fn bare_lowered_word(word: &str) -> String {
+    word.trim_matches(|c: char| matches!(c, ',' | '.' | ';' | ':' | '(' | ')'))
+        .to_ascii_lowercase()
+}
+
+/// Whether the *May* at `start..end` is the month of a date (*12 May 2020*, *May 2021*).
+fn names_the_month(text: &str, start: usize, end: usize) -> bool {
+    let after_number = text[..start]
+        .split_whitespace()
+        .next_back()
+        .is_some_and(|word| {
+            let digits = word.trim_matches(|c: char| !c.is_ascii_alphanumeric());
+            !digits.is_empty() && digits.chars().all(|c| c.is_ascii_digit())
+        });
+    &text[start..end] == "May"
+        && (after_number
+            || text[end..]
+                .trim_start()
+                .starts_with(|c: char| c.is_ascii_digit()))
+}
+
+/// Whether *may* states a possibility or forbids rather than permits: *may not*, *may never*, *may or may not*,
+/// *may have to*, *may have completed*, *may be due to*, or a verb of what can happen (`POSSIBILITY_VERBS`).
+fn may_states_no_permission(after: &[String]) -> bool {
+    let at = after
+        .iter()
+        .position(|word| !PERMISSION_ADVERBS.contains(&word.as_str()))
+        .unwrap_or(after.len());
+    let verb = after.get(at).map_or("", String::as_str);
+    let next = after.get(at + 1).map_or("", String::as_str);
+    matches!(verb, "not" | "never")
+        || (verb == "or" && next == "may")
+        || (verb == "have"
+            && (next == "to" || next == "been" || next.ends_with("ed") || next.ends_with("en")))
+        || (verb == "be" && next == "due")
+        || POSSIBILITY_VERBS.contains(&verb)
+}
+
+/// Whether a text speaks about the document itself: a document noun after *this* (*Arm may make changes to this
+/// document*; *Additional DTMs may be added in future versions of this specification*).
+fn speaks_about_the_document(text: &str) -> bool {
+    let lowered = text.to_ascii_lowercase();
+    let words: Vec<&str> = lowered
+        .split(|c: char| !c.is_ascii_alphabetic())
+        .filter(|word| !word.is_empty())
+        .collect();
+    words.windows(2).any(|pair| {
+        pair[0] == "this" && (DOCUMENT_SUBJECTS.contains(&pair[1]) || pair[1] == "guideline")
+    })
+}
+
+/// The clause before a permission marker, read past list bullets (`-`, `•`, `o`) and leading punctuation.
+fn strip_permission_bullets(clause: &str) -> &str {
+    let mut clause = clause.trim();
+    loop {
+        if let Some(rest) = clause.strip_prefix("o ") {
+            clause = rest.trim_start();
+        } else if clause
+            .chars()
+            .next()
+            .is_some_and(|c| !c.is_ascii_alphanumeric() && c != '[' && c != '(')
+        {
+            clause = clause[clause.chars().next().map_or(0, char::len_utf8)..].trim_start();
+        } else {
+            return clause;
+        }
+    }
+}
+
+/// Every permission a statement states with *may*, *is permitted to* or *is allowed to*. The subject is the clause
+/// before the marker, from the last clause break; a condition is the part before that break when it opens like one,
+/// or the *if* clause of *If X then Y may Z*; the permitted part runs to its clause's end. *It is permitted to* and
+/// *There may be* name nobody. Refused, so that no record says more or less than the sentence: *may* stating a
+/// possibility or a prohibition (`may_states_no_permission`), a hypothetical or concession with no *then*, a clause
+/// contrasted with what came before, a relative clause or a subject holding one (*the type of transactions that a
+/// device may generate*), a pronoun or the reader as subject, a month (*12 May 2020*), a subject opening with
+/// *no* or *neither* (a prohibition), a subject holding a verb no coordination ends, a permission embedded in a
+/// sentence whose main verb follows it, and a permission about the document.
+fn stated_permissions(text: &str) -> Vec<StatedPermission> {
+    // `to_ascii_lowercase` keeps the byte layout, so offsets index `text` too.
+    let lowered = text.to_ascii_lowercase();
+    let mut found = Vec::new();
+    for (start, end, modality) in permission_marker_spans(&lowered) {
+        let rest = &text[end..];
+        let after: Vec<String> = rest
+            .split_whitespace()
+            .take(4)
+            .map(bare_lowered_word)
+            .collect();
+        if modality == PermissionModality::May
+            && (may_states_no_permission(&after) || names_the_month(text, start, end))
+        {
+            continue;
+        }
+        let sentence_start = sentence_start_before(&lowered, start);
+        let before = &text[sentence_start..start];
+        let (prefix, clause) = match before.rfind([',', ';', ':']) {
+            Some(cut) => (&before[..cut], &before[cut + 1..]),
+            None => ("", before),
+        };
+        let mut words: Vec<&str> = strip_permission_bullets(clause)
+            .split_whitespace()
+            .collect();
+        let mut low: Vec<String> = words
+            .iter()
+            .map(|word| word.trim_matches([',', '(', ')']).to_ascii_lowercase())
+            .collect();
+        let mut condition: Option<String> = None;
+        if low
+            .first()
+            .is_some_and(|word| HYPOTHETICAL_OPENERS.contains(&word.as_str()))
+        {
+            let Some(then) = low.iter().skip(1).position(|word| word == "then") else {
+                continue;
+            };
+            condition = Some(words[..=then].join(" "));
+            words.drain(..=then + 1);
+            low.drain(..=then + 1);
+        }
+        if low.iter().any(|word| word == "otherwise" || word == "else") {
+            continue;
+        }
+        while low
+            .first()
+            .is_some_and(|word| PERMISSION_LEADING_WORDS.contains(&word.as_str()))
+        {
+            words.remove(0);
+            low.remove(0);
+        }
+        let impersonal = (low == ["it"] && modality != PermissionModality::May) || low == ["there"];
+        let subject = if impersonal {
+            None
+        } else {
+            if low.is_empty() {
+                continue;
+            }
+            if low.last().is_some_and(|word| word == "and" || word == "or") {
+                let Some(verb) = low
+                    .iter()
+                    .position(|word| SUBJECT_VERBS.contains(&word.as_str()))
+                    .filter(|verb| *verb > 0)
+                else {
+                    continue;
+                };
+                words.truncate(verb);
+                low.truncate(verb);
+            }
+            if let Some(last_verb) = low
+                .iter()
+                .rposition(|word| SUBJECT_VERBS.contains(&word.as_str()))
+            {
+                let Some(join) = low
+                    .iter()
+                    .enumerate()
+                    .skip(last_verb + 1)
+                    .filter(|(_, word)| matches!(word.as_str(), "and" | "or" | "but"))
+                    .map(|(index, _)| index)
+                    .next_back()
+                else {
+                    continue;
+                };
+                words.drain(..=join);
+                low.drain(..=join);
+                if low.is_empty() {
+                    continue;
+                }
+            }
+            let first = low[0].as_str();
+            let last = low[low.len() - 1].as_str();
+            if low[1..]
+                .iter()
+                .any(|word| matches!(word.as_str(), "that" | "which" | "whom" | "whose"))
+                || matches!(last, "which" | "that" | "who")
+                || matches!(
+                    first,
+                    "which" | "who" | "no" | "neither" | "none" | "nor" | "you"
+                )
+                || (low.len() == 1 && PERMISSION_PRONOUNS.contains(&first))
+            {
+                continue;
+            }
+            Some(words.join(" "))
+        };
+        let tail = rest.trim();
+        let clause_end = [
+            tail.find(". "),
+            tail.find("; "),
+            tail.find(", "),
+            tail.find('('),
+        ]
+        .into_iter()
+        .flatten()
+        .min()
+        .unwrap_or(tail.len());
+        let mut permitted = tail[..clause_end].trim().trim_end_matches('.').trim();
+        if permitted.matches(')').count() > permitted.matches('(').count() {
+            permitted = permitted[..permitted.rfind(')').unwrap_or(permitted.len())].trim();
+        }
+        let lowered_permitted = permitted.to_ascii_lowercase();
+        if let Some(next_marker) = ["may", "permitted to", "allowed to"]
+            .iter()
+            .filter_map(|marker| whole_phrase_offset(&lowered_permitted, marker))
+            .min()
+            && let Some(join) = [" and ", " or ", " but "]
+                .iter()
+                .filter_map(|join| lowered_permitted[..next_marker].rfind(join))
+                .max()
+        {
+            permitted = permitted[..join].trim();
+        }
+        let permitted_words: Vec<String> = permitted
+            .split_whitespace()
+            .map(bare_lowered_word)
+            .collect();
+        if let Some(copula) = permitted_words
+            .iter()
+            .position(|word| matches!(word.as_str(), "is" | "are" | "was" | "were"))
+            && !permitted_words[..copula]
+                .iter()
+                .any(|word| PERMISSION_SUBORDINATORS.contains(&word.as_str()))
+        {
+            continue;
+        }
+        if permitted.is_empty()
+            || speaks_about_the_document(&format!(
+                "{} {}",
+                subject.as_deref().unwrap_or(""),
+                permitted
+            ))
+        {
+            continue;
+        }
+        if condition.is_none() {
+            let prefix = prefix
+                .trim_start_matches(|c: char| !c.is_alphanumeric())
+                .trim();
+            condition = prefix
+                .split_whitespace()
+                .next()
+                .is_some_and(|word| {
+                    PERMISSION_CONDITION_OPENERS.contains(&word.to_ascii_lowercase().as_str())
+                })
+                .then(|| prefix.to_string());
+        }
+        found.push(StatedPermission {
+            subject,
+            permitted: permitted.to_string(),
+            condition,
+            modality,
+        });
+    }
+    found
+}
+
 /// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
 /// field name: both strategies emit name-unique lists (the bit-range form upserts by name; the composition
 /// form keeps a per-list `seen` set), so first-wins dedup is a no-op WITHIN each strategy and reproduces the
@@ -39041,7 +39568,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 43);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 44);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -59678,5 +60205,189 @@ mod stated_time_tests {
             classify_statement("The burst must be at least 4 bytes long."),
             StatementClass::TimingConstraint
         );
+    }
+}
+
+#[cfg(test)]
+mod permission_rule_tests {
+    use super::{
+        EvidenceModality, ExtractedStatement, PermissionModality, StatementClass,
+        permission_rule_surface, stated_permissions,
+    };
+
+    fn read(text: &str) -> Vec<(Option<String>, String, Option<String>, PermissionModality)> {
+        stated_permissions(text)
+            .into_iter()
+            .map(|stated| {
+                (
+                    stated.subject,
+                    stated.permitted,
+                    stated.condition,
+                    stated.modality,
+                )
+            })
+            .collect()
+    }
+
+    fn one(
+        subject: Option<&str>,
+        permitted: &str,
+        condition: Option<&str>,
+        modality: PermissionModality,
+    ) -> (Option<String>, String, Option<String>, PermissionModality) {
+        (
+            subject.map(str::to_string),
+            permitted.to_string(),
+            condition.map(str::to_string),
+            modality,
+        )
+    }
+
+    #[test]
+    fn a_subject_a_permitted_part_and_a_condition_are_read_as_written() {
+        assert_eq!(
+            read("A MASTER MAY signal Classic Cycle indefinitely."),
+            vec![one(
+                Some("A MASTER"),
+                "signal Classic Cycle indefinitely",
+                None,
+                PermissionModality::May
+            )]
+        );
+        assert_eq!(
+            read(
+                "When the MASTER signals a constant address burst, the SLAVE MAY assert the termination signal for the next cycle as soon as the current cycle terminates."
+            ),
+            vec![one(
+                Some("the SLAVE"),
+                "assert the termination signal for the next cycle as soon as the current cycle terminates",
+                Some("When the MASTER signals a constant address burst"),
+                PermissionModality::May
+            )]
+        );
+        assert_eq!(
+            read(
+                "If the aborted transaction is a write then the IO bridge may discard the write; the details are implementation defined."
+            ),
+            vec![one(
+                Some("the IO bridge"),
+                "discard the write",
+                Some("If the aborted transaction is a write"),
+                PermissionModality::May
+            )]
+        );
+        assert_eq!(
+            read("A Subordinate is permitted to wait for all write data before sending read data."),
+            vec![one(
+                Some("A Subordinate"),
+                "wait for all write data before sending read data",
+                None,
+                PermissionModality::Permitted
+            )]
+        );
+    }
+
+    #[test]
+    fn an_impersonal_permission_names_nobody_and_a_coordinated_one_finds_its_own_subject() {
+        assert_eq!(
+            read("- It is permitted to signal an error with no Poison violation."),
+            vec![one(
+                None,
+                "signal an error with no Poison violation",
+                None,
+                PermissionModality::Permitted
+            )]
+        );
+        assert_eq!(
+            read("There may be multiple DTMs in a single hardware platform."),
+            vec![one(
+                None,
+                "be multiple DTMs in a single hardware platform",
+                None,
+                PermissionModality::May
+            )]
+        );
+        assert_eq!(
+            read(
+                "Each interrupt source may be configured with a unique vector or a vector may be shared among one or more interrupt sources."
+            ),
+            vec![
+                one(
+                    Some("Each interrupt source"),
+                    "be configured with a unique vector",
+                    None,
+                    PermissionModality::May
+                ),
+                one(
+                    Some("a vector"),
+                    "be shared among one or more interrupt sources",
+                    None,
+                    PermissionModality::May
+                ),
+            ]
+        );
+    }
+
+    #[test]
+    fn a_possibility_a_prohibition_a_pronoun_or_the_document_is_no_permission() {
+        for text in [
+            "The use of ReqL instead of ReqS may lead to reduced container packing efficiency.",
+            "Bandwidth allocated to a DP tunnel may change as described in Section 6.2.1.2.",
+            "VBUS may not be present during eSS.Disabled.",
+            "The revision of the subsystem may or may not change.",
+            "Implementations may have to begin the CRC calculation early.",
+            "Previous commands may have completed.",
+            "This document may include technical inaccuracies or typographical errors.",
+            "Arm may make changes to this document at any time and without notice.",
+            "No device is allowed to acknowledge the START byte.",
+            "An OpenCAPI capable host API library that may be used for this assertion is the libocxl driver.",
+            "The amount of power that the device block may draw is limited only by the local power supply.",
+            "When a downstream port is in U1, it may receive a Ping.LFPS from its link partner.",
+            "You may only use the trademark in conjunction with certified products.",
+            "If the bus is idle the controller may start a transfer.",
+            "Otherwise the hub may discard the packet.",
+            "Version 1.1 (12 May 2020).",
+            "The DC further holds controls for the type of transactions that a device may generate.",
+        ] {
+            assert!(read(text).is_empty(), "{text}");
+        }
+    }
+
+    #[test]
+    fn the_surface_skips_tables_and_apparatus_and_merges_a_repeated_permission() {
+        let statement = |id: &str, class: StatementClass, text: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        };
+        let records = permission_rule_surface(&[
+            statement(
+                "s1",
+                StatementClass::SourceFact,
+                "A port may transmit a single LBPM.",
+            ),
+            statement(
+                "s2",
+                StatementClass::NormativeStatement,
+                "A port may transmit a single LBPM.",
+            ),
+            statement(
+                "s3",
+                StatementClass::SourceFact,
+                "| A port may transmit | 1 |",
+            ),
+            statement(
+                "s4",
+                StatementClass::Apparatus,
+                "The user may consult the glossary first.",
+            ),
+        ]);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].permission_id, "permission_0000");
+        assert_eq!(records[0].supporting_statement_ids, vec!["s1", "s2"]);
     }
 }

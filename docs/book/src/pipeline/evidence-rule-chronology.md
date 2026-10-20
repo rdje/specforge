@@ -1130,6 +1130,33 @@ only renumber their rule ids, and the emitted `.isf` texts are byte-identical. A
 that states a time but holds none of the admitting words keeps its class (*A 2 ms timer shall be started*), where its
 own readers find it. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.b`).
 
+**A stated permission is a typed record.** Most of what IntentIR lifted as unread behaviors were permissions (*A MASTER
+MAY signal Classic Cycle indefinitely*; *If the aborted transaction is a write then the IO bridge may discard the
+write*), and no record carried them. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` (`2026-10-20`) EvidenceIR carries
+each permission a sentence states with *may*, *is permitted to* or *is allowed to* as a `permission_rules` record,
+which SemanticIR and IntentIR carry unchanged:
+
+```json
+{ "permission_id": "permission_0164", "subject": "the IO bridge", "permitted": "discard the write",
+  "condition": "If the aborted transaction is a write", "modality": "may", "supporting_statement_ids": ["statement_1905"] }
+```
+
+The subject is the clause before the marker, from the sentence's last clause break; the condition is what comes
+before that break when it opens like one, or the *if* clause of *If X then Y may Z*; the permitted part runs to its
+clause's end. *It is permitted to …* and *There may be …* name nobody, so the record has no subject. A coordinated
+sentence gives each permission its own subject (*Each interrupt source may be configured with a unique vector or a
+vector may be shared …* is two records). Refused, because a record would say more or less than the sentence: *may*
+followed by a verb of what can happen (*may lead to*, *may change*, *may vary*), *may not*, *may never*, *may or may
+not*, *may have to*, *may have completed*; a hypothetical with no *then*; a contrasted clause; a pronoun, the reader
+(*You may only use the trademark*), a relative clause or a subject holding one (*the type of transactions that a
+device may generate*), a subject opening with *no* or *neither* (a prohibition); a permission about the document
+(*This document may include technical inaccuracies*); and the month (*12 May 2020*). *May* is otherwise not told apart
+from a possibility (*At this point the eye may be closed* is a record). On the 31 chains 890 records in 29 documents,
+USB 3.2 holding 335 and the IOMMU 179; 530 uses refused. Only that section moves at each stage, every adapter gains one
+`isf_protocol_permission_rules` residual naming its records by their id range, and the emitted `.isf` texts are
+byte-identical. The new rule field re-seals every chain. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.a`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

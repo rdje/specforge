@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > what owns live-document size limits and transition debt
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what owns the SWD EvidenceIR to IntentIR projection gap
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what parts of the literature are deferred or flagged as future work
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > what per-record ceiling does the claim registry actually need
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -289,11 +297,3 @@
   > where does SpecForge carry the value a signal takes when it is absent or not driven
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > where does SpecForge read a constraint's condition (extract_condition_clause, stated_condition_clauses)
-- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
-  > where does SpecForge read a document-wide or class-wide polarity statement
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > where does SpecForge record a captured region that produced no fact
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where does SpecForge store temporary files and caches
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > where does SpecForge withhold template declarations

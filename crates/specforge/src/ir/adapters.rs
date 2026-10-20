@@ -11,7 +11,7 @@ use crate::ir::derivation::{
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
     SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
-use crate::ir::evidence::{SignalPresenceRecord, StatedAbsentValue};
+use crate::ir::evidence::{PermissionRuleRecord, SignalPresenceRecord, StatedAbsentValue};
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
 use crate::ir::semantic::SystemResetPolarity;
@@ -1069,6 +1069,42 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
     (reasons.is_empty(), reasons)
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — one residual for every permission the document states: the records
+/// are numbered consecutively, so their range names them all.
+fn permission_residual_packet(records: &[PermissionRuleRecord]) -> Option<ResidualDecisionPacket> {
+    let first = records.first()?;
+    let last = records.last()?;
+    let statements = records
+        .iter()
+        .flat_map(|record| record.supporting_statement_ids.iter())
+        .collect::<BTreeSet<_>>()
+        .len();
+    Some(ResidualDecisionPacket {
+        packet_id: "isf_protocol_permission_rules".to_string(),
+        question: "How should the permissions the document states be represented downstream of `.isf`?".to_string(),
+        why_unresolved: format!(
+            "{} permission(s) (`{}`-`{}`, from {} statement(s)) state what a subject may do, under an optional condition; `.isf` has no construct for an optional behavior, and a permission's subject and permitted part are as written, not bound to an actor, signal or transaction. They remain exact in IntentIR and are not rendered.",
+            records.len(),
+            first.permission_id,
+            last.permission_id,
+            statements
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "preserve_intent_observation".to_string(),
+                description: "Keep the stated permissions in IntentIR and expose this adapter residual without emitting executable syntax.".to_string(),
+                downstream_impact: "Independently licensed ISF remains usable; what the document leaves optional stays visible but unmodelled.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "lower_as_choice_after_bindings".to_string(),
+                description: "Lower a permission as a choice the subject may take, once its subject is bound to an actor and its permitted part to a typed action.".to_string(),
+                downstream_impact: "A future adapter could model optional behavior as nondeterminism after the bindings are source-grounded and FSMGen-strict verified.".to_string(),
+            },
+        ],
+    })
+}
+
 fn protocol_residual_packet(
     surface_id: &str,
     surface_label: &str,
@@ -1219,7 +1255,8 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.protocol_transitions.len()
             + intent_ir.interface_edge_timings.len()
             + stated_absent_values.len()
-            + intent_ir.equivalence_rules.len(),
+            + intent_ir.equivalence_rules.len()
+            + 1,
     );
 
     for record in &intent_ir.serial_frame_fields {
@@ -1286,6 +1323,9 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "a construct that treats one thing as another under a condition, and a subject and equivalent `.isf` can name (a state, a transaction class, a value)",
         ));
     }
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — `.isf` has no construct for what a subject may do; one packet names
+    // every stated permission, the way `isf_obligations_not_lowered` names every obligation it does not lower.
+    residuals.extend(permission_residual_packet(&intent_ir.permission_rules));
     for (record, absent_value, class_ordinal) in stated_absent_values {
         residuals.push(absent_value_residual_packet(
             record,

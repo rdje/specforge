@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > why does the LLM constraint path refuse APB PSEL when the deterministic path recovers it (the same-clause appositive local declaration is implemented at ONE call site, is_same_clause_signal_appositive inside parse_inference_antecedent_signal_constraint at ir/evidence.rs:10107, and the LLM path types against the global catalog alone)
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why does the MPAM 'must be included' sentence extract nothing
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why does the OpenCAPI AFU Address Space Usage note emit no ISF
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > why does the OpenCAPI Certified Definition emit no ISF
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Certified engineering note emit no ISF
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > why does the OpenCAPI Data Link Layer specification emit no isf target
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why does the OpenCAPI Ready Definition emit no ISF
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > why does the OpenCAPI Ready engineering note emit no ISF
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -122,12 +136,16 @@
   > why is 'LPIs are always treated as Non-secure Group 1 interrupts' an assumption
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
   > why is 'MASTER and SLAVE interfaces MAY be designed so that they do not support the BLOCK cycles' no longer timing_constraint
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > why is 'This document may include technical inaccuracies' not a permission (about the document)
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > why is 'This guide assumes that you are familiar with' no longer an IntentIR assumption
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why is 'assumed to be 0b0 for a DVMComplete request' not read as an absent value
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > why is 'if the beginning part of Warm Reset is treated as U3 LFPS exit signal' not read (a hypothetical)
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > why is 'may lead to' or 'may change' not a permission (a verb of what can happen)
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > why is 'otherwise they are treated as unsupported requests' not an equivalence record (a contrasted clause is refused)
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
@@ -136,6 +154,8 @@
   > why is 'the hub shall ignore the route string and assume all packets are routed directly to the hub' an invariant now
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > why is 'the missing input cannot be assumed to take a fixed value' no longer an abstraction (a negated assume is a rule)
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > why is 'the type of transactions that a device may generate' refused (a subject holding a relative clause)
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > why is 0010 read as ten
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -278,23 +298,3 @@
   > why is a gate's own numeral grammar part of its contract
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > why is a gerund after while/when not a condition (action coordination)
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a glob list not enough to scope a claim gate
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > why is a green doctrine report not evidence that the branch builds cleanly
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why is a green wire-protocol score not evidence that extraction is intact
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why is a grounding test against the declared catalog circular
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > why is a growing list kept out of a frozen contract
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > why is a hardcoded self-test count worse than a tautological one
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > why is a hold listed with 'the hold's release … was not read'
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > why is a missing-signal census over generated/ not a statement about the current reader
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why is a multi-caller named drive kept without actor priority

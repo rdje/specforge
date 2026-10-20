@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > what is a scope carrier
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > what is a subscript split and why can no underscore rule find it
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
@@ -122,6 +124,8 @@
   > what is isf_obligations_not_lowered
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > what is isf_protocol_equivalence_rule_
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > what is isf_protocol_permission_rules
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > what is isf_protocol_signal_qualified_absent_value_
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
@@ -146,6 +150,8 @@
   > what is operating_condition on a timing constraint
 - [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
   > what is operation_kinds / OperationKindRecord / operation_kind_condition
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > what is permission_rules / PermissionRuleRecord / PermissionModality
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what is promotion_status not_promoted_review_required and where does the canonical mutation live
 - [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
@@ -198,6 +204,8 @@
   > what is split_clauses
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > what is stated_equivalences / equivalence_rule_surface
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > what is stated_permissions / permission_rule_surface
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > what is swallowed_verb_governance
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -289,11 +297,3 @@
   > what is the admission bar for a new candidate unit noun (measured precision: a noun is admitted only when EVERY line it newly admits is a real published quantity, read by hand, with the marginal count taken over the already-admitted set rather than the old baseline because overlap flatters a noun)
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > what is the ambiguous_statements metric in validate
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > what is the behavioral genericity held-out population
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > what is the behavioural oracle for a coverage guard
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule

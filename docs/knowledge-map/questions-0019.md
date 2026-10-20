@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > which arrow spellings does the declaration reader accept
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > which banded registries are coherent
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > which behavioral genericity transforms cover rich PDF capture
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which binary does check_proof_seal_currency.sh probe with
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > which bit-position columns must a radix repair leave alone
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
@@ -289,11 +297,3 @@
   > which source modalities are represented in the first vertical population
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > which source-to-IntentIR categories are supported incomplete or unmeasurable
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > which span does a dyn_sigcon record read its parts from
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > which span does a sigcon record read its subject condition negation and kind from
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > which specforge documents carry an eval gold and which of them are measurable
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > which stage has no read-only canonical probe

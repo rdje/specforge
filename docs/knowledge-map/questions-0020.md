@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a dyn_sigcon record read its parts from
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a sigcon record read its subject condition negation and kind from
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > which specforge documents carry an eval gold and which of them are measurable
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > which stage has no read-only canonical probe
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
 - [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
@@ -289,11 +297,3 @@
   > why did APB-E PADDR PWDATA PSEL and AHB HEXOKAY lose their tinv_sc invariants
 - [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
   > why did ARBURST have two identical constraints
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did AXI have 134 actors when APB has 8 and AHB has 25
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why did AXI have 71 registers (signal and property tables with a Default column)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4

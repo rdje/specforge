@@ -195,13 +195,37 @@ children moved here whole, with their acceptance checklists.
   class (273 of them table rows), deliberately: the class has no reader they would reach.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a`
-  Status: `open` (`2026-10-19`; DESIGN + CODE; found by `.3.d.iii`)
+  Status: `done` (`2026-10-20`; DESIGN + CODE; found by `.3.d.iii`; checklist below; opened `.3.d.iii.d`)
   Goal: **a stated permission is a typed record.** 154 unread behaviors grant something (*A MASTER MAY signal Classic
   Cycle indefinitely*; *The IO bridge may provide a completion to the device*; *TRX-ST-RJ may be adjusted to meet the
   target value*). **Reproduce:** modality `permission`. **Impact:** optional behavior has no carrier, so a document's
   permissions are indistinguishable from its unread descriptions. Acceptance: decide the carrier (the agent or
   subject, the permitted action, a condition, as written, the way `.3.d.ii.b.ii` carries an equivalence), keep a
   software agent's permission with `.3.d.i`, read the 154 into it citing their statements, and measure every chain.
+  **Decided `2026-10-20`: EvidenceIR `permission_rules`, one record per stated permission, carried unchanged by
+  SemanticIR and IntentIR, and one adapter residual per document.** `PermissionRuleRecord { permission_id, subject
+  (None for *It is permitted to …* and *There may be …*), permitted, condition, modality: may | permitted | allowed,
+  supporting_statement_ids }`, family `evidence.normative`, as written like an equivalence. **Probed first** over every
+  statement of the 31 chains (`.project-data/tmp/erg-3diiia/grammar2.py`): the 154 hold 213 permission words (*may*, *might*, *permitted*, *allowed*, *optional*) in nine
+  shapes, and the corpus 1,464 uses. `stated_permissions` reads the subject from the last clause break before the
+  marker, a condition opening like one or an *if … then* clause, the permitted part to its clause end and before a
+  second coordinated permission; it refuses *may* + a verb of what can happen, *may not*/*never*/*or may*/*have
+  to*/*have* + participle/*be due*, a hypothetical without *then*, a contrast, a pronoun or *you*, a subject holding or
+  ending in a relative pronoun, a prohibition (*No device is allowed to*), a subject with an unended verb, an embedded
+  permission (*may draw is limited*), a document noun after *this*, and *May* beside a number. *May* is not otherwise
+  told from a possibility (*the eye may be closed* is a record), stated in the record's doc. The adapter names a
+  document's permissions in one `isf_protocol_permission_rules` packet by id range, as `isf_obligations_not_lowered`
+  names obligations: per-record packets would add 890. **Measured over all 31 chains** (evidence dry-run against
+  `3f3091f2e`'s): 2 identical, 29 gain only `permission_rules`, 890 records (USB 3.2 335, IOMMU 179, USB4 CM 65,
+  RISC-V debug 61, Wishbone 49; 786 *may*, 81 *permitted*, 23 *allowed*), 530 uses refused; the Python probe yields the
+  same 890. Rebuilt stage by stage: only `permission_rules` moves at each stage, each adapter gains one residual, every
+  `.isf` text byte-identical; the new rule field re-sealed every chain (`rebuild_stage_cascade.sh --write`, 31
+  content-identical). Unread IntentIR records 315 -> 151 (behaviors 274 -> 112): `permission_or_description` 176 ->
+  51 (permission 154 -> 32: 11 relative clauses, 7 possibilities, 4 *may not*, 2 with only *might* or *optional*, 8
+  other refusals), `software_agent`
+  43 -> 9, `apparatus` 26 -> 21. **Routed to `.3.d.i`:** 87 records have a software subject (*Software*, *the
+  Connection Manager*, *a hypervisor*); the census now counts their behaviors read, so `.3.d.i`'s population is those
+  records plus its 9 unread behaviors. *Is optional* (76 statements) is `.3.d.iii.d`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`
   Status: `open` (`2026-10-19`; CODE; found by `.3.d.iii`)
@@ -213,6 +237,17 @@ children moved here whole, with their acceptance checklists.
   **Impact:** an obligation is read by no obligation reader. Acceptance: let a sentence whose *assume* is governed by
   *shall* or *must* (negated or not) keep its normative class, decide the remainder's dispositions, route software
   agents to `.3.d.i`, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d`
+  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.a`)
+  Goal: **an optional feature is a typed record.** `.3.d.iii.a` reads what a subject *may* do; a sentence that calls
+  a thing optional states that it may be absent (*All Trigger Module registers (Table 14) are optional*; *Implementing
+  this command is optional*; *The processing of BERT commands is optional for Gen 1 loopback*), and no record carries
+  it. **Reproduce:** 76 statements on the 31 chains (no table rows, no apparatus) say *is optional* or *are optional*
+  (RISC-V debug 17, ADIv6 14, USB 3.2 13, Wishbone 9, AXI 6, I2C 6). **Impact:** a document's optional features are
+  indistinguishable from its required ones. Acceptance: decide whether optionality is a `permission_rules` modality
+  (the subject as written, permitted to be absent, the qualifier as condition) or its own record, read the 76 into
+  it, and measure every chain.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` (CODE) — DONE `2026-10-19`
 
@@ -312,3 +347,36 @@ children moved here whole, with their acceptance checklists.
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A timing constraint states a time*); KM
   `a-timing-constraint-states-a-time` (new) and `unread-behaviors-are-permissions-and-the-timing-class-misfires`
   (amended). No production rule deleted: the arm is narrowed.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` (DESIGN + CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: `permission_or_description` 176, modality
+  `permission` 154; the shape probe (`.project-data/tmp/erg-3diiia/probe.py`) and the corpus grammar probe
+  (`grammar2.py`, 1,464 uses on the 31 chains) before any code.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no record carried what a subject may do: `conditional_rules` needs a signal and an
+  antecedent, and `equivalence_rules` reads only *treated as*. New `permission_rules` in
+  `crates/specforge/src/ir/evidence.rs` (`permission_rule_surface`, `stated_permissions`), carried in `semantic.rs` and
+  `intent.rs`, residual in `adapters.rs`. RED, the file restored byte-identically after each (8 mutations, each failing
+  its named test): the possibility, month, document and clause-in-subject refusals off
+  (`a_possibility_a_prohibition_a_pronoun_or_the_document_is_no_permission`); no impersonal subject and no
+  next-marker cut (`an_impersonal_permission_names_nobody_and_a_coordinated_one_finds_its_own_subject`); no *if … then*
+  condition (`a_subject_a_permitted_part_and_a_condition_are_read_as_written`); the apparatus skip off
+  (`the_surface_skips_tables_and_apparatus_and_merges_a_repeated_permission`).
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 2 identical, 29 gain only `permission_rules`, 890
+  records, equal to the Python probe's 890. Rebuilt stage by stage, each artifact validated once, the adapter last;
+  only `permission_rules` moves at each stage, one residual per adapter, `.isf` byte-identical; then
+  `rebuild_stage_cascade.sh --write` re-sealed all 31 content-identical. Unread records 315 -> 151.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `3f3091f2e`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean after one `.last()` -> `.next_back()` (the same element; currency and
+  the permission tests re-run after it); `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 171 /
+  1,858 passed, 0 failed. Rule-field counts: EvidenceIR 44, SemanticIR 59, IntentIR 58 (38 carried), qualification
+  192. `flow_census.json` rolled (+10 functions, +98 decision sites, +122 helper edges, +9 macros); boundary
+  `rule_roots` 127 -> 128 and `grammar_declassifiers` 68 -> 69 for the one registered producer.
+- [x] **GENERICITY (ADR 0006)** — English modals, adverbs, connectives, pronouns, verbs of what can happen and the
+  document nouns `.3.d.ii.b.i` already uses; no document, signal or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*A stated permission is a typed record*),
+  `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `quality/validation.md`,
+  `reference/intentir-contract.md`, `source-to-intent-contract.md`; KM `a-stated-permission-is-a-typed-record` (new);
+  `claim_family_inventory.tsv`, `rule_family_inventory.tsv`, `spec_to_intent_category_contract.json` and the census's
+  `TYPED_SURFACES`. No production rule deleted or replaced.

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md) | 2026-08-09 | `current` | CoreSight Base System refresh is portable, authority-empty, and honestly under-extracted |
 | [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md) | 2026-09-01 | `current` | Only 24 of 78 persisted documents (30.8%) pass the scorer's schema gate and just 2 carry a gold, and the two… |
 | [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md) | 2026-06-09 | `current` | Vendor/layout clustering via a derived structural+behavioral fingerprint (corpus_cluster) — emergent famili… |
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
@@ -60,4 +61,3 @@
 | [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md) | 2026-06-09 | `current` | EvidenceIR build determinism — two HashSet-iteration leaks (relations + enum name) found & FIXED (EVIDENCE-… |
 | [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md) | 2026-09-01 | `current` | An EvidenceIR's proof binds the artifact's own storage location, so a byte-identical copy elsewhere fails can… |
 | [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md) | 2026-09-11 | `current` | Changing the content of an existing EvidenceIR rule field stales every persisted proof without moving the rul… |
-| [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md) | 2026-08-09 | `current` | Evidence signal-declaration catalogs panic when a match follows a multi-byte bullet |

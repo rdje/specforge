@@ -202,6 +202,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
@@ -296,5 +298,3 @@
   > what is a route catalog part
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > what is a row-keyed constraint
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > what is a scope carrier

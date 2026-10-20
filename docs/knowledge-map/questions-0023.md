@@ -2,6 +2,19 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > why does a census of escape-fragmented declarations report zero if you are not careful (the fragmentation mints its own Signal X is width N. and Enum X ... = 0. statements, and the repository's standard standalone-wins discriminator then counts those as standalone occurrences and clears the fragment that created them — the contamination manufactures its own evidence of
+  > innocence; measured, disabling the exclusion makes the corpus census report 0 names across 0 documents)
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > why does a check table headed Name (AXI Table A16.4) still read
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why does a conditional rule have no consequent signal
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why does a constraint have no condition although its sentence states one
+- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
+  > why does a digit regex not catch a quoted number in a contract
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why does a document with no declared signals carry more ungrounded rules than one with signals
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why does a dynamic constraint record need no modal
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
@@ -284,17 +297,3 @@
   > why does the EvidenceIR book chapter keep breaching its size ceiling
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why does the Introducing CoreSight guide emit no ISF
-- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
-  > why does the LLM constraint path refuse APB PSEL when the deterministic path recovers it (the same-clause appositive local declaration is implemented at ONE call site, is_same_clause_signal_appositive inside parse_inference_antecedent_signal_constraint at ir/evidence.rs:10107, and the LLM path types against the global catalog alone)
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > why does the MPAM 'must be included' sentence extract nothing
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > why does the OpenCAPI AFU Address Space Usage note emit no ISF
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > why does the OpenCAPI Certified Definition emit no ISF
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why does the OpenCAPI Certified engineering note emit no ISF
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > why does the OpenCAPI Data Link Layer specification emit no isf target
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why does the OpenCAPI Ready Definition emit no ISF

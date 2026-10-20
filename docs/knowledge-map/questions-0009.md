@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > how many corpus/-sourced documents are there and how many are legacy
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim census candidates join exact evidence or registered annotations
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -296,5 +298,3 @@
   > how much page content escapes both the structured-element path and the region-crop path
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > how much should one closure cost a bounded task root
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > how much writable budget does relocating a sealed region actually return (the active part stops owning any region, so its whole health target becomes spendable rather than the target minus the sealed payload)

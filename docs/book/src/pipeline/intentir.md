@@ -125,7 +125,9 @@ request is `EXTRACTION-REPRESENTATION-GAPS.46`'s decision. `collective_signal_na
 (`.3.d.ii.a.ii`): a name the document defines for several signals, which the absent-value binder already resolves
 and which `EXTRACTION-REPRESENTATION-GAPS.47` will resolve for every rule stated on such a name. `equivalence_rules`
 cross likewise (`.3.d.ii.b.ii`): each sentence that treats one thing as another, as written, with its condition and
-modality; the adapter keeps one residual per rule.
+modality; the adapter keeps one residual per rule. `permission_rules` cross likewise (`.3.d.iii.a`): each permission
+a sentence states, its subject (none for *It is permitted to …*), what it permits and its condition, as written; the
+adapter keeps one residual naming them all.
 
 These records are canonical product data, but they are not automatically executable behavior. A named protocol
 state without transitions, guards, initial-state identity, or encoding is still incomplete; frame, operation,
@@ -495,9 +497,10 @@ area*) is classified `apparatus` at the evidence stage, a class no reader consum
 assumption; 83 sentences in 22 of the 31 chains left the surface. Since `.3.d.ii.b.iii.a` (`2026-10-19`) AXI's class-scoped domain
 defaults are read into presence records, and since `.3.d.ii.b.iii.b` the same day a sentence whose every *assume*
 forbids an assumption, means *take on*, is a device's obligation or states a value (*the DTF value assumed … is 0*)
-keeps its own class, and three more premise shapes are apparatus: 15 more assumptions left the surface. The behaviors are mostly permissions (154 of the 176 unread on `2026-10-19`, `.3.d.iii`), and they mix software obligations (the USB4
-connection-manager guide's procedures), permissions (*A MASTER MAY use End-Of-Burst …*), obligations no reader takes
-yet, table rows lifted as prose, and document apparatus. Each open kind has an owner (`.3.d.i`-`.3.d.iii`); the
+keeps its own class, and three more premise shapes are apparatus: 15 more assumptions left the surface. The behaviors were mostly permissions (154 of the 176 unread on `2026-10-19`, `.3.d.iii`); since `.3.d.iii.a`
+(`2026-10-20`) a stated permission is a `permission_rules` record, and the unread records fell from 315 to 151. The
+behaviors left mix software obligations (the USB4 connection-manager guide's procedures), permissions the grammar
+refuses, obligations no reader takes yet, table rows lifted as prose, and document apparatus. Each open kind has an owner (`.3.d.i`-`.3.d.iii`); the
 census is in `docs/research/category-family-census.md`.
 
 Validation may also attach negative-knowledge caution to this surface.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is a completed oversized task tree contained without losing evidence
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -295,5 +297,3 @@
   > how many corpus signals carry a table-declared direction
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > how many corpus/-sourced documents are there and how many are legacy

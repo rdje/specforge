@@ -2648,6 +2648,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     );
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
     println!("  equivalence_rules: {}", ir.equivalence_rules.len());
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
+    println!("  permission_rules: {}", ir.permission_rules.len());
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -3917,6 +3919,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 ir.collective_signal_names.len().to_string(),
             ),
             metric("equivalence_rules", ir.equivalence_rules.len().to_string()),
+            metric("permission_rules", ir.permission_rules.len().to_string()),
             metric(
                 "signal_polarity_conflicts",
                 ir.signal_polarity_conflicts.len().to_string(),
@@ -5369,6 +5372,8 @@ fn validate_semantic_ir_with_prior_memory(
     );
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
     println!("  equivalence_rules: {}", ir.equivalence_rules.len());
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
+    println!("  permission_rules: {}", ir.permission_rules.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -5595,6 +5600,7 @@ fn validate_semantic_ir_with_prior_memory(
                 ir.collective_signal_names.len().to_string(),
             ),
             metric("equivalence_rules", ir.equivalence_rules.len().to_string()),
+            metric("permission_rules", ir.permission_rules.len().to_string()),
             metric(
                 "interface_edge_timings",
                 ir.interface_edge_timings.len().to_string(),
@@ -5959,6 +5965,8 @@ fn validate_intent_ir_with_prior_memory(
     );
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
     println!("  equivalence_rules: {}", ir.equivalence_rules.len());
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
+    println!("  permission_rules: {}", ir.permission_rules.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -7545,6 +7553,7 @@ fn validate_intent_ir_with_prior_memory(
                 ir.collective_signal_names.len().to_string(),
             ),
             metric("equivalence_rules", ir.equivalence_rules.len().to_string()),
+            metric("permission_rules", ir.permission_rules.len().to_string()),
             metric(
                 "interface_edge_timings",
                 ir.interface_edge_timings.len().to_string(),
