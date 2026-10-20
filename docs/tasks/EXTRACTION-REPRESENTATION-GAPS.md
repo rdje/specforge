@@ -38,14 +38,18 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.46` — a parity check signal lowers from the signals it covers and its enable, or the gap is requested.
+`.46.a` — the parity sense a document states is a typed fact of its check signals.
 
-Then, in order: `.47` (a rule stated on a collective name reaches each member), `.50` (a prose hint gives a signal the role its sentence gives it), `.51` (a sentence defining the document's notation is apparatus), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
-matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
-(single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
-`.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a
-legacy register-map document's re-ingest. Closed leaves are read from the route catalog's lifecycles, not
-restated here; the list this paragraph carried until `2026-10-19` is in the `register-binding-leaves` part.
+Then, in order: `.46.b` (a one-bit check lowers as one parity rule), `.46.c` (a byte-granular parity is requested from
+FSMGen), `.47` (a rule stated on a collective name reaches each member), `.50` (a prose hint gives a signal the role
+its sentence gives it), `.51` (a sentence defining the document's notation is apparatus), `.3.g.iii` (multi-column
+encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables),
+`.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing
+tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1`
+grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for
+`.4`, and `.41.d` for a legacy register-map document's re-ingest. Closed leaves are read from the route catalog's
+lifecycles, not restated here; the list this paragraph carried until `2026-10-19` is in the `register-binding-leaves`
+part.
 
 New records of the `.3.d` family go to the `default-and-assumption-leaves` part (`unread-intent-leaves` reached its
 rollover on `2026-10-19`) and other `.3` records to `table-census-leaves` (`program-and-census` and `census-leaves` are
@@ -97,10 +101,12 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.37`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.46`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.47`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.50`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.51`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.46.a`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.46.b`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
 
 ## Changelog
 

@@ -93,7 +93,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   which column it came from.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46`
-  Status: `open` (`2026-10-03`; DESIGN then CODE; found by `.3.d.ii.a.i`)
+  Status: `done` (`2026-10-20`; DESIGN; found by `.3.d.ii.a.i`; split into `.46.a`-`.46.c`)
   Goal: **a parity check signal lowers from the signals it covers and its enable, or the gap is requested.** IntentIR
   now carries 153 `check_signal_records` in 3 documents (AXI 123, AHB5 16, APB5 14: a check signal, its covered
   signals, width, granularity and enable, all as written). `.isf` has `(^ A B)` and `(set …)` but no parity or
@@ -105,6 +105,54 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   per record shape, whether the adapter emits a combinational rule (and how a parameterised byte count is expressed
   in `.isf`'s width vocabulary) or whether a parity form is a `FSMGEN-REQUESTS` packet; then emit or request, and
   measure every emitting chain under FSMGen `--strict --check`.
+  **Decided `2026-10-20`, per shape, from the 153 records and the three documents.** The shapes: **80** one-bit
+  checks over one one-bit signal (*AWVALIDCHK* over *AWVALID*, *PSELxCHK*, *HREADYOUTCHK*); **24** one-bit checks
+  over several signals or one wider signal of a width the actor fixes (*PCTRLCHK* over *PPROT*, *PWRITE*, *PNSE*;
+  *HPROTCHK* over *HPROT*); **49** byte-granular checks over a parameterised width (*PADDRCHK*,
+  `ceil(ADDR_WIDTH/8)`; *PWDATACHK*, `DATA_WIDTH/8`; AXI's `Num_RP_AWW`, `ceil((ID_W_WIDTH + …)/8)`). Every record
+  has an enable, as written: a signal (*PSEL*, *AWVALID*, *ARESETn*), an expression (*PSEL & PWRITE*, *HTRANS !=
+  IDLE*) or a phase (*Write data phase*). **No rule can be emitted before the parity sense is read**: all three
+  documents state it (*Odd parity is used*; APB5's and AHB5's *The single odd parity bit is the inversion of the
+  original critical control signal*), and nothing carries it; inventing the inversion would fabricate the rule.
+  Hence, in order: **`.46.a`** reads the stated sense onto the check records; **`.46.b`** lowers the first two shapes
+  in the actor that drives the covered signals as one rule, `(! (^ …))` for odd parity over every covered bit, under
+  the enable when the enable is a signal or a signal expression the adapter reads (a phase stays a residual), and
+  measures every emitting chain under FSMGen `--strict --check`; **`.46.c`** requests from FSMGen the form the third
+  shape needs, a per-byte reduction over a parameterised width, which `.isf` cannot state today (`IsfIr` has `^`,
+  bit indices and slices, no reduction or replication), so the request is filed before the adapter guesses an
+  unrolling at the parameters' defaults.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.46.a`
+  Status: `open` (`2026-10-20`; CODE; found by `.46`)
+  Goal: **the parity sense a document states is a typed fact of its check signals.** AXI (*Odd parity is used.
+  Odd parity means that check signals are added to groups of signals on the interface and driven such that there is
+  always an odd number of asserted bits in that group*), APB5 and AHB5 state it, each beside its check-signal tables,
+  and the 153 `check_signal_records` carry no sense. **Reproduce:** `statement_4765`/`4766` (AXI), `statement_0380`
+  (APB5), `statement_1038` (AHB5), all `source_fact`. **Impact:** `.46.b` cannot emit a parity rule without
+  inventing its polarity. Acceptance: read *odd parity is used* / *even parity is used* (and the definition sentence
+  beside it) generically into the document's check-signal records with the citing statement, refuse a document that
+  states both or neither, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.46.b`
+  Status: `open` (`2026-10-20`; CODE; found by `.46`)
+  Goal: **a one-bit check over signals of fixed width lowers as one parity rule under its enable.** 104 records
+  (80 one-bit over one bit, 24 over several or wider fixed-width signals) reach `.isf` as ports driven by `val`.
+  **Reproduce:** `grep CHK generated/adapters/isf/ihi0024_e_2023_02_amba_5_apb_protocol_specification/requester.isf`.
+  **Impact:** the parity every AMBA5 interface declares is not modelled. Acceptance (after `.46.a`): in the actor
+  that drives the covered signals, emit `(rule … <enable> (CHK (! (^ …))))` over every covered bit for odd parity,
+  only when every covered width is fixed in the actor and the enable is a signal or an expression the adapter reads;
+  keep a phase-worded enable and any other shape a residual; measure every emitting chain under FSMGen `--strict
+  --check` and the WIRE-BASED-100 seeds.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
+  Status: `open` (`2026-10-20`; REQUEST; found by `.46`)
+  Goal: **a byte-granular parity over a parameterised width is requested from FSMGen.** 49 records state one check
+  bit per byte of a signal whose width is a parameter (`ceil(ADDR_WIDTH/8)`, `DATA_WIDTH/8`), which `.isf` cannot
+  state: no reduction, no replication, no per-byte iteration. **Reproduce:** the `.46` shape count. **Impact:** an
+  unrolling at the parameters' defaults would bake one configuration into a generic actor. Acceptance: file an
+  `FSMGEN-REQUESTS` packet (`docs/FSMGEN_FEEDBACK.md`) for a per-byte reduction over a parameterised width, with the
+  three documents' forms as evidence, before FSMGen's next push; keep the 49 records a residual until a pin carries
+  the form.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.47`
   Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a.ii`)

@@ -11,7 +11,7 @@ answers:
   - "does a sentence naming a signal outrank a class sentence for the same signal"
   - "why does a check table headed Name (AXI Table A16.4) still read"
   - "how is a footnote letter beside a check signal name (PSELxCHK b) handled"
-  - "is a parity check signal lowered to isf (no: EXTRACTION-REPRESENTATION-GAPS.46 decides)"
+  - "is a parity check signal lowered to isf (not yet: .46 decided per shape, .46.a-.46.c)"
   - "why did adding check_signal_records re-seal every chain"
 date: 2026-10-03
 status: current
@@ -48,9 +48,11 @@ binds). APB5 14 records, 15 presence rows take `LOW` (16 covered; `PADDR`'s matr
 109 -> 107.
 
 **Not lowered.** `.isf` has `(^ A B)` but no parity form; a check signal is a combinational XOR chain over its
-covered signals under its enable, and whether the adapter emits that or SpecForge asks FSMGen for a parity form is
-`EXTRACTION-REPRESENTATION-GAPS.46` (gap ledger S25). The records carry no residual each: a check signal is
-interface shape, like a presence row, not a protocol observation.
+covered signals under its enable. `EXTRACTION-REPRESENTATION-GAPS.46` decided per shape (`2026-10-20`): the
+documents' stated parity sense (*Odd parity is used*) is read first (`.46.a`); the 104 one-bit checks over signals of
+fixed width lower as one rule `(! (^ …))` under a readable enable (`.46.b`); the 49 byte-granular checks over a
+parameterised width need a per-byte reduction `.isf` cannot state and are requested from FSMGen (`.46.c`). The
+records carry no residual each: a check signal is interface shape, like a presence row, not a protocol observation.
 
 **Cost.** `check_signal_records` joins `EVIDENCE_RULE_FIELDS`, inside the EvidenceIR seal closure
 ([[stage-seal-closure-membership]]), so every chain re-seals from EvidenceIR down; the three table-bearing chains
