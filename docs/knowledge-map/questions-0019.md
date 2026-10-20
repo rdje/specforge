@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > which caption grammar can supply a unit to every timing row
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which cargo profile do the corpus replay checks build
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > which cell did the CoreSight TMC DATA phantom come from
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > which census measures escaped identifier fragments
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
@@ -291,9 +297,3 @@
   > which strategy is message_fields.byte_location_table
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > which subject does a signal-description row's description cell constrain
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > which surface bounds the number of task trees now
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > which surface does a dotted field obligation belong to
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > which table minted Clock and Reset as AHB signals

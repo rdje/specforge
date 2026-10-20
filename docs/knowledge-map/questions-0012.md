@@ -110,6 +110,8 @@
   > what are APB's remaining completeness candidate misses
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
   > what are EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i, .b.ii and .b.iii
+- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
+  > what are EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a, .b and .c
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -201,6 +203,8 @@
   > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
   > what are the unread IntentIR assumptions and behaviors
+- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
+  > what are the unread permission_or_description behaviors (154 of 176 are permissions)
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > what are the untyped tables no record cites
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
@@ -293,7 +297,3 @@
   > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > what did the OpenCAPI AFU address note prove about legal boilerplate
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the active PDF task containment census find

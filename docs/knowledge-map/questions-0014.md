@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > what fraction of a task-evidence part can actually grow
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
@@ -294,7 +298,3 @@
   > what is an alpha-variant placeholder
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > what is an appositive role phrase co-reference
-- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
-  > what is an upstream packet
-- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
-  > what is applies_to on a StatedAbsentValue / what is StatedValueEncoding

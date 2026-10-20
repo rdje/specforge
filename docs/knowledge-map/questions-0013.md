@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the active PDF task containment census find
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > what did the caption repair change in the published constraint count
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -293,7 +297,3 @@
   > what falls outside Docling's segmented bounding boxes on a page
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what field holds the constrained signal name (signal_name vs subject_signal)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)

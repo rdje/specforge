@@ -159,6 +159,38 @@ children moved here whole, with their acceptance checklists.
     [[assume-sentences-fall-into-six-shapes]]; the class-scoped value `.3.d.ii.b.iii.a` bound is `statement_2360`'s.
   No code change, so no acceptance checklist applies.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b`
+  Status: `open` (`2026-10-19`; CODE; found by `.3.d.iii`)
+  Goal: **a statement is a timing constraint only when it states a time.** `classify_statement`'s timing arm matches
+  substrings: ` cycle`, `cycles` and `at least` in its first list and `cycle`, `ns`, `ps`, `time` and `edge` in its
+  second, so a sentence that mentions bus cycles, a quantity *at least* some size, or a word containing `ns` is filed
+  `timing_constraint`. **Reproduce:** 645 of the 813 `timing_constraint` statements on the 31 chains carry no time
+  expression (Wishbone 268, USB 3.2 72, ADIv6 62, AXI 60), among them the 17 unread behaviors `.3.d.iii` found.
+  **Impact:** every reader of the class takes prose that states no time, and the behaviors it lifts are mislabelled.
+  Acceptance: decide what a time expression is in the document's own terms (a number with a time or cycle unit, a
+  named timing parameter, a clock edge or period, a latency), match the words as whole words, measure what every chain
+  and every reader of the class loses and gains, and keep all 11 seeds, the temporal golds included.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a`
+  Status: `open` (`2026-10-19`; DESIGN + CODE; found by `.3.d.iii`)
+  Goal: **a stated permission is a typed record.** 154 unread behaviors grant something (*A MASTER MAY signal Classic
+  Cycle indefinitely*; *The IO bridge may provide a completion to the device*; *TRX-ST-RJ may be adjusted to meet the
+  target value*). **Reproduce:** modality `permission`. **Impact:** optional behavior has no carrier, so a document's
+  permissions are indistinguishable from its unread descriptions. Acceptance: decide the carrier (the agent or
+  subject, the permitted action, a condition, as written, the way `.3.d.ii.b.ii` carries an equivalence), keep a
+  software agent's permission with `.3.d.i`, read the 154 into it citing their statements, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`
+  Status: `open` (`2026-10-19`; CODE; found by `.3.d.iii`)
+  Goal: **an obligation stated with *assume that* is no apparatus, and the remaining behaviors have a disposition.**
+  `.3.d.ii.b.i`'s premise phrase *assume that* filed 7 obligations as apparatus (*A device shall not assume that
+  transactions occur at the same location within each service interval*; *the debugger must not assume that the TAR
+  wraps*; *A channel must meet the common-mode requirements*), and 14 behaviors are recommendations (4), capabilities
+  (3) and descriptions (7). **Reproduce:** modality `obligation` with class `apparatus`; the other three modalities.
+  **Impact:** an obligation is read by no obligation reader. Acceptance: let a sentence whose *assume* is governed by
+  *shall* or *must* (negated or not) keep its normative class, decide the remainder's dispositions, route software
+  agents to `.3.d.i`, and measure every chain.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` (CODE) — DONE `2026-10-19`
 
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: `assumed_by_word` 53, `stated_default`

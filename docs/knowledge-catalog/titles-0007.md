@@ -50,6 +50,7 @@
 | [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md) | 2026-08-10 | `current` | Typed transaction-phase names require positive phrase authority |
 | [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-10-19 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
 | [unattached-table-captions](../knowledge/unattached-table-captions.md) | 2026-09-28 | `current` | Docling files some table captions as page text; the bit-layout reader recovers them page by page |
+| [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md) | 2026-10-19 | `current` | The unread IntentIR behaviors are mostly permissions, and 645 of 813 timing_constraint statements state no ti… |
 | [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md) | 2026-09-30 | `current` | The IntentIR assumptions and behaviors no typed record understands fall into six families, and assumptions ar… |
 | [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md) | 2026-09-29 | `current` | The untyped tables no canonical record cites (1,160) are either non-contract (53.1%) or contract content with… |
 | [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md) | 2026-08-09 | `current` | USB4 Connection Manager refresh is portable and honestly non-emitting |
@@ -60,4 +61,3 @@
 | [vlm-table-strategy](../knowledge/vlm-table-strategy.md) | 2026-06-07 | `current` | VLM (Qwen2.5VL) reads table images to reclassify "unknown" tables — the second, best-wins table strategy |
 | [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md) | 2026-09-19 | `current` | The three wire-based gold bundles were never lost — RESOLVED: installed at their normalized roots, declared… |
 | [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md) | 2026-09-26 | `current` | Wishbone's system contract (CLK_I, RST_I synchronous active-high) is read from its prose since 2026-09-26 —… |
-| [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md) | 2026-08-29 | `current` | A per-revision doctrine measurement in a git worktree fails closed until the fsmgen gitlink is populated |

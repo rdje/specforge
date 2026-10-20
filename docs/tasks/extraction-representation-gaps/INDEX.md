@@ -62,11 +62,13 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.41.d` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.h` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.45` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.47` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` | [Default and assumption leaves](default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` | [Default and assumption leaves](default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 
 ## Complete route catalog
 

@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii",
-      "literal" : "`.3.d.iii` — a stated permission is typed intent, and an unread obligation reaches its reader.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b",
+      "literal" : "`.3.d.iii.b` — a statement is a timing constraint only when it states a time.",
       "mode" : "eligible",
-      "part_id" : "unread-intent-leaves"
+      "part_id" : "default-and-assumption-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -124,25 +124,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
             "metrics" : {
-               "bytes" : 46207,
+               "bytes" : 48128,
                "line_bytes" : 639,
-               "lines" : 445
+               "lines" : 462
             },
             "part_id" : "unread-intent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-            "sha256" : "03ad693ffc2f2685e3c1208d3f25b9b62d47ae4f3fc799572556812606c2171a",
+            "sha256" : "8c49f7f0e171507ca775d7d0fb089c4a8d28a9dddb3c9615e377b2abe919c9d4",
             "state" : "active"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
             "metrics" : {
-               "bytes" : 24755,
+               "bytes" : 27675,
                "line_bytes" : 967,
-               "lines" : 232
+               "lines" : 264
             },
             "part_id" : "default-and-assumption-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
-            "sha256" : "350a50c535045221d94631ddcf2c001ef3c36877373c94f30b0efd3ea0cbcec8",
+            "sha256" : "f41c250c1bef1c0c104c704b38bd7cfac4c7b4f59c3c108fba4b7425791b9d8e",
             "state" : "active"
          },
          {
@@ -1038,7 +1038,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -1143,6 +1143,24 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "default-and-assumption-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "default-and-assumption-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "default-and-assumption-leaves"
       }
    ],
    "limits" : {
@@ -1270,7 +1288,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.iii` — a stated permission is typed intent, and an unread obligation reaches its reader.",
+         "`.3.d.iii.b` — a statement is a timing constraint only when it states a time.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1281,7 +1299,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.i`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii`",
@@ -1312,7 +1329,10 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.45`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`"
       ]
    },
    "migration_metadata" : {

@@ -259,7 +259,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   refused contrast and hypothetical sentences (IOMMU's *otherwise* and *else*, USB 3.2's *in which case* and *if …*).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`
-  Status: `open` (`2026-09-30`; MEASUREMENT then CODE; found by `.3.d`)
+  Status: `done` (`2026-10-19`; MEASUREMENT, the code re-scoped to three children `.3.d.iii.a`-`.3.d.iii.c`; found by `.3.d`)
   Goal: **a stated permission is typed intent, and an unread obligation reaches its reader.** 178 unread behaviors
   mix permissions (*A MASTER MAY use End-Of-Burst to indicate a single access*), obligations no reader reads (*The
   host shall schedule isochronous transactions such that …*) and descriptions; 17 carry EvidenceIR's
@@ -267,6 +267,23 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   **Reproduce:** family `permission_or_description`. **Impact:** optional behavior has no carrier, and obligations
   stay untyped. Acceptance: split the family by modality, route each obligation class to the reader that should take
   it, decide a carrier for a permission, find why those 17 are classed as timing, and measure every chain.
+  **Measured `2026-10-19`** (`python3 scripts/measure_unread_intent_records.py`, which now gives every
+  `permission_or_description` record one of five modalities, first match wins; `--json` carries it as `modality`).
+  **176** remain, and the family is a permission family: permission 154 (*may*, *permitted*, *allowed*, *optional*;
+  USB 3.2 51, IOMMU 35, Wishbone 20, the USB4 connection-manager guide 18, I2C 7), obligation 8, description 7,
+  recommendation 4, capability 3. **The 17 timing-class records are one symptom of a corpus-wide defect.**
+  `classify_statement`'s timing arm matches substrings: its first list holds ` cycle`, `cycles` and `at least`, its
+  second `cycle`, `ns`, `ps`, `time` and `edge`, so *MASTER and SLAVE interfaces MAY be designed so that they do not
+  support the BLOCK cycles* satisfies both, as do *at least 16 bits of PASID must be supported* and a register named
+  `iohpmcycles`. Over all 31 chains, **645 of the 813** `timing_constraint` statements (79%) carry no time expression
+  (no number with a time or cycle unit, no setup, hold or propagation time, no clock edge, period or latency) —
+  Wishbone 268, USB 3.2 72, ADIv6 62, AXI 60. **The 8 obligations** are 7 statements `.3.d.ii.b.i`'s premise phrase
+  *assume that* filed as apparatus although each states a hardware or software obligation (*A device shall not assume
+  that transactions occur at the same location within each service interval*; *the debugger must not assume that the
+  TAR wraps*) and one refused equivalence. **Decided:** three children, ordered by what each corrupts: the timing class
+  first, since 645 statements wear a class they do not state (`.3.d.iii.b`); then a carrier for a permission
+  (`.3.d.iii.a`); then the swallowed obligations and the 14-record remainder (`.3.d.iii.c`). No code change here, so no
+  acceptance checklist applies.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` (CODE) — DONE `2026-10-03`
 

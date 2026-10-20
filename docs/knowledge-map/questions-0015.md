@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > what is an upstream packet
+- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
+  > what is applies_to on a StatedAbsentValue / what is StatedValueEncoding
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
@@ -293,7 +297,3 @@
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > what is the canonical knowledge-map architecture path
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > what is the caption label prefix
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > what is the cheapest falsification oracle available in this repository

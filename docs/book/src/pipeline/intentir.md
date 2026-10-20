@@ -495,7 +495,7 @@ area*) is classified `apparatus` at the evidence stage, a class no reader consum
 assumption; 83 sentences in 22 of the 31 chains left the surface. Since `.3.d.ii.b.iii.a` (`2026-10-19`) AXI's class-scoped domain
 defaults are read into presence records, and since `.3.d.ii.b.iii.b` the same day a sentence whose every *assume*
 forbids an assumption, means *take on*, is a device's obligation or states a value (*the DTF value assumed … is 0*)
-keeps its own class, and three more premise shapes are apparatus: 15 more assumptions left the surface. The behaviors mix software obligations (the USB4
+keeps its own class, and three more premise shapes are apparatus: 15 more assumptions left the surface. The behaviors are mostly permissions (154 of the 176 unread on `2026-10-19`, `.3.d.iii`), and they mix software obligations (the USB4
 connection-manager guide's procedures), permissions (*A MASTER MAY use End-Of-Burst …*), obligations no reader takes
 yet, table rows lifted as prose, and document apparatus. Each open kind has an owner (`.3.d.i`-`.3.d.iii`); the
 census is in `docs/research/category-family-census.md`.

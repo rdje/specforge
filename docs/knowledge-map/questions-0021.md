@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > why did CoreSight SDC-600 table_0059 stop declaring anything
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did CoreSight TMC have relations on Chip, Write and Address
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > why did CoreSight TMC not declare its AXI master interface signals
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why did CoreSight TMC registers have no fields
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > why did DL disappear from the OpenCAPI Certified Definition
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -287,13 +297,3 @@
   > why did the retired SWD frame extractor score 11 of 11 if the document does not state the phases (because it did not read the frame: it keyed the phase off the FIELD NAME — wdata/rdata/datain/ack[ — so it carried SWD's field-to-phase table in the code. That is what ADR 0006 forbids, and it is why removing it lost the facts entirely)
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > why did the route-catalog lifecycle gate corroborate 0 of 56 leaves in EXTRACTION-QUALITY-GAUGE
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why did the row-constraint replay judge only 26 documents
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > why did the surface registry refuse my new partitioned-tree parts record (a surface's lines_total and bytes_total must equal files x lines_each and files x bytes_each, or declare an aggregate_composition)
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why did the task_evidence aggregate ceiling become 480000
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why did transaction_phases contain called edge or positive
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > why did validating a copied rollback backannotate the canonical chain

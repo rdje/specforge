@@ -21,7 +21,10 @@ placed in one family, the first whose test matches, in this order:
                             (a timing-diagram key), narrative (an example, a modelling or analysis premise),
                             treated_as (an equivalence rule), stated_default (a value or state assumed) and other;
   permission_or_description a behavior no earlier family took: a permission (`may`) or a description of hardware or
-                            protocol behavior that no typed reader reads.
+                            protocol behavior that no typed reader reads; each is given one of five MODALITIES
+                            (EXTRACTION-REPRESENTATION-GAPS.3.d.iii), first match wins: obligation (`must`, `shall`,
+                            `is required to`), recommendation (`should`, `recommended`), permission (`may`,
+                            `permitted`, `allowed`, `optional`), capability (`can`) and description.
 
 SOFTWARE_AGENTS is a measurement vocabulary, not a production rule: no field of the IR says whether an actor is
 software (SemanticIR actors are role nouns: `agent`, `controller`, `host`, `manager`), and that absence is one of
@@ -61,6 +64,12 @@ SHAPES = (
     ("narrative", re.compile(r"\bexample\b|\bassuming\b|assume[sd]? that\b|assumes the\b|assumed to (be )?(using|sent|received)")),
     ("stated_default", re.compile(r"assumed to be|is assumed|are assumed|assumed as|\bassumed\b|\bassumes?\b")),
 )
+MODALITIES = (
+    ("obligation", re.compile(r"\b(must|shall)\b|\b(is|are) required to\b")),
+    ("recommendation", re.compile(r"\bshould\b|\brecommended\b")),
+    ("permission", re.compile(r"\bmay\b|\b(is|are) (permitted|allowed)\b|\boptional(ly)?\b")),
+    ("capability", re.compile(r"\bcan(not)?\b")),
+)
 LIST_MARKER = re.compile(r"^(?:[-*•⚫o]\s+|\(?[0-9a-z]{1,3}[.)]\s+|[ivx]{1,4}\.\s+)+", re.IGNORECASE)
 NON_CONTRACT_SECTIONS = {"glossary", "table_of_contents"}
 
@@ -82,6 +91,12 @@ def shape(text: str) -> str:
     """The shape of an `assumed_by_word` record (`.3.d.ii.b`), first match wins; `other` when none matches."""
     lowered = unmarked(text).lower()
     return next((name for name, pattern in SHAPES if pattern.search(lowered)), "other")
+
+
+def modality(text: str) -> str:
+    """The modality of a `permission_or_description` record (`.3.d.iii`), first match wins; `description` when none."""
+    lowered = unmarked(text).lower()
+    return next((name for name, pattern in MODALITIES if pattern.search(lowered)), "description")
 
 
 def family(record: dict) -> str:
@@ -156,6 +171,8 @@ def chain_records(key: str) -> list[dict] | None:
             row["family"] = family(row)
             if row["family"] == "assumed_by_word":
                 row["shape"] = shape(row["text"])
+            if row["family"] == "permission_or_description":
+                row["modality"] = modality(row["text"])
             records.append(row)
     return records
 
@@ -182,6 +199,9 @@ def main() -> None:
         if name == "assumed_by_word":
             shapes = collections.Counter(row["shape"] for row in members)
             print("      shapes: " + ", ".join(f"{shape_name} {n}" for shape_name, n in shapes.most_common()))
+        if name == "permission_or_description":
+            modalities = collections.Counter(row["modality"] for row in members)
+            print("      modalities: " + ", ".join(f"{kind} {n}" for kind, n in modalities.most_common()))
         if args.samples:
             for row in random.Random(f"3.d:{name}").sample(members, min(args.samples, len(members))):
                 print(f"      {row['key'][:28]}: {row['text'][:160]}")

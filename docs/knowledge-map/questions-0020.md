@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > which surface bounds the number of task trees now
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > which surface does a dotted field obligation belong to
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > which table minted Clock and Reset as AHB signals
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > which table wins when two tables list the same field's values
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
@@ -50,6 +56,8 @@
   > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > which validate metrics/finding surface channel membership
+- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
+  > which words does the timing arm of classify_statement match (cycle, cycles, at least; cycle, ns, ps, time, edge as substrings)
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > which words mark a swallowed word as a verb (has does was, complementizer that)
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
@@ -106,6 +114,8 @@
   > why are USB 3.2's RxD and TxEQ not expanded
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > why are USER_GUIDE.md and the root architecture documents only pointers
+- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
+  > why are Wishbone's MAY sentences classed timing_constraint
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -287,13 +297,3 @@
   > why did AxLEN become an AXI interface port
 - [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
   > why did CLOCK GENERATION refuse Wishbone's contract (a heading parsed as a second clock; a clock is now declared only by a sentence)
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > why did CoreSight SDC-600 table_0059 stop declaring anything
-- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
-  > why did CoreSight TMC have relations on Chip, Write and Address
-- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
-  > why did CoreSight TMC not declare its AXI master interface signals
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > why did CoreSight TMC registers have no fields
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values

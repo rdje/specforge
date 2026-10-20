@@ -40,7 +40,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.41.g` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | `open` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | `open` | [Unread intent leaves](unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.h` | `open` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
@@ -58,3 +58,6 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.48` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.48.a` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.49` | `closed` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` | `open` | [Default and assumption leaves](default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` | `open` | [Default and assumption leaves](default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c` | `open` | [Default and assumption leaves](default-and-assumption-leaves.md) |
