@@ -38,10 +38,10 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.d.iii.d` — an optional feature is a typed record.
+`.3.d.iii.e` — an environment assumption is an assumption.
 
-Then, in order: `.3.d.iii.e` (an environment assumption is an assumption), `.3.d.i` (software intent), `.41.h` (APB4's PPROT
-map), `.45` (a fused presence row keeps the header's labels), `.46` (a parity check signal's lowering), `.47` (a rule stated on a collective name reaches each member), `.50` (a prose hint gives a signal the role its sentence gives it), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
+Then, in order: `.3.d.i` (software intent), `.41.h` (APB4's PPROT
+map), `.45` (a fused presence row keeps the header's labels), `.46` (a parity check signal's lowering), `.47` (a rule stated on a collective name reaches each member), `.50` (a prose hint gives a signal the role its sentence gives it), `.51` (a sentence defining the document's notation is apparatus), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
 matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
 (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
 `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a
@@ -104,8 +104,8 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.47`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.50`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.51`
 
 ## Changelog
 

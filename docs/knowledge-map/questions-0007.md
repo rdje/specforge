@@ -258,6 +258,8 @@
   > how is 'CMO transactions are assumed to be Non-shareable' read
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
   > how is 'If the aborted transaction is a write then the IO bridge may discard the write' read
+- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
+  > how is 'It is optional for a Subordinate component to support Atomic transactions' read
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > how is 'LPIs are always treated as Non-secure Group 1 interrupts' read
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
@@ -296,5 +298,3 @@
   > how is a CI-tier doctrine registered without slowing down the pre-commit hook
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how is a captured table region proven covered or uncovered

@@ -268,7 +268,7 @@ children moved here whole, with their acceptance checklists.
   These are declared residuals, not open work. Unread records 151 -> 140.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d`
-  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.a`)
+  Status: `done` (`2026-10-20`; DESIGN + CODE; found by `.3.d.iii.a`; checklist below; opened `.51`)
   Goal: **an optional feature is a typed record.** `.3.d.iii.a` reads what a subject *may* do; a sentence that calls
   a thing optional states that it may be absent (*All Trigger Module registers (Table 14) are optional*; *Implementing
   this command is optional*; *The processing of BERT commands is optional for Gen 1 loopback*), and no record carries
@@ -277,6 +277,27 @@ children moved here whole, with their acceptance checklists.
   indistinguishable from its required ones. Acceptance: decide whether optionality is a `permission_rules` modality
   (the subject as written, permitted to be absent, the qualifier as condition) or its own record, read the 76 into
   it, and measure every chain.
+  **Decided `2026-10-20`: its own record, EvidenceIR `optional_features`, carried unchanged by SemanticIR and
+  IntentIR, with one adapter residual per document.** Not a permission modality: a permission's subject is an actor
+  and its permitted part an action, while an option's subject is the feature and nothing acts; a modality would leave
+  `permitted` empty or invent *be absent*. `OptionalFeatureRecord { option_id, feature, implementer (*It is optional
+  for S to V*), condition, supporting_statement_ids }`, family `evidence.normative`, as written. **Probed first**
+  (`.project-data/tmp/erg-3diiid/grammar.py`): 61 of the 76 read, 15 refused. `stated_options` reads the feature from
+  the last clause break before *is/are (also) optional* (inside an unclosed parenthesis, its own; after
+  *because*/*since*, the reason's), a condition after *optional* or opening the sentence; it refuses a joined word
+  (*optional-normative*), a following word that makes *optional* an adjective (*optional open-drain outputs*) or a
+  contrast (*is optional otherwise*), *otherwise*/*else* before the marker, a hypothetical, a pronoun, a relative
+  clause, a subject with a verb and a feature of the document. A demonstrative feature (*This register*) is kept as
+  written, stated in the record's doc. **Measured over all 31 chains** (evidence dry-run against `2a661ef8c`'s): 18
+  identical, 13 gain only `optional_features`, 52 records from 61 statements (RISC-V debug 9, USB 3.2 9, ADIv6 8,
+  Wishbone 8, AXI 6; 10 with a condition, 2 with an implementer); the Python probe yields the same 52. Rebuilt stage
+  by stage: only `optional_features` moves at each stage, each adapter gains one `isf_protocol_optional_features`
+  residual, every `.isf` text byte-identical; the new rule field re-sealed every chain. Unread IntentIR records 140 -> 139: of
+  the 61 statements 37 are source facts IntentIR lifts as no record and 23 were already read by another surface;
+  AXI's *Domain signaling is optional, if an interface does not have Domain signaling then … are assumed to be in the
+  System Domain* was the one unread (`assumed_by_word` 8 -> 7). **Opened
+  `.51`:** `option_0006` of ADIv6 reads its pseudocode appendix's *elsif* block, one of 55 notation sentences the
+  31 chains do not file as apparatus.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e`
   Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.c`)
@@ -454,3 +475,38 @@ children moved here whole, with their acceptance checklists.
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*An obligation stated with an assume word*); KM
   `an-obligation-stated-with-assume-keeps-its-class` (new). No production rule deleted: the apparatus and abstraction
   arms are narrowed.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d` (DESIGN + CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — 76 statements on the 31 chains (no table rows, no apparatus) say *is optional* or *are
+  optional*, and no record cites them; the corpus grammar probe (`.project-data/tmp/erg-3diiid/grammar.py`, 61 read,
+  15 refused) before any code.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no record carried what may be absent: `permission_rules` reads *may*, *permitted*
+  and *allowed* for an actor, and no reader took *optional*. New `optional_features` in
+  `crates/specforge/src/ir/evidence.rs` (`optional_feature_surface`, `stated_options`, `option_clause`), carried in
+  `semantic.rs` and `intent.rs`, residual in `adapters.rs`, counted in `commands/validate.rs`. RED, the file restored
+  byte-identically after each (13 mutations, each failing its named test): the joined-word, adjective, hypothetical,
+  contrast, pronoun and relative-clause refusals off
+  (`an_adjective_a_hypothetical_a_contrast_or_a_pronoun_states_no_option`); the reason, parenthesis, implementer and
+  *whether* readings off (`a_feature_its_condition_and_its_implementer_are_read_as_written`); the apparatus and table
+  skips and the merge off (`the_surface_skips_tables_and_apparatus_and_merges_a_repeated_option`). The first RED run
+  found two refusals no test reached because a stricter check already made them (a `-` after the marker; *otherwise*
+  as the next word); both were removed, and the contrast refusal now reads the whole sentence before the marker, with
+  the probe's output unchanged.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 18 identical, 13 gain only `optional_features`, 52
+  records, equal to the Python probe's 52. Rebuilt stage by stage, each artifact validated once, the adapter last;
+  only `optional_features` moves at each stage, one residual per adapter, `.isf` byte-identical; then
+  `rebuild_stage_cascade.sh --write` re-sealed all 31 content-identical. Unread records 140 -> 139.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `2a661ef8c`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 171 / 1,863 passed, 0 failed. Rule-field counts: EvidenceIR 45, SemanticIR 60, IntentIR 59 (39 carried),
+  qualification 195. `flow_census.json` rolled (+4 functions, +63 decision sites, +69 helper edges, +7 macros);
+  boundary `rule_roots` 128 -> 129 and `grammar_declassifiers` 69 -> 70 for the one registered producer.
+- [x] **GENERICITY (ADR 0006)** — English copulas, condition openers, conjunctions, connectives, pronouns and the
+  document nouns `.3.d.ii.b.i` already uses; no document, signal or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*An optional feature is a typed record*),
+  `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `quality/validation.md`,
+  `reference/intentir-contract.md`, `source-to-intent-contract.md`; KM `an-optional-feature-is-a-typed-record` (new);
+  `claim_family_inventory.tsv`, `rule_family_inventory.tsv`, `spec_to_intent_category_contract.json` and the census's
+  `TYPED_SURFACES`. No production rule deleted or replaced.

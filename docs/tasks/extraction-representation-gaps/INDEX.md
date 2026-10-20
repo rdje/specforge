@@ -67,8 +67,8 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.46` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.47` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.50` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d` | [Default and assumption leaves](default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e` | [Default and assumption leaves](default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.51` | [Register binding leaves](register-binding-leaves.md) |
 
 ## Complete route catalog
 

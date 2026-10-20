@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > how many corpus signals carry a table-declared direction
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -296,5 +298,3 @@
   > how much of the reviewed trajectory population has current binary replay evidence
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > how much of the specforge persisted corpus can actually be scored / is canonically current
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > how much page content escapes both the structured-element path and the region-crop path

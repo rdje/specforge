@@ -15,11 +15,11 @@ use crate::ir::derivation::{
 };
 use crate::ir::evidence::{
     CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord, EvidenceIr,
-    InterfaceEdgeTimingRecord, PermissionRuleRecord, ProtocolOperationRecord, ProtocolStateRecord,
-    ProtocolTransitionRecord, SerialFrameField, SignalPolarity, SignalPolarityConflictRecord,
-    SignalPolarityRecord, SignalPresenceRecord, SignalSemanticConflictRecord,
-    SignalSemanticHintRecord, SignalSemanticHintSourceKind, SignalSemanticTag,
-    SourceLocalInferenceConstraintGrounding, StatementClass, VisualEvidenceRole,
+    InterfaceEdgeTimingRecord, OptionalFeatureRecord, PermissionRuleRecord,
+    ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
+    SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
+    SignalSemanticConflictRecord, SignalSemanticHintRecord, SignalSemanticHintSourceKind,
+    SignalSemanticTag, SourceLocalInferenceConstraintGrounding, StatementClass, VisualEvidenceRole,
     VisualObservationKind, parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
@@ -314,6 +314,10 @@ pub struct SemanticIr {
     /// EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub permission_rules: Vec<PermissionRuleRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the document's optional features (*X is optional*), projected
+    /// losslessly from EvidenceIR (ADR 0016).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub optional_features: Vec<OptionalFeatureRecord>,
     #[serde(default)]
     pub control_blocks: Vec<ControlBlockRecord>,
     #[serde(default)]
@@ -450,6 +454,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("collective_signal_names", "semantic.carried_evidence"),
     ("equivalence_rules", "semantic.carried_evidence"),
     ("permission_rules", "semantic.carried_evidence"),
+    ("optional_features", "semantic.carried_evidence"),
     ("register_records", "semantic.carried_evidence"),
     // These three collections are projections, not lossless carries: SemanticIR filters
     // ungrounded EvidenceIR records and may add records derived from typed visual evidence.
@@ -1022,6 +1027,7 @@ impl SemanticIr {
             collective_signal_names: evidence_ir.collective_signal_names.clone(),
             equivalence_rules: evidence_ir.equivalence_rules.clone(),
             permission_rules: evidence_ir.permission_rules.clone(),
+            optional_features: evidence_ir.optional_features.clone(),
             control_blocks,
             explicit_modules,
             explicit_tops,
@@ -1223,6 +1229,7 @@ impl SemanticIr {
         insert_field!(collective_signal_names);
         insert_field!(equivalence_rules);
         insert_field!(permission_rules);
+        insert_field!(optional_features);
         insert_field!(register_records);
         insert_field!(timing_constraints);
         insert_field!(signal_constraints);
@@ -29116,7 +29123,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 59);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 60);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

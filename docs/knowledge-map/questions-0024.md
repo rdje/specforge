@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the AMBA DTI specification declare no signals
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why does the APB missing fact remain must_be_asserted instead of HIGH
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why does the APB recovery keep PSEL separate from PSELX
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the Bosch CAN specification declare no signals
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > why does the Claude Read tool refuse some PDFs / report password-protected
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why does the CoreSight Base System Architecture emit no ISF
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -140,6 +152,8 @@
   > why is 'A 2 ms timer shall be started' not timing_constraint (none of the admitting words)
 - [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
   > why is 'A device shall not assume that transactions occur at the same location' filed apparatus
+- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
+  > why is 'Dotted transistors are optional open-drain outputs' not an option (an adjective)
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
   > why is 'LPIs are always treated as Non-secure Group 1 interrupts' an assumption
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
@@ -156,6 +170,8 @@
   > why is 'if the beginning part of Warm Reset is treated as U3 LFPS exit signal' not read (a hypothetical)
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
   > why is 'may lead to' or 'may change' not a permission (a verb of what can happen)
+- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
+  > why is 'optional-normative' refused (a joined word)
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > why is 'otherwise they are treated as unsupported requests' not an equivalence record (a contrasted clause is refused)
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
@@ -282,19 +298,3 @@
   > why is a concatenating join more dangerous than an underscore join
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > why is a condition like 'X is asserted, Y must remain asserted' wrong
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why is a conditional rule in EvidenceIR but not in SemanticIR
-- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
-  > why is a conditional rule with an unread condition listed instead of emitted
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why is a constraint subject CLK when the document says CLK_I
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why is a content score not enough to pick the member name column
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > why is a corpus cell census not a measure of a producer defect
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is a debug probe 14 seconds and a release probe 1.2
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a digest binding not enough to watch a number in prose
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why is a fact-card aggregate ceiling the file bound times the per-file bound

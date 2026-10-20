@@ -170,11 +170,12 @@
             "conditional_rules",
             "equivalence_rules",
             "permission_rules",
+            "optional_features",
             "temporal_rules",
             "actor_contracts",
             "fidelity_findings"
           ],
-          "required_when": "the source states values, stability, ordering, latency, sampling, or handshake obligations, that one thing is treated as another, or what a subject may do"
+          "required_when": "the source states values, stability, ordering, latency, sampling, or handshake obligations, that one thing is treated as another, what a subject may do, or what is optional"
         },
         {
           "family": "protocol_structure_and_state",

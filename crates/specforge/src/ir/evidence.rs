@@ -399,6 +399,10 @@ pub struct EvidenceIr {
     /// Y*). Empty (serde-skipped) for documents that state none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub permission_rules: Vec<PermissionRuleRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the features the document states are optional (*X is optional*).
+    /// Empty (serde-skipped) for documents that state none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub optional_features: Vec<OptionalFeatureRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -865,6 +869,27 @@ pub enum PermissionModality {
     Allowed,
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — a feature the document states is OPTIONAL: what may be absent, who may
+/// implement it when the sentence names one, and the condition it is optional under (*All Trigger Module registers
+/// (Table 14) are optional*; *It is optional for a Subordinate component to support Atomic transactions*; *This
+/// register is optional if no triggers are implemented*). Every part is as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct OptionalFeatureRecord {
+    /// Stable id, e.g. `option_0003`.
+    pub option_id: String,
+    /// What is optional (`All Trigger Module registers (Table 14)`, `support Atomic transactions`).
+    pub feature: String,
+    /// Who may implement or omit it, when the sentence names one (`a Subordinate component`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub implementer: Option<String>,
+    /// The condition it is optional under (`if no triggers are implemented`, `for Gen 1 loopback`); `None` when the
+    /// sentence states none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub condition: Option<String>,
+    /// The statement(s) that state it.
+    pub supporting_statement_ids: Vec<String>,
+}
+
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
 /// one NLI-oracle pass over `signal_constraints` ("does the source sentence entail this constraint
 /// as a claim?"). The not-entailed fraction is a cheap, automatic production-readiness signal that
@@ -1118,6 +1143,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("conditional_rules", "evidence.normative"),
     ("equivalence_rules", "evidence.normative"),
     ("permission_rules", "evidence.normative"),
+    ("optional_features", "evidence.normative"),
     ("extracted_contracts", "evidence.contract"),
     ("constrained_extraction_stats", "evidence.contract"),
     (
@@ -1535,6 +1561,7 @@ impl EvidenceIr {
         insert_field!(collective_signal_names);
         insert_field!(equivalence_rules);
         insert_field!(permission_rules);
+        insert_field!(optional_features);
         insert_field!(signal_alias_map);
         insert_field!(signal_polarities);
         insert_field!(signal_polarity_conflicts);
@@ -2242,6 +2269,8 @@ impl EvidenceIr {
         let equivalence_rules = equivalence_rule_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
         let permission_rules = permission_rule_surface(&extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the optional features the document states.
+        let optional_features = optional_feature_surface(&extracted_statements);
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
         // bit ranges and explicit prose composition lists. Both read names and ordering from the current
@@ -2388,6 +2417,7 @@ impl EvidenceIr {
             collective_signal_names,
             equivalence_rules,
             permission_rules,
+            optional_features,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_transitions,
@@ -21487,6 +21517,280 @@ fn stated_permissions(text: &str) -> Vec<StatedPermission> {
     found
 }
 
+/// The words that may follow *optional* when it states that something is optional rather than qualifying a noun
+/// (*is optional if no triggers are implemented*; *is optional and DEPRECATED*; not *are optional open-drain
+/// outputs*).
+const OPTION_FOLLOWERS: [&str; 20] = [
+    "if",
+    "when",
+    "unless",
+    "for",
+    "on",
+    "in",
+    "at",
+    "during",
+    "while",
+    "after",
+    "before",
+    "once",
+    "upon",
+    "and",
+    "but",
+    "or",
+    "normative",
+    "to",
+    "whether",
+    "",
+];
+
+/// The words an option's condition opens with, after *optional* or before its clause (*optional for Gen 1
+/// loopback*; *If there is only one debug component in the system, the ROM Table is optional*).
+const OPTION_CONDITION_OPENERS: [&str; 13] = [
+    "if", "when", "unless", "for", "on", "in", "at", "during", "while", "after", "before", "once",
+    "upon",
+];
+
+/// The connectives an option's subject is read past (*while support for low power swing is optional*).
+const OPTION_LEADING_WORDS: [&str; 12] = [
+    "then",
+    "and",
+    "but",
+    "so",
+    "thus",
+    "also",
+    "therefore",
+    "however",
+    "note",
+    "that",
+    "while",
+    "whereas",
+];
+
+/// A one-word subject that names no feature the sentence states (*It is optional*, *All are optional*).
+const OPTION_PRONOUNS: [&str; 12] = [
+    "it", "this", "they", "these", "that", "those", "all", "which", "who", "what", "both", "each",
+];
+
+/// One optional feature a sentence states: what, who may implement it, and under which condition.
+struct StatedOption {
+    feature: String,
+    implementer: Option<String>,
+    condition: Option<String>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the optional features a document states, in statement order; the same
+/// option stated twice is one record citing both statements. A table row lifted as prose and an apparatus statement
+/// are not read.
+fn optional_feature_surface(statements: &[ExtractedStatement]) -> Vec<OptionalFeatureRecord> {
+    let mut records: Vec<OptionalFeatureRecord> = Vec::new();
+    for statement in statements {
+        if statement.class == StatementClass::Apparatus
+            || statement.text.trim_start().starts_with('|')
+        {
+            continue;
+        }
+        for stated in stated_options(&statement.text) {
+            let same = records.iter_mut().find(|record| {
+                normalized_words(&record.feature) == normalized_words(&stated.feature)
+                    && record.implementer.as_deref().map(normalized_words)
+                        == stated.implementer.as_deref().map(normalized_words)
+                    && record.condition.as_deref().map(normalized_words)
+                        == stated.condition.as_deref().map(normalized_words)
+            });
+            match same {
+                Some(record) => {
+                    if !record
+                        .supporting_statement_ids
+                        .contains(&statement.statement_id)
+                    {
+                        record
+                            .supporting_statement_ids
+                            .push(statement.statement_id.clone());
+                    }
+                }
+                None => records.push(OptionalFeatureRecord {
+                    option_id: format!("option_{:04}", records.len()),
+                    feature: stated.feature,
+                    implementer: stated.implementer,
+                    condition: stated.condition,
+                    supporting_statement_ids: vec![statement.statement_id.clone()],
+                }),
+            }
+        }
+    }
+    records
+}
+
+/// The text of a clause up to its end: the first `. `, `; ` or `, ` (and `(` when `stop_at_parenthesis`), with a
+/// trailing period or colon dropped.
+fn option_clause(tail: &str, stop_at_parenthesis: bool) -> &str {
+    let end = [
+        tail.find(". "),
+        tail.find("; "),
+        tail.find(", "),
+        stop_at_parenthesis.then(|| tail.find('(')).flatten(),
+    ]
+    .into_iter()
+    .flatten()
+    .min()
+    .unwrap_or(tail.len());
+    tail[..end].trim().trim_end_matches(['.', ':']).trim()
+}
+
+/// Every optional feature a statement states with *is optional* or *are optional*. The feature is the clause before
+/// the marker, from the last clause break (inside a parenthesis, its own; after *because* or *since*, the reason's);
+/// a condition follows *optional* (*if …*, *for …*, *on …*, *in …*) or opens the sentence before that break. *It is
+/// optional for S to V* states V with S as its implementer, and *it is optional whether X* states *whether X*.
+/// Refused, so that no record says more or less than the sentence: *optional* joined to another word
+/// (*optional-normative*) or qualifying a noun (*optional open-drain outputs*), a hypothetical (*If a register is
+/// optional*), a contrast before or after the marker (*else the field is optional*; *is optional otherwise*), a
+/// pronoun or a relative clause as subject, a subject with a verb, and a feature of the document.
+fn stated_options(text: &str) -> Vec<StatedOption> {
+    // `to_ascii_lowercase` keeps the byte layout, so offsets index `text` too.
+    let lowered = text.to_ascii_lowercase();
+    let mut found = Vec::new();
+    let markers = [
+        "is optional",
+        "are optional",
+        "is also optional",
+        "are also optional",
+    ];
+    let mut spans: Vec<(usize, usize)> = markers
+        .iter()
+        .flat_map(|marker| {
+            lowered
+                .match_indices(marker)
+                .map(move |(start, _)| (start, start + marker.len()))
+        })
+        .filter(|&(start, _)| {
+            lowered[..start]
+                .chars()
+                .next_back()
+                .is_none_or(|c| !(c.is_ascii_alphanumeric() || c == '_'))
+        })
+        .collect();
+    spans.sort_unstable();
+    for (start, end) in spans {
+        let rest = &text[end..];
+        if !rest.is_empty() && !rest.starts_with([' ', ',', '.', ';', ':', ')']) {
+            continue;
+        }
+        let after: Vec<String> = rest
+            .split_whitespace()
+            .take(3)
+            .map(bare_lowered_word)
+            .collect();
+        let next = after.first().map_or("", String::as_str);
+        if rest
+            .trim_start()
+            .starts_with(|c: char| c.is_ascii_alphabetic())
+            && !OPTION_FOLLOWERS.contains(&next)
+        {
+            continue;
+        }
+        let sentence_start = sentence_start_before(&lowered, start);
+        let before = &text[sentence_start..start];
+        if before
+            .split_whitespace()
+            .any(|word| matches!(bare_lowered_word(word).as_str(), "otherwise" | "else"))
+        {
+            continue;
+        }
+        let (prefix, clause) = match before.rfind([',', ';', ':']) {
+            Some(cut) => (&before[..cut], &before[cut + 1..]),
+            None => ("", before),
+        };
+        let mut clause = strip_permission_bullets(clause);
+        if clause.matches('(').count() > clause.matches(')').count() {
+            clause = clause[clause.rfind('(').map_or(0, |i| i + 1)..].trim();
+        }
+        let mut words: Vec<&str> = clause.split_whitespace().collect();
+        let mut low: Vec<String> = words
+            .iter()
+            .map(|word| word.trim_matches([',', '(', ')']).to_ascii_lowercase())
+            .collect();
+        if let Some(reason) = low.iter().rposition(|w| w == "because" || w == "since") {
+            words.drain(..=reason);
+            low.drain(..=reason);
+        }
+        if low
+            .first()
+            .is_some_and(|word| HYPOTHETICAL_OPENERS.contains(&word.as_str()))
+        {
+            continue;
+        }
+        while low
+            .first()
+            .is_some_and(|word| OPTION_LEADING_WORDS.contains(&word.as_str()))
+        {
+            words.remove(0);
+            low.remove(0);
+        }
+        let tail = rest.trim();
+        let mut condition: Option<String> = None;
+        let (feature, implementer) = if low == ["it"] {
+            let after_next = tail
+                .split_once(char::is_whitespace)
+                .map_or("", |(_, r)| r.trim_start());
+            if next == "for" && tail.contains(" to ") {
+                let (implementer, feature) =
+                    after_next.split_once(" to ").unwrap_or((after_next, ""));
+                (
+                    option_clause(feature, false).to_string(),
+                    Some(implementer.trim().to_string()),
+                )
+            } else if next == "whether" {
+                (option_clause(tail, false).to_string(), None)
+            } else {
+                continue;
+            }
+        } else {
+            if low.is_empty() {
+                continue;
+            }
+            let first = low[0].as_str();
+            let last = low[low.len() - 1].as_str();
+            if low[1..]
+                .iter()
+                .any(|word| matches!(word.as_str(), "that" | "which" | "whom" | "whose"))
+                || matches!(last, "which" | "that" | "who")
+                || matches!(first, "which" | "who")
+                || (low.len() == 1 && OPTION_PRONOUNS.contains(&first))
+                || low
+                    .iter()
+                    .any(|word| SUBJECT_VERBS.contains(&word.as_str()))
+            {
+                continue;
+            }
+            if OPTION_CONDITION_OPENERS.contains(&next) {
+                condition = Some(option_clause(tail, true).to_string()).filter(|c| !c.is_empty());
+            }
+            (words.join(" "), None)
+        };
+        if feature.is_empty() || speaks_about_the_document(&feature) {
+            continue;
+        }
+        if condition.is_none() {
+            let prefix = prefix
+                .trim_start_matches(|c: char| !c.is_alphanumeric())
+                .trim();
+            condition = prefix
+                .split_whitespace()
+                .next()
+                .is_some_and(|word| {
+                    OPTION_CONDITION_OPENERS.contains(&word.to_ascii_lowercase().as_str())
+                })
+                .then(|| prefix.to_string());
+        }
+        found.push(StatedOption {
+            feature,
+            implementer,
+            condition,
+        });
+    }
+    found
+}
+
 /// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
 /// field name: both strategies emit name-unique lists (the bit-range form upserts by name; the composition
 /// form keeps a per-list `seen` set), so first-wins dedup is a no-op WITHIN each strategy and reproduces the
@@ -39615,7 +39919,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 44);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 45);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -60472,6 +60776,149 @@ mod permission_rule_tests {
         ]);
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].permission_id, "permission_0000");
+        assert_eq!(records[0].supporting_statement_ids, vec!["s1", "s2"]);
+    }
+}
+
+#[cfg(test)]
+mod optional_feature_tests {
+    use super::{
+        EvidenceModality, ExtractedStatement, StatementClass, optional_feature_surface,
+        stated_options,
+    };
+
+    fn read(text: &str) -> Vec<(String, Option<String>, Option<String>)> {
+        stated_options(text)
+            .into_iter()
+            .map(|stated| (stated.feature, stated.implementer, stated.condition))
+            .collect()
+    }
+
+    fn one(
+        feature: &str,
+        implementer: Option<&str>,
+        condition: Option<&str>,
+    ) -> (String, Option<String>, Option<String>) {
+        (
+            feature.to_string(),
+            implementer.map(str::to_string),
+            condition.map(str::to_string),
+        )
+    }
+
+    #[test]
+    fn a_feature_its_condition_and_its_implementer_are_read_as_written() {
+        assert_eq!(
+            read("All Trigger Module registers (Table 14) are optional."),
+            vec![one("All Trigger Module registers (Table 14)", None, None)]
+        );
+        assert_eq!(
+            read("This register is optional if no triggers are implemented."),
+            vec![one(
+                "This register",
+                None,
+                Some("if no triggers are implemented")
+            )]
+        );
+        assert_eq!(
+            read(
+                "If there is only one debug component in the system to which the MEM-AP is connected, the ROM Table is optional."
+            ),
+            vec![one(
+                "the ROM Table",
+                None,
+                Some(
+                    "If there is only one debug component in the system to which the MEM-AP is connected"
+                )
+            )]
+        );
+        assert_eq!(
+            read("It is optional for a Subordinate component to support Atomic transactions."),
+            vec![one(
+                "support Atomic transactions",
+                Some("a Subordinate component"),
+                None
+            )]
+        );
+        assert_eq!(
+            read(
+                "If the ABORT register is implemented in the DP, it is optional whether an outstanding transaction to an AP is aborted."
+            ),
+            vec![one(
+                "whether an outstanding transaction to an AP is aborted",
+                None,
+                Some("If the ABORT register is implemented in the DP")
+            )]
+        );
+        assert_eq!(
+            read(
+                "It is recommended that this signal be ANDED with PWR_EN because PWR_GOOD is optional."
+            ),
+            vec![one("PWR_GOOD", None, None)]
+        );
+        assert_eq!(
+            read("(The hart reset and halt-on-reset request bits are optional.)"),
+            vec![one(
+                "The hart reset and halt-on-reset request bits",
+                None,
+                None
+            )]
+        );
+    }
+
+    #[test]
+    fn an_adjective_a_hypothetical_a_contrast_or_a_pronoun_states_no_option() {
+        for text in [
+            "Dotted transistors are optional open-drain outputs which can stretch the serial clock signal SCL.",
+            "This capability is optional-normative for hosts and hubs operating at Gen 1x1 speed.",
+            "If a register is optional, then a read from its offset returns 0.",
+            "This register must be implemented if hcontext is implemented, and is optional otherwise.",
+            "The field is required when the hart supports it, else the field is optional.",
+            "Otherwise, the field is optional.",
+            "It is optional if no implemented triggers use it.",
+            "All are optional.",
+            "The DM supports a set of abstract commands, most of which are optional.",
+            "Commands that the DM supports are optional.",
+        ] {
+            assert!(read(text).is_empty(), "{text}");
+        }
+    }
+
+    #[test]
+    fn the_surface_skips_tables_and_apparatus_and_merges_a_repeated_option() {
+        let statement = |id: &str, class: StatementClass, text: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        };
+        let records = optional_feature_surface(&[
+            statement(
+                "s1",
+                StatementClass::SourceFact,
+                "This feature is optional.",
+            ),
+            statement(
+                "s2",
+                StatementClass::NormativeStatement,
+                "This feature is optional.",
+            ),
+            statement(
+                "s3",
+                StatementClass::SourceFact,
+                "| Clock stretching is optional | 1 |",
+            ),
+            statement(
+                "s4",
+                StatementClass::Apparatus,
+                "Reading the appendix is optional.",
+            ),
+        ]);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].option_id, "option_0000");
         assert_eq!(records[0].supporting_statement_ids, vec!["s1", "s2"]);
     }
 }

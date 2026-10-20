@@ -2650,6 +2650,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("  equivalence_rules: {}", ir.equivalence_rules.len());
     // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
     println!("  permission_rules: {}", ir.permission_rules.len());
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the optional features the document states.
+    println!("  optional_features: {}", ir.optional_features.len());
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -3920,6 +3922,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ),
             metric("equivalence_rules", ir.equivalence_rules.len().to_string()),
             metric("permission_rules", ir.permission_rules.len().to_string()),
+            metric("optional_features", ir.optional_features.len().to_string()),
             metric(
                 "signal_polarity_conflicts",
                 ir.signal_polarity_conflicts.len().to_string(),
@@ -5374,6 +5377,8 @@ fn validate_semantic_ir_with_prior_memory(
     println!("  equivalence_rules: {}", ir.equivalence_rules.len());
     // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
     println!("  permission_rules: {}", ir.permission_rules.len());
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the optional features the document states.
+    println!("  optional_features: {}", ir.optional_features.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -5601,6 +5606,7 @@ fn validate_semantic_ir_with_prior_memory(
             ),
             metric("equivalence_rules", ir.equivalence_rules.len().to_string()),
             metric("permission_rules", ir.permission_rules.len().to_string()),
+            metric("optional_features", ir.optional_features.len().to_string()),
             metric(
                 "interface_edge_timings",
                 ir.interface_edge_timings.len().to_string(),
@@ -5967,6 +5973,8 @@ fn validate_intent_ir_with_prior_memory(
     println!("  equivalence_rules: {}", ir.equivalence_rules.len());
     // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
     println!("  permission_rules: {}", ir.permission_rules.len());
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the optional features the document states.
+    println!("  optional_features: {}", ir.optional_features.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -7554,6 +7562,7 @@ fn validate_intent_ir_with_prior_memory(
             ),
             metric("equivalence_rules", ir.equivalence_rules.len().to_string()),
             metric("permission_rules", ir.permission_rules.len().to_string()),
+            metric("optional_features", ir.optional_features.len().to_string()),
             metric(
                 "interface_edge_timings",
                 ir.interface_edge_timings.len().to_string(),

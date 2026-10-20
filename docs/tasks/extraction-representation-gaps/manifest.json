@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d",
-      "literal" : "`.3.d.iii.d` — an optional feature is a typed record.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e",
+      "literal" : "`.3.d.iii.e` — an environment assumption is an assumption.",
       "mode" : "eligible",
       "part_id" : "default-and-assumption-leaves"
    },
@@ -987,7 +987,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
       },
@@ -996,6 +996,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.51",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1101,13 +1107,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
          "metrics" : {
-            "bytes" : 27443,
+            "bytes" : 28919,
             "line_bytes" : 281,
-            "lines" : 284
+            "lines" : 299
          },
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-         "sha256" : "74637ba686cb749ce859ba2894c6b6025a8bd50b43c38fd08d81817084928901",
+         "sha256" : "aac8d4e256463469756c1a56fa5616521811d8dc7cdd92d9c43595741fd83983",
          "state" : "active"
       },
       {
@@ -1125,13 +1131,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
          "metrics" : {
-            "bytes" : 47576,
+            "bytes" : 53372,
             "line_bytes" : 967,
-            "lines" : 456
+            "lines" : 512
          },
          "part_id" : "default-and-assumption-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
-         "sha256" : "a1edba8d8f0a769531bae79cceee7a38bd48cf1bed6163271612bd023ad9e272",
+         "sha256" : "e9cfd53727df30f97ecc76b3e9653fd5dded23fe1c0045a062d21ad771e3458a",
          "state" : "active"
       },
       {

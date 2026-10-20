@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > how much page content escapes both the structured-element path and the region-crop path
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > how much should one closure cost a bounded task root
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
@@ -296,5 +298,3 @@
   > is source_ir.json bounded in size for very large PDFs
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
-- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
-  > is tPortConfiguration or tSU a stated time (yes: a lowercase t before a capital names a timing parameter)

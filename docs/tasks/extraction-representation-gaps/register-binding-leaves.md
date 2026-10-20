@@ -203,6 +203,21 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   validity or readiness (not the data it qualifies, not another named signal, not a negated readiness), and measure
   every chain's hints and interfaces.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.51`
+  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.d`)
+  Goal: **a sentence defining the document's own notation is apparatus.** ADIv6's appendix E3 (*Pseudocode
+  Definition*) explains the pseudocode language the document uses, and its sentences are read as protocol content:
+  `.3.d.iii.d` read *The block of lines consisting of elsif and its indented statements is optional* as an optional
+  feature (`option_0006`), and *This statement indicates a special case that replaces the behavior defined by the
+  current pseudocode* is classed `normative_statement` five times and `derived_rule` once. **Reproduce:** statements
+  on the 31 chains not classed `apparatus` that name *pseudocode*, *elsif*, *indented statements* or *indentation*:
+  55, 46 of them ADIv6's (39 `source_fact`, 6 `normative_statement`, 1 `derived_rule`), AXI 6, ACE 2, CHI C2C 1.
+  **Impact:** a notation rule becomes a requirement or an option the hardware is held to, and an obligation reader
+  can take it. Acceptance: tell a section that defines the document's notation (pseudocode, typographic or
+  numbering conventions) from one that uses it, by its heading and its own words rather than a document's name, file
+  its sentences as apparatus, keep a pseudocode function that describes hardware behavior (*The pseudocode function
+  EnterDormantState describes the function of the JTAG-to-DS sequence detector*) where it is, and measure every chain.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6's AHB3 and AHB5 sections map `CSW.Prot` bits 28-24 to `HPROT` in prose; no

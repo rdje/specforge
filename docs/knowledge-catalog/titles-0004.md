@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md) | 2026-09-01 | `current` | An EvidenceIR's proof binds the artifact's own storage location, so a byte-identical copy elsewhere fails can… |
 | [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md) | 2026-09-11 | `current` | Changing the content of an existing EvidenceIR rule field stales every persisted proof without moving the rul… |
 | [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md) | 2026-08-09 | `current` | Evidence signal-declaration catalogs panic when a match follows a multi-byte bullet |
 | [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md) | 2026-08-11 | `current` | EvidenceIR statement text comes from the normalized markdown, where `_` is escaped, so every underscore-beari… |
@@ -60,4 +61,3 @@
 | [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md) | 2026-08-09 | `current` | Legal and administrative prose is retained as evidence but cannot establish semantic intent |
 | [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |
 | [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md) | 2026-08-14 | `current` | Parent Git index defines SpecForge live-Markdown coverage |
-| [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md) | 2026-08-09 | `current` | Derived-state field and copy plane is independently closed |

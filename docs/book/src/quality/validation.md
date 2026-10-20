@@ -378,7 +378,7 @@ cross both stages. `.3.d.ii.a.i` adds the check-coverage inventory beside it: `c
 `check_signal_covered` (distinct covered signals) on EvidenceIR, an `evidence_check_signal_inventory` Info finding
 when the surface is non-empty, and a `check_signal_records` count on the two carried stages. `.3.d.ii.a.ii` does
 the same for `collective_signal_names` (an `evidence_collective_signal_name_inventory` finding). `.3.d.ii.b.ii` adds an
-`equivalence_rules` count on all three stages, and `.3.d.iii.a` a `permission_rules` count.
+`equivalence_rules` count on all three stages, `.3.d.iii.a` a `permission_rules` count, and `.3.d.iii.d` an `optional_features` count.
 
 The typed **message-field inventory** (the in-memory structure and packet-field surface built
 by the bit-position and field-titled table readers) is also on the report: five metrics —

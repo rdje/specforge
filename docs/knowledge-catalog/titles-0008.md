@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md) | 2026-06-15 | `current` | The deterministic value binder matches an alphabetic enum value as a whole word (no substring fabrication) |
 | [vlm-table-strategy](../knowledge/vlm-table-strategy.md) | 2026-06-07 | `current` | VLM (Qwen2.5VL) reads table images to reclassify "unknown" tables — the second, best-wins table strategy |
 | [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md) | 2026-09-19 | `current` | The three wire-based gold bundles were never lost — RESOLVED: installed at their normalized roots, declared… |
 | [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md) | 2026-09-26 | `current` | Wishbone's system contract (CLK_I, RST_I synchronous active-high) is read from its prose since 2026-09-26 —… |

@@ -1170,6 +1170,31 @@ passive *must be assumed* stay apparatus. On the 31 chains 24 statements in 8 do
 7 conditional rules and 3 permissions, 11 abstractions leave SemanticIR and 23 invariants join it, and the emitted `.isf`
 texts are byte-identical. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.c`).
 
+**An optional feature is a typed record.** A sentence that calls something optional states that it may be absent
+(*All Trigger Module registers (Table 14) are optional*; *The processing of BERT commands is optional for Gen 1
+loopback*), and no record carried it. It is not a permission: its subject is the feature, not an actor that may do
+something. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d` (`2026-10-20`) EvidenceIR carries each feature a sentence
+calls optional with *is optional* or *are optional* as an `optional_features` record, which SemanticIR and IntentIR
+carry unchanged:
+
+```json
+{ "option_id": "option_0001", "feature": "support Atomic transactions", "implementer": "a Subordinate component",
+  "supporting_statement_ids": ["statement_2161"] }
+```
+
+The feature is the clause before the marker, from the sentence's last clause break (inside a parenthesis, its own;
+after *because* or *since*, the reason's); a condition follows *optional* (*if …*, *for …*, *on …*) or opens the
+sentence before that break. *It is optional for S to V* names V as the feature and S as its implementer, and *it is
+optional whether X* names *whether X*. Refused, because a record would say more or less than the sentence: *optional*
+joined to another word (*optional-normative*) or qualifying a noun (*are optional open-drain outputs*), a hypothetical
+(*If a register is optional*), a contrast before or after the marker (*else the field is optional*; *and is optional
+otherwise*), a pronoun (*It is optional*, *All are optional*), a relative clause (*most of which are optional*), a
+subject with a verb, and a feature of the document. A feature named by a demonstrative (*This register*, *This
+field*) keeps it as written; the grammar does not resolve what it refers to. On the 31 chains 52 records in 13 documents, read from 61 statements; 15 uses refused. Only that
+section moves at each stage, every adapter gains one `isf_protocol_optional_features` residual naming its records by
+their id range, and the emitted `.isf` texts are byte-identical. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.d`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

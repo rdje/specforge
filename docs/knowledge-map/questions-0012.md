@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > should a co-referenced antecedent be marked alias_dependent
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > should a corpus refresh clean the normalized bundle when it finishes
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -295,5 +297,3 @@
   > what did SPEC-TO-INTENT-ALIGNMENT.7c.ii publish
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > what did admitting the product's output nouns to the candidate grammar cost (56 new candidate lines, 483 to 539, with candidate files unmoved at 26; individually statements +13, behaviors +12, rows +12, constraints +11, actors +5, declarations +5, invariants +5, subjects +2, spans +1, leaves +1, which sum to 67 because the book counts several on one line)
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what did real filenames expose in adversarial identity comparison

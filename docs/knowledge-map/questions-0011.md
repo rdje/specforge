@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
+  > is tPortConfiguration or tSU a stated time (yes: a lowercase t before a capital names a timing parameter)
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > is text inside a timing diagram available to the extractor
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -296,5 +298,3 @@
   > should SpecForge use one weighted progress score
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > should a bounded task root carry verification log rows
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > should a co-referenced antecedent be marked alias_dependent

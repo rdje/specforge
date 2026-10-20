@@ -11,7 +11,9 @@ use crate::ir::derivation::{
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
     SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
-use crate::ir::evidence::{PermissionRuleRecord, SignalPresenceRecord, StatedAbsentValue};
+use crate::ir::evidence::{
+    OptionalFeatureRecord, PermissionRuleRecord, SignalPresenceRecord, StatedAbsentValue,
+};
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
 use crate::ir::semantic::SystemResetPolarity;
@@ -1105,6 +1107,38 @@ fn permission_residual_packet(records: &[PermissionRuleRecord]) -> Option<Residu
     })
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — one residual for every optional feature the document states, named by
+/// the range of its consecutively numbered records.
+fn optional_feature_residual_packet(
+    records: &[OptionalFeatureRecord],
+) -> Option<ResidualDecisionPacket> {
+    let first = records.first()?;
+    let last = records.last()?;
+    Some(ResidualDecisionPacket {
+        packet_id: "isf_protocol_optional_features".to_string(),
+        question: "How should the features the document states are optional be represented downstream of `.isf`?".to_string(),
+        why_unresolved: format!(
+            "{} optional feature(s) (`{}`-`{}`) state what may be absent, under an optional condition; `.isf` has no construct for an optional feature or a configuration that omits one, and each feature is a phrase as written, not bound to a port, register or transaction. They remain exact in IntentIR and are not rendered.",
+            records.len(),
+            first.option_id,
+            last.option_id
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "preserve_intent_observation".to_string(),
+                description: "Keep the optional features in IntentIR and expose this adapter residual without emitting executable syntax.".to_string(),
+                downstream_impact: "Independently licensed ISF remains usable; which features a configuration may omit stays visible but unmodelled.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "lower_as_configuration_after_bindings".to_string(),
+                description: "Lower an optional feature as a configuration parameter once the feature is bound to the ports, registers or transactions it adds.".to_string(),
+                downstream_impact: "A future adapter could emit one configuration per choice after the bindings are source-grounded and FSMGen-strict verified.".to_string(),
+            },
+        ],
+    })
+}
+
 fn protocol_residual_packet(
     surface_id: &str,
     surface_label: &str,
@@ -1256,7 +1290,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.interface_edge_timings.len()
             + stated_absent_values.len()
             + intent_ir.equivalence_rules.len()
-            + 1,
+            + 2,
     );
 
     for record in &intent_ir.serial_frame_fields {
@@ -1326,6 +1360,10 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
     // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — `.isf` has no construct for what a subject may do; one packet names
     // every stated permission, the way `isf_obligations_not_lowered` names every obligation it does not lower.
     residuals.extend(permission_residual_packet(&intent_ir.permission_rules));
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — nor for a feature that may be absent; one packet names them all.
+    residuals.extend(optional_feature_residual_packet(
+        &intent_ir.optional_features,
+    ));
     for (record, absent_value, class_ordinal) in stated_absent_values {
         residuals.push(absent_value_residual_packet(
             record,
