@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e",
-      "literal" : "`.3.d.iii.e` — an environment assumption is an assumption.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f",
+      "literal" : "`.3.d.iii.f` — an *assumes the* whose subject is no premise's states what its subject does.",
       "mode" : "eligible",
-      "part_id" : "default-and-assumption-leaves"
+      "part_id" : "environment-assumption-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -136,13 +136,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
             "metrics" : {
-               "bytes" : 53372,
+               "bytes" : 51970,
                "line_bytes" : 967,
-               "lines" : 512
+               "lines" : 498
             },
             "part_id" : "default-and-assumption-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
-            "sha256" : "e9cfd53727df30f97ecc76b3e9653fd5dded23fe1c0045a062d21ad771e3458a",
+            "sha256" : "5d379f557c5b6316a6bb17a38525bcac78103bb75e2a0629fe62746f67859e73",
+            "state" : "active"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — environment assumption leaves",
+            "metrics" : {
+               "bytes" : 11242,
+               "line_bytes" : 123,
+               "lines" : 115
+            },
+            "part_id" : "environment-assumption-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/environment-assumption-leaves.md",
+            "sha256" : "78219665d6817cc47c2dcc250b4e3714a3b1eb34f5ae1446e1d1ddc1fb136370",
             "state" : "active"
          },
          {
@@ -1176,15 +1188,27 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "default-and-assumption-leaves"
+         "part_id" : "environment-assumption-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.51",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "environment-assumption-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "environment-assumption-leaves"
       }
    ],
    "limits" : {
@@ -1312,7 +1336,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.iii.e` — an environment assumption is an assumption.",
+         "`.3.d.iii.f` — an *assumes the* whose subject is no premise's states what its subject does.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1355,8 +1379,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.50`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.51`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.51`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g`"
       ]
    },
    "migration_metadata" : {

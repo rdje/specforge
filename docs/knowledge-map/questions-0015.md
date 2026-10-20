@@ -222,6 +222,8 @@
   > what is stated_permissions / permission_rule_surface
 - [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
   > what is states_an_obligation_beside_its_assumptions
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > what is states_only_premises_with_assume_that / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > what is swallowed_verb_governance
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -295,5 +297,3 @@
   > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP

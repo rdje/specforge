@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > why did the ceiling_increase_authorities registry start warning about capacity
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > why did the claim-verification gate fail after I edited MEMORY.md
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -152,6 +154,8 @@
   > why does 'It is permitted to signal an error' have no subject
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > why does 'Shareable domain' carry two codes 0b01 and 0b10
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why does 'These rules assume that the TS Delays are zero' stay apparatus (a rule's premise)
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
   > why does 'This register is optional' keep the demonstrative (no referent resolution)
 - [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
@@ -294,7 +298,3 @@
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why does Wishbone declare no signals
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > why does a Bits column become an enum value column
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > why does a Function title spanning two columns lose rows

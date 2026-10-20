@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why is the reviewed dataset review-locked
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why is the snap trigger absence-from-sentence and not typing failure
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > why is the stage-staleness check zero-versus-some and not a count comparison
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
 - [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)

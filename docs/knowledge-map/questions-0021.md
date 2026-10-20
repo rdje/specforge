@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > why did ADIv6 CSW.AddrInc have no values
 - [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
   > why did ADIv6 have an enum named In
 - [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
@@ -295,5 +297,3 @@
   > why did the book quantitative-claim census report full coverage while published counts went ungated (its unit vocabulary is a closed alternation assembled from nouns that had already produced a loud miss, and SpecForge's own output nouns had never produced one — a miss there is a silent zero rather than an error, so nothing looked)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > why did the canonical SWD relation count change from 25 to 21
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > why did the ceiling_increase_authorities registry start warning about capacity

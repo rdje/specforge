@@ -16,10 +16,13 @@ placed in one family, the first whose test matches, in this order:
                             from the closed list SOFTWARE_AGENTS;
   assumed_by_word           an assumption no earlier family took: SemanticIR lifts a statement to an abstraction by its
                             words (`assume`, `treated as`), so what remains is a hardware or protocol rule; each is
-                            given one of six SHAPES (EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b), first match wins:
+                            given one of seven SHAPES (EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b), first match wins:
                             convention (the guide, document, example or reader is the subject), diagram_convention
-                            (a timing-diagram key), narrative (an example, a modelling or analysis premise),
-                            treated_as (an equivalence rule), stated_default (a value or state assumed) and other;
+                            (a timing-diagram key), environment (what a component, an interface or a protocol
+                            assumes of its environment with `assume(s) that`, an assumption only when no premise
+                            subject precedes it: EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e), narrative (an example,
+                            a modelling or analysis premise), treated_as (an equivalence rule), stated_default (a
+                            value or state assumed) and other;
   permission_or_description a behavior no earlier family took: a permission (`may`) or a description of hardware or
                             protocol behavior that no typed reader reads; each is given one of five MODALITIES
                             (EXTRACTION-REPRESENTATION-GAPS.3.d.iii), first match wins: obligation (`must`, `shall`,
@@ -61,6 +64,7 @@ SHAPES = (
         r"|\bwe (assume|refer)\b|assum\w*\s+(that\s+)?(you|the reader)\b|\bare assumed:\s*$")),
     ("treated_as", re.compile(r"\btreated as\b")),
     ("diagram_convention", re.compile(r"timing diagram|shaded|waveform")),
+    ("environment", re.compile(r"\bassumes? that\b")),
     ("narrative", re.compile(r"\bexample\b|\bassuming\b|assume[sd]? that\b|assumes the\b|assumed to (be )?(using|sent|received)")),
     ("stated_default", re.compile(r"assumed to be|is assumed|are assumed|assumed as|\bassumed\b|\bassumes?\b")),
 )

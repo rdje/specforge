@@ -15,10 +15,14 @@ answers:
   - "why is 'the bits … assume a valid but otherwise UNSPECIFIED value' no longer an abstraction (assume means take on)"
   - "what is every_assume_word_states_no_abstraction / premise_of_a_figure_a_guideline_or_an_analysis"
   - "why is 'the hub shall ignore the route string and assume all packets are routed directly to the hub' an invariant now"
-date: 2026-10-19
+  - "why is 'The WISHBONE interface logic assumes that a low-skew clock distribution scheme is used' an assumption, not apparatus"
+  - "what is states_only_premises_with_assume_that / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS"
+  - "why does 'These rules assume that the TS Delays are zero' stay apparatus (a rule's premise)"
+  - "why does a 'For example' after an assumption not make it an example's premise"
+date: 2026-10-20
 status: current
 tags: [evidence-ir, statement-class, apparatus, assumptions, classifier, measured, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (StatementClass::Apparatus; abstraction_class; is_non_contract_assumption; ABSTRACTION_WORDS; MODELLING_PHRASES; DOCUMENT_SUBJECTS); crates/specforge/src/ir/semantic.rs (is_invariant_like); crates/specforge/src/commands/validate.rs (the class-name table); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b.i)
+evidence: crates/specforge/src/ir/evidence.rs (StatementClass::Apparatus; abstraction_class; is_non_contract_assumption; ABSTRACTION_WORDS; MODELLING_PHRASES; DOCUMENT_SUBJECTS); crates/specforge/src/ir/semantic.rs (is_invariant_like); crates/specforge/src/commands/validate.rs (the class-name table); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b.i); docs/tasks/extraction-representation-gaps/environment-assumption-leaves.md (.3.d.iii.e, .3.d.iii.f)
 reverify: "cargo test --offline -p specforge-core --lib non_contract_assumption && python3 -c \"import json; e=json.load(open('generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json')); print(sum(1 for s in e['extracted_statements'] if s['class']=='apparatus'))\"   # expect 3 (two diagram keys and a parity-budget premise)"
 ---
 
@@ -61,5 +65,19 @@ class (13 targets, two example premises, two Wishbone legal sentences, a three-s
 low state*, an endpoint that *cannot assume a rate*); no other evidence record moves; 15 IntentIR assumptions go, and
 three reclassified rules become ordinary invariants and constraints (AXI 1, USB 2). Unlike `.3.d.ii.b.i`'s refused
 fall-through, nothing junk is minted, because these sentences are rules or behaviour.
+
+**`.3.d.iii.e` (`2026-10-20`): what the hardware assumes of its environment is an assumption.** *Assume that* and
+*assumes that* were premise phrases whatever their subject, so *The WISHBONE interface logic assumes that a low-skew
+clock distribution scheme is used on the target device* was apparatus. Since then
+(`states_only_premises_with_assume_that`) a sentence is a premise by those phrases only when **every** use has, in
+its own sentence (a table cell counts as one), a document noun, an analysis noun or a `PREMISE_SUBJECT_WORDS` word
+before it (*rules*, *limitation*,
+*descriptions*, *shown*, *we*, *we'll*, *you*, *reader*), or no subject at all (*Assume that a target or line error
+has occurred*). An *example* counts only before an assume word (`names_an_example_before_its_assumptions`): AXI's
+*This MEC implementation assumes that Managers and caches do not perform any MECID checks. For example, …* is
+illustrated, not premised. *Assumes the* is unchanged (`.3.d.iii.f`). Measured on the 31 chains: 5 statements in 4
+documents become abstractions (Wishbone's clock-skew and FASM read-data sentences, AXI's MEC, SMBus's timeout, RISC-V
+debug's *Debuggers may assume that a hardware platform has no harts with indexes higher than the first nonexistent
+one*, which `permission_rules` also reads); no other evidence record moves.
 
 Links: [[assume-sentences-fall-into-six-shapes]], [[a-signals-stated-absent-value-rides-its-presence-record]].

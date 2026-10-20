@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-III-D-OPTIONAL-FEATURE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-III-E-ENVIRONMENT-ASSUMPTION",
    "baseline": {
-    "analyzed_functions": 2764,
-    "decision_sites": 15102,
-    "helper_edges": 18679,
-    "semantic_macros": 1594
+    "analyzed_functions": 2768,
+    "decision_sites": 15165,
+    "helper_edges": 18748,
+    "semantic_macros": 1601
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 63,
-    "helper_edges": 69,
-    "semantic_macros": 7
+    "analyzed_functions": 2,
+    "decision_sites": 15,
+    "helper_edges": 8,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d: an optional feature is a typed record. optional_feature_surface and stated_options read each feature a sentence calls optional into EvidenceIR optional_features, carried by SemanticIR and IntentIR, with one adapter residual per document."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e: what the hardware assumes of its environment is an assumption. states_only_premises_with_assume_that and names_an_example_before_its_assumptions let assume that / assumes that make a premise only with a premise subject before them."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

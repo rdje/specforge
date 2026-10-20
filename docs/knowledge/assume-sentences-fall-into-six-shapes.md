@@ -12,7 +12,7 @@ answers:
   - "what are the 21 remaining stated_default records / what are EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a, .b and .c"
   - "why is AXI's 'CMO transactions are assumed to be Non-shareable' not AWDOMAIN's absent value (it holds for a class of requests only)"
   - "does the AXI specification disagree with itself about a cacheable request's domain without domain signals (yes: statement_2337 says Non-shareable, statement_2360 says Shareable)"
-date: 2026-10-19
+date: 2026-10-20
 status: current
 tags: [intent-ir, assumptions, abstraction, classification, census, measured, extraction-representation-gaps]
 evidence: scripts/measure_unread_intent_records.py (SHAPES, shape); crates/specforge/src/ir/evidence.rs (classify_statement, the ExplicitAbstraction arm); crates/specforge/src/ir/semantic.rs (build_abstractions); crates/specforge/src/ir/intent.rs (build_assumptions); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b)
@@ -59,5 +59,10 @@ is a value; neither belongs beside a guide's prerequisite. The remedy is split b
 by removing the words from the classifier wholesale, because a reclassified sentence falls through to the other
 classes in order (`DerivedRule`, `LocalDesignDecision`, `SignalValueConstraint`, …) and each child must measure
 what those readers then take.
+
+**A seventh census shape (`2026-10-20`).** Since `.3.d.iii.e` EvidenceIR files *assume that* / *assumes that* as an
+assumption when no premise subject precedes it, so the census gives those records their own shape, `environment`
+(what a component, an interface or a protocol assumes of its environment), ahead of `narrative`, whose *assume that*
+would otherwise call them an example's premise: 2 on the 31 chains (Wishbone's low-skew clock, SMBus's timeout).
 
 Links: [[a-signals-stated-absent-value-rides-its-presence-record]], [[untyped-uncited-tables-fall-into-fifteen-families]].

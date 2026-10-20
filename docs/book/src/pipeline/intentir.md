@@ -498,7 +498,10 @@ area*) is classified `apparatus` at the evidence stage, a class no reader consum
 assumption; 83 sentences in 22 of the 31 chains left the surface. Since `.3.d.ii.b.iii.a` (`2026-10-19`) AXI's class-scoped domain
 defaults are read into presence records, and since `.3.d.ii.b.iii.b` the same day a sentence whose every *assume*
 forbids an assumption, means *take on*, is a device's obligation or states a value (*the DTF value assumed … is 0*)
-keeps its own class, and three more premise shapes are apparatus: 15 more assumptions left the surface. The behaviors were mostly permissions (154 of the 176 unread on `2026-10-19`, `.3.d.iii`); since `.3.d.iii.a`
+keeps its own class, and three more premise shapes are apparatus: 15 more assumptions left the surface. Since
+`.3.d.iii.e` (`2026-10-20`) *assume that* makes a premise only when a premise subject precedes it, so what a component,
+an interface or a protocol assumes of its environment (*The WISHBONE interface logic assumes that a low-skew clock
+distribution scheme is used*) is an assumption again: 5 joined the surface. The behaviors were mostly permissions (154 of the 176 unread on `2026-10-19`, `.3.d.iii`); since `.3.d.iii.a`
 (`2026-10-20`) a stated permission is a `permission_rules` record, and the unread records fell from 315 to 151. The
 behaviors left mix software obligations (the USB4 connection-manager guide's procedures), permissions the grammar
 refuses, obligations no reader takes yet, table rows lifted as prose, and document apparatus. Each open kind has an owner (`.3.d.i`-`.3.d.iii`); the

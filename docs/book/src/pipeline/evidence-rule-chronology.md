@@ -1195,6 +1195,20 @@ section moves at each stage, every adapter gains one `isf_protocol_optional_feat
 their id range, and the emitted `.isf` texts are byte-identical. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.d`).
 
+**What the hardware assumes of its environment.** The premise phrases *assume that* and *assumes that* filed a
+sentence as apparatus whatever its subject, so *The WISHBONE interface logic assumes that a low-skew clock
+distribution scheme is used on the target device* was read by nothing. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e`
+(`2026-10-20`) those phrases make a premise only when every use of them has, in its own sentence (a table cell is
+one), a document noun, a figure, a table, a rule or limitation, an analysis, *shown*, *we* or the reader before it, or
+no subject at all (*Assume that a target or line error has occurred*). What a component, an interface, an
+implementation or a protocol assumes is an assumption. An *example* makes a premise only before the assume word, so
+*This MEC implementation assumes that Managers and caches do not perform any MECID checks. For example, …* is an
+assumption the example illustrates. *Assumes the* keeps its premise reading for now (`.3.d.iii.f`). On the 31 chains 5
+statements in 4 documents leave the apparatus class: Wishbone's clock-skew and read-data assumptions, AXI's MEC,
+SMBus's timeout, and RISC-V debug's *Debuggers may assume that a hardware platform has no harts with indexes higher
+than the first nonexistent one*. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md`
+(`.3.d.iii.e`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

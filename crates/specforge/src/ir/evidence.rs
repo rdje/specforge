@@ -7369,15 +7369,13 @@ fn is_non_contract_assumption(sentence: &str) -> bool {
         ],
     ) || sentence.trim_end().ends_with("are assumed:");
     let diagram_key = contains_any(sentence, &["timing diagram", "shaded", "waveform"]);
-    let premise = contains_whole_identifier(sentence, "example")
-        || contains_whole_identifier(sentence, "examples")
+    let premise = names_an_example_before_its_assumptions(sentence)
         || contains_whole_identifier(sentence, "assuming")
         || premise_of_a_figure_a_guideline_or_an_analysis(sentence)
+        || states_only_premises_with_assume_that(sentence)
         || contains_any(
             sentence,
             &[
-                "assume that",
-                "assumes that",
                 "assumes the",
                 "assumed as",
                 "shown assume",
@@ -7391,6 +7389,91 @@ fn is_non_contract_assumption(sentence: &str) -> bool {
             ],
         );
     document_subject || reader_subject || diagram_key || premise
+}
+
+/// The words before a premise phrase, besides `DOCUMENT_SUBJECTS` and `ANALYSIS_NOUNS`, that make it the premise of
+/// the document, a rule, a figure or the reader rather than what the hardware assumes (`.3.d.iii.e`). English, not a
+/// vocabulary (ADR 0006).
+const PREMISE_SUBJECT_WORDS: [&str; 17] = [
+    "guideline",
+    "examples",
+    "figures",
+    "tables",
+    "rule",
+    "rules",
+    "limitation",
+    "limitations",
+    "description",
+    "descriptions",
+    "shown",
+    "we",
+    "we'll",
+    "us",
+    "let's",
+    "you",
+    "reader",
+];
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e — whether the sentence names an example before an assume word, so that
+/// the assumption is the example's premise (*The example assumes that the two interrupts are sent simultaneously*).
+/// An example that follows every assume word illustrates the assumption (*This MEC implementation assumes that
+/// Managers and caches do not perform any MECID checks. For example, …*); a sentence with no assume word keeps the
+/// test it had (*treated as* or a modelling phrase beside *example*).
+fn names_an_example_before_its_assumptions(sentence: &str) -> bool {
+    let last_assume = assume_word_offsets(sentence)
+        .last()
+        .map_or(sentence.len(), |&(at, _)| at);
+    ["example", "examples"].iter().any(|word| {
+        sentence.match_indices(word).any(|(at, _)| {
+            at < last_assume
+                && sentence[..at]
+                    .chars()
+                    .next_back()
+                    .is_none_or(|c| !c.is_ascii_alphanumeric())
+                && sentence[at + word.len()..]
+                    .chars()
+                    .next()
+                    .is_none_or(|c| !c.is_ascii_alphanumeric())
+        })
+    })
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e — whether the sentence says *assume that* or *assumes that* and every
+/// such use states a premise: the words of its sentence before it name the document, a figure, an example, a rule,
+/// an analysis, the reader or *we* (*This table assumes that GICD_CTLR.DS==0*; *these rules assume that the Tx and
+/// Rx TS Delays … are zero*; *For now, we'll assume that the clock comes from off-chip*), or no subject at all
+/// (*Assume that a target or line error has occurred*). What a component, an interface, an implementation or a
+/// protocol assumes of its environment is an assumption, not apparatus (*The WISHBONE interface logic assumes that a
+/// low-skew clock distribution scheme is used on the target device*).
+fn states_only_premises_with_assume_that(sentence: &str) -> bool {
+    let uses: Vec<usize> = assume_word_offsets(sentence)
+        .into_iter()
+        .filter(|&(at, word)| word != "assumed" && sentence[at + word.len()..].starts_with(" that"))
+        .map(|(at, _)| at)
+        .collect();
+    !uses.is_empty()
+        && uses.into_iter().all(|at| {
+            // A table cell is a sentence of its own (*| invalid ACK | Assume that a target or line error has occurred*).
+            let start = sentence[..at]
+                .rfind(". ")
+                .map(|i| i + 2)
+                .max(sentence[..at].rfind('|').map(|i| i + 1))
+                .unwrap_or(0);
+            let words: Vec<&str> = sentence[start..at]
+                .split(|c: char| !(c.is_ascii_alphanumeric() || c == '\''))
+                .filter(|word| !word.is_empty())
+                .collect();
+            words.iter().all(|word| {
+                matches!(
+                    *word,
+                    "and" | "but" | "then" | "so" | "note" | "that" | "also" | "o"
+                )
+            }) || words.iter().any(|word| {
+                DOCUMENT_SUBJECTS.contains(word)
+                    || ANALYSIS_NOUNS.contains(word)
+                    || PREMISE_SUBJECT_WORDS.contains(word)
+            })
+        })
 }
 
 /// The byte offsets of every *assume*, *assumes* and *assumed* the sentence uses as a whole word.
@@ -60396,6 +60479,37 @@ mod non_contract_assumption_tests {
                 StatementClass::Apparatus,
                 "{text}"
             );
+        }
+    }
+
+    /// `.3.d.iii.e` — what a component, an interface, an implementation or a protocol assumes of its environment is an
+    /// assumption, even beside a premise of the document or with an example after it.
+    #[test]
+    fn an_environment_assumption_stated_with_assume_that_is_an_abstraction() {
+        for text in [
+            "The WISHBONE interface logic assumes that a low-skew clock distribution scheme is used on the target device, and that the clock-skew shall be low enough to permit reliable operation over the environmental conditions.",
+            "This MEC implementation assumes that Managers and caches do not perform any MECID checks. For example, if a read access targets a location that has a copy present in a cache, the read access succeeds.",
+            "SMBus protocol just assumes that if something takes too long, then it means that there is a problem on the bus.",
+            "Debuggers may assume that a hardware platform has no harts with indexes higher than the first nonexistent one.",
+            "Note that these rules assume that the delays are zero. The hub assumes that its upstream port is in U0.",
+        ] {
+            assert!(is_abstraction(text), "{text}");
+        }
+    }
+
+    /// `.3.d.iii.e` — *assume that* stays a premise when the sentence before it names a rule, a figure, a table, *we*,
+    /// or nothing at all.
+    #[test]
+    fn a_premise_stated_with_assume_that_stays_apparatus() {
+        for text in [
+            "Note that these rules assume that the Tx and Rx TS Delays in Figure 8-16 are zero.",
+            "For now, we'll assume that the clock comes from off-chip, and that the reset signal is synchronized.",
+            "Assume that a target or line error has occurred and treat as a fatal error.",
+            "| Read or Write | invalid ACK | Assume that a target or line error has occurred and treat as a fatal error. |",
+            "The memory circuits shown above are highly portable, but do assume that FASM compatible memories are available.",
+            "Remark: Table 9 assumes that the Hs devices are isolated from the Fm and Sm devices.",
+        ] {
+            assert!(is_apparatus(text), "{text}");
         }
     }
 

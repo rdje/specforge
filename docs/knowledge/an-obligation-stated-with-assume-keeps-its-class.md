@@ -38,7 +38,7 @@ unchanged, because `equivalence_rule_surface` reads every non-apparatus statemen
 the readers add 7 conditional rules and 3 permissions and remove nothing, SemanticIR abstractions fall by 11 and
 invariants rise by 23, `.isf` texts byte-identical; unread IntentIR records 151 -> 140, obligations 8 -> 3.
 Environment assumptions stated with *assumes that* (Wishbone's low-skew clock, AXI's MEC implementation, SMBus)
-remain apparatus and are `.3.d.iii.e`.
+remained apparatus; since `.3.d.iii.e` they are assumptions ([[an-assume-sentence-about-the-document-is-apparatus]]).
 
 Links: [[an-assume-sentence-about-the-document-is-apparatus]], [[assume-sentences-fall-into-six-shapes]],
 [[a-stated-permission-is-a-typed-record]].

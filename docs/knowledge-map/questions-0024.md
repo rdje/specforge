@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why does the AArch64 External Debug Guide emit no ISF
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why does the AMBA DTI specification declare no signals
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -158,6 +164,8 @@
   > why is 'LPIs are always treated as Non-secure Group 1 interrupts' an assumption
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
   > why is 'MASTER and SLAVE interfaces MAY be designed so that they do not support the BLOCK cycles' no longer timing_constraint
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why is 'The WISHBONE interface logic assumes that a low-skew clock distribution scheme is used' an assumption, not apparatus
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
   > why is 'This document may include technical inaccuracies' not a permission (about the document)
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
@@ -290,11 +298,3 @@
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > why is a bit slice not a spelling heuristic
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > why is a bounded active root near its line ceiling
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > why is a comma-separated signal family safe when a space-separated one is not
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > why is a concatenating join more dangerous than an underscore join
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > why is a condition like 'X is asserted, Y must remain asserted' wrong

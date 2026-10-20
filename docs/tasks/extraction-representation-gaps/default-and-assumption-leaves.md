@@ -5,7 +5,8 @@
 
 The `.3.d` family continues here, after `unread-intent-leaves` reached its mandatory rollover (`2026-10-19`): the stated
 defaults and the assume-sentences no typed record yet understands, and the readers that will. `.3.d.ii.b.iii` and its
-children moved here whole, with their acceptance checklists.
+children moved here whole, with their acceptance checklists. `.3.d.iii.e` moved on to `environment-assumption-leaves`
+(`2026-10-20`).
 
 ## Post-migration records
 
@@ -298,21 +299,6 @@ children moved here whole, with their acceptance checklists.
   System Domain* was the one unread (`assumed_by_word` 8 -> 7). **Opened
   `.51`:** `option_0006` of ADIv6 reads its pseudocode appendix's *elsif* block, one of 55 notation sentences the
   31 chains do not file as apparatus.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e`
-  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.c`)
-  Goal: **what an implementation or interface assumes about its environment is an assumption, not apparatus.**
-  `.3.d.ii.b.i`'s premise phrase *assumes that* files a sentence as apparatus whatever its subject, which is right for
-  an example's or a table's premise (*Table 9 assumes that the Hs devices are isolated*; *The circuit assumes that the
-  RAM primitive is the FASM*) but not when the subject is the hardware: Wishbone's *The WISHBONE interface logic
-  assumes that a low-skew clock distribution scheme is used on the target device, and that the clock-skew shall be
-  low enough …*, AXI's *This MEC implementation assumes that Managers and caches do not perform …*, and I2C's *SMBus
-  protocol just assumes that if something takes too long … all devices must reset*. **Reproduce:** apparatus
-  statements saying *assumes that* whose subject is no document noun, example or analysis (5 on the 31 chains; these
-  3, the table premise and the example circuit). **Impact:** the environment contract a component states is read by
-  no reader, and SMBus's *Target devices are not then allowed to hold the clock LOW too long* with it. Acceptance:
-  tell an environment assumption from a premise by the subject the document gives it (a component, an interface, an
-  implementation, a protocol), keep the premise shapes apparatus, and measure every chain.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` (CODE) — DONE `2026-10-19`
 
