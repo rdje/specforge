@@ -32,7 +32,7 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   No code change, so no acceptance checklist applies.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.i`
-  Status: `open` (`2026-09-30`; DESIGN + CODE; found by `.3.d`)
+  Status: `done` (`2026-10-20`; DESIGN + CODE; found by `.3.d`; checklist below; opened `.52`)
   Goal: **a software agent's obligation is recorded as software intent, not as an untyped behavior.** 47 unread
   records oblige or permit a software agent (*The Connection Manager may enable CLx 50ms after TMU has been
   activated*; *The firmware is responsible for creating the stage 2 translation tables for the untrusted OS*); 34 are
@@ -43,6 +43,31 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   be software from the document (no IR field says so today), give the obligation a typed non-executable disposition,
   and measure every chain. `.3.d.ii.b.iii` (`2026-10-19`) routes one more record here: USB4 inter-domain's *If
   bonding does not complete, assume single-Lane operation*, a step of the Local Domain's procedure.
+  **Decided `2026-10-20`: the document's own words make an agent software, and every statement it is the subject of
+  is an EvidenceIR `software_intent` record, carried unchanged by SemanticIR and IntentIR, with one adapter residual
+  per document as the category contract's explicit non-applicable disposition.** Three bases, each the document's
+  words (`SoftwareAgentBasis`): an English software noun (*software*, *firmware*, *operating system*, *hypervisor*,
+  *device driver*, *debugger*; not *driver* alone, which names an I/O pad, nor *user*), a glossary row defining the
+  term as software (*| Hypervisor | Software entity that controls virtualization. |*), and *X can be implemented in
+  software* (*A Connection Manager can be implemented in software or firmware*). The census's own agent list (`.3.d`)
+  is a measurement vocabulary and stays one: it named I2C's *output drivers*, USB 3.2's *Re-driver*, a debug-host
+  *user* and *Debug software access*. `SoftwareIntentRecord { intent_id, agent, software_name, basis,
+  basis_statement_ids, modality, supporting_statement_ids }`, family `evidence.normative`; modality is the word after
+  the subject (obligation, recommendation, permission, capability, description). **Probed first**
+  (`.project-data/tmp/erg-3di/probe.py`, then the token-for-token port `grammar.py`): 25 of 25 sampled subjects are
+  software. **Measured over all 31 chains** (evidence dry-run against `7a262314d`'s): 20 identical, 11 gain only
+  `software_intent`, 342 records (USB4 connection-manager guide 232, ADIv6 44, RISC-V debug 16, IOMMU 15, external
+  debug guide 13; 185 descriptions, 61 obligations, 54 capabilities, 36 permissions, 6 recommendations; bases 232
+  implemented in software, 104 software nouns, 6 glossary); the Python port yields the same 342. Rebuilt stage by stage:
+  only `software_intent` moves at each stage, each of the 11 adapters gains one `isf_software_intent_not_applicable`
+  residual, every `.isf` text byte-identical; the new rule field re-sealed every chain (`rebuild_stage_cascade.sh
+  --write`, 31 content-identical). Unread IntentIR records 145 -> 138: `software_agent` 12 -> 5.
+  **Declared residuals:** of the census's 12 `software_agent` records, 7 are now read; 4 name hardware or a human (the
+  list's false positives above), and 1 is software the grammar does not reach: the inter-domain spec's *Higher level
+  software running on each Host usually requires unique MAC Addresses* (a participle after the noun). The same spec
+  names its Connection Manager only as *the Local Connection Manager software*, a compound that also names hardware's
+  software (*Host Controller software*), so its 9 Connection Manager permissions carry no `software_intent`. **Opened `.52`:** the readers that ran before this one minted 137
+  IntentIR records from these statements (102 temporal invariants, 25 conditional rules, 10 multi-statement records).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii`
   Status: `done` (`2026-09-30`; MEASUREMENT, re-scoped from CODE; found by `.3.d`; children `.3.d.ii.a`, `.3.d.ii.b`)
@@ -460,3 +485,40 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `quality/validation.md`,
   `reference/intentir-contract.md`, `source-to-intent-contract.md`; KM `an-equivalence-rule-is-a-typed-record` (new),
   `assume-sentences-fall-into-six-shapes` (amended). No production rule was deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.i` (DESIGN + CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: family `software_agent` 12; the
+  basis probe and the subject probe (`.project-data/tmp/erg-3di/probe.py`, 256 statements, 25 of 25 sampled correct)
+  before any code.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no IR field said an agent is software, so nothing told a software procedure from
+  hardware behavior. New `software_intent` in `crates/specforge/src/ir/evidence.rs` (`software_intent_surface`,
+  `software_subject`, `software_agent`, `glossary_software_name`, `implemented_in_software_names`,
+  `without_lead_markers`), carried in `semantic.rs` and `intent.rs`, residual in `adapters.rs`, counted in
+  `commands/validate.rs`. RED, the file restored byte-identically after each (12 mutations, each failing its named
+  test): the glossary follower, *implemented in software*, condition-word and preposition refusals off
+  (`a_software_noun_that_is_not_the_subject_or_a_name_the_document_never_makes_software_is_no_intent`); the condition
+  clause, relative clause, note label and list number kept, and *can* read as permission
+  (`an_agent_the_document_makes_software_is_read_with_its_basis_and_modality`); the apparatus and table skips and the
+  merge off (`the_surface_skips_tables_and_apparatus_and_merges_a_repeated_statement`). The preposition mutant first
+  survived because the verb list cut *External accesses from a debugger* at *accesses*; a subject the preposition
+  alone refuses (*Data from software is ignored*) killed it.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 20 identical, 11 gain only `software_intent`, 342
+  records, equal to the Python port's 342. The 11 chains rebuilt stage by stage, each artifact validated once,
+  the adapter last; only `software_intent` moves at each stage, one residual per adapter, `.isf` byte-identical; then
+  `rebuild_stage_cascade.sh --write` re-sealed all 31 content-identical. Unread records 145 -> 138.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical
+  to `7a262314d`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 171 / 1,869 passed, 0 failed. Rule-field counts: EvidenceIR 46, SemanticIR 61, IntentIR 60 (40 carried),
+  qualification 198. `flow_census.json` rolled (+8 functions, +87 decision sites, +171 helper edges, +10 macros);
+  boundary `rule_roots` 129 -> 130 and `grammar_declassifiers` 70 -> 71 for the one registered producer.
+- [x] **GENERICITY (ADR 0006)** — English software nouns, articles, modals, condition openers, prepositions and
+  procedure verbs; a name is software only by the document's own glossary row or *implemented in software* sentence;
+  no document, agent, signal or protocol name in code.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*What a software agent does is software intent*),
+  `pipeline/semanticir.md`, `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `quality/validation.md`,
+  `reference/intentir-contract.md`, `source-to-intent-contract.md`; KM `a-software-agents-statement-is-software-intent`
+  (new); `claim_family_inventory.tsv`, `rule_family_inventory.tsv`, `spec_to_intent_category_contract.json`
+  (`software_architecture_semantics` and `non_contract_disposition` name the surface) and the census's
+  `TYPED_SURFACES`. No production rule deleted or replaced.

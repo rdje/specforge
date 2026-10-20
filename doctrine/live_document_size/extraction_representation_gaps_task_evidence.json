@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.i",
-      "literal" : "`.3.d.i` — a software agent's obligation is recorded as software intent, not as an untyped behavior.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.52",
+      "literal" : "`.52` — a software agent's statement mints no hardware rule.",
       "mode" : "eligible",
-      "part_id" : "unread-intent-leaves"
+      "part_id" : "register-binding-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -112,25 +112,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
             "metrics" : {
-               "bytes" : 28919,
+               "bytes" : 30377,
                "line_bytes" : 281,
-               "lines" : 299
+               "lines" : 314
             },
             "part_id" : "register-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-            "sha256" : "aac8d4e256463469756c1a56fa5616521811d8dc7cdd92d9c43595741fd83983",
+            "sha256" : "203183e0f7ad9091ab17d0a6052d25ab780f2a2497b967b8150a6535423f7cec",
             "state" : "active"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
             "metrics" : {
-               "bytes" : 48128,
+               "bytes" : 54752,
                "line_bytes" : 639,
-               "lines" : 462
+               "lines" : 524
             },
             "part_id" : "unread-intent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-            "sha256" : "8c49f7f0e171507ca775d7d0fb089c4a8d28a9dddb3c9615e377b2abe919c9d4",
+            "sha256" : "00e8e36ba5288a0f718027ff3a5ed016383dea64536d2982638f650cd2552790",
             "state" : "active"
          },
          {
@@ -1038,7 +1038,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -1209,6 +1209,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "environment-assumption-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.52",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
       }
    ],
    "limits" : {
@@ -1336,7 +1342,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d.i` — a software agent's obligation is recorded as software intent, not as an untyped behavior.",
+         "`.52` — a software agent's statement mints no hardware rule.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1346,7 +1352,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii`",
@@ -1379,7 +1384,8 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.47`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.50`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.51`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.51`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.52`"
       ]
    },
    "migration_metadata" : {

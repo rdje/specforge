@@ -12,7 +12,8 @@ use crate::ir::derivation::{
     SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
 use crate::ir::evidence::{
-    OptionalFeatureRecord, PermissionRuleRecord, SignalPresenceRecord, StatedAbsentValue,
+    OptionalFeatureRecord, PermissionRuleRecord, SignalPresenceRecord, SoftwareIntentRecord,
+    StatedAbsentValue,
 };
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
@@ -1139,6 +1140,38 @@ fn optional_feature_residual_packet(
     })
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.i — one residual, the explicit non-applicable disposition the category contract
+/// requires, for every statement about a software agent, named by the range of its consecutively numbered records.
+fn software_intent_residual_packet(
+    records: &[SoftwareIntentRecord],
+) -> Option<ResidualDecisionPacket> {
+    let first = records.first()?;
+    let last = records.last()?;
+    Some(ResidualDecisionPacket {
+        packet_id: "isf_software_intent_not_applicable".to_string(),
+        question: "Should the document's statements about software agents stay outside the executable hardware intent?".to_string(),
+        why_unresolved: format!(
+            "{} statement(s) (`{}`-`{}`) say what an agent the document makes software does, must, may or can do (an English software noun, a glossary row that defines the name as software, or a name the document says is implemented in software). Software intent is non-applicable to executable IntentIR: `.isf` describes hardware, so they remain exact in IntentIR and are not rendered.",
+            records.len(),
+            first.intent_id,
+            last.intent_id
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "non_applicable_software_intent".to_string(),
+                description: "Keep the software intent in IntentIR as a non-executable disposition and emit no hardware syntax for it.".to_string(),
+                downstream_impact: "Independently licensed ISF remains usable; the document's software procedure stays visible and is never mistaken for hardware behavior.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "model_software_as_environment".to_string(),
+                description: "Model a software agent as the environment that drives the hardware's registers once its accesses are bound to the hardware's ports and fields.".to_string(),
+                downstream_impact: "A future adapter could emit stimulus or a testbench sequence after the bindings are source-grounded and FSMGen-strict verified.".to_string(),
+            },
+        ],
+    })
+}
+
 fn protocol_residual_packet(
     surface_id: &str,
     surface_label: &str,
@@ -1290,7 +1323,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.interface_edge_timings.len()
             + stated_absent_values.len()
             + intent_ir.equivalence_rules.len()
-            + 2,
+            + 3,
     );
 
     for record in &intent_ir.serial_frame_fields {
@@ -1364,6 +1397,8 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
     residuals.extend(optional_feature_residual_packet(
         &intent_ir.optional_features,
     ));
+    // EXTRACTION-REPRESENTATION-GAPS.3.d.i — nor for what a software agent does, which is non-executable by design.
+    residuals.extend(software_intent_residual_packet(&intent_ir.software_intent));
     for (record, absent_value, class_ordinal) in stated_absent_values {
         residuals.push(absent_value_residual_packet(
             record,

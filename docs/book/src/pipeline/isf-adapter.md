@@ -495,7 +495,9 @@ construct that treats one thing as another under a condition, and the rule's sub
 `.isf` name stands for yet. A document's permissions (`.3.d.iii.a`) share one packet, `isf_protocol_permission_rules`,
 which names them by their id range: `.isf` has no construct for an optional behavior, and a permission's subject and
 permitted part are phrases, not an actor and an action. A document's optional features (`.3.d.iii.d`) share one packet
-likewise, `isf_protocol_optional_features`: `.isf` has no construct for a feature that may be absent.
+likewise, `isf_protocol_optional_features`: `.isf` has no construct for a feature that may be absent. A document's
+software intent (`.3.d.i`) shares one packet, `isf_software_intent_not_applicable`: `.isf` describes hardware, and the
+packet is the explicit non-applicable disposition the category contract requires for software semantics.
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
 unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,

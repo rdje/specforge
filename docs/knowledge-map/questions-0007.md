@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > how does SpecForge read a fronted condition like When asserted, X must remain asserted
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > how does SpecForge read a quoted encoding value
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
@@ -296,5 +298,3 @@
   > how is a Bit[N] drives HPROT[n] sentence read
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how is a CI-tier doctrine registered without slowing down the pre-commit hook
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how is a Reg.Field cross-reference distinguished from a real constraint subject

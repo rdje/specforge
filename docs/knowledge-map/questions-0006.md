@@ -281,6 +281,8 @@
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > how does SpecForge handle one transaction and one rule writing the same named-drive target
+- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
+  > how does SpecForge know an agent is software (an English software noun, a glossary row, implemented in software)
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > how does SpecForge know which signals a check signal covers
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
@@ -295,5 +297,3 @@
   > how does SpecForge prove a reviewed paraphrase is parser equivalent
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > how does SpecForge read a fronted condition like When asserted, X must remain asserted

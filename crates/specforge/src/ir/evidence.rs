@@ -403,6 +403,12 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents that state none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub optional_features: Vec<OptionalFeatureRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.d.i — what the document says a software agent does, must, may or can do (*The
+    /// Connection Manager shall configure DP AUX Path with the Dedicated Flow Control Buffer Allocation scheme*), where
+    /// the document itself makes the agent software. Non-executable by design. Empty (serde-skipped) for documents that
+    /// name none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub software_intent: Vec<SoftwareIntentRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -890,6 +896,55 @@ pub struct OptionalFeatureRecord {
     pub supporting_statement_ids: Vec<String>,
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.i — how the document makes an agent software.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SoftwareAgentBasis {
+    /// An English noun that names software (*software*, *firmware*, *operating system*, *hypervisor*, *device
+    /// driver*, *debugger*).
+    SoftwareNoun,
+    /// A glossary row defines the name as software (*| Hypervisor | Software entity that controls virtualization. |*).
+    Glossary,
+    /// The document says the agent is implemented in software (*A Connection Manager can be implemented in software or
+    /// firmware*).
+    ImplementedInSoftware,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.i — the word after a software agent's subject: *must*/*shall*, *should*, *may*,
+/// *can*, or anything else.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SoftwareIntentModality {
+    Obligation,
+    Recommendation,
+    Permission,
+    Capability,
+    Description,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.i — a statement whose subject is an agent the document makes software: the
+/// subject as written, the software name heading it, how the document makes it software, and the modality. Software
+/// intent is non-executable for IntentIR (the category contract's software-architecture and methodology dispositions):
+/// it is carried so that a software procedure is told from hardware behavior, never lowered.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SoftwareIntentRecord {
+    /// Stable id, e.g. `software_intent_0003`.
+    pub intent_id: String,
+    /// The subject as written (`The Connection Manager`, `the external debugger`, `Software`).
+    pub agent: String,
+    /// The software name heading the subject, lowercased (`connection manager`, `debugger`, `software`).
+    pub software_name: String,
+    /// How the document makes it software.
+    pub basis: SoftwareAgentBasis,
+    /// The statement that defines the name as software, for a glossary or *implemented in software* basis.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub basis_statement_ids: Vec<String>,
+    /// The word after the subject (*shall* -> obligation).
+    pub modality: SoftwareIntentModality,
+    /// The statement(s) that state it; the same statement text twice is one record.
+    pub supporting_statement_ids: Vec<String>,
+}
+
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
 /// one NLI-oracle pass over `signal_constraints` ("does the source sentence entail this constraint
 /// as a claim?"). The not-entailed fraction is a cheap, automatic production-readiness signal that
@@ -1144,6 +1199,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("equivalence_rules", "evidence.normative"),
     ("permission_rules", "evidence.normative"),
     ("optional_features", "evidence.normative"),
+    ("software_intent", "evidence.normative"),
     ("extracted_contracts", "evidence.contract"),
     ("constrained_extraction_stats", "evidence.contract"),
     (
@@ -1562,6 +1618,7 @@ impl EvidenceIr {
         insert_field!(equivalence_rules);
         insert_field!(permission_rules);
         insert_field!(optional_features);
+        insert_field!(software_intent);
         insert_field!(signal_alias_map);
         insert_field!(signal_polarities);
         insert_field!(signal_polarity_conflicts);
@@ -2271,6 +2328,8 @@ impl EvidenceIr {
         let permission_rules = permission_rule_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d — the optional features the document states.
         let optional_features = optional_feature_surface(&extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.3.d.i — what the document's software agents do.
+        let software_intent = software_intent_surface(&extracted_statements);
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
         // bit ranges and explicit prose composition lists. Both read names and ordering from the current
@@ -2418,6 +2477,7 @@ impl EvidenceIr {
             equivalence_rules,
             permission_rules,
             optional_features,
+            software_intent,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_transitions,
@@ -21901,6 +21961,372 @@ fn stated_options(text: &str) -> Vec<StatedOption> {
     found
 }
 
+/// English nouns that name software (ADR 0006: words of English, not a vocabulary of any document).
+const SOFTWARE_NOUNS: [&str; 10] = [
+    "software",
+    "firmware",
+    "operating system",
+    "operating systems",
+    "hypervisor",
+    "hypervisors",
+    "device driver",
+    "device drivers",
+    "debugger",
+    "debuggers",
+];
+
+/// What a glossary row says right after *software* when it defines its term as software (*Software entity that
+/// controls virtualization*; *Software resident on the host*).
+const SOFTWARE_GLOSSARY_FOLLOWERS: [&str; 10] = [
+    "entity",
+    "component",
+    "agent",
+    "program",
+    "module",
+    "that",
+    "which",
+    "resident",
+    "running",
+    "responsible",
+];
+
+/// The words a leading condition clause opens with, read past to the subject (*If the Host Router is a Version 2.0
+/// Router, the Connection Manager may reset the Domain*).
+const SOFTWARE_CONDITION_OPENERS: [&str; 10] = [
+    "if", "when", "whenever", "while", "unless", "after", "before", "once", "during", "until",
+];
+
+/// The modals, auxiliaries and verbs that end a software agent's subject (*The debugger writes …*; *A Connection
+/// Manager shall …*). English, not a vocabulary (ADR 0006).
+const SOFTWARE_SUBJECT_ENDS: [&str; 42] = [
+    "must",
+    "shall",
+    "should",
+    "may",
+    "can",
+    "will",
+    "is",
+    "are",
+    "does",
+    "do",
+    "has",
+    "have",
+    "sets",
+    "waits",
+    "reads",
+    "writes",
+    "uses",
+    "requests",
+    "initializes",
+    "issues",
+    "checks",
+    "performs",
+    "sends",
+    "receives",
+    "configures",
+    "enables",
+    "disables",
+    "clears",
+    "programs",
+    "accesses",
+    "determines",
+    "discovers",
+    "allocates",
+    "polls",
+    "creates",
+    "updates",
+    "needs",
+    "requires",
+    "then",
+    "also",
+    "first",
+    "only",
+];
+
+/// The prepositions that make a software noun the object of another subject (*External accesses from a debugger*).
+const SOFTWARE_SUBJECT_PREPOSITIONS: [&str; 14] = [
+    "of", "from", "by", "to", "for", "with", "in", "on", "at", "into", "through", "between",
+    "under", "via",
+];
+
+/// The words of `text` as written: runs of ASCII letters, digits, `'` and `-`.
+fn software_tokens(text: &str) -> Vec<&str> {
+    text.split(|c: char| !(c.is_ascii_alphanumeric() || c == '\'' || c == '-'))
+        .filter(|word| !word.is_empty())
+        .collect()
+}
+
+/// `| Hypervisor | Software entity that controls virtualization. |` names `hypervisor` as software.
+fn glossary_software_name(text: &str) -> Option<String> {
+    let row = text.trim();
+    if !row.starts_with('|') {
+        return None;
+    }
+    let cells: Vec<&str> = row.trim_matches('|').split('|').map(str::trim).collect();
+    let term = *cells.first()?;
+    let definition = *cells.get(1)?;
+    if term.is_empty() || term.chars().count() > 40 {
+        return None;
+    }
+    let mut words: Vec<String> = software_tokens(definition)
+        .into_iter()
+        .map(str::to_ascii_lowercase)
+        .collect();
+    if words
+        .first()
+        .is_some_and(|word| matches!(word.as_str(), "a" | "an" | "the"))
+    {
+        words.remove(0);
+    }
+    let defines = (0..words.len().min(2)).any(|i| {
+        words[i] == "software"
+            && words
+                .get(i + 1)
+                .is_some_and(|next| SOFTWARE_GLOSSARY_FOLLOWERS.contains(&next.as_str()))
+    });
+    let name: Vec<String> = software_tokens(term)
+        .into_iter()
+        .map(str::to_ascii_lowercase)
+        .collect();
+    (defines && !name.is_empty()).then(|| name.join(" "))
+}
+
+/// `A Connection Manager can be implemented in software or firmware` names `connection manager` as software: up to
+/// four capitalized words after an article, before *can*, *may*, *is* or *are* (*be*) *implemented in* or *as*
+/// (one word) *software*.
+fn implemented_in_software_names(text: &str) -> Vec<String> {
+    let tokens = software_tokens(text);
+    let lowered: Vec<String> = tokens
+        .iter()
+        .map(|word| word.to_ascii_lowercase())
+        .collect();
+    let mut names = Vec::new();
+    for i in 0..lowered.len() {
+        if lowered[i] != "implemented"
+            || i + 2 >= lowered.len()
+            || !matches!(lowered[i + 1].as_str(), "in" | "as")
+            || !(lowered[i + 2] == "software"
+                || lowered.get(i + 3).is_some_and(|w| w == "software"))
+        {
+            continue;
+        }
+        let mut j = i;
+        if j > 0 && lowered[j - 1] == "be" {
+            j -= 1;
+        }
+        if j == 0 || !matches!(lowered[j - 1].as_str(), "can" | "may" | "is" | "are") {
+            continue;
+        }
+        let mut k = j - 1;
+        let mut name: Vec<&str> = Vec::new();
+        while k > 0
+            && name.len() < 4
+            && tokens[k - 1].starts_with(|c: char| c.is_ascii_uppercase())
+            && !matches!(lowered[k - 1].as_str(), "a" | "an" | "the")
+        {
+            name.insert(0, lowered[k - 1].as_str());
+            k -= 1;
+        }
+        if !name.is_empty() && k > 0 && matches!(lowered[k - 1].as_str(), "a" | "an" | "the") {
+            names.push(name.join(" "));
+        }
+    }
+    names
+}
+
+/// The text past its list markers (`-`, `•`, `o`, `7.`, `ii.`, `a)`) and a note label (`Note:`, `Note 1:`, `Note
+/// that`).
+fn without_lead_markers(text: &str) -> &str {
+    let mut text = text.trim();
+    loop {
+        let mut next = text.trim_start_matches(|c: char| !c.is_ascii_alphanumeric());
+        if let Some(rest) = next.strip_prefix("o ") {
+            next = rest.trim_start();
+        } else if let Some(first) = next.split_whitespace().next() {
+            let core = first.strip_suffix(['.', ')']);
+            if let Some(core) = core
+                && (1..=4).contains(&core.len())
+                && core.chars().all(|c| c.is_ascii_alphanumeric())
+                && (core.chars().all(|c| c.is_ascii_digit())
+                    || core.chars().any(|c| c.is_ascii_lowercase())
+                        && !core.chars().any(|c| c.is_ascii_uppercase()))
+            {
+                next = next[first.len()..].trim_start();
+            }
+        }
+        if next == text {
+            break;
+        }
+        text = next;
+    }
+    let lowered = text.to_ascii_lowercase();
+    if lowered.starts_with("note")
+        && lowered[4..]
+            .chars()
+            .next()
+            .is_none_or(|c| !c.is_ascii_alphanumeric())
+    {
+        let mut rest = text[4..].trim_start();
+        if let Some(first) = rest.split_whitespace().next() {
+            let number = first.trim_end_matches(':');
+            if !number.is_empty() && number.chars().all(|c| c.is_ascii_digit()) {
+                rest = rest[number.len()..].trim_start();
+            }
+        }
+        if let Some(after) = rest.strip_prefix([':', '-']) {
+            rest = after.trim_start();
+        } else if rest.to_ascii_lowercase().starts_with("that")
+            && rest[4..]
+                .chars()
+                .next()
+                .is_none_or(|c| !(c.is_ascii_alphanumeric() || c == '\'' || c == '-'))
+        {
+            rest = rest[4..].trim_start();
+        }
+        text = rest;
+    }
+    text
+}
+
+/// A statement's subject words as written, and the modal or verb that ends them: past list markers, a note label and
+/// a leading condition clause, up to the first `,`, `:`, `;` or `(`. A subject with a relative clause (*A Connection
+/// Manager that supports USB4 Version 2.0, may use …*) ends before its pronoun, and its modal is the first of the
+/// sentence after it.
+fn software_subject(text: &str) -> (Vec<&str>, Option<String>) {
+    let mut text = without_lead_markers(text);
+    let opener = software_tokens(text.split(',').next().unwrap_or(""))
+        .first()
+        .map(|word| word.to_ascii_lowercase());
+    if opener.is_some_and(|word| SOFTWARE_CONDITION_OPENERS.contains(&word.as_str()))
+        && let Some((_, rest)) = text.split_once(',')
+    {
+        text = rest;
+    }
+    let cut = text.find([',', ':', ';', '(']).unwrap_or(text.len());
+    let words = software_tokens(&text[..cut]);
+    for (i, word) in words.iter().enumerate() {
+        let lowered = word.to_ascii_lowercase();
+        if i > 0 && matches!(lowered.as_str(), "that" | "which" | "who") {
+            let sentence = text.split(". ").next().unwrap_or(text);
+            let modal = software_tokens(sentence)
+                .into_iter()
+                .skip(i + 1)
+                .map(str::to_ascii_lowercase)
+                .find(|word| matches!(word.as_str(), "must" | "shall" | "should" | "may" | "can"));
+            return (words[..i].to_vec(), modal);
+        }
+        if SOFTWARE_SUBJECT_ENDS.contains(&lowered.as_str()) {
+            return (words[..i].to_vec(), Some(lowered));
+        }
+    }
+    (words, None)
+}
+
+/// The software name heading a subject — the longest that ends it, with at most three words before it and none of
+/// them a preposition or a condition opener — and how the document makes it software.
+fn software_agent<'a>(
+    subject: &[&str],
+    names: &'a [(String, SoftwareAgentBasis, String)],
+) -> Option<(String, SoftwareAgentBasis, Option<&'a str>)> {
+    let lowered: Vec<String> = subject
+        .iter()
+        .map(|word| word.to_ascii_lowercase())
+        .collect();
+    let mut candidates: Vec<(String, SoftwareAgentBasis, Option<&str>)> = names
+        .iter()
+        .map(|(name, basis, statement)| (name.clone(), *basis, Some(statement.as_str())))
+        .chain(
+            SOFTWARE_NOUNS
+                .iter()
+                .map(|noun| ((*noun).to_string(), SoftwareAgentBasis::SoftwareNoun, None)),
+        )
+        .collect();
+    // The longest name first (stable, so a document's own name precedes an English noun of the same length).
+    candidates.sort_by_key(|(name, _, _)| std::cmp::Reverse(name.split(' ').count()));
+    candidates.into_iter().find(|(name, _, _)| {
+        let name_words: Vec<&str> = name.split(' ').collect();
+        lowered.len() >= name_words.len()
+            && lowered[lowered.len() - name_words.len()..]
+                .iter()
+                .zip(&name_words)
+                .all(|(a, b)| a == b)
+            && {
+                let before = &lowered[..lowered.len() - name_words.len()];
+                before.len() <= 3
+                    && !before.iter().any(|word| {
+                        SOFTWARE_SUBJECT_PREPOSITIONS.contains(&word.as_str())
+                            || SOFTWARE_CONDITION_OPENERS.contains(&word.as_str())
+                    })
+            }
+    })
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.i — every statement whose subject is an agent the document makes software, in
+/// statement order: an English software noun, a name a glossary row defines as software, or a name the document says
+/// is implemented in software (each defining statement read first, in order). A table row and an apparatus statement
+/// are not read; the same statement text twice is one record.
+fn software_intent_surface(statements: &[ExtractedStatement]) -> Vec<SoftwareIntentRecord> {
+    let mut names: Vec<(String, SoftwareAgentBasis, String)> = Vec::new();
+    for statement in statements {
+        let defined = glossary_software_name(&statement.text)
+            .map(|name| (name, SoftwareAgentBasis::Glossary))
+            .into_iter()
+            .chain(
+                implemented_in_software_names(&statement.text)
+                    .into_iter()
+                    .map(|name| (name, SoftwareAgentBasis::ImplementedInSoftware)),
+            );
+        for (name, basis) in defined {
+            if !names.iter().any(|(known, _, _)| *known == name) {
+                names.push((name, basis, statement.statement_id.clone()));
+            }
+        }
+    }
+    let mut records: Vec<SoftwareIntentRecord> = Vec::new();
+    let mut texts: Vec<String> = Vec::new();
+    for statement in statements {
+        if statement.class == StatementClass::Apparatus
+            || statement.text.trim_start().starts_with('|')
+        {
+            continue;
+        }
+        let (subject, word) = software_subject(&statement.text);
+        let Some((software_name, basis, basis_statement)) = software_agent(&subject, &names) else {
+            continue;
+        };
+        let text = statement
+            .text
+            .to_lowercase()
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ");
+        if let Some(at) = texts.iter().position(|known| *known == text) {
+            records[at]
+                .supporting_statement_ids
+                .push(statement.statement_id.clone());
+            continue;
+        }
+        let modality = match word.as_deref() {
+            Some("must" | "shall") => SoftwareIntentModality::Obligation,
+            Some("should") => SoftwareIntentModality::Recommendation,
+            Some("may") => SoftwareIntentModality::Permission,
+            Some("can") => SoftwareIntentModality::Capability,
+            _ => SoftwareIntentModality::Description,
+        };
+        texts.push(text);
+        records.push(SoftwareIntentRecord {
+            intent_id: format!("software_intent_{:04}", records.len()),
+            agent: subject.join(" "),
+            software_name,
+            basis,
+            basis_statement_ids: basis_statement.map(str::to_string).into_iter().collect(),
+            modality,
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+        });
+    }
+    records
+}
+
 /// Run the serial-frame surface through the unified key-merge driver (EXTRACTOR-ARCHITECTURE.9a). Key =
 /// field name: both strategies emit name-unique lists (the bit-range form upserts by name; the composition
 /// form keeps a per-list `seen` set), so first-wins dedup is a no-op WITHIN each strategy and reproduces the
@@ -40029,7 +40455,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 45);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 46);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -61085,6 +61511,179 @@ mod optional_feature_tests {
         ]);
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].option_id, "option_0000");
+        assert_eq!(records[0].supporting_statement_ids, vec!["s1", "s2"]);
+    }
+}
+
+#[cfg(test)]
+mod software_intent_tests {
+    use super::{
+        EvidenceModality, ExtractedStatement, SoftwareAgentBasis, SoftwareIntentModality,
+        SoftwareIntentRecord, StatementClass, software_intent_surface,
+    };
+
+    fn statement(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        }
+    }
+
+    /// The records for `texts`, read after the defining statements `defines`.
+    fn read(defines: &[&str], texts: &[&str]) -> Vec<SoftwareIntentRecord> {
+        let mut statements: Vec<ExtractedStatement> = defines
+            .iter()
+            .enumerate()
+            .map(|(i, text)| statement(&format!("d{i}"), StatementClass::SourceFact, text))
+            .collect();
+        statements.extend(texts.iter().enumerate().map(|(i, text)| {
+            statement(&format!("s{i}"), StatementClass::NormativeStatement, text)
+        }));
+        software_intent_surface(&statements)
+            .into_iter()
+            .filter(|record| record.supporting_statement_ids[0].starts_with('s'))
+            .collect()
+    }
+
+    fn agent(
+        record: &SoftwareIntentRecord,
+    ) -> (&str, &str, SoftwareAgentBasis, SoftwareIntentModality) {
+        (
+            record.agent.as_str(),
+            record.software_name.as_str(),
+            record.basis,
+            record.modality,
+        )
+    }
+
+    #[test]
+    fn an_agent_the_document_makes_software_is_read_with_its_basis_and_modality() {
+        let records = read(
+            &["A Connection Manager can be implemented in software or firmware."],
+            &[
+                "A Connection Manager shall configure DP AUX Path with the Dedicated Flow Control Buffer Allocation scheme.",
+                "If this value of ARCHID is found by a debugger, the debugger must use the IDR register in the AP.",
+                "A Connection Manager that supports USB4 Version 2.0, may use DPRX Discovery feature to:",
+                "Note: If Wake Events are not enabled, the Connection Manager may set the Port is Configured bit to 1b.",
+                "3. The debugger writes a second instruction to the ITR:",
+                "Software can issue CMD_PRI_RESP using the command queue.",
+            ],
+        );
+        let agents: Vec<_> = records.iter().map(agent).collect();
+        assert_eq!(
+            agents,
+            vec![
+                (
+                    "A Connection Manager",
+                    "connection manager",
+                    SoftwareAgentBasis::ImplementedInSoftware,
+                    SoftwareIntentModality::Obligation
+                ),
+                (
+                    "the debugger",
+                    "debugger",
+                    SoftwareAgentBasis::SoftwareNoun,
+                    SoftwareIntentModality::Obligation
+                ),
+                (
+                    "A Connection Manager",
+                    "connection manager",
+                    SoftwareAgentBasis::ImplementedInSoftware,
+                    SoftwareIntentModality::Permission
+                ),
+                (
+                    "the Connection Manager",
+                    "connection manager",
+                    SoftwareAgentBasis::ImplementedInSoftware,
+                    SoftwareIntentModality::Permission
+                ),
+                (
+                    "The debugger",
+                    "debugger",
+                    SoftwareAgentBasis::SoftwareNoun,
+                    SoftwareIntentModality::Description
+                ),
+                (
+                    "Software",
+                    "software",
+                    SoftwareAgentBasis::SoftwareNoun,
+                    SoftwareIntentModality::Capability
+                ),
+            ]
+        );
+        assert_eq!(records[0].basis_statement_ids, vec!["d0"]);
+        assert!(records[1].basis_statement_ids.is_empty());
+        let glossary = read(
+            &["| Hypervisor | Software entity that controls virtualization. |"],
+            &["A hypervisor may set DTF to 1 to disable fault reporting."],
+        );
+        assert_eq!(
+            glossary.iter().map(agent).collect::<Vec<_>>(),
+            vec![(
+                "A hypervisor",
+                "hypervisor",
+                SoftwareAgentBasis::Glossary,
+                SoftwareIntentModality::Permission
+            )]
+        );
+    }
+
+    #[test]
+    fn a_software_noun_that_is_not_the_subject_or_a_name_the_document_never_makes_software_is_no_intent()
+     {
+        assert!(
+            read(
+                &[
+                    "| Status | Software writes 1 to clear the bit. |",
+                    "A Router can be implemented in hardware.",
+                ],
+                &[
+                    "The status must be cleared before the next transfer.",
+                    "The Router shall forward the packet.",
+                    "External accesses from a debugger, PADDRDBG31 = 1, are not subject to the Lock registers.",
+                    "Data from software is ignored while the port is disabled.",
+                    "The debugger access port is a hardware block.",
+                    "Re-driver refers to an analog component that operates on the signal without re-timing it.",
+                    "The higher strength output drivers sink more current.",
+                    "If software sets the bit then the hardware clears it.",
+                    "The Connection Manager shall configure DP AUX Path.",
+                ],
+            )
+            .is_empty()
+        );
+    }
+
+    #[test]
+    fn the_surface_skips_tables_and_apparatus_and_merges_a_repeated_statement() {
+        let records = software_intent_surface(&[
+            statement(
+                "s1",
+                StatementClass::NormativeStatement,
+                "Software must clear the bit.",
+            ),
+            statement(
+                "s2",
+                StatementClass::SourceFact,
+                "Software  must clear the bit.",
+            ),
+            statement(
+                "s3",
+                StatementClass::SourceFact,
+                "| Software must clear the bit | 1 |",
+            ),
+            statement(
+                "s4",
+                StatementClass::Apparatus,
+                "The debugger reads this guide.",
+            ),
+        ]);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].intent_id, "software_intent_0000");
         assert_eq!(records[0].supporting_statement_ids, vec!["s1", "s2"]);
     }
 }

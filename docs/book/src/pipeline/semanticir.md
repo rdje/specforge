@@ -610,6 +610,8 @@ Five evidence-grounded protocol collections, and the signal-presence records, cr
   subject, what it permits, its condition and the word it is stated with (`EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a`)
 - `optional_features` — each feature the document calls optional: the feature, who may implement it (*It is
   optional for S to V*) and its condition, as written (`EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d`)
+- `software_intent` — each statement whose subject is an agent the document makes software: the agent as written,
+  how the document makes it software and the modality; non-executable by design (`EXTRACTION-REPRESENTATION-GAPS.3.d.i`)
 
 This projection is intentionally lossless rather than interpretive. Record order, ids, optional values, and
 every `supporting_statement_ids` and `supporting_table_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
@@ -651,10 +653,11 @@ state, encodings, values, ports, activation conditions, or storage targets.
   equivalence_rules: N
   permission_rules: N
   optional_features: N
+  software_intent: N
 ```
 
 IntentIR carries the same collections unchanged, and the `.isf` adapter keeps one residual per record (one for all
-of a document's permissions, and one for all of its optional features) rather than lowering any of them ([ISF adapter](isf-adapter.md), *Protocol-observation disposition*). That keeps a successful
+of a document's permissions, one for all of its optional features, and one for all of its software intent) rather than lowering any of them ([ISF adapter](isf-adapter.md), *Protocol-observation disposition*). That keeps a successful
 SemanticIR projection from being mistaken for complete `.isf` lowering.
 
 ## Closed task trees — how each was implemented and verified

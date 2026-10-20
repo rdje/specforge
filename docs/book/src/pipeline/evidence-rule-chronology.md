@@ -1220,6 +1220,30 @@ connection-manager conclusions and a Wishbone example circuit's *Circuit assumes
 primitives* become assumptions. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md`
 (`.3.d.iii.f`).
 
+**What a software agent does is software intent.** A document often says what software does to the hardware (*A
+Connection Manager shall configure DP AUX Path with the Dedicated Flow Control Buffer Allocation scheme*; *the
+debugger must use the IDR register in the AP*), and nothing told that from what the hardware does. Since
+`EXTRACTION-REPRESENTATION-GAPS.3.d.i` (`2026-10-20`) EvidenceIR carries every statement whose subject is an agent
+the document makes software as a `software_intent` record, which SemanticIR and IntentIR carry unchanged:
+
+```json
+{ "intent_id": "software_intent_0070", "agent": "A Connection Manager", "software_name": "connection manager",
+  "basis": "implemented_in_software", "basis_statement_ids": ["statement_0166"], "modality": "obligation",
+  "supporting_statement_ids": ["statement_0433"] }
+```
+
+The document makes an agent software in one of three ways, each its own words: an English noun that names software
+(*software*, *firmware*, *operating system*, *hypervisor*, *device driver*, *debugger*), a glossary row that defines the
+name as software (*| Hypervisor | Software entity that controls virtualization. |*), or a sentence saying the agent is
+implemented in software (*A Connection Manager can be implemented in software or firmware*). The subject is read past
+list markers, a note label and a leading condition clause, up to the first modal or verb; the name must head it, with
+at most three words before it and no preposition (*External accesses from a debugger* is no software intent). The
+word after the subject gives the modality: *must*/*shall* an obligation, *should* a recommendation, *may* a permission,
+*can* a capability, anything else a description. Software intent is non-executable by design, so every adapter names a
+document's records in one `isf_software_intent_not_applicable` residual, the explicit disposition the category
+contract requires; nothing is lowered. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md`
+(`.3.d.i`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named

@@ -38,7 +38,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.f.iv` | `closed` | [Table census leaves](table-census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.44` | `open` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.g` | `closed` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | `open` | [Unread intent leaves](unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.h` | `open` | [Register binding leaves](register-binding-leaves.md) |
@@ -67,3 +67,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.51` | `open` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.52` | `open` | [Register binding leaves](register-binding-leaves.md) |

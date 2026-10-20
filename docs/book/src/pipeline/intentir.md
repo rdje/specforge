@@ -129,6 +129,8 @@ modality; the adapter keeps one residual per rule. `permission_rules` cross like
 a sentence states, its subject (none for *It is permitted to …*), what it permits and its condition, as written; the
 adapter keeps one residual naming them all. `optional_features` cross likewise (`.3.d.iii.d`): each feature a
 sentence calls optional, who may implement it and its condition, as written, with one residual naming them all.
+`software_intent` crosses likewise (`.3.d.i`): each statement about an agent the document makes software, never
+lowered, with one residual that is the category contract's explicit non-applicable disposition.
 
 These records are canonical product data, but they are not automatically executable behavior. A named protocol
 state without transitions, guards, initial-state identity, or encoding is still incomplete; frame, operation,

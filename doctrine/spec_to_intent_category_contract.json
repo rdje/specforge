@@ -361,7 +361,9 @@
         },
         {
           "family": "software_architecture_semantics",
-          "intent_ir_surfaces": [],
+          "intent_ir_surfaces": [
+            "software_intent"
+          ],
           "required_when": "the source defines instruction semantics, privilege policy, exceptions, or abstract memory ordering without a hardware boundary contract",
           "current_outcome": "honest non-applicable content for executable IntentIR; every region still requires an explicit non-applicable disposition and must not mint fake hardware behavior"
         }
@@ -416,7 +418,8 @@
         {
           "family": "non_contract_disposition",
           "intent_ir_surfaces": [
-            "residual_decisions"
+            "residual_decisions",
+            "software_intent"
           ],
           "required_when": "the reviewed source is guidance or methodology rather than a hardware contract"
         },

@@ -218,6 +218,21 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   its sentences as apparatus, keep a pseudocode function that describes hardware behavior (*The pseudocode function
   EnterDormantState describes the function of the JTAG-to-DS sequence detector*) where it is, and measure every chain.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.52`
+  Status: `open` (`2026-10-20`; DESIGN + CODE; found by `.3.d.i`)
+  Goal: **a software agent's statement mints no hardware rule.** `.3.d.i` types what the document's software agents
+  do (`software_intent`, 342 records in 11 chains), but the readers that ran before it still read the same statements
+  as hardware: 137 IntentIR records cite one, 102 `temporal_invariants` (the USB4 connection-manager guide 64, ADIv6
+  16, the IOMMU 7, RISC-V debug 5; the GIC guide's *Software must enable the system register interface before using
+  these registers*), 25 `conditional_rules`, and 10 multi-statement records (5 transactions,
+  2 interfaces, 2 actor relations, a protocol state) for which the software statement is one citation among several.
+  **Reproduce:** IntentIR records whose `supporting_statement_ids` meet a `software_intent` record's. **Impact:** the
+  category contract's `false_executable_intent_facts` floor (0 for a methodology guide) is breached by every invariant
+  and rule minted from a software procedure, and a hardware reader of IntentIR cannot tell them from the device's own.
+  Acceptance: decide, per surface, whether a record minted only from software-intent statements is withheld, marked,
+  or kept; keep a record where the software agent is the hardware's external actor (*the debugger drives TDI*) or one
+  citation of several; and measure every chain's invariants, rules and adapters.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.g` (CODE) — DONE `2026-09-30`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6's AHB3 and AHB5 sections map `CSW.Prot` bits 28-24 to `HPROT` in prose; no
