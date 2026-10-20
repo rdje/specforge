@@ -4,7 +4,8 @@
 > more than 24 hours old or this file is missing. The sweep's rules and history are owned by
 > [`SCRATCH-RESIDUE-CONTAINMENT`](tasks/SCRATCH-RESIDUE-CONTAINMENT.md).
 
-- Last cleanup: `2026-10-19 22:59 +0200` (`SCRATCH-RESIDUE-CONTAINMENT.14`) — no unreachable scratch had accumulated
-  under `.project-data/tmp/` (42 unreachable roots, plan empty) and no fixture residue under `generated/`; removed 18
-  superseded rustc incremental sessions with 36 orphan locks (`target/debug/incremental` 10.6 -> 9.0 GiB); no
-  `.bin`/`.log` in `target/release` or `target/debug/deps`.
+- Last cleanup: `2026-10-21 00:07 +0200` (`SCRATCH-RESIDUE-CONTAINMENT.16`) — removed 60 paths / 1,107 files /
+  7,803.9 MiB of unreachable scratch that 11 roots under `.project-data/tmp/` accumulated since `.14` (logs and
+  scripts kept; re-plan empty); removed 35 superseded rustc incremental sessions with 75 orphan locks
+  (`target/debug/incremental` 13.1 -> 9.8 GiB); no `.bin`/`.log` in `target/release` or `target/debug/deps`. The 31
+  fixture roots under `generated/` are `SCRATCH-RESIDUE-CONTAINMENT.15`'s, still pending.
