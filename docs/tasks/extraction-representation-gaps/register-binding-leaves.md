@@ -171,7 +171,7 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   declared signal; IntentIR carries no coreference (`PSEL` -> `PSELx`), which SemanticIR reads but does not pass on.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
-  Status: `open` (`2026-10-20`; REQUEST; found by `.46`)
+  Status: `open` (`2026-10-20`; REQUEST; found by `.46`; filed as `FSMGEN-REQUESTS.12`, waits for a pin)
   Goal: **a byte-granular parity over a parameterised width is requested from FSMGen.** 49 records state one check
   bit per byte of a signal whose width is a parameter (`ceil(ADDR_WIDTH/8)`, `DATA_WIDTH/8`), which `.isf` cannot
   state: no reduction, no replication, no per-byte iteration. **Reproduce:** the `.46` shape count. **Impact:** an
@@ -179,6 +179,11 @@ mandatory rollover (`2026-09-30`): the register-field-to-signal binding readers 
   `FSMGEN-REQUESTS` packet (`docs/FSMGEN_FEEDBACK.md`) for a per-byte reduction over a parameterised width, with the
   three documents' forms as evidence, before FSMGen's next push; keep the 49 records a residual until a pin carries
   the form.
+  **Filed `2026-10-20`** as `FSMGEN-REQUESTS.12`, bundle `sf-isf-byte-group-reduction`, open ledger record
+  `byte-group-reduction`: `^` takes two operands only on the pin `54ac1c22` and upstream `82f0a5661`, so neither a
+  one-operand reduction over a slice nor a per-byte reduction over a parameterised width can be stated; the unrolled
+  fixed-width baseline is accepted. The 49 records stay named in `isf_parity_checks_not_lowered`. This leaf closes when
+  a pin carries the form and the adapter lowers them.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.47`
   Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.a.ii`)

@@ -15,6 +15,9 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/upstream/fsmgen/sf-isf-aggregate-interface-ports/README.md](../../docs/upstream/fsmgen/sf-isf-aggregate-interface-ports/README.md) | FSMGen Feature Request: a record-typed interface port, for packets and headers |
 | [docs/upstream/fsmgen/sf-isf-aggregate-interface-ports/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-aggregate-interface-ports/SIGNOFF.md) | Signoff — sf-isf-aggregate-interface-ports |
 | [docs/upstream/fsmgen/sf-isf-aggregate-interface-ports/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-aggregate-interface-ports/expected/expected-notes.md) | Expected outcomes — sf-isf-aggregate-interface-ports |
+| [docs/upstream/fsmgen/sf-isf-byte-group-reduction/README.md](../../docs/upstream/fsmgen/sf-isf-byte-group-reduction/README.md) | FSMGen Feature Request: a reduction, and a per-byte reduction over a parameterised width |
+| [docs/upstream/fsmgen/sf-isf-byte-group-reduction/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-byte-group-reduction/SIGNOFF.md) | Signoff — sf-isf-byte-group-reduction |
+| [docs/upstream/fsmgen/sf-isf-byte-group-reduction/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-byte-group-reduction/expected/expected-notes.md) | Expected outcomes — sf-isf-byte-group-reduction |
 | [docs/upstream/fsmgen/sf-isf-contract-eventually-flat/README.md](../../docs/upstream/fsmgen/sf-isf-contract-eventually-flat/README.md) | FSMGen Issue Bundle: sf-isf-contract-eventually-flat |
 | [docs/upstream/fsmgen/sf-isf-contract-eventually-flat/RESOLUTION.md](../../docs/upstream/fsmgen/sf-isf-contract-eventually-flat/RESOLUTION.md) | RESOLUTION — sf-isf-contract-eventually-flat (F1) |
 | [docs/upstream/fsmgen/sf-isf-contract-eventually-flat/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-contract-eventually-flat/expected/expected-notes.md) | Expected behavior |

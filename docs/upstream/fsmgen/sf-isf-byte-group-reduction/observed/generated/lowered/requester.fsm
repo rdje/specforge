@@ -1,0 +1,41 @@
+(?fsm:requester
+
+  (+params
+    (DATA_WIDTH 16)
+    (DATA_BYTES 2)
+  )
+
+  (+system
+    (clock CLK)
+    (areset RESETn)
+  )
+
+  (+interface
+    (output DATA)
+    (output DATACHK)
+    (output VALID)
+  )
+
+  (+size
+    (DATA 16)
+    (DATACHK 2)
+    (VALID 1)
+    (DATA_start 1)
+    (DATA_val 16)
+    (VALID_start 1)
+    (VALID_val 1)
+  )
+
+  (-parity_bytes <(== VALID 1)
+    (<- (DATACHK> (! (^ DATA))))
+  )
+
+  (-DATA
+    (<- (DATA> DATA_val) <DATA_start)
+  )
+
+  (-VALID
+    (<- (VALID> VALID_val) <VALID_start)
+  )
+
+)

@@ -218,6 +218,18 @@ Signed off `2026-09-29`; waits for the owner to forward it. A record type is acc
 record-typed ports whose fields a transaction reads and drives by name; 191 untyped layout tables on the 31
 chains, 75 of them USB 3.2's packet formats. Builds on FSMGen's `2026-06-22` storage-field answer.
 
+### byte-group-reduction — a reduction, and a per-byte reduction over a parameterised width
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `FSMGEN-REQUESTS.12`
+- Evidence: `docs/upstream/fsmgen/sf-isf-byte-group-reduction/README.md`
+
+Signed off `2026-10-20`; waits for the owner to forward it. `^` takes two operands only, so a parity bit per byte of a
+parameter-sized bus cannot be stated. Asks for one-operand reductions and a per-group reduction over a parameterised
+width; 49 of the 153 AMBA5 check signals SPECFORGE carries are byte-granular.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

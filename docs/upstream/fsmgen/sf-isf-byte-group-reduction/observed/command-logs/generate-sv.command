@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-byte-group-reduction/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-byte-group-reduction/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-byte-group-reduction/sources/fsmgen-input/byte-parity-param-width.isf

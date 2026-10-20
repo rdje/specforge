@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R0` (downstream contract hygiene) and the `KG-ISF-COMPLETENESS` lowering it unblocks
 - Created: `2026-09-24`
-- Last updated: `2026-09-26`
+- Last updated: `2026-10-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -196,7 +196,22 @@ drafting to integration, and forwarded by the owner. The process is
   commit passed. Verification: `check_fsmgen_request_bundles.pl` and the full gate driver pass with no export
   present.
 
+- ID: `FSMGEN-REQUESTS.12` · Status: `open` (`2026-10-20`; REQUEST — classify, reproduce, bundle, sign off; found by
+  `EXTRACTION-REPRESENTATION-GAPS.46`) · Goal: **a reduction, and a per-byte reduction over a parameterised width.**
+  AMBA 5's check signals carry odd parity, one bit per byte of a bus whose width is a parameter (*PADDRCHK*,
+  `ceil(ADDR_WIDTH/8)`; *PWDATACHK*, `DATA_WIDTH/8`): 49 of the 153 check signals SPECFORGE carries. `.isf`'s `^` takes
+  two operands only (*Malformed expression operator '^' with 1 operand(s)*), so a one-bit check over fixed widths can be
+  unrolled (`.46.b` lowers 48) and a byte-granular one over a parameter cannot. Acceptance: bundle
+  `sf-isf-byte-group-reduction`, reproduced on the pin and upstream HEAD, signed off, open ledger record; the owner
+  forwards. **Signed off `2026-10-20`**: reproduced on the pin `54ac1c22` and upstream `82f0a5661` (a read-only export,
+  each known-good-checked first), identical exit codes and diagnostics for the three inputs; built with FSMGen's
+  `bin/fsmgen-issue-bundle`, `commands.sh` re-run from the export root; the export removed after copying. The ledger
+  holds 16 open records, its cap.
+
 ## Current Frontier
+
+`.12` — `sf-isf-byte-group-reduction` signed off `2026-10-20`; waits for the owner to forward it, before FSMGen's
+next push.
 
 `.7`-`.10` — four requests found while measuring what USB 3.2's link layer needs from `.isf` (`2026-09-29`):
 durations in time units, named timers, the unstated-reset question, packet-typed ports. Signed off here; the owner
@@ -224,3 +239,5 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
 - `2026-09-29`: `.11` — the upstream export moves to `.project-data/tmp/` and is removed after bundling.
 - `2026-09-30`: `.7`-`.10`'s rows added to the book's *Current packets* table, which their sign-off had missed (found by
   `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`); SpecForge now carries the transitions `sf-isf-named-timers` asks to lower.
+- `2026-10-20`: `.12` opened and signed off (`sf-isf-byte-group-reduction`, found by
+  `EXTRACTION-REPRESENTATION-GAPS.46`); the ledger reaches its 16-record cap.

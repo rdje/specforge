@@ -1,0 +1,114 @@
+{
+   "actor_constants" : [],
+   "actor_network" : null,
+   "actor_params" : [
+      {
+         "name" : "DATA_WIDTH",
+         "value" : "16"
+      },
+      {
+         "name" : "DATA_BYTES",
+         "value" : "2"
+      }
+   ],
+   "actor_phases" : [],
+   "actor_stages" : [],
+   "bank_accesses" : [],
+   "clock" : "CLK",
+   "clock_domains" : [],
+   "compatible_fanin_groups" : [],
+   "compile_issues" : [],
+   "crossings" : [],
+   "dt_blocks" : [
+      {
+         "assignments" : 1,
+         "kind" : "rule",
+         "name" : "parity_bytes"
+      },
+      {
+         "assignments" : 1,
+         "kind" : "drive",
+         "name" : "DATA"
+      },
+      {
+         "assignments" : 1,
+         "kind" : "drive",
+         "name" : "VALID"
+      }
+   ],
+   "generated_composition" : null,
+   "inferred_storage" : [
+      {
+         "kind" : "counter",
+         "name" : "DATA_start",
+         "role" : "drive_request",
+         "width" : 1
+      },
+      {
+         "kind" : "counter",
+         "name" : "DATA_val",
+         "role" : "drive_payload",
+         "width" : 16
+      },
+      {
+         "kind" : "counter",
+         "name" : "VALID_start",
+         "role" : "drive_request",
+         "width" : 1
+      },
+      {
+         "kind" : "counter",
+         "name" : "VALID_val",
+         "role" : "drive_payload",
+         "width" : 1
+      }
+   ],
+   "inputs" : 0,
+   "interface_ports" : [
+      {
+         "direction" : "output",
+         "name" : "DATA",
+         "width" : 16
+      },
+      {
+         "direction" : "output",
+         "name" : "DATACHK",
+         "width" : 2
+      },
+      {
+         "direction" : "output",
+         "name" : "VALID",
+         "width" : 1
+      }
+   ],
+   "library_uses" : [],
+   "loop_early_exits" : [],
+   "outputs" : 3,
+   "port_count" : 3,
+   "priority_resolutions" : [],
+   "reset" : {
+      "kind" : "async",
+      "name" : "RESETn",
+      "polarity" : "active_low"
+   },
+   "reset_provenance" : [
+      {
+         "domain" : null,
+         "origin" : "explicit"
+      }
+   ],
+   "resource_arbitration" : [],
+   "scheduled_fsm" : "requester.fsm",
+   "schema_version" : 1,
+   "source" : "requester.isf",
+   "state_count" : 0,
+   "temporal_contracts" : [],
+   "transaction_loops" : [],
+   "transaction_port_bindings" : [],
+   "transaction_stages" : [],
+   "transaction_waits" : [],
+   "transactions" : [],
+   "verification_bridge" : null,
+   "verification_observations" : [],
+   "watchdog" : "65536"
+}

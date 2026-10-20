@@ -1,0 +1,2 @@
+Source file: '<FSMGEN_ROOT>/scratch-bundles/sf-isf-byte-group-reduction/sources/fsmgen-input/byte-parity-param-width.isf'
+Error parsing FSM with adapter: Malformed expression operator '^' with 1 operand(s). This active form requires at least 2 operands. See docs/book/src/90-reference-map.md for the current supported boundary and owning chapter map.

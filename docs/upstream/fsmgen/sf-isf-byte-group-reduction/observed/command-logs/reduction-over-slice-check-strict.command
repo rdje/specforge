@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/scratch-bundles/sf-isf-byte-group-reduction/sources/fsmgen-input/reduction-over-slice.isf

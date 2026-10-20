@@ -1,0 +1,27 @@
+{
+  "failure_class": "rejected-input",
+  "feedback_record": "byte-group-reduction",
+  "forwarded": null,
+  "id": "sf-isf-byte-group-reduction",
+  "kind": "feature_request",
+  "owner": "FSMGEN-REQUESTS.12",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-10-20",
+  "specforge_side": "SPECFORGE lowers one-bit parity checks over fixed-width signals since EXTRACTION-REPRESENTATION-GAPS.46.b; the 49 byte-granular checks over a parameterised width stay residuals, owned by EXTRACTION-REPRESENTATION-GAPS.46.c until a pin carries the form",
+  "status": "signed_off",
+  "title": "A reduction operator, and a per-byte reduction over a parameterised width, for parity check signals",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: reduction-over-slice and byte-parity-param-width refused (expression operator '^' requires at least 2 operands); baseline accepted (strict checks; no generation inside the pinned checkout)",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "82f0a5661eb79061dbb874fcb45b1066c29051a5",
+      "result": "reproduced by commands.sh: the same two refused with the same diagnostic, baseline accepted",
+      "role": "upstream"
+    }
+  ]
+}

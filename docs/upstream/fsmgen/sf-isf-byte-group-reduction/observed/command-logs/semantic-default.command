@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-byte-group-reduction/sources/fsmgen-input/byte-parity-param-width.isf

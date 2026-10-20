@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.46.c",
-      "literal" : "`.46.c` — a byte-granular parity over a parameterised width is requested from FSMGen.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.47",
+      "literal" : "`.47` — a rule stated on a collective name reaches each member.",
       "mode" : "eligible",
       "part_id" : "register-binding-leaves"
    },
@@ -1143,13 +1143,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
          "metrics" : {
-            "bytes" : 54157,
+            "bytes" : 54718,
             "line_bytes" : 281,
-            "lines" : 555
+            "lines" : 560
          },
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
-         "sha256" : "992bcce523924774c2365d867fbbdc9a9656c1a649f677a00564fbfd5e3d3796",
+         "sha256" : "85af5ff9ef5e7d00169bb3e9e8c6d72f2ab0db7461f96a7b760c17f5ee37f5de",
          "state" : "active"
       },
       {
