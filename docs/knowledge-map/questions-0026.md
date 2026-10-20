@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why must a check and the thing it checks not share a parent
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why must a co-reference key be rejected as a clause value
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why must a collection aggregate be at least files times per-file
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why must a current claim census candidate key include the semantic view
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > why must a declaration change be measured on the pass and not on one function
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > why must a frontier leaf be re-declared post-migration
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -59,6 +69,8 @@
   > why not trim a two-word actor like HBM responds back to its head
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > why should corpus counts leave MEMORY md
+- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
+  > why was 'A device shall not assume that transactions occur at the same location' apparatus
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why was 'Any AxSNOOP bits not driven by an interface are assumed to be LOW' not bound by .3.d.ii.a alone
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)

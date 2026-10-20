@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > does the corpus contain a negated value binding the extractor cannot read
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -296,5 +298,3 @@
   > how do I check whether a persisted artifact field describes current behaviour
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how do I check whether the persisted corpus seal is stale
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > how do I clean up scratch after a slice

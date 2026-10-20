@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > how does SpecForge read a quoted encoding value
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > how does SpecForge read a table whose rows disagree about their column order
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -296,5 +298,3 @@
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how is a captured table region proven covered or uncovered
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how is a captured visual region proven covered or uncovered

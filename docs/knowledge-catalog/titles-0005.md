@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md) | 2026-08-31 | `current` | A `line_bytes_each` warning is an extremal bound, not accumulation — narrow the widest lines without changi… |
 | [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md) | 2026-09-29 | `current` | Editing a live surface triggers a fixed chain of derived-state refreshes, and skipping any link fails the doc… |
 | [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md) | 2026-09-18 | `current` | A same-clause appositive is a local declaration — on the deterministic path only, so the LLM path re-refuse… |
 | [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |
@@ -60,4 +61,3 @@
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
 | [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md) | 2026-09-18 | `current` | Composing a new reader into a registered evidence derivation invalidates every proof-carrying artifact — a… |
 | [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |
-| [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |

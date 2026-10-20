@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > how do I clean up scratch after a slice
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > how do I clear a live-document line_bytes_each warning (reflow the few widest lines; do not partition, roll over, or raise the ceiling — nothing is running out)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -295,5 +297,3 @@
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > how does SpecForge read a fronted condition like When asserted, X must remain asserted
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > how does SpecForge read a quoted encoding value

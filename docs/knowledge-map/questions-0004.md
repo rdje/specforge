@@ -26,6 +26,8 @@
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > does a noun use of read or access create a relation
+- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
+  > does a passive 'must be assumed to be approximately' keep its class (no: a premise)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > does a plural phrase like 'in the RUN or DEACTIVATE states' bind a state (yes since EXTRACTION-REPRESENTATION-GAPS.49)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -296,5 +298,3 @@
   > does the constraint record source_text become the clause
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does the converge NLI pass measure quality or demote unsupported intent
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > does the corpus contain a negated value binding the extractor cannot read

@@ -7251,6 +7251,11 @@ fn abstraction_class(lowered: &str) -> Option<StatementClass> {
         ],
     );
     let treated_as = sentence.contains("treated as");
+    // `.3.d.iii.c` — a statement that states an obligation is neither apparatus nor an assumption: it takes the class
+    // it would take without the word.
+    if (uses_word || mentions_word) && states_an_obligation_beside_its_assumptions(sentence) {
+        return None;
+    }
     if uses_word && (treated_as || !is_non_contract_assumption(sentence)) {
         // `.3.d.ii.b.iii.b` — a sentence whose every assume word states a rule, a behaviour or a value is none of
         // these classes: it takes the class it would take without the word.
@@ -7263,6 +7268,48 @@ fn abstraction_class(lowered: &str) -> Option<StatementClass> {
     } else {
         None
     }
+}
+
+/// The phrases besides *shall* and *must* that state an obligation in a sentence of their own (*Target devices are
+/// not allowed to hold the clock LOW too long*). *Is required to* is not one: *an extra cycle is required to forward
+/// results* states a need.
+const OBLIGATION_PHRASES: [&str; 4] = [
+    "is not allowed to",
+    "are not allowed to",
+    "is not permitted to",
+    "are not permitted to",
+];
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c — whether a statement states an obligation its assume words do not turn
+/// into a premise: every assume word is active and governed by *shall* or *must*, negated or not, so it is the
+/// obliged subject's (*A device shall not assume that transactions occur at the same location*; *the debugger must
+/// not assume that the TAR wraps*), or another sentence of the statement states an obligation, uses no such word and
+/// does not speak about the document (*A channel must meet the common-mode requirements … the limits defined below
+/// assume a budgeting process*). A passive *must be assumed* is a premise the reader is told to take, and *You must not
+/// assume any timing information* the key to the document's diagrams, so neither governs anything here.
+fn states_an_obligation_beside_its_assumptions(statement: &str) -> bool {
+    let offsets = assume_word_offsets(statement);
+    let obliged = !offsets.is_empty()
+        && offsets.iter().all(|&(at, word)| {
+            let before = clause_before(statement, at).trim_end();
+            word != "assumed"
+                && !contains_whole_identifier(before, "you")
+                && (contains_whole_identifier(before, "shall")
+                    || contains_whole_identifier(before, "must"))
+        });
+    let obligation_beside = statement.split(". ").any(|sentence| {
+        let names_an_abstraction = ABSTRACTION_WORDS
+            .iter()
+            .any(|word| contains_whole_identifier(sentence, word))
+            || contains_any(sentence, &MODELLING_PHRASES)
+            || contains_any(sentence, &["assum", "abstracted", "treated as"]);
+        !names_an_abstraction
+            && !speaks_about_the_document(sentence)
+            && (contains_whole_identifier(sentence, "shall")
+                || contains_whole_identifier(sentence, "must")
+                || contains_any(sentence, &OBLIGATION_PHRASES))
+    });
+    obliged || obligation_beside
 }
 
 /// The measured shapes of an assume-sentence that states nothing about the hardware (`.3.d.ii.b`).
@@ -60010,6 +60057,43 @@ mod collective_signal_name_tests {
 #[cfg(test)]
 mod non_contract_assumption_tests {
     use super::{StatementClass, classify_statement};
+
+    /// `.3.d.iii.c` — an obligation stated with an assume word keeps the class it would take without the word.
+    #[test]
+    fn an_obligation_stated_with_an_assume_word_is_neither_apparatus_nor_an_assumption() {
+        for text in [
+            "A device shall not assume that transactions occur at the same location within each service interval.",
+            "If CFG.TARINC is 0x0, the incrementer size is not specified, and the debugger must not assume that the TAR wraps back to the beginning of each 1KB segment.",
+            "A channel must meet the common-mode requirements as they are defined in the receiver specification. Typically, the limits defined below assume a budgeting process.",
+            "In U3, if the beginning part of Warm Reset is treated as U3 LFPS exit signal, the re-timer shall transition to U3S. It shall infer Warm Reset if the received LFPS signal is more than 15 ms.",
+        ] {
+            assert!(
+                !matches!(
+                    classify_statement(text),
+                    StatementClass::Apparatus | StatementClass::ExplicitAbstraction
+                ),
+                "{text}"
+            );
+        }
+    }
+
+    /// `.3.d.iii.c` — the reader's directive, a premise the reader is told to take, a stated need and an obligation
+    /// about the document stay apparatus.
+    #[test]
+    fn a_directive_to_the_reader_or_an_obligation_about_the_document_stays_apparatus() {
+        for text in [
+            "The following figure explains the components used in timing diagrams. You must not assume any timing information that is not explicit in the diagrams.",
+            "Because the card is mounted inside a host chassis, any cooling airflow must be assumed to be approximately 5 C above ambient inlet air temperature.",
+            "The latencies shown assume the memory access hits in the Level 1 Data Cache. Compared to standard loads, an extra cycle is required to forward results to FP/ASIMD pipelines.",
+            "In no event shall the contributors be liable for any damages resulting in any way from the use of this specification. By adopting this specification, the user assumes all responsibility for its use.",
+        ] {
+            assert_eq!(
+                classify_statement(text),
+                StatementClass::Apparatus,
+                "{text}"
+            );
+        }
+    }
 
     fn is_abstraction(text: &str) -> bool {
         matches!(

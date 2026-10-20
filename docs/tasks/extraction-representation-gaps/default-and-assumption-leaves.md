@@ -228,7 +228,7 @@ children moved here whole, with their acceptance checklists.
   records plus its 9 unread behaviors. *Is optional* (76 statements) is `.3.d.iii.d`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`
-  Status: `open` (`2026-10-19`; CODE; found by `.3.d.iii`)
+  Status: `done` (`2026-10-20`; CODE; found by `.3.d.iii`; checklist below; opened `.3.d.iii.e`)
   Goal: **an obligation stated with *assume that* is no apparatus, and the remaining behaviors have a disposition.**
   `.3.d.ii.b.i`'s premise phrase *assume that* filed 7 obligations as apparatus (*A device shall not assume that
   transactions occur at the same location within each service interval*; *the debugger must not assume that the TAR
@@ -237,6 +237,35 @@ children moved here whole, with their acceptance checklists.
   **Impact:** an obligation is read by no obligation reader. Acceptance: let a sentence whose *assume* is governed by
   *shall* or *must* (negated or not) keep its normative class, decide the remainder's dispositions, route software
   agents to `.3.d.i`, and measure every chain.
+  **Decided `2026-10-20`: a statement that states an obligation keeps the class it would take without the assume
+  word.** `abstraction_class` asks `states_an_obligation_beside_its_assumptions` before filing a statement as
+  apparatus or an abstraction: every assume word is active and governed by *shall* or *must* in its clause, negated or
+  not (*A device shall not assume that …*; *the debugger must not assume that the TAR wraps*), or another sentence of
+  the statement states an obligation (*shall*, *must*, *is not allowed to*, *is not permitted to*) with no abstraction
+  word and nothing about the document (*A channel must meet the common-mode requirements … the limits defined below
+  assume a budgeting process*). Three exclusions, each measured on a first draft that flipped them: *You must not
+  assume any timing information that is not explicit in the diagrams* (the reader, 3 diagram keys), *an extra cycle is
+  required to forward results* (*is required to* states a need, 2), and a disclaimer whose *shall* sentence names
+  *this specification* (1). A passive *must be assumed* stays a premise (OpenCAPI's airflow, as `.3.d.ii.b.iii.b`
+  decided). **Measured over all 31 chains** (evidence dry-run against `9d584c986`'s): 23 identical; 24 statements in 8
+  change class (13 from `apparatus`, 11 from `explicit_abstraction`: 12 -> `normative_statement`, 8 ->
+  `conditional_rule`, 2 -> `derived_rule`, 1 -> `signal_value_constraint`, 1 -> `timing_constraint`); the readers
+  add 7 conditional rules and 3 permissions and remove nothing; equivalence and presence records unchanged. Rebuilt
+  stage by stage: SemanticIR abstractions fall in 6 chains (USB 3.2 19 -> 15, AXI 21 -> 19, ADIv6 6 -> 4, GICv3,
+  IOMMU and USB4 inter-domain 1 each) and invariants rise by 23; IntentIR assumptions fall by 11; adapter residuals
+  only renumber rules and recount permissions; `.isf` byte-identical. Of the 8 obligations, 5 are read; OpenCAPI's
+  airflow premise stays apparatus by design, and Wishbone's low-skew clock and I2C's SMBus environment assumptions
+  are `.3.d.iii.e`. **The remaining 12 have dispositions:** 2 are software steps (SMMU guide's *software can choose
+  to terminate the transaction*; USB4 inter-domain's *Set the Local Target Link Width field …*), already `.3.d.i`'s;
+  6 describe a component's responsibility or an implementation-defined behavior (USB 3.2's hubs, Repeater/Forwarder,
+  SSP US and DS controllers, *The transmitter is responsible for detecting the far end receiver termination*, *A
+  peripheral device initiates transitions to U1 or U2 … based on vendor specific algorithms*) and stay untyped
+  behaviors: they state no condition, value or order a reader could type; I2S's *higher data rates can be used in the
+  future* is about the specification's form; USB 3.2's *The only allowed values for descriptor type are device,
+  configuration, and string descriptor types* is a request field's value set in prose, one record no reader takes;
+  RISC-V debug's *the MIPI 10-pin Narrow JTAG connector should be used* is a recommendation, and its *Pins whose
+  functionality isn't needed may be left unconnected* a permission `.3.d.iii.a` refuses for its relative subject.
+  These are declared residuals, not open work. Unread records 151 -> 140.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d`
   Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.a`)
@@ -248,6 +277,21 @@ children moved here whole, with their acceptance checklists.
   indistinguishable from its required ones. Acceptance: decide whether optionality is a `permission_rules` modality
   (the subject as written, permitted to be absent, the qualifier as condition) or its own record, read the 76 into
   it, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e`
+  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.c`)
+  Goal: **what an implementation or interface assumes about its environment is an assumption, not apparatus.**
+  `.3.d.ii.b.i`'s premise phrase *assumes that* files a sentence as apparatus whatever its subject, which is right for
+  an example's or a table's premise (*Table 9 assumes that the Hs devices are isolated*; *The circuit assumes that the
+  RAM primitive is the FASM*) but not when the subject is the hardware: Wishbone's *The WISHBONE interface logic
+  assumes that a low-skew clock distribution scheme is used on the target device, and that the clock-skew shall be
+  low enough …*, AXI's *This MEC implementation assumes that Managers and caches do not perform …*, and I2C's *SMBus
+  protocol just assumes that if something takes too long … all devices must reset*. **Reproduce:** apparatus
+  statements saying *assumes that* whose subject is no document noun, example or analysis (5 on the 31 chains; these
+  3, the table premise and the example circuit). **Impact:** the environment contract a component states is read by
+  no reader, and SMBus's *Target devices are not then allowed to hold the clock LOW too long* with it. Acceptance:
+  tell an environment assumption from a premise by the subject the document gives it (a component, an interface, an
+  implementation, a protocol), keep the premise shapes apparatus, and measure every chain.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` (CODE) — DONE `2026-10-19`
 
@@ -380,3 +424,33 @@ children moved here whole, with their acceptance checklists.
   `reference/intentir-contract.md`, `source-to-intent-contract.md`; KM `a-stated-permission-is-a-typed-record` (new);
   `claim_family_inventory.tsv`, `rule_family_inventory.tsv`, `spec_to_intent_category_contract.json` and the census's
   `TYPED_SURFACES`. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c` (CODE) — DONE `2026-10-20`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_unread_intent_records.py`: modality `obligation` 8 (7 classed
+  `apparatus`, 1 `explicit_abstraction`), and 11 records of the other three modalities.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `abstraction_class` filed a statement as
+  apparatus whenever `is_non_contract_assumption` matched a premise phrase (*assume that*, *assumes the*), and
+  `every_assume_word_states_no_abstraction`, which knows *shall not*, was only asked on the abstraction branch. RED,
+  the file restored byte-identically after each (7 mutations, each failing its named test): the early return, the
+  obliged test and the obligation-beside test off
+  (`an_obligation_stated_with_an_assume_word_is_neither_apparatus_nor_an_assumption`); the reader and document
+  exclusions off, a passive *assumed* allowed, and *is required to* counted
+  (`a_directive_to_the_reader_or_an_obligation_about_the_document_stays_apparatus`, the passive one also
+  `a_premise_of_a_figure_a_guideline_or_an_analysis_is_not_an_abstraction`, the reader one also
+  `a_timing_diagram_key_is_not_an_abstraction`).
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 24 statements in 8 change class, 7 conditional rules
+  and 3 permissions added, nothing removed. The 8 chains rebuilt stage by stage, each artifact validated once, the
+  adapter last; `.isf` byte-identical. Unread records 151 -> 140; obligations 8 -> 3.
+- [x] **NO REGRESSION** — the classifier is outside the EvidenceIR seal closure: `check_chain_currency.sh` 31 of 31
+  current after the rebuilds. WIRE-BASED-100: the 11 seeds' scores identical to `9d584c986`'s reports; nine reports
+  byte-identical, AXI and SWD differ only in their existing-rule counts (154 -> 155, 105 -> 109) and candidate pools
+  (551 -> 553, 317 -> 318). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 171 /
+  1,860 passed, 0 failed. `flow_census.json` rolled (+1 function, +3 decision sites, +8 helper edges); boundary
+  unchanged.
+- [x] **GENERICITY (ADR 0006)** — English modals, obligation phrases and the document nouns `.3.d.ii.b.i` uses; no
+  document, signal or protocol name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (*An obligation stated with an assume word*); KM
+  `an-obligation-stated-with-assume-keeps-its-class` (new). No production rule deleted: the apparatus and abstraction
+  arms are narrowed.

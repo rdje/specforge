@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > which actor does a section-heading signal table relate its rows to
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > which admissibility routes run before the relational test
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > which architecture owns work and which one verifies published claims
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > which arrow spellings does the declaration reader accept
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
@@ -291,9 +297,3 @@
   > which signal is a conditional rule's consequent signal
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > which signal tables have per-row column drift
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > which source modalities and IntentIR surfaces are required per chip-spec category
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which source modalities are represented in the first vertical population
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > which source-to-IntentIR categories are supported incomplete or unmeasurable

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > how many corpus task ids and source regions must containment preserve
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > how many corpus/-sourced documents are there and how many are legacy
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -296,5 +298,3 @@
   > how much of the specforge persisted corpus can actually be scored / is canonically current
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > how much page content escapes both the structured-element path and the region-crop path
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > how much should one closure cost a bounded task root

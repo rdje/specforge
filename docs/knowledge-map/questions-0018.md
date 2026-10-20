@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > where does SpecForge carry a state transition a table states
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > where does SpecForge carry the value a signal takes when it is absent or not driven
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > where does SpecForge read a constraint's condition (extract_condition_clause, stated_condition_clauses)
 - [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
   > where does SpecForge read a document-wide or class-wide polarity statement
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -292,9 +298,3 @@
   > which active task tree is next at the live document warning
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree now requires bounded evidence containment
-- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
-  > which actor does a section-heading signal table relate its rows to
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > which admissibility routes run before the relational test
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > which architecture owns work and which one verifies published claims

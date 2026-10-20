@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-III-A-PERMISSION-RULE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-D-III-C-OBLIGATION-WITH-ASSUME",
    "baseline": {
-    "analyzed_functions": 2753,
-    "decision_sites": 15001,
-    "helper_edges": 18549,
-    "semantic_macros": 1585
+    "analyzed_functions": 2763,
+    "decision_sites": 15099,
+    "helper_edges": 18671,
+    "semantic_macros": 1594
    },
    "delta": {
-    "analyzed_functions": 10,
-    "decision_sites": 98,
-    "helper_edges": 122,
-    "semantic_macros": 9
+    "analyzed_functions": 1,
+    "decision_sites": 3,
+    "helper_edges": 8,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a: a stated permission is a typed record. permission_rule_surface and stated_permissions read \"X may Y\" and \"X is permitted/allowed to Y\" into permission_rules (subject, permitted, condition, modality); SemanticIR and IntentIR carry them; the adapter keeps one residual per document."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c: an obligation stated with an assume word is no apparatus. states_an_obligation_beside_its_assumptions lets a statement whose assume words are governed by shall/must, or that states an obligation in a sentence of its own, keep its class."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

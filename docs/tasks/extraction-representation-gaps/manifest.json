@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c",
-      "literal" : "`.3.d.iii.c` — an obligation stated with *assume that* is no apparatus, and the remaining behaviors have a disposition.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d",
+      "literal" : "`.3.d.iii.d` — an optional feature is a typed record.",
       "mode" : "eligible",
       "part_id" : "default-and-assumption-leaves"
    },
@@ -975,7 +975,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
       },
@@ -987,6 +987,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "default-and-assumption-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "default-and-assumption-leaves"
@@ -1119,13 +1125,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
          "metrics" : {
-            "bytes" : 40060,
+            "bytes" : 47576,
             "line_bytes" : 967,
-            "lines" : 382
+            "lines" : 456
          },
          "part_id" : "default-and-assumption-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
-         "sha256" : "66107b43be9d72d7fef29ead4948f225e26836793e4c6c4808c0da5bcfd74fc5",
+         "sha256" : "a1edba8d8f0a769531bae79cceee7a38bd48cf1bed6163271612bd023ad9e272",
          "state" : "active"
       },
       {

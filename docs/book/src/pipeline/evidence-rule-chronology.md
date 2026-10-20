@@ -1157,6 +1157,19 @@ USB 3.2 holding 335 and the IOMMU 179; 530 uses refused. Only that section moves
 byte-identical. The new rule field re-seals every chain. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.a`).
 
+**An obligation stated with an assume word.** The premise phrases of `.3.d.ii.b.i` (*assume that*, *assumes the*)
+filed a statement as apparatus whatever else it said, so *A device shall not assume that transactions occur at the
+same location within each service interval* was no rule. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c`
+(`2026-10-20`) a statement keeps the class it would take without the word when every assume word in it is active and
+governed by *shall* or *must*, negated or not (*the debugger must not assume that the TAR wraps*), or when another
+of its sentences states an obligation (*shall*, *must*, *is not allowed to*) with no such word and nothing about the
+document (*A channel must meet the common-mode requirements … the limits defined below assume a budgeting process*).
+The reader's directive in a diagram key (*You must not assume any timing information that is not explicit in the
+diagrams*), a need (*an extra cycle is required to forward results*), a disclaimer about *this specification* and a
+passive *must be assumed* stay apparatus. On the 31 chains 24 statements in 8 documents change class, the readers add
+7 conditional rules and 3 permissions, 11 abstractions leave SemanticIR and 23 invariants join it, and the emitted `.isf`
+texts are byte-identical. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.iii.c`).
+
 ### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
 
 Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named
