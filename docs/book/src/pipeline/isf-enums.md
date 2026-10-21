@@ -474,7 +474,7 @@ A column title names a signal when it is a declared signal or a collective name 
   and no code or member name repeats.
 - **Member names** come from the first column that is no signal and no code and whose names are distinct.
 - **Other cases.** A table whose every row the converter put in its header is read from its second row on. A column
-  that only jointly keys its member, or repeats codes, is left alone (`.3.g.iii.b`, `.3.g.iii.c`).
+  that only jointly keys its member, or repeats codes, is left alone (`.3.g.iii.b.i`, `.3.g.iii.c`).
 
 AXI now lowers `(AxPAS (SECURE 0) (NON_SECURE__NS 1) (ROOT 2) (REALM 3) (SYSTEM_AGENT__SA 4) (NON_SECURE_PROTECTED__NSP
 5))`. AHB lowers `(HSIZE (BYTE 0) (HALFWORD 1) (WORD 2) (DOUBLEWORD 3) (HSIZE_4_WORD_LINE 4) (HSIZE_8_WORD_LINE 5))`,

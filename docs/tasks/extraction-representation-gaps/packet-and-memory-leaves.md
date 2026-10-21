@@ -3,9 +3,10 @@
 - Part ID: `packet-and-memory-leaves`
 - State: `active`
 
-Open ERG leaves continue here, after `hint-and-notation-leaves` reached its rollover (`2026-10-21`): the reserved space
-of captured packet layouts, the corpus memory's refresh, and every later ERG leaf. `.54.a` and `.55.b.iv.a` moved here
-whole.
+Open ERG leaves continued here, after `hint-and-notation-leaves` reached its rollover (`2026-10-21`): the reserved
+space of captured packet layouts and the corpus memory's refresh. `.54.a` and `.55.b.iv.a` moved here whole. This part
+reached its own rollover on `2026-10-21`; later leaves are in `encoding-and-state-leaves`, where `.3.g.iii.b`,
+`.3.g.iii.c` and `.57` moved whole.
 
 ## Post-migration records
 
@@ -529,29 +530,3 @@ whole.
 - [x] **GENERICITY (ADR 0006)** — the member's own name and the enum's own name; no document or table.
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (the `AxSIZE` note and the multi-column section); KM card
   `a-signal-titled-code-column-determining-its-member-is-an-enum` amended. No production rule deleted or replaced.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b`
-  Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)
-  Goal: **a row binding several signals' or fields' values to a member or a meaning is typed.** **Reproduce:** APB's
-  `PNSE | PPROT[1] | Physical address space`, AXI *A15.26* `State | SYSCOREQ | SYSCOACK`, and AXI *A13.14*'s legal MMU
-  combinations are residuals. Acceptance: decide the record (the keys and values a row binds, and the member or
-  meaning it names), its carrier to IntentIR, and whether a joint key over states reaches `protocol_states`. Measure
-  the 9 tables of this shape on the 31 chains, and the untyped-table census's `signal_value_matrix` (22) and
-  `field_value_encoding` (14, keyed by register fields) families it now owns. Then open the CODE leaf.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`
-  Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)
-  Goal: **a code column that maps several members to one code is carried as what it is.** **Reproduce:** AXI *A4.4*:
-  `ARCACHE` `0b1010` is Write-Through No-Allocate and Write-Allocate on reads; today's `ARCACHE` enum keeps 6 of 12
-  rows and `AWCACHE` none. Acceptance: decide whether a repeating column is an aliasing encoding (code -> members) or
-  stays a residual. Decide whether today's 6-member enum is kept, re-read or withdrawn, and how the parenthesized
-  alternates (*0b1110 ( 0b0110 )*) read. Measure AXI and the wire golds.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.57`
-  Status: `open` (`2026-10-21`; DESIGN; found by `.3.g.iii`)
-  Goal: **a table whose every row the converter put in its header has one header row.** 137 tables in 16 documents
-  have more than one header row and no body row (the Cortex-A76 guide 37, AXI 26, USB 3.2 23, ADIv6 14), so every
-  table reader sees no data. AXI *A4.7* is one. **Reproduce:** `generated/source_ir/ihi0022…/source_ir.json`
-  `table_0061` (7 header rows, 0 body rows). Acceptance: census the 137 by shape (front matter, data tables, true
-  multi-row headers), decide whether SourceIR normalizes them or each reader does, from what the converter states,
-  and measure every chain.

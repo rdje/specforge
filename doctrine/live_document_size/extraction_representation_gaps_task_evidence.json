@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b",
-      "literal" : "`.3.g.iii.b` — a row binding several signals' or fields' values to a member or a meaning is typed.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i",
+      "literal" : "`.3.g.iii.b.i` — a jointly keyed table is a value combination, and the states it keys are protocol states.",
       "mode" : "eligible",
-      "part_id" : "packet-and-memory-leaves"
+      "part_id" : "encoding-and-state-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -142,13 +142,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
             "metrics" : {
-               "bytes" : 53077,
+               "bytes" : 51071,
                "line_bytes" : 221,
-               "lines" : 557
+               "lines" : 532
             },
             "part_id" : "packet-and-memory-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-            "sha256" : "c14ad1ecb83ca7971c22d52268ead37ee57ed6bb19fb76cb7794b2cca608f70e",
+            "sha256" : "5b5984c4d1d119fbe0339a779bfc5f7b0318db26bb9dd5c3a70ee69dafd6363c",
+            "state" : "active"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
+            "metrics" : {
+               "bytes" : 9296,
+               "line_bytes" : 119,
+               "lines" : 111
+            },
+            "part_id" : "encoding-and-state-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
+            "sha256" : "4ffeb40927d2217f2a87fbffeecc7a577be21da73965a682db2169371510601c",
             "state" : "active"
          },
          {
@@ -1416,27 +1428,39 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "packet-and-memory-leaves"
+         "part_id" : "encoding-and-state-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "packet-and-memory-leaves"
+         "part_id" : "encoding-and-state-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.57",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "packet-and-memory-leaves"
+         "part_id" : "encoding-and-state-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.58",
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
       }
    ],
    "limits" : {
@@ -1564,7 +1588,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.g.iii.b` — a row binding several signals' or fields' values to a member or a meaning is typed.",
+         "`.3.g.iii.b.i` — a jointly keyed table is a value combination, and the states it keys are protocol states.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1602,9 +1626,10 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`"
       ]
    },
    "migration_metadata" : {

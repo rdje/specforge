@@ -32,7 +32,7 @@ The census, whole: 616 tables (53.1%) state nothing the contract lowers (documen
 instruction timings and worked examples, line coding and electrical parameters, empty tables, waveform narrations,
 and 56 of the hand-read). 544 (46.9%) are contract content, every one with an owner: `DOC-INTENT-TAXONOMY.4b` 225
 (structure and message layouts), `.3.c.v` 135 (presence, requirement and response matrices), AXI's parameter
-definitions 78 (`KG-ISF-COMPLETENESS.2a.vii.c`), `.3.g.iii` 57 (multi-key encodings and behaviour; `.3.g.iii.b` since `2026-10-21`), `.3.b.iii` 43
+definitions 78 (`KG-ISF-COMPLETENESS.2a.vii.c`), `.3.g.iii` 57 (multi-key encodings and behaviour; `.3.g.iii.b.i` since `2026-10-21`), `.3.b.iii` 43
 (single-key value, timer and constraint tables the ingest left untyped), `.41.e` 5 (a field's bits mapped to a signal's)
 and `.3.c.viii` 1 (TMC's shifted memory table).
 
