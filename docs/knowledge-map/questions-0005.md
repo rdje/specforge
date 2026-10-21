@@ -140,6 +140,8 @@
   > how are USB descriptor tables (Offset | Field | Size | Value | Description) extracted (descriptor_layout_columns, EXTRACTION-REPRESENTATION-GAPS.55.b.i)
 - [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
   > how are USB packet header layouts (Width (bits) | Offset (DW:bit) | Description) extracted
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are USB status words (Bit | Description, dash ranges, Name: heads) read (colon_head_field_name, parse_dash_bit_range, EXTRACTION-REPRESENTATION-GAPS.55.b.v)
 - [a-dword-packet-layout-reaches-message-field-records](../knowledge/a-dword-packet-layout-reaches-message-field-records.md)
   > how are USB4 packet layouts (DW | Bits | Description) extracted
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
@@ -296,5 +298,3 @@
   > how do I avoid re-sealing all 31 chains for a behaviour-neutral refactor
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how do I census enum member and value fidelity
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > how do I census enum value provenance

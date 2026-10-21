@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > how do I census enum value provenance
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > how do I census which span a published constraint read its parts from
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -295,5 +297,3 @@
   > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how does SpecForge handle one transaction and one rule writing the same named-drive target

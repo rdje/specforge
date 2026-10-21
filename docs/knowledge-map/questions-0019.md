@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > where is the reviewed source-to-intent dataset
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)

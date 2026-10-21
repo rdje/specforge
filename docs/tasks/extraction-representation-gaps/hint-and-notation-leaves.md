@@ -347,7 +347,7 @@ hint gives a signal, and the sentences that define the document's own notation. 
   symbolic width (`xx`, offset `4:0 + xx`), so neither it nor the CRC after it is read.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.v`
-  Status: `open` (`2026-10-21`; CODE; found by `.55.b.ii`)
+  Status: `done` (`2026-10-21`; CODE; found by `.55.b.ii`; checklist below)
   Goal: **a status-word table whose field name opens its description reaches a field record.** USB 3.2's 10 (*Table
   10-10. Hub Status Field, wHubStatus*, `Bit | Description`: *0 | Local Power Source: This field …*) and USB4
   inter-domain's 3 `Bit | Description` tables match the two-column bit-position family, but its fused-name grammar
@@ -355,6 +355,27 @@ hint gives a signal, and the sentences that define the document's own notation. 
   table. **Reproduce:** `table_0240`. Acceptance: read the *Name:* head the way `.55.b.ii` reads a width-and-offset
   layout's, skip a value sub-row rather than the table, decide whether a status word's bits are a message field's or
   a register's (the caption names a field: *wHubStatus*), and measure every chain.
+  **Found `2026-10-21`: four gates, not one.** Of the 15 two-column `Bit | Description` tables on the 31 chains (USB 3.2
+  10, USB4 inter-domain 3, TMC 1), none reached a record: a dash range (`2-15`, `5-8`) is no bit position to
+  `parse_pure_bit_position` and rejects the whole table; an empty bit cell (a *Value* sub-row) did the same; the `.10a`
+  name chain recovers no *Name:* head and the identifier gate refuses a multi-word one; and four tables are typed
+  `signal_description`. **Decided:** in the two-column branch a dash range is a bit range (`parse_dash_bit_range`,
+  local to this family, not the shared parser), and an empty bit cell is a value sub-row skipped, as the three-column
+  branch already skips one; a row the `.10a` chain names nothing falls back to the head a colon closes
+  (`colon_head_field_name`: at most eight words, a trailing mnemonic outranking it — never a period, so *Bits [39:12]
+  of an address.* is no name), which may be several words. A table that writes a dash range is a status-word layout
+  and is named by that head alone: unlocked, USB4's *USB4 Version of the Router …* row would otherwise have taken the
+  leading-token name `USB4`. The bits are message fields, the family's typed home, under the caption's container (*Hub
+  Status Field, wHubStatus*). The kind gate stays: a table the converter classified is never claimed, so no table is
+  read twice — tried and reverted, since it broke that tested rule.
+  **Measured over all 31 chains** (evidence dry-run against `50df88645`'s): 30 identical; USB 3.2's
+  `message_field_records` 205 -> 209 (*Hub Status Field, wHubStatus*: `Local Power Source`, `Over-current`; *Hub
+  Change Field, wHubChange*: `C_HUB_LOCAL_POWER`, `C_HUB_OVER_CURRENT`, the last from a caption-less continuation).
+  Rebuilt stage by stage: every later stage and `.isf` text byte-identical. **Declared residuals:** USB 3.2's four
+  `signal_description`-typed status tables (*Port Status Field*, *Port Change Field*, *Extended Port Status Field*,
+  *Downstream Port Remote Wake Mask Encoding*) and their three caption-less continuations stay with their
+  classification; USB4's three *Immediate Value* decodings state their bits in prose with no head; TMC's page-table
+  entry repeats its `[1:0]` bit cell for each value and stays unread.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`
   Status: `done` (`2026-10-21`; CODE; split from `.55.b`; checklist below)
@@ -534,4 +555,27 @@ hint gives a signal, and the sentences that define the document's own notation. 
   `quality/corpus-memory.md` (the fixed point cannot be re-run, `.54`), `pipeline/multimodal-evidence.md` (the caption
   example, `.50`), `document-categories.md` (the message-field count), ROADMAP R15f and its owning tree's pointer to
   `.54.a`. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.v` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — the 15 two-column `Bit | Description` tables of the 31 chains, each with its kind, rows
+  and the gate that stopped it (dash ranges, value sub-rows, *Name:* heads, a classified kind).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `collect_bit_layout_tables`'s two-column
+  branch rejected a table over one dash range or empty bit cell, and the `.10a` chain names no colon head. New
+  `parse_dash_bit_range`, `colon_head_field_name`, `BitLayoutTable.status_word`; the value sub-row skip. RED, the file
+  restored byte-identically after each (6 mutations, each failing a named test): the colon head, the identifier gate
+  on a head, the dash range, the value sub-row, the status word's leading token, a period closing a head. A kind-gate
+  change was tried and reverted: it broke `bit_position_surface_extracts_structure_fields_with_fragment_chains`,
+  whose classified table must stay unclaimed.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 30 identical, USB 3.2 +4 status-word fields; rebuilt
+  stage by stage, every later stage and `.isf` text byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `50df88645`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean (after a test's tuple type was named); `cargo test
+  --workspace --lib --exclude specforge-production-graph` 474 / 171 / 1,897 passed, 0 failed. `flow_census.json` rolled
+  (+2 functions, +16 decision sites, +10 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the table's own cells, the caption's label and the description's head; no document or
+  field name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (the strict-parser rule and *Status words in the two-column
+  family*); KM `bit-position-structure-field-extraction` amended. No production rule deleted or replaced.
 

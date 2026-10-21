@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > where are the Rust toolchain gates registered
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > where are the held-out APB AXI AHB normalized bundles kept
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
@@ -296,5 +298,3 @@
   > where is the register-field gold seed
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > where is the required-residual rule frozen
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > where is the reviewed source-to-intent dataset

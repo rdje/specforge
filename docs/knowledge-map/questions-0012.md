@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > should I split a conflated enum per table
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > should NLP-SHALLOW-PARSE.2f build coordination distribution
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -295,5 +297,3 @@
   > what debug/diagnostic tools does specforge have (TOOLBOX.md)
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > what declaration catalog does the placeholder check read
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next

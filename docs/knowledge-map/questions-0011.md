@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > is neutralized classification the reason legacy documents extract nothing
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > is one canonical probe per distinct seal a sample
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -296,5 +298,3 @@
   > should I fix the PSEL valid when PSEL asserted temporal rule
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > should I refuse an enum whose members span tables
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > should I split a conflated enum per table

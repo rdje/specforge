@@ -10,9 +10,10 @@ answers:
   - "why does a symbolic bit cell reject the whole table"
   - "what does MessageFieldRecord.bit_range mean and when is it set"
   - "why does adding an extractor change every doc's extraction manifest"
+  - "how are USB status words (Bit | Description, dash ranges, Name: heads) read (colon_head_field_name, parse_dash_bit_range, EXTRACTION-REPRESENTATION-GAPS.55.b.v)"
 date: 2026-06-10
 tags: [message-fields, structures, tables, bit-position, fragments, digestion, amd-class, nvme-class]
-evidence: crates/specforge/src/ir/evidence.rs (extract_bit_position_structure_fields, parse_pure_bit_position, bit_position_chain_adjacent, bit_position_container_label, message_field_surface); docs/tasks/PDF-VARIANT-DIGESTION.md (.10b)
+evidence: crates/specforge/src/ir/evidence.rs (extract_bit_position_structure_fields, parse_pure_bit_position, parse_dash_bit_range, colon_head_field_name, bit_position_chain_adjacent, bit_position_container_label, message_field_surface); docs/tasks/PDF-VARIANT-DIGESTION.md (.10b)
 reverify: cargo test --workspace --exclude specforge-production-graph --lib bit_position -- --nocapture ; plus old-vs-new `evidence --dry-run` parity over generated/source_ir/*/ (intact bundles) and the stub-copy protocol for AMD
 ---
 
@@ -59,3 +60,9 @@ wrapped-cell protection). Canonical NVMe evidence NOT rebuilt this slice — a r
 the standing Pattern gauge (LLM-PRIMARY-PROMOTION.4 state); refresh rides the next
 gauge-bearing sweep. Related: [[bit-location-register-field-vocabulary]],
 [[corpus-register-table-shape-gap]].
+
+**`2026-10-21` (`EXTRACTION-REPRESENTATION-GAPS.55.b.v`).** The two-column branch also reads a dash range (`5-8`,
+`parse_dash_bit_range`, this family only) and skips an empty bit cell as a value sub-row; a row the `.10a` chain names
+nothing falls back to the head a colon closes (`colon_head_field_name`, several words allowed, a trailing mnemonic
+outranking it, never a period). A table that writes a dash range is a status-word layout, named by that head alone.
+The kind gate is unchanged: a classified table is never claimed. USB 3.2 gains 4 status-word fields.

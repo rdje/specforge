@@ -19131,6 +19131,9 @@ struct BitLayoutTable<'a> {
     label: BitLayoutLabel,
     page: Option<u32>,
     rows: Vec<BitLayoutRow>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.55.b.v` — the table writes a bit range with a dash (`5-8`): a status-word
+    /// layout, whose names are colon heads (`colon_head_field_name`), never a leading token.
+    status_word: bool,
 }
 
 /// PDF-VARIANT-DIGESTION.10d — are a table's dword-relative rows in FORWARD layout order
@@ -19376,13 +19379,24 @@ fn collect_bit_layout_tables<'a>(
         }
         let mut rows: Vec<BitLayoutRow> = Vec::new();
         let mut all_parse = true;
+        let mut status_word = false;
         for (index, row) in body.iter().enumerate() {
             if two_column {
                 let cells = effective_row_cells(row);
                 let [bits, desc] = cells.as_slice() else {
                     continue;
                 };
+                if bits.trim().is_empty() {
+                    // `EXTRACTION-REPRESENTATION-GAPS.55.b.v` — a value sub-row (*| Value*), as the three-column
+                    // branch skips one: no bit position is stated, so nothing is misplaced by skipping it
+                    continue;
+                }
                 let parsed = parse_pure_bit_position(bits)
+                    .or_else(|| {
+                        let range = parse_dash_bit_range(bits);
+                        status_word |= range.is_some();
+                        range
+                    })
                     .map(|(high, low)| (high, low, None))
                     .or_else(|| {
                         parse_offset_suffixed_bit_position(bits)
@@ -19457,6 +19471,7 @@ fn collect_bit_layout_tables<'a>(
             page: bit_position_table_page(table),
             rows,
             table,
+            status_word,
         });
     }
     tables
@@ -19551,6 +19566,7 @@ fn extract_bit_position_structure_fields(
                     *leading_token_rows.entry(key).or_default() += 1;
                 }
             }
+            let mut head_named: BTreeSet<String> = BTreeSet::new();
             for row in &parsed.rows {
                 let name = match &row.name {
                     // explicit name column (three-column family): `-` placeholders and
@@ -19576,15 +19592,29 @@ fn extract_bit_position_structure_fields(
                             _ => explicit.clone(),
                         }
                     }
-                    // two-column family: recover the fused name through the `.10a` chain
+                    // two-column family: recover the fused name through the `.10a` chain, or —
+                    // `EXTRACTION-REPRESENTATION-GAPS.55.b.v` — the head a colon closes
+                    // (*Local Power Source: This field …*), which may be several words; a
+                    // status-word layout (dash ranges) names its fields by that head alone
                     None => {
-                        match recover_field_mnemonic(&row.description, None, &leading_token_rows) {
+                        let recovered = (!parsed.status_word)
+                            .then(|| {
+                                recover_field_mnemonic(&row.description, None, &leading_token_rows)
+                            })
+                            .flatten();
+                        match recovered {
                             Some(name) => name,
-                            None => continue,
+                            None => match colon_head_field_name(&row.description) {
+                                Some(name) => {
+                                    head_named.insert(name.clone());
+                                    name
+                                }
+                                None => continue,
+                            },
                         }
                     }
                 };
-                if !is_message_field_name(&name) {
+                if !head_named.contains(&name) && !is_message_field_name(&name) {
                     continue;
                 }
                 let key = (label.to_ascii_lowercase(), name.to_ascii_uppercase());
@@ -19946,6 +19976,58 @@ fn width_offset_layout_columns(table: &StructuredTableRecord) -> Option<(usize, 
         offset,
         description,
     ))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.v` — a field's name as a status-word layout writes it: the head a colon closes
+/// (*Local Power Source: This field …*, *Entry type: 00*), at most eight words, letter-led, with no period inside; a
+/// trailing parenthesized mnemonic of two characters or more names the field instead (*Current Connect Status
+/// (PORT_CONNECTION): …* -> `PORT_CONNECTION`). A period does not close a name here: *Bits [39:12] of an address.* is
+/// a sentence. A `Reserved…` row is padding.
+fn colon_head_field_name(description: &str) -> Option<String> {
+    let description = description.trim();
+    if description
+        .get(..8)
+        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+    {
+        return None;
+    }
+    let head = description[..description.find(": ")?].trim_end();
+    if head.ends_with(')')
+        && let Some(open) = head.rfind('(')
+    {
+        let inner = head[open + 1..head.len() - 1].trim();
+        if (2..=40).contains(&inner.chars().count())
+            && inner
+                .chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_alphabetic())
+            && inner.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Some(inner.to_string());
+        }
+    }
+    if head.is_empty()
+        || !head.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        || head.contains('.')
+        || head.split_whitespace().count() > 8
+    {
+        return None;
+    }
+    Some(head.split_whitespace().collect::<Vec<_>>().join(" "))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.v` — a bit range written with a dash (`5-8`, `2-15`), as a status-word layout
+/// writes it; the two-column bit layout reads it beside the colon form.
+fn parse_dash_bit_range(cell: &str) -> Option<(u32, u32)> {
+    let (a, b) = cell.trim().split_once('-')?;
+    let side = |side: &str| {
+        let side = side.trim();
+        (!side.is_empty() && side.len() <= 4 && side.bytes().all(|b| b.is_ascii_digit()))
+            .then(|| side.parse::<u32>().ok())
+            .flatten()
+    };
+    let (a, b) = (side(a)?, side(b)?);
+    Some((a.max(b), a.min(b)))
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` — a field's name as a width-and-offset layout writes it: the words before
@@ -45664,6 +45746,122 @@ The control register.
             "captioned visual evidence should carry High automation confidence"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn a_status_word_names_its_fields_before_a_colon() {
+        let name = super::colon_head_field_name;
+        assert_eq!(
+            name("Local Power Source: This field indicates …").as_deref(),
+            Some("Local Power Source")
+        );
+        assert_eq!(
+            name("Current Connect Status (PORT_CONNECTION): This field reflects …").as_deref(),
+            Some("PORT_CONNECTION")
+        );
+        assert_eq!(name("Entry type: 00").as_deref(), Some("Entry type"));
+        assert_eq!(
+            name("Bits [39:12] of an address. Bits [11:0] are always zero."),
+            None,
+            "a period closes no name"
+        );
+        assert_eq!(
+            name("Reserved: set to zero"),
+            None,
+            "padding, never a field"
+        );
+        assert_eq!(super::parse_dash_bit_range("5-8"), Some((8, 5)));
+        assert_eq!(super::parse_dash_bit_range("2-x"), None);
+    }
+
+    #[test]
+    fn a_status_word_table_reaches_message_field_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("status.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Status\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let table = |table_id: &str, page: &str, caption: Option<&str>, rows: &[[&str; 2]]| {
+            StructuredTableRecord {
+                table_id: table_id.to_string(),
+                asset_id: format!("asset_{table_id}"),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![
+                    ["Bit", "Description"]
+                        .iter()
+                        .map(|text| make_table_cell(text, true))
+                        .collect(),
+                ],
+                body_rows: rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|text| make_table_cell(text, false))
+                            .collect()
+                    })
+                    .collect(),
+                row_count: rows.len() as u32,
+                col_count: 2,
+            }
+        };
+        source_ir.structured_tables.push(table(
+            "table_port_status",
+            "page_0420",
+            Some("Table 10-13.  Port Status Field, wPortStatus"),
+            &[
+                ["0", "Current Connect Status (PORT_CONNECTION): This field reflects whether a device is connected."],
+                ["", "Value"],
+                ["1", "Port Enabled/Disabled: This field indicates whether the port is enabled."],
+                ["2-4", "Reserved"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_port_status_continued",
+            "page_0421",
+            None,
+            &[
+                ["5-8", "Port Link State (PORT_LINK_STATE): This field reflects the current state of the link."],
+                ["9-10", "LINK3 Version of the link adjacent to this port. This field shall equal the version."],
+            ],
+        ));
+        let fields = super::extract_bit_position_structure_fields(&source_ir, None);
+        type Read<'a> = (&'a str, &'a str, Option<(u32, u32)>);
+        let read: Vec<Read> = fields
+            .iter()
+            .map(|field| {
+                (
+                    field.container.as_str(),
+                    field.name.as_str(),
+                    field.bit_range,
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                (
+                    "Port Status Field, wPortStatus",
+                    "PORT_CONNECTION",
+                    Some((0, 0))
+                ),
+                (
+                    "Port Status Field, wPortStatus",
+                    "Port Enabled/Disabled",
+                    Some((1, 1))
+                ),
+                (
+                    "Port Status Field, wPortStatus",
+                    "PORT_LINK_STATE",
+                    Some((8, 5))
+                ),
+            ],
+            "a value sub-row, a dash range and a continuation"
+        );
         Ok(())
     }
 

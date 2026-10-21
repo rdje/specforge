@@ -68,7 +68,8 @@ position (`Command Identifier (CID)` at bits `31:16` of `Command Dword 0`; `vImu
 `Device Table Entry (DTE)`).
 
 Three measured gates make the reading honest. First, a **strict cell parser**: a bit cell is accepted only
-when it is *purely* a bit position (`255:248`, `247`, `[7:4]`) — AMD's dword-relative cells (`31:28 +04`)
+when it is *purely* a bit position (`255:248`, `247`, `[7:4]`, and since `.55.b.v` a dash range `5-8`; an empty
+cell is a value sub-row, skipped) — AMD's dword-relative cells (`31:28 +04`)
 and NVMe's symbolic ones (`31 + (Element Length*8):32`) reject the *whole* table, because capturing the
 range while dropping the offset would misrepresent where the field actually sits. Second, the **fragment
 chain**: AMD splits its Device Table Entry across nine page fragments, most of them caption-less — and the
@@ -256,6 +257,14 @@ sub-rows, and multi-dword fields as spans (`7:4`). A sixth strategy reads them: 
 offset and a whole-dword bit range, a nested sub-row is a field of the dword above, and a restated sub-header, a value
 sub-table or a symbolic dword (`9+N`) states nothing. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iii`).
+
+**Status words in the two-column family (`EXTRACTION-REPRESENTATION-GAPS.55.b.v`).** USB's status words (*Hub Status
+Field, wHubStatus*) are `Bit | Description` tables that write ranges with a dash (`2-15`) and name a field before a
+colon (*Local Power Source: This field …*). The two-column family now reads a dash range as a bit range (the shared
+strict parser the other families use is unchanged), skips an empty bit cell as a value sub-row rather than
+rejecting the table, and names a field the mnemonic chain cannot by the head a colon closes, several words allowed. A
+table that writes a dash range is named by that head alone. A table the converter classified as a signal table is
+still never claimed. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.v`).
 
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 

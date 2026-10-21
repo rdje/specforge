@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how much memory did the guarded OpenCAPI Certified Definition ingest use
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how much memory did the guarded OpenCAPI Ready Definition ingest use
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -296,5 +298,3 @@
   > is lower recall acceptable when removing protocol-specific shortcuts
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > is mdbook test part of the canonical SpecForge CI gate
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > is neutralized classification the reason legacy documents extract nothing

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > what is REPLAY_PROJECTION_SHA256
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
@@ -296,5 +298,3 @@
   > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > what is table_reading_orders
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > what is table_states_a_property_rather_than_a_signal_inventory

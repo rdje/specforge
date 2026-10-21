@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how does SpecForge handle one transaction and one rule writing the same named-drive target
 - [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
   > how does SpecForge know an agent is software (an English software noun, a glossary row, implemented in software)
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
@@ -296,5 +298,3 @@
   > how is AXI per-signal channel membership recovered without a VLM
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > how is AXI per-signal phase membership recoverable without a VLM
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > how is FigureRegion raw_image_path serialized

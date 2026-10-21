@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what determines a document's document_class
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
@@ -295,5 +297,3 @@
   > what does the declared_signal_names.is_empty() branch in semantic.rs do
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > what does the drop reason name_is_a_placeholder mean
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > what does the held-out bundle census report now that nothing is held out

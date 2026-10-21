@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > what does the held-out bundle census report now that nothing is held out
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what does the ingest traversal oracle check
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
@@ -296,5 +298,3 @@
   > what is PDF-VARIANT-DIGESTION.3 prose entity capture
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > what is ProtocolStateRecord / protocol_states / DBGTAPSM
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)

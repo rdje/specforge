@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.v",
-      "literal" : "`.55.b.v` — a status-word table whose field name opens its description reaches a field record.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv",
+      "literal" : "`.55.b.iv` — a captured field marked with a defined keyword carries its obligations.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -1101,7 +1101,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.v",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       }
@@ -1221,13 +1221,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
          "metrics" : {
-            "bytes" : 52915,
+            "bytes" : 57399,
             "line_bytes" : 154,
-            "lines" : 537
+            "lines" : 581
          },
          "part_id" : "hint-and-notation-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-         "sha256" : "4cc9c94267c4028bf0128962859f751547e88a15a8c712e1c60483d277a1c8b2",
+         "sha256" : "8f444cb3faa10ab3d0dad5463d475901a47897c1f627dfec144178a157d7f11d",
          "state" : "active"
       },
       {
