@@ -16,7 +16,7 @@ answers:
 date: 2026-10-19
 status: current
 tags: [evidence-ir, signal-presence, absent-value, encoding, label, carried-evidence, isf-adapter, adr-0006, adr-0016]
-evidence: crates/specforge/src/ir/evidence.rs (StatedValueEncoding; AbsentValueEncodings; stated_absent_value; value_clause_class_subject; absence_list_lead_in; agreed_absent_value; labeled_absent_value_tests); crates/specforge/src/ir/adapters.rs (absent_value_residual_packet); crates/specforge/src/commands/validate.rs (signal_presence_qualified_absent_values); docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.ii.b.iii.a)
+evidence: crates/specforge/src/ir/evidence.rs (StatedValueEncoding; AbsentValueEncodings; stated_absent_value; value_clause_class_subject; absence_list_lead_in; agreed_absent_value; labeled_absent_value_tests); crates/specforge/src/ir/adapters.rs (absent_value_residual_packet); crates/specforge/src/commands/validate.rs (signal_presence_qualified_absent_values); docs/archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.ii.b.iii.a)
 reverify: "cargo test --offline -p specforge-core --lib labeled_absent_value && python3 -c \"import json; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); print([(r['signal_name'], [(v['applies_to'], v['value'], v['encoding']['codes']) for v in r['qualified_absent_values']]) for r in e['signal_presence_records'] if r.get('qualified_absent_values')])\"   # expect AWDOMAIN and ARDOMAIN, three values each: Non-cacheable requests / System domain / 0b11, Cacheable requests / Shareable domain / 0b01 0b10, CMO transactions / Non-shareable / 0b00"
 ---
 

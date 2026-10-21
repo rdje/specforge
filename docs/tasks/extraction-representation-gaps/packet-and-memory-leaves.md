@@ -91,7 +91,7 @@ whole.
   half the total. Implementation: `.56.a`; the corpus tree's adoption: `.56.b`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56.a`
-  Status: `open` (`2026-10-21`; CODE; opened by `.56`)
+  Status: `done` (`2026-10-21`; CODE; opened by `.56`; checklist below)
   Goal: **a task-evidence part whose every leaf is closed moves to the archive terminal and out of the live total.**
   Acceptance: `scripts/check_active_task_evidence.pl` gains an archived part. It lives under `archive_directory`, is
   sealed by commit and blob and checked byte-for-byte against that commit, and is excluded from the live `parts`
@@ -102,6 +102,46 @@ whole.
   following every reference to their paths (KM cards, the manifest, routes, the contract, `surfaces.jsonl`), copy ->
   verify -> use -> delete. Measure the live total after the move, and keep the book's `reference/live-docs.md` in
   lockstep.
+  **Done `2026-10-21`.** The checker accepts `state: archived` with `archived_from`, `sealed_commit` and
+  `git_blob`. `validate_archived_part` refuses an archived part whose live copy remains, which routes an open leaf,
+  or which is the frontier's part. The seal is read at `archived_from`, and the part leaves the live totals
+  (`archived_part_metrics`). The index marks it *— archived*. Self-test 83 -> 91. ERG's eight all-closed parts moved
+  under `docs/archive/tasks/extraction-representation-gaps/`, sealed at `4a3d61c5a`: live 17 parts / 661,007 bytes
+  -> 9 parts / 337,798 bytes (43.0%); 327,205 bytes archived. The `bytes_total` warning is gone. The parts surface
+  drops their targets, and a new `erg_task_evidence_archived_parts` archive-terminal collection holds them
+  (exact: 8 files, totals `8 ×` the per-file bounds). The gap-owner check (`trajectory.rs`
+  `task_evidence_declares`) also reads the archive directory. 24 KM cards' evidence paths follow. The census drops
+  4 evidence records for moved files and gains one for the parts surface's new first member (`census-leaves.md`).
+  The root's routing paragraph now sends every new leaf to `packet-and-memory-leaves`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.56.a` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — the contract's part totals before (661,007 bytes, 84.1% of target); each part's
+  routed leaves by lifecycle, checklist bytes and size; the eight all-closed parts (327,205 bytes); every reference
+  to their paths (24 KM cards; the contract, manifest, routes, index and registry); every consumer that reads part
+  directories (`trajectory.rs` `task_evidence_declares`, no gap owner in the eight parts today).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_active_task_evidence.pl` had no part state outside the live
+  totals, so closed history counted against the bound forever; `crates/specforge/src/ir/trajectory.rs` read only the
+  collection directory. New `validate_archived_part`, the archived arms of the schema, seal, totals and index, and
+  `archive_fixture_activity_part`. RED, each file restored byte-identically after each mutation, every one failing
+  a named case. In the checker, 8: archived refused as a state, an open leaf allowed, a live copy allowed, the
+  frontier's part allowed, archived bytes counted live, the seal read at the archive path, the archive placed in
+  the collection directory, `archived_from` allowed on a live part. In Rust, 2: no archive directory read, the
+  archive read under the wrong root.
+- [x] **ADDRESSED (verified)** — `check_active_task_evidence.pl --contract …extraction_representation_gaps… --check`
+  valid with the `bytes_total` warning gone (live 337,798 bytes, 43.0%); the eight archived files byte-identical to
+  `4a3d61c5a`'s live copies (checked before each live copy was deleted); `check_live_document_size.pl` 1,280 files
+  over 83 surfaces; `check_current_claim_census.pl` and `check_book_quantitative_claims.pl` pass.
+- [x] **NO REGRESSION** — `check_active_task_evidence.pl --self-test` 91/91; `check_task_evidence_contracts.sh` green
+  for all eight contracts; `check_chain_currency.sh` 31 of 31 current; WIRE-BASED-100 all 11 seed reports
+  byte-identical to `a166ef4d8`'s; `kg-bench` 158/158; `cargo fmt --check` clean; `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 171 /
+  1,900 passed; `check_production_genericity_flow.sh` unchanged.
+- [x] **GENERICITY (ADR 0006)** — a part's routed lifecycles, its seal and its directory; no tree, part or leaf
+  name in the checker, and the Rust lookup derives the archive directory from the root's own name.
+- [x] **LOCKSTEP** — book `reference/live-docs.md` (*A part whose leaves are all closed is archived, not counted*);
+  KM card `a-task-evidence-part-whose-leaves-are-all-closed-is-archived` (new); the root routing paragraph and
+  `MEMORY.md`. No record edited, merged or deleted.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56.b`
   Status: `open` (`2026-10-21`; DOC; opened by `.56`)

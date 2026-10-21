@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > should I fix the PSEL valid when PSEL asserted temporal rule
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > should I refuse an enum whose members span tables
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > should I split a conflated enum per table
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
@@ -293,7 +297,3 @@
   > what conserves between the PDF and SourceIR
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
   > what counts as a stated time (states_a_time)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what debug/diagnostic tools does specforge have (TOOLBOX.md)
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > what declaration catalog does the placeholder check read

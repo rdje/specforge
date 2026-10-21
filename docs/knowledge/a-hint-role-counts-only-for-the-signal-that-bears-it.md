@@ -16,7 +16,7 @@ answers:
 date: 2026-10-21
 status: current
 tags: [evidence-ir, semantic-hints, handshake-roles, prior-memory, prose, signal-description-tables, visual-captions, adr-0006, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (VALID_ROLE_PHRASES; READY_ROLE_PHRASES; INDICATING_VERBS; ASSERTION_WORDS; is_role_label_word; semantic_role_phrase_spans; SemanticRoleSubject; retain_borne_semantic_roles; SemanticRoleReading; infer_signal_semantic_tags_from_description; synthesize_signal_semantic_hints_from_tables/_prose/_visual_evidence; table_keys_codes_rather_than_signals); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.50, .53, .54)
+evidence: crates/specforge/src/ir/evidence.rs (VALID_ROLE_PHRASES; READY_ROLE_PHRASES; INDICATING_VERBS; ASSERTION_WORDS; is_role_label_word; semantic_role_phrase_spans; SemanticRoleSubject; retain_borne_semantic_roles; SemanticRoleReading; infer_signal_semantic_tags_from_description; synthesize_signal_semantic_hints_from_tables/_prose/_visual_evidence; table_keys_codes_rather_than_signals); docs/archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.50, .53, .54)
 reverify: "cargo test --offline -p specforge-core --lib a_prose_role_counts_only_for_the_signal_that_indicates_it a_description_names_its_signal_by_the_role_or_indicates_it a_remembered_role_holds_only_where_the_signal_states_it"
 ---
 

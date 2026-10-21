@@ -11,7 +11,7 @@ answers:
 date: 2026-09-29
 status: current
 tags: [evidence-ir, signal-constraints, keyed-rows, tables, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (signal_keyed_obligation_row, signal_keyed_obligation_value_is_readable, keyed_row_value_predicate, extract_signal_keyed_obligation_row_constraints, dedup_appended_signal_constraints); docs/book/src/pipeline/evidence-failure-modes.md; docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b.iii.f)
+evidence: crates/specforge/src/ir/evidence.rs (signal_keyed_obligation_row, signal_keyed_obligation_value_is_readable, keyed_row_value_predicate, extract_signal_keyed_obligation_row_constraints, dedup_appended_signal_constraints); docs/book/src/pipeline/evidence-failure-modes.md; docs/archive/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b.iii.f)
 reverify: "cargo test --offline --workspace --exclude specforge-production-graph --lib the_three_guards_each_refuse_their_own_row an_established_repeat_of_the_same_statement_is_one_record; then AXI's evidence_ir.json signal_constraints under condition 'DVM Complete request' hold ARCACHE must_be_value 0B0010, ARMMUVALID 0B0, and exactly one ARBURST (target_value INCR)"
 ---
 

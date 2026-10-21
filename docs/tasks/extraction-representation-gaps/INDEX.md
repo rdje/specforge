@@ -7,21 +7,21 @@
 
 - [Program and census](program-and-census.md)
 - [Census leaves](census-leaves.md)
-- [Table census leaves](table-census-leaves.md)
+- [Table census leaves](../../archive/tasks/extraction-representation-gaps/table-census-leaves.md) — archived
 - [Fsmgen requests and reset](fsmgen-requests-and-reset.md)
 - [Condition lowering](condition-lowering.md)
 - [Representation leaves](representation-leaves.md)
 - [Recent leaves](recent-leaves.md)
 - [Clause and register leaves](clause-and-register-leaves.md)
 - [Register binding leaves](register-binding-leaves.md)
-- [Hint and notation leaves](hint-and-notation-leaves.md)
+- [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) — archived
 - [Packet and memory leaves](packet-and-memory-leaves.md)
-- [Unread intent leaves](unread-intent-leaves.md)
-- [Default and assumption leaves](default-and-assumption-leaves.md)
-- [Environment assumption leaves](environment-assumption-leaves.md)
-- [Acceptance checklists a](acceptance-checklists-a.md)
-- [Acceptance checklists b](acceptance-checklists-b.md)
-- [Changelog](changelog.md)
+- [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) — archived
+- [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) — archived
+- [Environment assumption leaves](../../archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md) — archived
+- [Acceptance checklists a](../../archive/tasks/extraction-representation-gaps/acceptance-checklists-a.md) — archived
+- [Acceptance checklists b](../../archive/tasks/extraction-representation-gaps/acceptance-checklists-b.md) — archived
+- [Changelog](../../archive/tasks/extraction-representation-gaps/changelog.md) — archived
 
 ## Open leaf routes
 
@@ -67,7 +67,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b` | [Packet and memory leaves](packet-and-memory-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.56.a` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.56.b` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 
 ## Complete route catalog

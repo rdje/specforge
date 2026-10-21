@@ -18,7 +18,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [evidence-ir, parity, check-signal, signal-presence, absent-value, table, carried-evidence, adr-0006, adr-0016]
-evidence: crates/specforge/src/ir/evidence.rs (CheckSignalRecord; check_coverage_tables; check_signal_surface; sentence_names_relation; bind_stated_absent_values); crates/specforge/src/ir/semantic.rs and intent.rs (check_signal_records); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a.i); docs/gaps/specforge.md (S25)
+evidence: crates/specforge/src/ir/evidence.rs (CheckSignalRecord; check_coverage_tables; check_signal_surface; sentence_names_relation; bind_stated_absent_values); crates/specforge/src/ir/semantic.rs and intent.rs (check_signal_records); docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a.i); docs/gaps/specforge.md (S25)
 reverify: "cargo test --offline -p specforge-core --lib check_coverage && python3 -c \"import json; e=json.load(open('generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json')); print(len(e['check_signal_records']), sum(1 for r in e['signal_presence_records'] if r.get('absent_value')))\"   # expect 14 15"
 ---
 

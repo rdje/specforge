@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > is lower recall acceptable when removing protocol-specific shortcuts
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > is mdbook test part of the canonical SpecForge CI gate
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > is neutralized classification the reason legacy documents extract nothing
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
@@ -294,7 +298,3 @@
   > should I add a term to builtin_actor_taxonomy_role_in_text (measure it first with scripts/measure_actor_taxonomy_blast_radius.py; the answer for every candidate the corpus has produced so far is NO)
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > should I build an isf lowering-completeness verifier for temporal rules
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > should I fix the PSEL valid when PSEL asserted temporal rule
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > should I refuse an enum whose members span tables

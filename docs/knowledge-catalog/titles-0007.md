@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
 | [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-10-20 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
@@ -60,4 +61,3 @@
 | [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md) | 2026-06-17 | `current` | AXI/SWD per-signal phase membership — the recorded "VLM timing-diagram phase columns" candidate is RESOLVED… |
 | [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md) | 2026-08-10 | `current` | Typed transaction-phase names require positive phrase authority |
 | [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-10-19 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
-| [unattached-table-captions](../knowledge/unattached-table-captions.md) | 2026-09-28 | `current` | Docling files some table captions as page text; the bit-layout reader recovers them page by page |

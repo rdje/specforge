@@ -988,6 +988,32 @@ check passes for a unique row whenever the same leaf happens to appear in the se
 different closure, and a row-level content test caught one record that a careful reading had already
 cleared.
 
+### A part whose leaves are all closed is archived, not counted
+
+Rolling over to a new part bounds each part file, but a tree's parts **total** keeps growing. Each slice
+adds a leaf record and an acceptance checklist, and nothing ever removes one. The total is the bound on
+what a tree holds live, and it stays (LDPH `.14e`); adding parts never lowers it (ADR 0032). The
+contract's ceiling is the portable cap of 1,179,648 bytes, so raising the target is no remedy either.
+`EXTRACTION-REPRESENTATION-GAPS` reached 84.1% of its 786,432-byte target on `2026-10-21`. Half of that
+was history: eight parts whose every leaf was closed.
+
+Such a part can now be **archived** (`EXTRACTION-REPRESENTATION-GAPS.56.a`). Its file moves byte-exact into
+the tree's archive directory beside the source capsule, and its contract entry becomes `state: archived`,
+naming `archived_from` (the live path), `sealed_commit` and `git_blob`. The checker verifies five things:
+
+- the file equals the live path's bytes at the sealing commit, which must be an ancestor of HEAD;
+- the live copy is gone;
+- no leaf the part routes is open;
+- the part is not the current frontier's;
+- its source regions still resolve once each.
+
+An archived part leaves the live parts total, and the index marks it *— archived*. A leaf it holds is
+amended by a new record in a live part, never by editing the archive. The archived files form one
+`archive_terminal` collection surface per tree, which a later archival extends rather than duplicates.
+The gap-owner check reads the archive directory too, so a gap owned by such a leaf still resolves. ERG
+went from 17 parts and 661,007 live bytes to 9 live parts holding 337,798 bytes (43.0%), with 327,205
+bytes archived.
+
 
 ## Closed task trees — how each was implemented and verified
 

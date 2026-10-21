@@ -15,7 +15,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [evidence-ir, permission, may, carried-evidence, isf-adapter, census, adr-0006, adr-0016, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (PermissionRuleRecord; PermissionModality; permission_rule_surface; stated_permissions; may_states_no_permission; names_the_month; speaks_about_the_document; permission_rule_tests); crates/specforge/src/ir/semantic.rs and intent.rs (permission_rules); crates/specforge/src/ir/adapters.rs (permission_residual_packet); scripts/measure_category_family_census.py (TYPED_SURFACES); docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.a)
+evidence: crates/specforge/src/ir/evidence.rs (PermissionRuleRecord; PermissionModality; permission_rule_surface; stated_permissions; may_states_no_permission; names_the_month; speaks_about_the_document; permission_rule_tests); crates/specforge/src/ir/semantic.rs and intent.rs (permission_rules); crates/specforge/src/ir/adapters.rs (permission_residual_packet); scripts/measure_category_family_census.py (TYPED_SURFACES); docs/archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.a)
 reverify: "cargo test --offline -p specforge-core --lib permission_rule && python3 -c \"import json,glob; es=[json.load(open(p)) for p in glob.glob('generated/intent_ir/*/intent_ir.json')]; print(sum(len(e.get('permission_rules',[])) for e in es if e.get('proof_context')))\"   # 2026-10-20: 890 on the 31 proof-carrying chains"
 ---
 

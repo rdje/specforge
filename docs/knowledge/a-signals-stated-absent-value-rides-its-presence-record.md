@@ -17,7 +17,7 @@ answers:
 date: 2026-10-03
 status: current
 tags: [evidence-ir, signal-presence, absent-value, tie-off, carried-evidence, isf-adapter, adr-0006, adr-0016, fsmgen]
-evidence: crates/specforge/src/ir/evidence.rs (StatedAbsentValue; bind_stated_absent_values; stated_absent_value_literal; signal_presence_surface); crates/specforge/src/ir/semantic.rs and intent.rs (signal_presence_records); crates/specforge/src/ir/adapters.rs (absent_value_residual_packet); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a); docs/upstream/fsmgen/sf-isf-optional-signal/README.md (R3)
+evidence: crates/specforge/src/ir/evidence.rs (StatedAbsentValue; bind_stated_absent_values; stated_absent_value_literal; signal_presence_surface); crates/specforge/src/ir/semantic.rs and intent.rs (signal_presence_records); crates/specforge/src/ir/adapters.rs (absent_value_residual_packet); docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a); docs/upstream/fsmgen/sf-isf-optional-signal/README.md (R3)
 reverify: "cargo test --offline -p specforge-core --lib stated_absent_value && python3 -c \"import json; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); print([(r['signal_name'], r['absent_value']) for r in e['signal_presence_records'] if r.get('absent_value')])\"   # expect BRESP and RRESP, value 0b000, one statement each"
 ---
 

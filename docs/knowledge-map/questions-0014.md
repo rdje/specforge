@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > what does the drop reason name_is_a_placeholder mean
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > what does the held-out bundle census report now that nothing is held out
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -262,6 +266,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iii
 - [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a and .55.b.iv.b
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.56 and .56.a
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -292,9 +298,3 @@
   > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is PDF-VARIANT-DIGESTION.12a
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is PDF-VARIANT-DIGESTION.12b
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what is PDF-VARIANT-DIGESTION.3 prose entity capture

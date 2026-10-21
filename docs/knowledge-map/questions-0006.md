@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > how do I census enum member and value fidelity
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > how do I census enum value provenance
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -295,5 +297,3 @@
   > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does SpecForge group a transaction's signals by channel
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how does SpecForge handle Docling clones of a table cell with col_span greater than one

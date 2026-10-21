@@ -14,7 +14,7 @@ answers:
 date: 2026-09-29
 status: current
 tags: [source-ir, tables, captured-regions, census, extraction-representation-gaps, measured]
-evidence: scripts/measure_untyped_table_families.py; docs/research/category-family-census.md (The 1,165 untyped tables no record cites); docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b, .3.b.i, .3.b.ii); docs/book/src/pipeline/semanticir.md (Captured regions that reach no carrier)
+evidence: scripts/measure_untyped_table_families.py; docs/research/category-family-census.md (The 1,165 untyped tables no record cites); docs/archive/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b, .3.b.i, .3.b.ii); docs/book/src/pipeline/semanticir.md (Captured regions that reach no carrier)
 reverify: "python3 scripts/measure_untyped_table_families.py — expect (2026-09-29, after .3.b.iii.c) 1119 tables (timing_untyped 1, the notes of USB 3.2 Table 7-12): document_apparatus 201, structure_or_message_layout 191, figure_fragment 164, residue 105, software_or_performance 94, parameter_definition 77, presence_or_compliance_matrix 69, physical_coding_or_electrical 69, response_or_requirement_matrix 44, register_field_table 12, register_summary 7, signal_declaration_untyped 1"
 ---
 

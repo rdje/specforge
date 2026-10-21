@@ -686,19 +686,35 @@ sub validate_contract_schema {
     }
     my (%part_ids, %part_paths, %part_states);
     for my $part (@$parts) {
-        reject_unknown($part, 'contract part', $errors, qw(part_id path heading state sha256 metrics sealed_commit git_blob));
+        reject_unknown(
+            $part, 'contract part', $errors,
+            qw(part_id path heading state sha256 metrics sealed_commit git_blob archived_from),
+        );
         my $part_id = required_scalar($part, 'part_id', 'contract part', $errors);
         my $path = required_scalar($part, 'path', 'contract part', $errors);
         required_scalar($part, 'heading', 'contract part', $errors);
         my $state = required_scalar($part, 'state', 'contract part', $errors);
         push @$errors, "contract part has invalid state '$state'"
-            if defined($state) && $state ne 'legacy' && $state ne 'active' && $state ne 'sealed';
+            if defined($state) && $state !~ /\A(?:legacy|active|sealed|archived)\z/;
+        my $archived = ($state // '') eq 'archived';
         push @$errors, "contract duplicate part_id '$part_id'" if defined($part_id) && $part_ids{$part_id}++;
         $part_states{$part_id} = $state if defined($part_id) && defined($state);
         push @$errors, "contract duplicate part path '$path'" if defined($path) && $part_paths{$path}++;
-        push @$errors, "contract part path '$path' is unsafe or outside collection_directory"
-            if defined($path) && (!safe_relative_path($path) || index($path, "$collection_directory/") != 0);
+        # EXTRACTION-REPRESENTATION-GAPS.56.a — an archived part lives in the archive directory; every other part in
+        # the collection directory.
+        my $home = $archived ? $archive_directory : $collection_directory;
+        my $home_field = $archived ? 'archive_directory' : 'collection_directory';
+        push @$errors, "contract part path '$path' is unsafe or outside $home_field"
+            if defined($path) && (!safe_relative_path($path) || index($path, "$home/") != 0);
         push @$errors, "contract path '$path' is declared more than once" if defined($path) && $paths{$path}++;
+        if ($archived) {
+            my $from = required_scalar($part, 'archived_from', 'archived contract part', $errors);
+            push @$errors, "archived contract part archived_from '$from' is unsafe or outside collection_directory"
+                if defined($from) && (!safe_relative_path($from) || index($from, "$collection_directory/") != 0);
+            push @$errors, "contract path '$from' is declared more than once" if defined($from) && $paths{$from}++;
+        } elsif (exists $part->{archived_from}) {
+            push @$errors, 'non-archived contract part must not declare archived_from';
+        }
         if (($migration_state // '') eq 'migrated') {
             my $sha = required_scalar($part, 'sha256', 'migrated contract part', $errors);
             push @$errors, "migrated contract part sha256 is invalid" if defined($sha) && $sha !~ /\A[0-9a-f]{64}\z/;
@@ -707,7 +723,7 @@ sub validate_contract_schema {
             push @$errors, 'source-locked part must not pin result sha256 or metrics'
                 if exists($part->{sha256}) || exists($part->{metrics});
         }
-        if (($state // '') eq 'sealed') {
+        if (($state // '') eq 'sealed' || $archived) {
             my $sealed_commit = required_scalar($part, 'sealed_commit', 'sealed contract part', $errors);
             my $git_blob = required_scalar($part, 'git_blob', 'sealed contract part', $errors);
             push @$errors, 'sealed contract part has invalid sealed_commit'
@@ -715,7 +731,7 @@ sub validate_contract_schema {
             push @$errors, 'sealed contract part has invalid git_blob'
                 if defined($git_blob) && $git_blob !~ /\A(?:[0-9a-f]{40}|[0-9a-f]{64})\z/;
         } elsif (exists($part->{sealed_commit}) || exists($part->{git_blob})) {
-            push @$errors, 'non-sealed contract part must not declare sealed_commit or git_blob';
+            push @$errors, 'non-sealed, non-archived contract part must not declare sealed_commit or git_blob';
         }
     }
 
@@ -1150,6 +1166,22 @@ sub validate_manifest {
     $result->{manifest_metrics} = $manifest_metrics;
 }
 
+# EXTRACTION-REPRESENTATION-GAPS.56.a — a part moves to the archive terminal only as closed history: its live copy is
+# gone, every leaf it routes is closed, and it is not the part the current frontier works in.
+sub validate_archived_part {
+    my ($base, $contract, $part, $errors) = @_;
+    my $from = $part->{archived_from} // '';
+    push @$errors, "archived part '$part->{part_id}' still exists at its live path '$from'"
+        if $from ne '' && -e absolute($base, $from);
+    for my $route (@{$contract->{leaf_routes} // []}) {
+        next if ($route->{part_id} // '') ne ($part->{part_id} // '');
+        push @$errors, "archived part '$part->{part_id}' routes open leaf '$route->{leaf_id}'"
+            if ($route->{lifecycle} // '') ne 'closed';
+    }
+    push @$errors, "archived part '$part->{part_id}' is the current frontier's part"
+        if ($contract->{current_frontier}{part_id} // '') eq ($part->{part_id} // '');
+}
+
 sub validate_part_and_regions {
     my ($base, $contract, $part, $region_raw, $seen_regions, $errors, $part_raw) = @_;
     my $path = $part->{path};
@@ -1162,20 +1194,31 @@ sub validate_part_and_regions {
         if sha256_hex($raw) ne ($part->{sha256} // '');
     push @$errors, "semantic part '$part->{part_id}' lacks its exact heading"
         if index($raw, raw_scalar($part->{heading})) != 0;
-    my $state_literal = "- State: `$part->{state}`";
-    push @$errors, "semantic part '$part->{part_id}' lacks state literal '$state_literal'"
-        if occurrences($raw, $state_literal) != 1;
-    if (($part->{state} // '') eq 'sealed') {
+    my $archived = ($part->{state} // '') eq 'archived';
+    if ($archived) {
+        # An archived part is the live part's exact bytes, so it carries the state it had when it was live.
+        my $live_states = grep { occurrences($raw, "- State: `$_`") == 1 } qw(active legacy sealed);
+        push @$errors, "archived part '$part->{part_id}' lacks exactly one live state literal"
+            if $live_states != 1;
+        validate_archived_part($base, $contract, $part, $errors);
+    } else {
+        my $state_literal = "- State: `$part->{state}`";
+        push @$errors, "semantic part '$part->{part_id}' lacks state literal '$state_literal'"
+            if occurrences($raw, $state_literal) != 1;
+    }
+    if (($part->{state} // '') eq 'sealed' || $archived) {
         my $commit = $part->{sealed_commit};
+        # An archived part is sealed where it was live: its bytes at archived_from in the sealing commit.
+        my $sealed_path = $archived ? ($part->{archived_from} // '') : $path;
         my $blob = git_capture($base, "sealed part '$part->{part_id}' blob lookup", $errors,
-            'rev-parse', "$commit:$path");
+            'rev-parse', "$commit:$sealed_path");
         if (defined $blob) {
             $blob =~ s/[\r\n]+\z//;
             push @$errors, "sealed part '$part->{part_id}' Git blob is '$blob', expected '$part->{git_blob}'"
                 if $blob ne ($part->{git_blob} // '');
         }
         my $sealed_raw = git_capture($base, "sealed part '$part->{part_id}' content read", $errors,
-            'show', "$commit:$path");
+            'show', "$commit:$sealed_path");
         push @$errors, "sealed part '$part->{part_id}' differs from its sealing commit"
             if defined($sealed_raw) && $sealed_raw ne $raw;
         my (undef, $ancestor_exit) = command_capture('git', '-C', $base, 'merge-base', '--is-ancestor', $commit, 'HEAD');
@@ -1287,7 +1330,8 @@ sub render_index {
     $raw .= "## Semantic parts\n\n";
     for my $part (@{$contract->{destinations}{parts}}) {
         my $label = part_display_label($part->{part_id});
-        $raw .= "- [$label](" . relative_markdown_link($path, $part->{path}) . ")\n";
+        my $archived = ($part->{state} // '') eq 'archived' ? " \x{2014} archived" : '';
+        $raw .= "- [$label](" . relative_markdown_link($path, $part->{path}) . ")$archived\n";
     }
     if (route_catalog_is_sharded($contract)) {
         $raw .= "\n## Open leaf routes\n\n";
@@ -1608,11 +1652,19 @@ sub validate_migrated {
     my %seen_regions;
     my %part_raw;
     my ($files, $lines_total, $bytes_total, $max_lines, $max_bytes, $max_line_bytes) = (0, 0, 0, 0, 0, 0);
+    my %archived_actual = (files => 0, lines_total => 0, bytes_total => 0);
     for my $part (@{$contract->{destinations}{parts}}) {
         my $actual = validate_part_and_regions(
             $base, $contract, $part, $region_raw, \%seen_regions, $errors, \%part_raw,
         );
         next if !defined $actual;
+        # EXTRACTION-REPRESENTATION-GAPS.56.a — archived history is the archive surface's, not the live collection's.
+        if (($part->{state} // '') eq 'archived') {
+            $archived_actual{files}++;
+            $archived_actual{lines_total} += $actual->{lines};
+            $archived_actual{bytes_total} += $actual->{bytes};
+            next;
+        }
         $files++;
         $lines_total += $actual->{lines};
         $bytes_total += $actual->{bytes};
@@ -1645,6 +1697,7 @@ sub validate_migrated {
         $result->{warnings},
     );
     $result->{part_collection_metrics} = $part_actual;
+    $result->{archived_part_metrics} = \%archived_actual;
     validate_route_lifecycles($contract, \%part_raw, $errors, $result);
     validate_manifest($base, $contract, $errors, $result) if !$options->{skip_derived};
 }
@@ -2313,6 +2366,41 @@ sub seal_fixture_activity_part {
     );
 }
 
+# EXTRACTION-REPRESENTATION-GAPS.56.a — commit the live activity part (it routes only the closed PROGRAM.1), then move
+# its exact bytes to the archive directory and declare it archived, sealed where it was live.
+sub archive_fixture_activity_part {
+    my ($base, $contract) = @_;
+    my $part = $contract->{destinations}{parts}[1];
+    my $live = $part->{path};
+    system('git', '-C', $base, 'add', '--', $live) == 0
+        or die "active-task-evidence self-test: archived part git add failed\n";
+    system(
+        'git', '-C', $base,
+        '-c', 'user.name=Fixture',
+        '-c', 'user.email=fixture@example.invalid',
+        '-c', 'commit.gpgsign=false',
+        'commit', '-qm', 'PROGRAM.1 — the live part before archiving',
+    ) == 0 or die "active-task-evidence self-test: archived part git commit failed\n";
+    my ($commit, $commit_exit) = command_capture('git', '-C', $base, 'rev-parse', 'HEAD');
+    die "active-task-evidence self-test: archived commit lookup failed\n" if $commit_exit;
+    $commit =~ s/[\r\n]+\z//;
+    my ($blob, $blob_exit) = command_capture('git', '-C', $base, 'rev-parse', "HEAD:$live");
+    die "active-task-evidence self-test: archived blob lookup failed\n" if $blob_exit;
+    $blob =~ s/[\r\n]+\z//;
+    my @read_errors;
+    my $raw = read_regular($base, $live, 'fixture live part', \@read_errors);
+    die "active-task-evidence self-test: archived part read failed\n" if @read_errors;
+    my $archived = "$contract->{destinations}{archive_directory}/activity.md";
+    write_raw($base, $archived, $raw);
+    unlink absolute($base, $live) or die "active-task-evidence self-test: live part removal failed\n";
+    $part->{state} = 'archived';
+    $part->{path} = $archived;
+    $part->{archived_from} = $live;
+    $part->{sealed_commit} = $commit;
+    $part->{git_blob} = $blob;
+    write_fixture_derived($base, $contract);
+}
+
 sub run_self_test {
     my ($base) = @_;
     my $generated = File::Spec->catdir($base, 'generated');
@@ -2388,6 +2476,15 @@ sub run_self_test {
         ['open leaf absent from the root owner registry', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1]); set_fixture_root_owners($_[0], $_[1], 'PROGRAM', 'PROGRAM.1') }, qr/complete leaf route 'PROGRAM\.2' is absent from the declared root owner registry/],
         ['sealed part positive', 'migrated', 'complete', sub { seal_fixture_activity_part($_[0], $_[1], $_[2]) }, undef],
         ['sealed part mutation', 'migrated', 'complete', sub { seal_fixture_activity_part($_[0], $_[1], $_[2]); my $part = $_[1]{destinations}{parts}[1]; write_raw($_[0], $part->{path}, fixture_part_raw($_[1], $_[2], $part) . "changed\n") }, qr/differs from its sealing commit/],
+        # EXTRACTION-REPRESENTATION-GAPS.56.a — an all-closed part moves to the archive terminal, out of the live total.
+        ['archived part positive', 'migrated', 'complete', sub { archive_fixture_activity_part($_[0], $_[1]) }, undef],
+        ['an archived part leaves the live total', 'migrated', 'complete', sub { archive_fixture_activity_part($_[0], $_[1]); $_[1]{limits}{parts}{health_targets}{files} = 2; $_[1]{limits}{parts}{enforcement_ceilings}{files} = 2 }, undef],
+        ['archived part routes an open leaf', 'migrated', 'complete', sub { archive_fixture_activity_part($_[0], $_[1]); $_[1]{leaf_routes}[0]{lifecycle} = 'open'; write_fixture_derived($_[0], $_[1]) }, qr/archived part 'activity' routes open leaf 'PROGRAM\.1'/],
+        ['archived part left at its live path', 'migrated', 'complete', sub { archive_fixture_activity_part($_[0], $_[1]); my @e; write_raw($_[0], $_[1]{destinations}{parts}[1]{archived_from}, read_regular($_[0], $_[1]{destinations}{parts}[1]{path}, 'copy', \@e)) }, qr/still exists at its live path/],
+        ['archived part is the frontier part', 'migrated', 'complete', sub { archive_fixture_activity_part($_[0], $_[1]); $_[1]{current_frontier} = {mode => 'eligible', literal => 'No eligible frontier.', leaf_id => 'PROGRAM', part_id => 'activity'}; write_fixture_derived($_[0], $_[1]) }, qr/archived part 'activity' is the current frontier's part/],
+        ['archived part byte drift', 'migrated', 'complete', sub { archive_fixture_activity_part($_[0], $_[1]); my @e; my $path = $_[1]{destinations}{parts}[1]{path}; write_raw($_[0], $path, read_regular($_[0], $path, 'drift', \@e) . "changed\n") }, qr/differs from its sealing commit/],
+        ['archived part outside the archive directory', 'migrated', 'complete', sub { archive_fixture_activity_part($_[0], $_[1]); $_[1]{destinations}{parts}[1]{path} = 'docs/tasks/program/archived-activity.md' }, qr/outside archive_directory/],
+        ['live part declares archived_from', 'migrated', 'complete', sub { $_[1]{destinations}{parts}[1]{archived_from} = 'docs/tasks/program/activity.md' }, qr/non-archived contract part must not declare archived_from/],
     );
 
     my $passed = 0;
@@ -2636,8 +2733,9 @@ sub run_self_test {
     }
 
     # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 added seven leaf-route exemption cases (73 -> 80);
-    # EXTRACTION-REPRESENTATION-GAPS.48 three root-owner-registry lifecycle cases (80 -> 83).
-    my $expected = 83;
+    # EXTRACTION-REPRESENTATION-GAPS.48 three root-owner-registry lifecycle cases (80 -> 83);
+    # EXTRACTION-REPRESENTATION-GAPS.56.a eight archived-part cases (83 -> 91).
+    my $expected = 91;
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
     # and both sides drop together. The expected total is declared here, independently of the
     # suite, so a case removed — or one added and not declared — fails instead of moving a

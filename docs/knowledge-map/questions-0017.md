@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what is the size-immunity binding constraint for source_ir.json at extreme page counts
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what is the source-to-IntentIR completeness contract
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what is the standing per-doc quality report wired into converge/CI
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > what is the subject of a relation verb after and then
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is the table-kind precision estimate and the flagged-mismatch list
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
@@ -287,13 +297,3 @@
   > where are administrative workflows filtered
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > where are behavioral paraphrase and harmless layout recipes registered
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > where are section-derived semantic phases built
-- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
-  > where are software obligations like the USB4 Connection Manager's procedures carried
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where are the .6d.ii per-leaf qualification results

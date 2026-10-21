@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.a",
-      "literal" : "`.56.a` — a task-evidence part whose every leaf is closed moves to the archive terminal and out of the live total.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b",
+      "literal" : "`.55.b.iv.b` — the reserved marks no message-field family reads are typed or declared.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -38,6 +38,8 @@
             "state" : "active"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
+            "git_blob" : "87180ff4b19af1dcc606eafd9bbd7a982c476d1f",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
                "bytes" : 52347,
@@ -45,9 +47,10 @@
                "lines" : 546
             },
             "part_id" : "table-census-leaves",
-            "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/table-census-leaves.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "aab5fd0f39e7abf58d11b8ec9cc8c51f0f0904c340b71ea36bb2a8ecf8651052",
-            "state" : "active"
+            "state" : "archived"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — FSMGen requests and the reset contract",
@@ -122,6 +125,8 @@
             "state" : "active"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
+            "git_blob" : "b3af28dac7115c6fef1c03e3f07744cbc2fc7e68",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
                "bytes" : 57379,
@@ -129,23 +134,26 @@
                "lines" : 579
             },
             "part_id" : "hint-and-notation-leaves",
-            "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "924cc4e6e3675e4a908078e117d8b7968cf958de14fa53454853e2e3b5e1c255",
-            "state" : "active"
+            "state" : "archived"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
             "metrics" : {
-               "bytes" : 12965,
+               "bytes" : 17032,
                "line_bytes" : 171,
-               "lines" : 141
+               "lines" : 181
             },
             "part_id" : "packet-and-memory-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-            "sha256" : "9fe9fe34bf7cc3d030c5029699fa8c0e4aaf951572f3548587340a549396c0dc",
+            "sha256" : "9081bba32db3d822a13b85e3b2d65ff5608ec437ba0000e5f72c49fe1c968a21",
             "state" : "active"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
+            "git_blob" : "a94e8c98cf7633d75b877c3ed5ab97906264936b",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
             "metrics" : {
                "bytes" : 54752,
@@ -153,11 +161,14 @@
                "lines" : 524
             },
             "part_id" : "unread-intent-leaves",
-            "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "00e8e36ba5288a0f718027ff3a5ed016383dea64536d2982638f650cd2552790",
-            "state" : "active"
+            "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
+            "git_blob" : "646990c1f6389b6f6259e0620518b872663bbc82",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — default and assumption leaves",
             "metrics" : {
                "bytes" : 51970,
@@ -165,11 +176,14 @@
                "lines" : 498
             },
             "part_id" : "default-and-assumption-leaves",
-            "path" : "docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "5d379f557c5b6316a6bb17a38525bcac78103bb75e2a0629fe62746f67859e73",
-            "state" : "active"
+            "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/environment-assumption-leaves.md",
+            "git_blob" : "8625ad3f60339a7f1ec21ccea9d2817a76c2fe0b",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — environment assumption leaves",
             "metrics" : {
                "bytes" : 17618,
@@ -177,11 +191,14 @@
                "lines" : 177
             },
             "part_id" : "environment-assumption-leaves",
-            "path" : "docs/tasks/extraction-representation-gaps/environment-assumption-leaves.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "370221b96dff614a8193c32bef27625e2a455760b83ce1aba7e5d5f25cf9a088",
-            "state" : "active"
+            "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/acceptance-checklists-a.md",
+            "git_blob" : "f5d5f3f532e147835831eeed1a9ae5cb2c584d57",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — acceptance checklists, first half",
             "metrics" : {
                "bytes" : 42254,
@@ -189,11 +206,14 @@
                "lines" : 151
             },
             "part_id" : "acceptance-checklists-a",
-            "path" : "docs/tasks/extraction-representation-gaps/acceptance-checklists-a.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/acceptance-checklists-a.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "712be22fe5825f0542c56450242f00d4645285b3f83120fc4aa93027aa287e10",
-            "state" : "legacy"
+            "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/acceptance-checklists-b.md",
+            "git_blob" : "bca1370d5ac80f28c369ed8bfba331fc32463f8d",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — acceptance checklists, second half",
             "metrics" : {
                "bytes" : 38203,
@@ -201,11 +221,14 @@
                "lines" : 142
             },
             "part_id" : "acceptance-checklists-b",
-            "path" : "docs/tasks/extraction-representation-gaps/acceptance-checklists-b.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/acceptance-checklists-b.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "c43c01f55533bafa55ae182acce7b811a5edefb52c0eb09770f964ad6be582f4",
-            "state" : "legacy"
+            "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/changelog.md",
+            "git_blob" : "cf11091275a9907ed1eb49f9e251e508ec364252",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — commit log and changelog",
             "metrics" : {
                "bytes" : 12682,
@@ -213,9 +236,10 @@
                "lines" : 114
             },
             "part_id" : "changelog",
-            "path" : "docs/tasks/extraction-representation-gaps/changelog.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/changelog.md",
+            "sealed_commit" : "4a3d61c5a87015c925e2efa5c6756992375f8b83",
             "sha256" : "847d7897b3a99b0f891e99263c39436a3cd36756472ae08ce0240563feebb5ba",
-            "state" : "legacy"
+            "state" : "archived"
          }
       ],
       "route_part_prefix" : "docs/tasks/extraction-representation-gaps/routes-",
@@ -1344,7 +1368,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       },
@@ -1480,7 +1504,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.56.a` — a task-evidence part whose every leaf is closed moves to the archive terminal and out of the live total.",
+         "`.55.b.iv.b` — the reserved marks no message-field family reads are typed or declared.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1520,7 +1544,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.56.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.56.b`"
       ]
    },

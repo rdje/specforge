@@ -13,7 +13,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [evidence-ir, classifier, timing, statement-class, measured, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (classify_statement's timing arm; states_a_time; TIME_UNITS, TIME_COUNT_WORDS, RELATIVE_CYCLE_WORDS, TIMING_PARAMETERS, TIME_PHRASES, EDGE_WORDS; stated_time_tests); docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.b)
+evidence: crates/specforge/src/ir/evidence.rs (classify_statement's timing arm; states_a_time; TIME_UNITS, TIME_COUNT_WORDS, RELATIVE_CYCLE_WORDS, TIMING_PARAMETERS, TIME_PHRASES, EDGE_WORDS; stated_time_tests); docs/archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.b)
 reverify: "cargo test --offline -p specforge-core --lib stated_time_tests && python3 -c \"import json,glob; es=[json.load(open(p)) for p in glob.glob('generated/evidence_ir/*/evidence_ir.json')]; print(sum(1 for e in es if e.get('proof_context') for s in e['extracted_statements'] if s.get('class')=='timing_constraint'))\"   # 2026-10-20: 279 on the 31 proof-carrying chains"
 ---
 

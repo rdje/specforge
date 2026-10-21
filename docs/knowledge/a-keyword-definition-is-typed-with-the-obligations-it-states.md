@@ -13,7 +13,7 @@ answers:
 date: 2026-10-21
 status: current
 tags: [evidence-ir, keyword-definitions, notation, obligations, reserved-fields, non-executable, carried-evidence, isf-adapter, adr-0033, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (KeywordDefinitionRecord; KeywordObligation; KeywordObligationModality; keyword_definition_surface; keyword_obligations; keyword_definition_tests); crates/specforge/src/ir/semantic.rs and intent.rs (keyword_definitions); crates/specforge/src/ir/adapters.rs (keyword_definition_residual_packet); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55, .55.a, .55.b); docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md (.55.b.iv.a)
+evidence: crates/specforge/src/ir/evidence.rs (KeywordDefinitionRecord; KeywordObligation; KeywordObligationModality; keyword_definition_surface; keyword_obligations; keyword_definition_tests); crates/specforge/src/ir/semantic.rs and intent.rs (keyword_definitions); crates/specforge/src/ir/adapters.rs (keyword_definition_residual_packet); docs/archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55, .55.a, .55.b); docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md (.55.b.iv.a)
 reverify: "cargo test --offline -p specforge-core --lib keyword_definition"
 ---
 

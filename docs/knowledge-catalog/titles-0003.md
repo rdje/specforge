@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |
 | [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md) | 2026-09-15 | `current` | Partitioning a task tree costs four surface records, and the registry that holds them has no warning band |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
@@ -60,4 +61,3 @@
 | [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md) | 2026-09-11 | `current` | A repeated appositive role phrase is the document stating two spellings are one wire, and it is the only alia… |
 | [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |
 | [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md) | 2026-09-23 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
-| [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md) | 2026-08-11 | `current` | Of the 33 documents that declare no signals, 32 have no declaration-bearing modality at all; one declares its… |

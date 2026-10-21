@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
+- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
+  > where is the gap table between PDF extraction and isf representation
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > where is the list of everything SpecForge still cannot do from PDF to ISF
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > where is the mdBook current-truth verifier
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the normative IntentIR product contract
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > where is the per-author adopt-vs-defer provenance
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
@@ -286,14 +298,3 @@
   > which logic level records did the pairing remove
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > which mdBook quantitative assertions still lack claim authority
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > which mdBook quantitative census totals may be published and which must be read from the report
-- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
-  > which metric counts class-scoped absent values (signal_presence_qualified_absent_values)
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > which metric counts stated absent values (signal_presence_absent_values)
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > which metrics govern specification-to-executable-intent progress
-- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
-  > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
-  > REQUEST_COMPLETE)

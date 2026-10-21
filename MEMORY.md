@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.56.a` (archive all-closed parts), `.55.b.iv.b` (unread reserved marks), `.56.b`, `.54.a`; `.46.c` waits
+- Next action: ERG `.55.b.iv.b` (unread reserved marks), `.56.b` (corpus archive), `.54.a` (memory refresh); `.46.c` waits
   on FSMGEN-REQUESTS.12, `.3.g.iii`-`.3.f.iii`, `.44`, SRC `.15` (self-test fixtures in `generated/`), KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`,
   EGF `.14`/`.12`, TLIS `.3`-`.5`, LDPH `.17a`/`.34c`/`.42`. Score all 11 seeds every slice. Book regions: `adjudicate_book_quantity_regions.py`. Pin
   `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
@@ -23,10 +23,10 @@
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`). A new top-level IR field moves that stage's rule
   fields, so it re-seals too: rebuild the content-changed chain by hand, then `rebuild_stage_cascade.sh --write`.
-- Part sizes: ERG `.3.d.iii` -> `environment-assumption-leaves`, other `.3` -> `table-census-leaves` (near rollover),
-  other ERG leaves -> `packet-and-memory-leaves`; KG-ISF actor-surface leaves -> `actor-surface-leaves`. A new part needs a contract part
-  entry + a surfaces target. SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's
-  `current-and-open-work` is at 84.7% lines. Read which contract raised a warning before acting on it.
+- Part sizes: new ERG leaves -> `packet-and-memory-leaves`; all-closed parts may be archived (`.56.a`); KG-ISF
+  actor-surface leaves -> `actor-surface-leaves`. A new part needs a contract part entry + a surfaces target.
+  SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
+  84.7% lines. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column`. LOCATE BY ATTRIBUTION (`located_tables`): a shared-member locator paired
   68% of tables with enums they never minted; identical-replay twins are reported ambiguous.

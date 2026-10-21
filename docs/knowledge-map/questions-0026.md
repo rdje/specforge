@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why is exact source region capture 13 of 14
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > why is file_digest uncached in repin_claim_regions
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why is its not a determiner for relation verbs (GIC ITS agent)
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > why is kg-bench 156/156 not enough for an enum change
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is lowering_status blocked
+- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
+  > why is msi_cfg_tbl not sized
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why is must be greater than 0 not a value binding
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > why is my rebuilt chain stale even though the content matches
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -282,19 +298,3 @@
   > why was a signal not extracted from a signal table (e.g. AHB HREADY)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why was an encoding table whose enum reaches IntentIR listed as uncarried
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > why was an obligation recorded on the condition's signal (AWIDUNQ instead of RIDUNQ)
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > why was attaching the row key as a condition refused as a remedy (it cannot be validated on the publishable stratum, and on the 5 two-axis rows it produces an obligation that is still wrong but now carries a condition that makes it look checked; the adjudicated direction is refusal, not reconstruction)
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why was bare prohibited refused as a deontic form
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why was corpus task maximum line width corrected from 4747 to 4746
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > why was elem_00017|informational_non_contract changed
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why was is-not-valid refused as a deontic form
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > why was moving only the region the wrong remedy even though LIVE-DOCUMENT-PRESSURE-HEADROOM.30b did exactly that (the region .30b moved superseded nothing, so it never met this)

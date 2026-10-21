@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded Introducing CoreSight ingest use
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how much memory did the guarded OpenCAPI AFU address note ingest use
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how much memory did the guarded OpenCAPI Certified Definition ingest use
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
@@ -294,7 +298,3 @@
   > is it safe to put single-letter abbreviations in a notation census vocabulary (no - measured 0 true positives and 18 false ones corpus-wide for i/o/io/in/out; an abbreviation is not a notation until a document is shown to use it as one)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > is losslessness enough when partitioning a canonical record (no — .4e proved a byte-exact partition can still break 14 section anchors while every doctrine passes)
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > is lower recall acceptable when removing protocol-specific shortcuts
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > is mdbook test part of the canonical SpecForge CI gate

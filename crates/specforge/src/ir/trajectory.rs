@@ -8,7 +8,7 @@
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
@@ -986,20 +986,29 @@ fn validate_task_owner(owner: &TaskOwner, gap_id: &str, problems: &mut Vec<Strin
 
 /// Whether a task tree's evidence directory declares the node: the Markdown parts of the directory named after
 /// the root file in lowercase beside it (`docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` ->
-/// `docs/tasks/spec-to-intent-alignment/`), which is every migrated tree's declared collection directory.
+/// `docs/tasks/spec-to-intent-alignment/`), which is every migrated tree's declared collection directory, or —
+/// EXTRACTION-REPRESENTATION-GAPS.56.a — of the same name under `docs/archive/tasks/`, its declared archive
+/// directory, where a part whose every leaf is closed is archived.
 fn task_evidence_declares(root: &Path, declaration: &str) -> bool {
     let (Some(parent), Some(stem)) = (root.parent(), root.file_stem().and_then(|s| s.to_str()))
     else {
         return false;
     };
-    let Ok(entries) = fs::read_dir(parent.join(stem.to_ascii_lowercase())) else {
-        return false;
+    let directory = stem.to_ascii_lowercase();
+    let declares = |evidence: PathBuf| {
+        let Ok(entries) = fs::read_dir(evidence) else {
+            return false;
+        };
+        entries.flatten().any(|entry| {
+            let path = entry.path();
+            path.extension().is_some_and(|extension| extension == "md")
+                && fs::read_to_string(&path).is_ok_and(|contents| contents.contains(declaration))
+        })
     };
-    entries.flatten().any(|entry| {
-        let path = entry.path();
-        path.extension().is_some_and(|extension| extension == "md")
-            && fs::read_to_string(&path).is_ok_and(|contents| contents.contains(declaration))
-    })
+    declares(parent.join(&directory))
+        || parent
+            .parent()
+            .is_some_and(|docs| declares(docs.join("archive").join("tasks").join(&directory)))
 }
 
 fn validate_evidence_ref(evidence: &EvidenceRef, label: &str, problems: &mut Vec<String>) {
@@ -1116,6 +1125,14 @@ mod tests {
                 "gap 'gap' owner 'SPEC-TO-INTENT-ALIGNMENT.999' is not declared in {TASK_PATH} or its task evidence"
             )]
         );
+        // EXTRACTION-REPRESENTATION-GAPS.56.a — a closed leaf whose part was archived is found in the archive directory.
+        let archived = TaskOwner {
+            task_id: "EXTRACTION-REPRESENTATION-GAPS.55.b.v".to_string(),
+            task_tree_path: "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md".to_string(),
+        };
+        let mut archived_problems = Vec::new();
+        validate_task_owner(&archived, "gap", &mut archived_problems);
+        assert!(archived_problems.is_empty(), "{archived_problems:?}");
     }
 
     fn evidence() -> EvidenceRef {

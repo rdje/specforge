@@ -2,6 +2,17 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > which mdBook quantitative census totals may be published and which must be read from the report
+- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
+  > which metric counts class-scoped absent values (signal_presence_qualified_absent_values)
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > which metric counts stated absent values (signal_presence_absent_values)
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > which metrics govern specification-to-executable-intent progress
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
+  > REQUEST_COMPLETE)
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > which naming outranks which for an absent value (the signal itself, then a collective name, then a class)
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -28,6 +39,8 @@
   > which outcomes may a published value have
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > which part of identity_context may name an encoding table
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > which parts may be archived (every leaf it routes closed, not the current frontier's part, live copy deleted)
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > which persisted documents cannot be rebuilt and why (ihi0022_l_2025_08 AXI, ihi0024_e APB and ihi0033_c AHB — they retain no normalized bundle, the retention declaration says retained 24 reclamations 0 and never included them, and the evidence stage reads that bundle; they are three of the four wire-based golds and their only route back is a re-ingest from PDF)
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
@@ -285,15 +298,3 @@
   > why are stability obligations residuals
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > why are table regions no longer excluded from captured-region residuals
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why are table-row sources exempt from the pre-bind constraint subject rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why are the 75 missing declared signals almost all legacy
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why are the AHB gold negatives for statements 0561 and 0678 there
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why are the APB AHB AXI wire golds not in the corpus refresh frontier
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)

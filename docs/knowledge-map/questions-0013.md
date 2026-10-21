@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what debug/diagnostic tools does specforge have (TOOLBOX.md)
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > what declaration catalog does the placeholder check read
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -293,7 +297,3 @@
   > what does the corpus memory change on the 31 chains
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > what does the declared_signal_names.is_empty() branch in semantic.rs do
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > what does the drop reason name_is_a_placeholder mean

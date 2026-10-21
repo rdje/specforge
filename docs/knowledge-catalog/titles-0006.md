@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
 | [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md) | 2026-09-20 | `current` | A signal table whose rows disagree about where their columns are is read per row against one anchor, and the… |
 | [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md) | 2026-09-12 | `current` | A census over the persisted corpus measures what SpecForge PUBLISHED, not what today's extractor does — 54… |
 | [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md) | 2026-09-18 | `current` | The 149 persisted llm_sigcon_* records were minted 78 minutes before declared_signal_catalog existed — ever… |
@@ -60,4 +61,3 @@
 | [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md) | 2026-06-24 | `current` | A register mnemonic reused across blocks (ARM-Debug/CoreSight AUTHSTATUS/IDR/CSW) is resolved by FIELD-SET CO… |
 | [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md) | 2026-09-12 | `current` | A self-test coverage guard lives in the exit code, not the printed ratio — reading the print line got the c… |
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
-| [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |

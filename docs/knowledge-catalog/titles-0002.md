@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md) | 2026-08-14 | `current` | Alignment task evidence is a bounded active root over exact semantic and provenance authorities |
 | [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md) | 2026-09-11 | `current` | A token with one interior lower-case position that wildcards onto two declared names is the document's placeh… |
 | [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md) | 2026-06-04 | `current` | validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs) |
 | [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md) | 2026-10-19 | `current` | A stated absent value may be a label of the signal's own encoding, and a value stated for one class of reques… |
@@ -60,4 +61,3 @@
 | [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md) | 2026-09-16 | `current` | A caller's local $/ turns chomp into a no-op, and the guard it feeds then disables a whole check silently |
 | [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-30 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |
 | [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md) | 2026-09-22 | `current` | The claim registries pin TWO digest families — 731 line-range regions and 113 whole-file digests — and th… |
-| [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |

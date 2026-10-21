@@ -13,7 +13,7 @@ answers:
 date: 2026-10-21
 status: current
 tags: [evidence-ir, message-fields, reserved-spans, keyword-definitions, packet-layouts, descriptors, padding, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (ReservedSpanRecord; is_reserved_led; is_reserved_field_name; record_reserved_span; reserved_span_surface; the reserved sink of extract_container_message_fields, extract_bit_position_structure_fields, extract_byte_location_structure_fields, extract_width_offset_layout_fields, extract_dword_layout_fields); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55.b.iv); docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md (.55.b.iv.a, .55.b.iv.b)
+evidence: crates/specforge/src/ir/evidence.rs (ReservedSpanRecord; is_reserved_led; is_reserved_field_name; record_reserved_span; reserved_span_surface; the reserved sink of extract_container_message_fields, extract_bit_position_structure_fields, extract_byte_location_structure_fields, extract_width_offset_layout_fields, extract_dword_layout_fields); docs/archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55.b.iv); docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md (.55.b.iv.a, .55.b.iv.b)
 reverify: "cargo test --offline -p specforge-core --lib reserved"
 ---
 

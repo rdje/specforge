@@ -11,7 +11,7 @@ answers:
 date: 2026-10-21
 status: current
 tags: [message-fields, packets, tables, layouts, usb4, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (DwordLayoutExtractor; dword_layout_field_name; parse_dword_span; continues_dword_layout; extract_dword_layout_fields; message_field_surface); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55.b.iii)
+evidence: crates/specforge/src/ir/evidence.rs (DwordLayoutExtractor; dword_layout_field_name; parse_dword_span; continues_dword_layout; extract_dword_layout_fields; message_field_surface); docs/archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55.b.iii)
 reverify: "cargo test --offline -p specforge-core --lib a_dword_layout"
 ---
 

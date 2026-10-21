@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > how is AXI per-signal phase membership recoverable without a VLM
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > how is FigureRegion raw_image_path serialized
 - [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
@@ -102,6 +104,8 @@
   > how is an active task evidence migration written atomically
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is an active task source locked before migration
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > how is an archived part verified (its bytes equal archived_from at sealed_commit, an ancestor of HEAD)
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -293,7 +297,3 @@
   > how many corpus documents are flagged as under-extracted specs
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > how many corpus documents carry markdown-escaped underscores in their statements
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > how many corpus documents have a current-schema SourceIR
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)

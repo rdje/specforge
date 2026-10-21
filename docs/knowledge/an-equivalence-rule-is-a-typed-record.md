@@ -14,7 +14,7 @@ answers:
 date: 2026-10-19
 status: current
 tags: [evidence-ir, equivalence, treated-as, carried-evidence, isf-adapter, adr-0006, adr-0016, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (EquivalenceRuleRecord; EquivalenceModality; equivalence_rule_surface; stated_equivalences; equivalence_rule_tests); crates/specforge/src/ir/semantic.rs and intent.rs (equivalence_rules); crates/specforge/src/ir/adapters.rs (protocol_residual_decisions); doctrine/production_genericity/claim_family_inventory.tsv and rule_family_inventory.tsv (evidence.normative); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b.ii)
+evidence: crates/specforge/src/ir/evidence.rs (EquivalenceRuleRecord; EquivalenceModality; equivalence_rule_surface; stated_equivalences; equivalence_rule_tests); crates/specforge/src/ir/semantic.rs and intent.rs (equivalence_rules); crates/specforge/src/ir/adapters.rs (protocol_residual_decisions); doctrine/production_genericity/claim_family_inventory.tsv and rule_family_inventory.tsv (evidence.normative); docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b.ii)
 reverify: "cargo test --offline -p specforge-core --lib equivalence_rule && python3 -c \"import json,glob; print(sum(len(json.load(open(p)).get('equivalence_rules',[])) for p in glob.glob('generated/intent_ir/*/intent_ir.json')))\"   # expect 34 on the 31 current chains (2026-10-19)"
 ---
 

@@ -14,7 +14,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [evidence-ir, optional, carried-evidence, isf-adapter, census, adr-0006, adr-0016, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (OptionalFeatureRecord; optional_feature_surface; stated_options; option_clause; OPTION_FOLLOWERS; optional_feature_tests); crates/specforge/src/ir/semantic.rs and intent.rs (optional_features); crates/specforge/src/ir/adapters.rs (optional_feature_residual_packet); scripts/measure_category_family_census.py (TYPED_SURFACES); docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.d)
+evidence: crates/specforge/src/ir/evidence.rs (OptionalFeatureRecord; optional_feature_surface; stated_options; option_clause; OPTION_FOLLOWERS; optional_feature_tests); crates/specforge/src/ir/semantic.rs and intent.rs (optional_features); crates/specforge/src/ir/adapters.rs (optional_feature_residual_packet); scripts/measure_category_family_census.py (TYPED_SURFACES); docs/archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.d)
 reverify: "cargo test --offline -p specforge-core --lib optional_feature_tests && python3 -c \"import json,glob; es=[json.load(open(p)) for p in glob.glob('generated/intent_ir/*/intent_ir.json')]; print(sum(len(e.get('optional_features',[])) for e in es if e.get('proof_context')))\"   # 2026-10-20: 52 on the 31 proof-carrying chains"
 ---
 

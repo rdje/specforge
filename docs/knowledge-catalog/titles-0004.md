@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md) | 2026-08-11 | `current` | Of the 33 documents that declare no signals, 32 have no declaration-bearing modality at all; one declares its… |
 | [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md) | 2026-09-22 | `current` | An enum member is named from the column the document names it in — the signal seam's calibrated score, tran… |
 | [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md) | 2026-09-22 | `current` | Neither standing oracle can see an enum member value — 0 of 156 kg-bench fixtures mention one and eval-extr… |
 | [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md) | 2026-09-18 | `current` | All 18 escape-fragmented catalog names are artefacts and adjudicate to removal — the English-word risk is t… |
@@ -60,4 +61,3 @@
 | [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md) | 2026-06-21 | `current` | FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract,… |
 | [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md) | 2026-08-08 | `current` | Knowledge-map architecture lives inside the knowledge-map bundle |
 | [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md) | 2026-08-08 | `current` | The Knowledge Map shard migration is locked by a bounded executable contract |
-| [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md) | 2026-09-20 | `current` | 22 of the 51 legacy evidence artifacts disagree with the current declaration reader, so a legacy artifact is… |

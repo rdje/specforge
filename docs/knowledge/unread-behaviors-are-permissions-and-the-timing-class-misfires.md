@@ -12,7 +12,7 @@ answers:
 date: 2026-10-19
 status: current
 tags: [intent-ir, behaviors, permissions, timing, classifier, census, measured, extraction-representation-gaps]
-evidence: scripts/measure_unread_intent_records.py (MODALITIES, modality); crates/specforge/src/ir/evidence.rs (classify_statement, the TimingConstraint arm; is_non_contract_assumption's premise phrases); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.iii); docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.a-.3.d.iii.c)
+evidence: scripts/measure_unread_intent_records.py (MODALITIES, modality); crates/specforge/src/ir/evidence.rs (classify_statement, the TimingConstraint arm; is_non_contract_assumption's premise phrases); docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.iii); docs/archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.a-.3.d.iii.c)
 reverify: "python3 scripts/measure_unread_intent_records.py | rg 'permission_or_description|modalities'   # 2026-10-19: 176; permission 154, obligation 8, description 7, recommendation 4, capability 3"
 ---
 

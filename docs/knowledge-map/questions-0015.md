@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is PDF-VARIANT-DIGESTION.12a
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is PDF-VARIANT-DIGESTION.12b
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what is PDF-VARIANT-DIGESTION.3 prose entity capture
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -68,6 +74,8 @@
   > what is an alpha-variant placeholder
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > what is an appositive role phrase co-reference
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > what is an archived task-evidence part (state archived, archived_from, sealed_commit, git_blob)
 - [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
   > what is an upstream packet
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
@@ -136,6 +144,8 @@
   > what is enum member-column drift
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
   > what is equivalence_rules / EquivalenceRuleRecord / EquivalenceModality
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > what is erg_task_evidence_archived_parts
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > what is every_assume_word_states_no_abstraction / premise_of_a_figure_a_guideline_or_an_analysis
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -288,13 +298,3 @@
   > what is stated_equivalences / equivalence_rule_surface
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
   > what is stated_options / optional_feature_surface
-- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
-  > what is stated_permissions / permission_rule_surface
-- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
-  > what is states_an_obligation_beside_its_assumptions
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > what is states_only_premises_with_a_premise_phrase / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > what is swallowed_verb_governance
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > what is synthesize_register_field_tables

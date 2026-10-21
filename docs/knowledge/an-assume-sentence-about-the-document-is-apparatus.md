@@ -24,7 +24,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [evidence-ir, statement-class, apparatus, assumptions, classifier, measured, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (StatementClass::Apparatus; abstraction_class; is_non_contract_assumption; ABSTRACTION_WORDS; MODELLING_PHRASES; DOCUMENT_SUBJECTS); crates/specforge/src/ir/semantic.rs (is_invariant_like); crates/specforge/src/commands/validate.rs (the class-name table); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b.i); docs/tasks/extraction-representation-gaps/environment-assumption-leaves.md (.3.d.iii.e, .3.d.iii.f)
+evidence: crates/specforge/src/ir/evidence.rs (StatementClass::Apparatus; abstraction_class; is_non_contract_assumption; ABSTRACTION_WORDS; MODELLING_PHRASES; DOCUMENT_SUBJECTS); crates/specforge/src/ir/semantic.rs (is_invariant_like); crates/specforge/src/commands/validate.rs (the class-name table); docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b.i); docs/archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md (.3.d.iii.e, .3.d.iii.f)
 reverify: "cargo test --offline -p specforge-core --lib non_contract_assumption && python3 -c \"import json; e=json.load(open('generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json')); print(sum(1 for s in e['extracted_statements'] if s['class']=='apparatus'))\"   # expect 3 (two diagram keys and a parity-budget premise)"
 ---
 

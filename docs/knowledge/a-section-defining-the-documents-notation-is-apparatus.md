@@ -13,7 +13,7 @@ answers:
 date: 2026-10-21
 status: current
 tags: [evidence-ir, statement-class, apparatus, notation, conventions, pseudocode, section-headings, adr-0006, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (StatementClass::Apparatus; outline_number; names_document_notation; document_notation_sections; the statement loop's class); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.51, .55)
+evidence: crates/specforge/src/ir/evidence.rs (StatementClass::Apparatus; outline_number; names_document_notation; document_notation_sections; the statement loop's class); docs/archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.51, .55)
 reverify: "cargo test --offline -p specforge-core --lib a_heading_names_the_documents_notation_or_puts_it_to_use a_numbered_notation_heading_covers_the_headings_numbered_under_it a_sentence_of_a_notation_section_is_apparatus"
 ---
 

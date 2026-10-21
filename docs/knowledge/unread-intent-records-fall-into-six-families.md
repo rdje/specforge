@@ -13,7 +13,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [intent-ir, semantic-ir, census, assumptions, behaviors, software-intent, extraction-representation-gaps, measured]
-evidence: scripts/measure_unread_intent_records.py; scripts/measure_category_family_census.py (untyped_not_understood); docs/research/category-family-census.md (What the unread assumptions and behaviors are); docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.d, .3.d.i-.3.d.iii); crates/specforge/src/ir/intent.rs (the pass assumptions)
+evidence: scripts/measure_unread_intent_records.py; scripts/measure_category_family_census.py (untyped_not_understood); docs/research/category-family-census.md (What the unread assumptions and behaviors are); docs/archive/tasks/extraction-representation-gaps/table-census-leaves.md (.3.d, .3.d.i-.3.d.iii); crates/specforge/src/ir/intent.rs (the pass assumptions)
 reverify: "python3 scripts/measure_unread_intent_records.py   # expect 443 records (166 assumptions, 277 behaviors) on 2026-09-30, and the six families below"
 ---
 

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > why does dcsr.cause have values in IntentIR but not in the isf
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why does decision-record capacity become 58
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > why does declared_node_statuses not match the separator between the id and the status
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does declaring a newly re-ingested normalized bundle fail the doctrine gate
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does decoder go from 0/0 to connected (decoder also consolidated)
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why does docling now extract text from inside a figure
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > why does docs/tasks have no file count cap
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -177,6 +191,8 @@
   > why does the flow census differ on my machine
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > why does the gap owner check find a closed leaf under docs/archive/tasks (task_evidence_declares)
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > why does the gate refuse when generated/source_ir is missing
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
@@ -281,19 +297,3 @@
   > why is 'if the beginning part of Warm Reset is treated as U3 LFPS exit signal' not read (a hypothetical)
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
   > why is 'may lead to' or 'may change' not a permission (a verb of what can happen)
-- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
-  > why is 'optional-normative' refused (a joined word)
-- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
-  > why is 'otherwise they are treated as unsupported requests' not an equivalence record (a contrasted clause is refused)
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > why is 'the bits … assume a valid but otherwise UNSPECIFIED value' no longer an abstraction (assume means take on)
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > why is 'the hub shall ignore the route string and assume all packets are routed directly to the hub' an invariant now
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > why is 'the missing input cannot be assumed to take a fixed value' no longer an abstraction (a negated assume is a rule)
-- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
-  > why is 'the type of transactions that a device may generate' refused (a subject holding a relative clause)
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > why is 0010 read as ten
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > why is 18 of 349 the wrong population for the constraint kind span

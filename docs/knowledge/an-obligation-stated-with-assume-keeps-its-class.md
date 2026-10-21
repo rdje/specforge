@@ -12,7 +12,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [evidence-ir, classifier, assume, apparatus, obligation, statement-class, measured, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (abstraction_class; states_an_obligation_beside_its_assumptions; OBLIGATION_PHRASES; non_contract_assumption_tests); docs/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.c, .3.d.iii.e)
+evidence: crates/specforge/src/ir/evidence.rs (abstraction_class; states_an_obligation_beside_its_assumptions; OBLIGATION_PHRASES; non_contract_assumption_tests); docs/archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md (.3.d.iii.c, .3.d.iii.e)
 reverify: "cargo test --offline -p specforge-core --lib non_contract_assumption_tests && python3 scripts/measure_unread_intent_records.py | rg 'unread records|modalities'   # 2026-10-20: 140 unread; obligation 3"
 ---
 

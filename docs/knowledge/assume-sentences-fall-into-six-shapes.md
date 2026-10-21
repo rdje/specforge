@@ -15,7 +15,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [intent-ir, assumptions, abstraction, classification, census, measured, extraction-representation-gaps]
-evidence: scripts/measure_unread_intent_records.py (SHAPES, shape); crates/specforge/src/ir/evidence.rs (classify_statement, the ExplicitAbstraction arm); crates/specforge/src/ir/semantic.rs (build_abstractions); crates/specforge/src/ir/intent.rs (build_assumptions); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b)
+evidence: scripts/measure_unread_intent_records.py (SHAPES, shape); crates/specforge/src/ir/evidence.rs (classify_statement, the ExplicitAbstraction arm); crates/specforge/src/ir/semantic.rs (build_abstractions); crates/specforge/src/ir/intent.rs (build_assumptions); docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.b)
 reverify: "python3 scripts/measure_unread_intent_records.py | rg 'assumed_by_word|shapes'   # 2026-10-19 after .3.d.ii.b.iii.b: 37; treated_as 31, stated_default 5, narrative 1 (after .3.d.ii.b.iii.a 50 and 18; before it 53 and 21; 2026-10-03, before .3.d.ii.b.i: 106; treated_as 31, narrative 30, stated_default 25, diagram_convention 10, convention 6, other 4)"
 ---
 

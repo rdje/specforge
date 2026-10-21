@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > where are cross-document prior contradictions surfaced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > where are section-derived semantic phases built
+- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
+  > where are software obligations like the USB4 Connection Manager's procedures carried
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where are the .6d.ii per-leaf qualification results
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > where are the AHB and AXI normalized bundles
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -41,6 +51,8 @@
   > where do I log feedback or a suggestion to FSMGen
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > where do I record a correction to a leaf whose part is archived (a new record in a live part)
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > where do TimingConstraintRecord table provenance ids live
 - [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
@@ -285,15 +297,3 @@
   > where is the fast doctrine subset declared
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the first post-migration DEVELOPMENT_NOTES rollover segment
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
-- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
-  > where is the gap table between PDF extraction and isf representation
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
-- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
-  > where is the list of everything SpecForge still cannot do from PDF to ISF
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > where is the mdBook current-truth verifier
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the normative IntentIR product contract

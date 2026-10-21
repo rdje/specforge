@@ -15,7 +15,7 @@ answers:
 date: 2026-10-20
 status: current
 tags: [evidence-ir, collective-name, generic-name, signal-presence, absent-value, carried-evidence, adr-0006, adr-0016]
-evidence: crates/specforge/src/ir/evidence.rs (CollectiveSignalNameRecord; collective_signal_name_surface; collective_marker; is_collective_member; StatedAbsentValueReading::rank); crates/specforge/src/ir/semantic.rs and intent.rs (collective_signal_names); docs/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a.ii)
+evidence: crates/specforge/src/ir/evidence.rs (CollectiveSignalNameRecord; collective_signal_name_surface; collective_marker; is_collective_member; StatedAbsentValueReading::rank); crates/specforge/src/ir/semantic.rs and intent.rs (collective_signal_names); docs/archive/tasks/extraction-representation-gaps/unread-intent-leaves.md (.3.d.ii.a.ii)
 reverify: "cargo test --offline -p specforge-core --lib collective_signal_name && python3 -c \"import json; e=json.load(open('generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json')); c=e['collective_signal_names']; print(len(c), [r for r in c if r['collective_name']=='AxSNOOP'])\"   # expect 37 records; AxSNOOP -> ARSNOOP, AWSNOOP citing statement_0446"
 ---
 

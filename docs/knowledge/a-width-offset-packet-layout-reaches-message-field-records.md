@@ -11,7 +11,7 @@ answers:
 date: 2026-10-21
 status: current
 tags: [message-fields, packets, tables, layouts, usb, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (WidthOffsetLayoutExtractor; width_offset_layout_columns; width_offset_field_name; extract_width_offset_layout_fields; message_field_surface); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55.b.ii, .55.b.v)
+evidence: crates/specforge/src/ir/evidence.rs (WidthOffsetLayoutExtractor; width_offset_layout_columns; width_offset_field_name; extract_width_offset_layout_fields; message_field_surface); docs/archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55.b.ii, .55.b.v)
 reverify: "cargo test --offline -p specforge-core --lib a_width_offset_layout"
 ---
 

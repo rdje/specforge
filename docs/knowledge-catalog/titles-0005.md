@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md) | 2026-09-20 | `current` | 22 of the 51 legacy evidence artifacts disagree with the current declaration reader, so a legacy artifact is… |
 | [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic whole-statement gates are schema-compatible audit data only |
 | [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic section phases are schema-compatible audit data only |
 | [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md) | 2026-09-20 | `current` | The 363 signal tables a legacy artifact's labels would recover cannot reach the canonical row reader, because… |
@@ -60,4 +61,3 @@
 | [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md) | 2026-08-10 | `current` | Parenthetical data heads require an adjacent wire qualifier |
 | [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md) | 2026-09-17 | `current` | Partitioning a task tree costs four surface records, one driver entry and two census records per current surf… |
 | [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md) | 2026-08-10 | `current` | A passive obligation's constraint subject must be named before its must/shall be\|remain lead |
-| [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |

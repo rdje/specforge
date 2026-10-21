@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > what is stated_permissions / permission_rule_surface
+- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
+  > what is states_an_obligation_beside_its_assumptions
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > what is states_only_premises_with_a_premise_phrase / names_an_example_before_its_assumptions / PREMISE_SUBJECT_WORDS
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > what is swallowed_verb_governance
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > what is synthesize_register_field_tables
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
@@ -287,13 +297,3 @@
   > what is the semantic_ungrounded_records_not_promoted residual packet
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > what is the semantic_unreadable_declaration_width residual packet
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > what is the size-immunity binding constraint for source_ir.json at extreme page counts
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what is the source-to-IntentIR completeness contract
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is the standing per-doc quality report wired into converge/CI
-- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
-  > what is the subject of a relation verb after and then

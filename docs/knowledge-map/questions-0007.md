@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > how does SpecForge handle one transaction and one rule writing the same named-drive target
 - [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
@@ -296,5 +298,3 @@
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how is AXI per-signal channel membership recovered without a VLM
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > how is AXI per-signal phase membership recoverable without a VLM

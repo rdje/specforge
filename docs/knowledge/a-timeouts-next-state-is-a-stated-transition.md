@@ -18,7 +18,7 @@ answers:
 date: 2026-09-30
 status: current
 tags: [evidence-ir, timing, protocol-states, transitions, table, usb, adr-0006, adr-0033, fsmgen]
-evidence: crates/specforge/src/ir/evidence.rs (ProtocolTransitionRecord; protocol_transition_surface; timeout_tables; timeout_table_note_marks; timeout_table_states); crates/specforge/src/ir/adapters.rs (protocol_residual_decisions); docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b.iii.g); docs/upstream/fsmgen/sf-isf-named-timers/README.md
+evidence: crates/specforge/src/ir/evidence.rs (ProtocolTransitionRecord; protocol_transition_surface; timeout_tables; timeout_table_note_marks; timeout_table_states); crates/specforge/src/ir/adapters.rs (protocol_residual_decisions); docs/archive/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b.iii.g); docs/upstream/fsmgen/sf-isf-named-timers/README.md
 reverify: "cargo test --offline -p specforge-core --lib -- timeout_rows_next_state lost_note_mark state_cell_is_split && python3 -c \"import json; e=json.load(open('generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json')); t=e['protocol_transitions']; print(len(t), {r.get('machine_name') for r in t})\"   # expect 28 {'LTSSM'}"
 ---
 

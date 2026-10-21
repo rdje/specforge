@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why did eight Introducing CoreSight ports and four connectivity edges disappear
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > why did every chain report SourceIR proof verification failed proof ledger ruleset hash is stale after a source.rs edit
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > why did generated artifact scanning miss FigureRegion raw_image_path
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why did ingest stop with 'ingest aborted before launching'
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > why did ingest stop with 'ingest aborted to protect the host'
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why did intent_ir artifacts move when semantic_ir did not
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > why did max_facts become 379
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
@@ -284,17 +298,3 @@
   > why does APB5's PPROT presence record carry absent_value LOW with a supporting_table_ids entry
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > why does ATTR_OVR.SHCFG must be 0b01 produce no signal constraint
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > why does AWBURST must be INCR have no condition
-- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
-  > why does AWDOMAIN carry three absent values (System domain, Shareable domain, Non-shareable)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
-- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
-  > why does AXI manager.isf not drive AWSNOOP ARSNOOP ARLOCK AWLOCK WSTRB from the tied LOW sentences
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does AXI publish WTAG VALID and WTAG ZERO as a temporal conflict
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > why does AXI score 1.000 while losing 103 declaration rows
-- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
-  > why does AXI still list asserted/deasserted obligations as polarity unknown

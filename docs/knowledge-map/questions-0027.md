@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why was an encoding table whose enum reaches IntentIR listed as uncarried
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why was an obligation recorded on the condition's signal (AWIDUNQ instead of RIDUNQ)
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > why was attaching the row key as a condition refused as a remedy (it cannot be validated on the publishable stratum, and on the 5 two-axis rows it produces an obligation that is still wrong but now carries a condition that makes it look checked; the adjudicated direction is refusal, not reconstruction)
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why was bare prohibited refused as a deontic form
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why was corpus task maximum line width corrected from 4747 to 4746
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > why was elem_00017|informational_non_contract changed
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why was is-not-valid refused as a deontic form
+- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
+  > why was moving only the region the wrong remedy even though LIVE-DOCUMENT-PRESSURE-HEADROOM.30b did exactly that (the region .30b moved superseded nothing, so it never met this)
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why was nearest-heading anchoring rejected for capless table adoption
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)

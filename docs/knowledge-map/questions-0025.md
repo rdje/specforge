@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
+  > why is 'optional-normative' refused (a joined word)
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > why is 'otherwise they are treated as unsupported requests' not an equivalence record (a contrasted clause is refused)
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why is 'the bits … assume a valid but otherwise UNSPECIFIED value' no longer an abstraction (assume means take on)
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why is 'the hub shall ignore the route string and assume all packets are routed directly to the hub' an invariant now
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why is 'the missing input cannot be assumed to take a fixed value' no longer an abstraction (a negated assume is a rule)
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > why is 'the type of transactions that a device may generate' refused (a subject holding a relative clause)
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why is 0010 read as ten
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > why is 18 of 349 the wrong population for the constraint kind span
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why is 198 exactly the largest fact-card maximum the current projection allows
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
@@ -282,19 +298,3 @@
   > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > why is every isf adapter blocked
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why is exact source region capture 13 of 14
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > why is file_digest uncached in repin_claim_regions
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > why is its not a determiner for relation verbs (GIC ITS agent)
-- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
-  > why is kg-bench 156/156 not enough for an enum change
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why is lowering_status blocked
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > why is msi_cfg_tbl not sized
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why is must be greater than 0 not a value binding
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair

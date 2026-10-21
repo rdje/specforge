@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why are table-row sources exempt from the pre-bind constraint subject rule
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why are the 75 missing declared signals almost all legacy
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why are the AHB gold negatives for statements 0561 and 0678 there
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why are the APB AHB AXI wire golds not in the corpus refresh frontier
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -72,6 +84,8 @@
   > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > why can't a task tree's live part total be lowered by adding parts or raising the target (ADR 0032; the 1179648-byte portable cap)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -283,17 +297,3 @@
   > why did claims.jsonl stop at 94% with 12 of 64 records
 - [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
   > why did condrule_0152 read only AWSNOOP is not CMO
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why did eight Introducing CoreSight ports and four connectivity edges disappear
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > why did every chain report SourceIR proof verification failed proof ledger ruleset hash is stale after a source.rs edit
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > why did generated artifact scanning miss FigureRegion raw_image_path
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why did ingest stop with 'ingest aborted before launching'
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > why did ingest stop with 'ingest aborted to protect the host'
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why did intent_ir artifacts move when semantic_ir did not

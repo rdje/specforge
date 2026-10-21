@@ -32,58 +32,58 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.42.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.43` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.43.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g` | `closed` | [Table census leaves](table-census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h` | `closed` | [Table census leaves](table-census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i` | `closed` | [Table census leaves](table-census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.f.iv` | `closed` | [Table census leaves](table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g` | `closed` | [Table census leaves](../../archive/tasks/extraction-representation-gaps/table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h` | `closed` | [Table census leaves](../../archive/tasks/extraction-representation-gaps/table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i` | `closed` | [Table census leaves](../../archive/tasks/extraction-representation-gaps/table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.f.iv` | `closed` | [Table census leaves](../../archive/tasks/extraction-representation-gaps/table-census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.44` | `open` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.g` | `closed` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.h` | `closed` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.45` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.47` | `closed` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii` | `closed` | [Unread intent leaves](unread-intent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii` | `closed` | [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.a` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.b` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii.c` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.48` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.48.a` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.49` | `closed` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.50` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d` | `closed` | [Default and assumption leaves](default-and-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.51` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g` | `closed` | [Environment assumption leaves](environment-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.50` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d` | `closed` | [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.e` | `closed` | [Environment assumption leaves](../../archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.51` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.f` | `closed` | [Environment assumption leaves](../../archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii.g` | `closed` | [Environment assumption leaves](../../archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.52` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.a` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.b` | `closed` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | `open` | [Register binding leaves](register-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.53` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.54` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.53` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.54` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a` | `open` | [Packet and memory leaves](packet-and-memory-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.a` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.b` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.b.i` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.b.iv` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.b.v` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.a` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b.i` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b.iv` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b.v` | `closed` | [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` | `closed` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.56` | `closed` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b` | `open` | [Packet and memory leaves](packet-and-memory-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.56.a` | `open` | [Packet and memory leaves](packet-and-memory-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.56.a` | `closed` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.56.b` | `open` | [Packet and memory leaves](packet-and-memory-leaves.md) |
