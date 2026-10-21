@@ -838,6 +838,60 @@ expect_case(
         save_registry($fixture);
     },
 );
+# ADR 0058 — a member at its per-file rollover may be sealed; its seal is its content's hash.
+sub seal_canonical_part {
+    my ($fixture, %args) = @_;
+    my $content = read_text($fixture->{root}, $args{path} // 'canonical/part.md');
+    surface($fixture, 'canonical')->{sealed_members} = [{
+        path => $args{path} // 'canonical/part.md',
+        sha256 => $args{sha256} // sha256_hex($content),
+        owner => 'FIXTURE.1',
+    }];
+}
+expect_absent_case('a sealed member at its rollover leaves the per-file milestones to the members that can grow',
+    qr/surface 'canonical' lines_each is at or above/, sub {
+        my ($fixture) = @_;
+        write_text($fixture->{root}, 'canonical/part.md', "# Canonical part\n" x 95);
+        surface($fixture, 'canonical')->{health_targets}{lines_each} = 50;
+        seal_canonical_part($fixture);
+        save_registry($fixture);
+    });
+expect_case('an unsealed member at its rollover still warns beside a sealed one',
+    1, qr/surface 'canonical' lines_each is at or above warning/, sub {
+        my ($fixture) = @_;
+        write_text($fixture->{root}, 'canonical/part.md', "# Canonical part\n" x 95);
+        write_text($fixture->{root}, 'canonical/INDEX.md', "[Part](part.md)\n" x 42);
+        surface($fixture, 'canonical')->{health_targets}{lines_each} = 50;
+        seal_canonical_part($fixture);
+        save_registry($fixture);
+    });
+expect_case('an edited sealed member fails closed', 0,
+    qr{sealed member 'canonical/part\.md' changed; amend it with a new record}, sub {
+        my ($fixture) = @_;
+        write_text($fixture->{root}, 'canonical/part.md', "# Canonical part\n" x 95);
+        surface($fixture, 'canonical')->{health_targets}{lines_each} = 50;
+        seal_canonical_part($fixture, sha256 => sha256_hex("an earlier content\n"));
+        save_registry($fixture);
+    });
+expect_case('a member below its per-file rollover cannot be sealed', 0,
+    qr{sealed member 'canonical/part\.md' has not reached its per-file rollover}, sub {
+        my ($fixture) = @_;
+        seal_canonical_part($fixture);
+        save_registry($fixture);
+    });
+expect_case('a sealed member must be one of the surface\'s files', 0,
+    qr{sealed member 'query/part\.md' is not one of its files}, sub {
+        my ($fixture) = @_;
+        seal_canonical_part($fixture, path => 'query/part.md');
+        save_registry($fixture);
+    });
+expect_case('a sealed member still counts toward every ceiling', 0,
+    qr/surface 'canonical' exceeds lines_each ceiling: 120 > 100/, sub {
+        my ($fixture) = @_;
+        write_text($fixture->{root}, 'canonical/part.md', "# Canonical part\n" x 120);
+        seal_canonical_part($fixture);
+        save_registry($fixture);
+    });
 expect_case('pressure names the distance to the hard ceiling, not only the health percentage',
     1, qr/lines_each is at or above rollover \(\d+\.\d%\) — \d+ below its 100 ceiling/, sub {
         my ($fixture) = @_;
@@ -1497,7 +1551,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 120;
+my $expected_checks = 126;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;

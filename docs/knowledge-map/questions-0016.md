@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is row_conditions on a timing constraint
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > what is scope_rule_polarity_observations / PolarityScopes
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is scripts/check_doctrines.sh / the doctrine driver
+- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
+  > what is scripts/measure_unread_intent_records.py
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > what is scripts/measure_untyped_table_families.py
 - [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
   > what is section_field_name / bind_field_sections / describes_reserved_field
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -287,13 +297,3 @@
   > what is the per-record byte budget for a status record
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > what is the per-row layout drift rule
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is the permission-vs-obligation gate / frame error class
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > what is the population of a kind-classifier change in evidence.rs
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > what is the positional value fallback in evidence.rs
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what is the pre-registered adoption bar for a remote decision provider
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is the presence-matrix structural gate and how many tables fire it

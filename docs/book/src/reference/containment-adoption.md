@@ -242,6 +242,16 @@ arithmetic. The plane grows to nine title parts and no fact-plane axis warns aft
 next stop: the projection now declares all but one shard's worth of its byte cap, so the next raise has to shrink
 the per-shard byte bound first.
 
+#### A complete decision record is sealed, not warned about
+
+On `2026-10-21` ADR 0038, an accepted record, held 474 of 512 lines and 31,833 of 32,768 bytes. It was past rollover
+on both, so `decision_records` reported a rollover on every run for a file that takes no more writes. That warning
+was misread three times as "no room for a new decision record", although a new record is a new file. ADR 0058 lets a
+collection seal a member that has reached its per-file rollover: the surface lists it with its content's SHA-256, an
+edit fails closed, and it is amended by a new member. The per-file milestones then measure the members that can
+still grow, while every ceiling, the file count and both aggregates still measure all of them. A member below
+rollover cannot be sealed, so the mechanism cannot quiet a file that is still growing.
+
 #### Remaining canonical collection catalogs landed
 
 At `.5c.iii`, no partitioned canonical Markdown collection relied only on a Git query. The bounded

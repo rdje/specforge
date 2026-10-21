@@ -9,3 +9,5 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | Leaf | Lifecycle | Primary detail |
 | --- | --- | --- |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34e` | `open` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a` | `open` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b` | `open` | [Warning assignment](warning-assignment.md) |

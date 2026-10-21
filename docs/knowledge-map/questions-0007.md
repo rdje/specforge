@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how does SpecForge extract register fields from tables
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -296,5 +298,3 @@
   > how is 'must remain asserted until X' represented
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values
-- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
-  > how is 'the missing signals are assumed to be LOW' (signals covered by a check signal) bound now

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why does the reviewed prose sit at elem_00230 instead of elem_00219
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > why does the roadmap archive hold more than one capsule
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why does the same token AXI interface merge in one doc but not another
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > why does the status ledger keep hitting rollover
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
@@ -284,17 +298,3 @@
   > why is a reviewed residual cell unmet no matter what production does
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > why is a sentence containing when not necessarily a semantic gate
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > why is a shipped_behavior aggregate_change rationale rejected (it is capped at 512 bytes; the whole surfaces.jsonl record is bounded by max_scalar_bytes)
-- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
-  > why is a signal not valid-like when the sentence says valid data (presents valid data on its DAT_O lines)
-- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
-  > why is a signal tagged handshake_valid_like or handshake_ready_like
-- [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
-  > why is a spanning prose row under a Value sub-header no value (it repeats itself across both cells)
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > why is a stable span after tick zero residual
-- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
-  > why is a stated default like the DTF value assumed 0 an assumption
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why is a suffix-of-other-declared-names rule not enough to detect a naming template

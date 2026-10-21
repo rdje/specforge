@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > does the caption repair admit serialized table rows
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > does the co-reference rule resurrect resolve_indexed_signal_family
 - [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
@@ -296,5 +298,3 @@
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I address exactly one converter item
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > how do I adjudicate cross-table enum conflation

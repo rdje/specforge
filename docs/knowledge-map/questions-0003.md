@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can the trajectory controller mutate canonical semantic artifacts
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > can the trajectory controller use one weighted score
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > can the word when in a statement make its whole section a semantic phase
@@ -296,5 +298,3 @@
   > does a constraint keep its list lead-in
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > does a count over generated/evidence_ir measure current extractor behaviour
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > does a debug build and a release build accept the same persisted artifact

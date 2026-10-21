@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > why is a shipped_behavior aggregate_change rationale rejected (it is capped at 512 bytes; the whole surfaces.jsonl record is bounded by max_scalar_bytes)
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why is a signal not valid-like when the sentence says valid data (presents valid data on its DAT_O lines)
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why is a signal tagged handshake_valid_like or handshake_ready_like
+- [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
+  > why is a spanning prose row under a Value sub-header no value (it repeats itself across both cells)
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > why is a stable span after tick zero residual
+- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
+  > why is a stated default like the DTF value assumed 0 an assumption
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why is a suffix-of-other-declared-names rule not enough to detect a naming template
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > why is a table listed uncarried though its rows produced constraints
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
@@ -283,17 +297,3 @@
   > why must both sides of a direction arrow resolve to a role
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why must opaque identifiers remain one grammar token
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > why must read-only census commands avoid /tmp and /private/tmp
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why must source-library paths not determine whether a corpus document was refreshed
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > why must source-local PSEL not become a global interface signal
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why must terminal task tree containment use two commits
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > why must the invariant comparator reject a semantic negative first
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > why must the radix test be stratified by cell width

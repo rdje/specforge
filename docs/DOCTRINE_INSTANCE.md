@@ -154,6 +154,9 @@ plus the real four-ledger plan prove whole-record boundaries, exact source ident
 bounded warning-safe survivors, repository-relative archive routes, and required reader/writer seams.
 After a ledger migrates, that verifier switches identity authority to its immutable source capsule and
 checks the manifest, bounded index, live limits, and exact retained-record suffix.
+A `collection` surface may also seal a member that has reached its per-file rollover (ADR 0058): the surface
+lists its path, content SHA-256 and sealing leaf, an edit fails closed, and the per-file milestones then measure
+only the unsealed members while every ceiling and aggregate still measures all of them.
 The adapter also executes `scripts/check_roadmap_projection_contract.pl`: its focused cases and real
 contract pin the exact pre-migration roadmap identity, five exhaustive semantic regions, ordered
 23-workstream/task ownership, drift evidence, consumers, bounded-current structure, and archive

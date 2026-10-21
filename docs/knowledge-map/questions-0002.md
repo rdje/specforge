@@ -161,6 +161,8 @@
   > can a migrated task tree satisfy the lifecycle gate with zero lifecycles re-derived (yes, if the whole tree is written in a node shape the reader cannot parse)
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > can a minted enum value be trusted
+- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
+  > can a new ADR be written while decision_records shows per-file pressure (yes: per-file pressure is one member's; a new ADR is a new file)
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > can a new actor-role term DESTROY existing relations (yes - unique_complementary_reader_actor_name mints a Reads relation only when the opposite role holds exactly one name, so a term that takes that set from one to two deletes every complementary relation the document had; measured on AMBA GFB with 'source')
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
@@ -296,5 +298,3 @@
   > can the subject snap fabricate or rewrite a signal name
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > can the three wire-based golds be rebuilt through the evidence stage
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > can the trajectory controller mutate canonical semantic artifacts

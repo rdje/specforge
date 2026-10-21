@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
+  > why did a closed leaf disappear from a task tree root's owner registry
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why did a conditional rule take its consequent signal from the previous sentence
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why did a current claim census count change without the producer changing
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why did a figure caption become null after re-ingest
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > why did a fresh ingest expose normalized staging in persisted metadata
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why did a freshly partitioned task-evidence part fill up in one slice
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > why did a junk polarity record appear after WIRE-BASED-100.10b
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -285,15 +297,3 @@
   > why do questions and bug reports to FSMGen follow the same process
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > why do register records carry no size_bits
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > why do register records cite table_0030
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why do replayed SourceIR digests always differ between replay roots
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
-- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
-  > why do some treated-as paragraphs now classify normative (an obligation sentence beside the equivalence)
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why do source derived ids need field aware alpha normalization

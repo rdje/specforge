@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > does a debug build and a release build accept the same persisted artifact
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
@@ -296,5 +298,3 @@
   > does the authority empty repair preserve formal and system contract interfaces
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > does the book quantitative-claim grammar see a hyphenated count like 55-case or 153-line (yes since CLAIM-VERIFICATION-ADOPTION.24: numeral-hyphen-noun with the same closed noun list; it admitted 109 lines, all quantities, and exposed four stale present-tense passages; 32-bit and 4-way stay out because bit and way are not admitted nouns)
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > does the caption repair admit serialized table rows

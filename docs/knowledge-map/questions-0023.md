@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > why do register records carry no size_bits
+- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
+  > why do register records cite table_0030
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why do replayed SourceIR digests always differ between replay roots
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
+- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
+  > why do some treated-as paragraphs now classify normative (an obligation sentence beside the equivalence)
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why do source derived ids need field aware alpha normalization
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > why do statements contain &gt; and &lt;
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -286,15 +298,3 @@
   > why does a task-evidence contract declare parts lines_total below files x lines_each when the surface registry forbids that (the contract has its own portable caps of 9600 lines and 1179648 bytes, which sit below the product; the two authorities are sized independently and the stricter one binds)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > why does a task-evidence index only list open leaves
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why does a temporal antecedent use PSELX not PSEL
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does a timing record carry a Note 1 as its condition
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does a timing value keep a trailing footnote number (4.0690104 1)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
-- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
-  > why does a windowed monitor refuse a value that is not a level (must be valid)
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > why does actions/checkout need fetch-depth 0 and submodules

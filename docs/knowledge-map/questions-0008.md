@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
+  > how is 'the missing signals are assumed to be LOW' (signals covered by a check signal) bound now
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -88,6 +90,8 @@
   > how is a remote model evaluated in this repository
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how is a roadmap rollover capsule verified
+- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
+  > how is a sealed ADR amended (by a new record; an edit fails the seal)
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how is a state machine identifier introduced generically
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
@@ -293,7 +297,3 @@
   > how many constraints lose their governing condition
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > how many consumers call SourceIr::load_for_inspection
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many converter text items does iterate_items yield across the corpus
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > how many corpus constraints need a negated form of extract_protocol_state_value

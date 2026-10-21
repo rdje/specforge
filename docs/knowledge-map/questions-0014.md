@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what does the bounded current ROADMAP contain
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > what does the caption admission repair do to the whole corpus
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > what does the corpus frontier refreshed list mean
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -216,6 +220,8 @@
   > what is ADR 0052
 - [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
   > what is ADR 0057
+- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
+  > what is ADR 0058
 - [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
   > what is ANALYSIS_TARGET in the production graph
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -292,9 +298,3 @@
   > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever

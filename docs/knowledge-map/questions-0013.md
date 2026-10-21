@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > what clean scopes does specforge offer
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > what condition does an obligation inferred with 'which means that' get (its antecedent clause; EXTRACTION-REPRESENTATION-GAPS.31)
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > what confidence axis correlates with extracted-constraint correctness
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -293,7 +297,3 @@
   > what does the active task evidence checker verify
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > what does the active task migration roll back after a validation failure
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what does the bounded current ROADMAP contain
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > what does the caption admission repair do to the whole corpus

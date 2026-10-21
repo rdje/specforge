@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
+  > why are TGD_I and TGD_O refused by the shipped heading rule
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > why are USB 3.2 LTSSM substates like Polling.Active protocol states / what is merge_transition_states / table_state
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > why are USB 3.2's RxD and TxEQ not expanded
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > why are USER_GUIDE.md and the root architecture documents only pointers
+- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
+  > why are Wishbone's MAY sentences classed timing_constraint
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > why are claim evidence commands argv arrays
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -285,15 +297,3 @@
   > why did a census over persisted artifacts disagree with what the producer does (because the artifacts were written by an earlier producer — check the artifact mtimes against git log -L on the grounding function before treating a persisted population as evidence about current behaviour)
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
   > why did a census over the persisted corpus have to be retracted
-- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
-  > why did a closed leaf disappear from a task tree root's owner registry
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > why did a conditional rule take its consequent signal from the previous sentence
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > why did a current claim census count change without the producer changing
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > why did a figure caption become null after re-ingest
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > why did a fresh ingest expose normalized staging in persisted metadata
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > why did a freshly partitioned task-evidence part fill up in one slice

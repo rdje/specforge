@@ -384,3 +384,56 @@ owner's `Status` line rather than from any mention of the surface.
   The file does not accrete today, so decide from measurement whether the warning marks a stop compliant work will
   reach (then cut by reader concern under `.34`'s rule) or a static chapter whose line bound and byte bound disagree
   (then say which bound binds, as `.28` did for the fact plane). Do not raise a ceiling.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8`
+  Status: `done` (`2026-10-21`; DOCTRINE; owner-directed; checklist below)
+  Goal: restore writable headroom for the decision-record surface, whose named owner is closed
+  **This declaration supersedes the sealed `pending` one in `assigned-successor-nodes` above.** The owner asked on
+  `2026-10-21` whether the decision-record cap blocks work. **Measured.** `decision_records` held 59 of 74 files (79.7%) and 365,714 of 2,424,832 bytes. Its per-file pressure
+  was one member's: ADR 0038 at 474 of 512 lines (92.6%) and 31,833 of 32,768 bytes (97.1%), past rollover on both.
+  `DECISION-RECORD-CAPACITY-HEADROOM` is `done` and recorded on `2026-08-15` that ADR 0038 is accepted and no longer
+  appendable, so the warning asked for a remedy that cannot apply. It also misled: three ERG records
+  (`.54.a.i`, `.54.a.i.a`, `.56.b`) skipped a decision record because of it, and this leaf's own owner reported
+  "no room for new ADRs" on `2026-10-21`. Both are corrected in `EXTRACTION-REPRESENTATION-GAPS`' `encoding-and-state-leaves`.
+  **Decided (ADR 0058) and done.** This leaf carries the axis. A `collection` member that has reached its per-file
+  rollover may be sealed (`sealed_members`: path, SHA-256, owner). `validate_sealed_members` refuses a sealed member
+  outside the surface, sealed twice, below its rollover, or whose content no longer hashes to its seal. Per-file
+  milestones measure the unsealed members, while every ceiling, the file count and both aggregates still measure
+  all members. `decision_records` seals ADR 0038, and its `bytes_each` and `lines_each` milestones now read the
+  other members: largest 16,083 bytes (`INDEX.md`) and 191 lines (ADR 0039). No bound moved. Opened `.8.a` (the
+  60th file puts the count at its warning) and `.8.b` (ADR 0050's 434-byte line, the remaining width warning).
+
+## Acceptance Checklist (enforced) — `LIVE-DOCUMENT-PRESSURE-HEADROOM.8` (DOCTRINE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — `check_live_document_size.pl --report` on `decision_records` and per-member line,
+  byte and width maxima; ADR 0038's history and `DECISION-RECORD-CAPACITY-HEADROOM`'s `2026-08-15` decision.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/check_live_document_size.pl` `validate_limits`: per-file milestones
+  measured every member, including one that cannot grow, so a complete member's rollover was permanent and had no
+  remedy. New `validate_sealed_members`; `validate_limits` reads `*_each` milestones from the unsealed members.
+- [x] **ADDRESSED (verified)** — `decision_records` reports no `bytes_each` or `lines_each` warning; the checker
+  passes over the whole registry.
+- [x] **NO REGRESSION** — `test_live_document_size.pl` 126/126 (six new cases: a sealed member leaves the per-file
+  milestones to the others; an unsealed member at rollover still warns beside it; an edit fails closed; a member
+  below rollover cannot be sealed; a member outside the surface cannot be; a sealed member still counts toward
+  every ceiling). RED 5/5, the checker restored byte-identically after each: an edited seal passing, a member below
+  rollover sealed, a foreign path sealed, milestones reading every member, ceilings reading only the unsealed ones.
+- [x] **GENERICITY** — eligibility is read from the member's own measure and the surface's own milestones; no
+  surface or file is named in the checker.
+- [x] **LOCKSTEP** — ADR 0058 and the decision index (0038 marked sealed); `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`'s
+  local adoption note; `docs/DOCTRINE_INSTANCE.md`; book `reference/containment-adoption.md`; `MEMORY.md`.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a`
+  Status: `open` (`2026-10-21`; opened by `.8`)
+  Goal: re-derive `decision_records`' file count before the collection reaches its rollover
+  Acceptance: ADR 0058 is the 60th of 74 files (81.1%, warning). Re-derive the count by ADR 0041's law (population
+  below 80%, population plus the measured peak day below 90%), with the coupled fact-plane identities
+  (`max_facts = max_cards + files - 1`, the question keys funded per fact) moving in one transaction under a
+  single-use increase authority, as ADR 0055 did. Do not move a per-file bound.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b`
+  Status: `open` (`2026-10-21`; opened by `.8`)
+  Goal: own `decision_records`' remaining width warning
+  Acceptance: `line_bytes_each` warns at 84.8% (434 of 512) on one line of ADR 0050, an accepted record below its
+  rollover, so it cannot be sealed. Decide from measurement whether the line is a table row or prose and whether the
+  record may be reflowed without changing its content (the decision index says records are never silently
+  rewritten), or whether the warning stands as an owned, static one. Do not raise the bound.

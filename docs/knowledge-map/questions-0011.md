@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > is it safe to install a held-out normalized bundle
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > is it safe to measure a backup copy of an evidence_ir with nli-verify
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > is it safe to put single-letter abbreviations in a notation census vocabulary (no - measured 0 true positives and 18 false ones corpus-wide for i/o/io/in/out; an abbreviation is not a notation until a document is shown to use it as one)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -294,7 +298,3 @@
   > path does not exist normalized/<key>.md when running specforge evidence
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > qwen2.5vl vs qwen3-vl which model
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > roughly what share of docs/tasks node declarations state their status inline on the id line (about a third; 467 of 1,427 on 2026-09-17, but the denominator MOVES - see below)

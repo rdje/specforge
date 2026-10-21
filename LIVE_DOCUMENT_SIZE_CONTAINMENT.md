@@ -130,6 +130,12 @@
   bounds differ. `fact_index` uses the equal-count form; alignment task parts use the per-band form for their
   accepted 16/24-file profile. Pressure lines also name the absolute distance to the enforcement ceiling, while
   report ordering stays by surface id.
+- Sealed members `2026-10-21` (ADR 0058, `LIVE-DOCUMENT-PRESSURE-HEADROOM.8`): a `collection` member that has
+  reached its per-file rollover may be listed in `sealed_members` with its content's SHA-256 and the sealing leaf.
+  It takes no more writes; an edit fails closed, so it is amended by a new member. Per-file milestones then measure
+  the unsealed members, while every ceiling, the file count and both aggregates still measure all of them. A member
+  below rollover cannot be sealed. `decision_records` seals ADR 0038, an accepted record at 92.6% of its lines and
+  97.1% of its bytes, whose warning had asked for a remedy that cannot apply to a file that does not grow.
 - Precedent re-read `2026-09-23` (`LIVE-DOCUMENT-PRESSURE-HEADROOM.40`): the FSMGen adoption guide at `727e0d086`,
   SHA-256 `8f77fa39c9bcb9cfc43166259a627a6ced64682030088400b727dccc5d674a53`, against the `.8a` reading of
   `6f10b950…` (`70ba62f35`). Two rules were added since, both now neutral text above. Task-narrative bounding was

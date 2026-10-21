@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how many converter text items does iterate_items yield across the corpus
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > how many corpus constraints need a negated form of extract_protocol_state_value
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > how many corpus documents are flagged as under-extracted specs
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -294,7 +298,3 @@
   > how much fact-card catalog index headroom remains
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how much fixed overhead does the status ledger live view carry
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how much headroom remains in the corpus coverage task file
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > how much intent does SpecForge extract across the whole corpus

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > what is the permission-vs-obligation gate / frame error class
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > what is the population of a kind-classifier change in evidence.rs
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > what is the positional value fallback in evidence.rs
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is the pre-registered adoption bar for a remote decision provider
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is the presence-matrix structural gate and how many tables fire it
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > what is the present blocking point on the specification-to-executable-intent path
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
@@ -287,13 +297,3 @@
   > when is a WIRE-BASED-100 gold refined instead of the extractor changed
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > when is a bracket-slice leading token a field name
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > when is a register's own stated reset lowered to (reset V)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > when is a single letter a field name
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > when is a trailing single letter in a name cell removed
-- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
-  > when is an unknown-kind table read as a signal description
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)

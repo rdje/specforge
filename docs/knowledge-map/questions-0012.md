@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > qwen2.5vl vs qwen3-vl which model
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > roughly what share of docs/tasks node declarations state their status inline on the id line (about a third; 467 of 1,427 on 2026-09-17, but the denominator MOVES - see below)
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > should I add a term to builtin_actor_taxonomy_role_in_text (measure it first with scripts/measure_actor_taxonomy_blast_radius.py; the answer for every candidate the corpus has produced so far is NO)
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
@@ -293,7 +297,3 @@
   > what changed between the persisted source_ir and a fresh ingest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > what class of defect does a given check still permit
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > what clean scopes does specforge offer
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > what condition does an obligation inferred with 'which means that' get (its antecedent clause; EXTRACTION-REPRESENTATION-GAPS.31)

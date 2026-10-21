@@ -2,10 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
 - [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
   > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.17
 - [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
   > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.43
+- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
+  > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.8
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > what is LOWand and why does the level test read a leading uppercase run
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
@@ -84,6 +92,8 @@
   > what is a row-keyed constraint
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > what is a scope carrier
+- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
+  > what is a sealed member of a live-document-size collection (sealed_members: path, sha256, owner)
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > what is a subscript split and why can no underscore rule find it
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
@@ -288,13 +298,3 @@
   > what is retain_borne_semantic_roles / SemanticRoleSubject / SemanticRoleReading / semantic_role_phrase_spans
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is route_catalog_state
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is row_conditions on a timing constraint
-- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
-  > what is scope_rule_polarity_observations / PolarityScopes
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is scripts/check_doctrines.sh / the doctrine driver
-- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
-  > what is scripts/measure_unread_intent_records.py
-- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
-  > what is scripts/measure_untyped_table_families.py

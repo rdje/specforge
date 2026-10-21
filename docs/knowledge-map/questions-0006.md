@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how do I adjudicate cross-table enum conflation
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
   > how do I avoid re-sealing all 31 chains for a behaviour-neutral refactor
 - [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
@@ -295,5 +297,3 @@
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > how does SpecForge expand a generic Ax name to AW and AR
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how does SpecForge extract register fields from tables

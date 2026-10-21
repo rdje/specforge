@@ -152,7 +152,7 @@ for my $id (sort keys %surface_by_id) {
     my $paths = $matches_by_surface{$id} // [];
     my $metrics = measure_paths($paths);
     $metrics_by_surface{$id} = $metrics;
-    validate_limits($surface, $metrics, $id);
+    validate_limits($surface, $metrics, $id, validate_sealed_members($surface, $paths, $id));
     validate_cardinality_exemption($surface, $id, \%surface_by_id, \%matches_by_surface);
     validate_lifecycle($surface, $paths, $metrics, $id, \%executed_verifier);
     if ($report) {
@@ -552,7 +552,7 @@ sub validate_surface_schema {
     reject_unknown_fields(
         $surface,
         "surface '$id'",
-        qw(surface_id targets locator lifecycle state owner health_targets enforcement_ceilings milestones verifier baseline transition currency index index_contract freshness_verifier canonical_inputs sha256 reference_contract archive_manifest aggregate_composition cardinality_exemption),
+        qw(surface_id targets locator lifecycle state owner health_targets enforcement_ceilings milestones verifier baseline transition currency index index_contract freshness_verifier canonical_inputs sha256 reference_contract archive_manifest aggregate_composition cardinality_exemption sealed_members),
     );
     validate_aggregate_reachability($surface, $id);
     reject_unknown_fields($surface->{health_targets}, "surface '$id' health_targets", @dimensions);
@@ -572,6 +572,10 @@ sub validate_surface_schema {
     reject_unknown_fields($surface->{cardinality_exemption}, "surface '$id' cardinality_exemption",
         qw(authority work_unit route_surface_id rationale))
         if exists $surface->{cardinality_exemption};
+    if (ref($surface->{sealed_members}) eq 'ARRAY') {
+        reject_unknown_fields($_, "surface '$id' sealed member", qw(path sha256 owner))
+            for grep { ref($_) eq 'HASH' } @{ $surface->{sealed_members} };
+    }
     if (exists $surface->{reference_contract}) {
         my $contract = $surface->{reference_contract};
         reject_unknown_fields($contract, "surface '$id' reference_contract", qw(mandatory_read max_navigation_depth aggregate_change));
@@ -996,8 +1000,64 @@ sub validate_cardinality_exemption {
     }
 }
 
+# ADR 0058 — a collection member that has reached its per-file rollover may be SEALED: it takes no further writes,
+# and what would have grown it goes to a new member, which is the rollover's own remedy. Each sealed member names
+# its path, the sha256 of the content it was sealed with, and the leaf that sealed it. It must be one of the
+# surface's own files, it must have reached rollover on a per-file dimension (sealing cannot silence a file that is
+# still growing toward its band), and its content must still hash to the seal: an edit fails closed, so a sealed
+# record is amended by a new one. The return is the measure of the unsealed members, which the per-file
+# milestones read; `undef` when the surface seals nothing.
+sub validate_sealed_members {
+    my ($surface, $paths, $id) = @_;
+    return undef if !exists $surface->{sealed_members};
+    my $sealed = $surface->{sealed_members};
+    if (ref($sealed) ne 'ARRAY' || !@$sealed) {
+        problem("surface '$id' sealed_members must be a non-empty array");
+        return undef;
+    }
+    problem("surface '$id' seals members but is not a collection")
+        if ($surface->{locator} // '') ne 'collection';
+    my $targets = ref($surface->{health_targets}) eq 'HASH' ? $surface->{health_targets} : {};
+    my $rollover = ref($surface->{milestones}) eq 'HASH' ? $surface->{milestones}{rollover_pct} : undef;
+    my %member = map { $_ => 1 } @$paths;
+    my %seen;
+    for my $entry (@$sealed) {
+        if (ref($entry) ne 'HASH') {
+            problem("surface '$id' sealed member must be an object");
+            next;
+        }
+        my $path = required_scalar($entry, 'path', "surface '$id' sealed member") // next;
+        my $expected = required_scalar($entry, 'sha256', "surface '$id' sealed member '$path'");
+        required_scalar($entry, 'owner', "surface '$id' sealed member '$path'");
+        problem("surface '$id' seals '$path' twice") if $seen{$path}++;
+        if (!$member{$path}) {
+            problem("surface '$id' sealed member '$path' is not one of its files");
+            next;
+        }
+        open my $fh, '<:raw', absolute($path) or do {
+            problem("cannot read sealed member '$path': $!");
+            next;
+        };
+        local $/;
+        my $actual = sha256_hex(<$fh> // '');
+        close $fh;
+        problem("surface '$id' sealed member '$path' changed; amend it with a new record")
+            if defined($expected) && $actual ne $expected;
+        my $own = measure_paths([$path]);
+        my $at_rollover = defined($rollover) && grep {
+            defined($targets->{$_}) && $targets->{$_} > 0 && 100 * $own->{$_} / $targets->{$_} >= $rollover
+        } qw(lines_each bytes_each line_bytes_each);
+        problem("surface '$id' sealed member '$path' has not reached its per-file rollover")
+            if !$at_rollover;
+    }
+    return measure_paths([grep { !$seen{$_} } @$paths]);
+}
+
 sub validate_limits {
-    my ($surface, $metrics, $id) = @_;
+    my ($surface, $metrics, $id, $milestone_metrics) = @_;
+    # ADR 0058 — a sealed member takes no writes, so a per-file growth milestone measures the members that can
+    # still grow; every ceiling and every aggregate still measures the whole surface.
+    $milestone_metrics //= $metrics;
     # A maintained reference may null a dimension by lifecycle. Any other surface may null one only behind a
     # declared cardinality exemption, whose conditions validate_cardinality_exemption enforces separately —
     # so a bare null is still refused and cannot be adopted by copying this line (ADR 0045).
@@ -1022,7 +1082,8 @@ sub validate_limits {
         } else {
             for my $dimension (@dimensions) {
                 next if !defined $targets->{$dimension} || $targets->{$dimension} == 0;
-                my $percent = 100 * $metrics->{$dimension} / $targets->{$dimension};
+                my $measured = $dimension =~ /_each\z/ ? $milestone_metrics->{$dimension} : $metrics->{$dimension};
+                my $percent = 100 * $measured / $targets->{$dimension};
                 # LIVE-DOCUMENT-PRESSURE-HEADROOM.25 — this skip used to apply to EVERY surface at
                 # equality, which made a collection's FULLEST state the only one that reported nothing:
                 # measured at `rolling_ledger_archive_indexes`, a partitioned_canonical collection sitting
@@ -1060,8 +1121,8 @@ sub validate_limits {
                 # have landed on an unrelated slice (ADR 0032).
                 my $headroom = '';
                 my $ceiling = ref($ceilings) eq 'HASH' ? $ceilings->{$dimension} : undef;
-                $headroom = sprintf(' — %d below its %d ceiling', $ceiling - $metrics->{$dimension}, $ceiling)
-                    if defined($ceiling) && $ceiling >= $metrics->{$dimension};
+                $headroom = sprintf(' — %d below its %d ceiling', $ceiling - $measured, $ceiling)
+                    if defined($ceiling) && $ceiling >= $measured;
                 if ($percent >= $rollover) {
                     push @warnings, sprintf("surface '%s' %s is at or above rollover (%.1f%%)%s", $id, $dimension, $percent, $headroom);
                 } elsif ($percent >= $warning) {

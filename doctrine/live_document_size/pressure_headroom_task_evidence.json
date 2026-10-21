@@ -52,13 +52,13 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 warning assignment",
     "metrics": {
-     "bytes": 33952,
+     "bytes": 38767,
      "line_bytes": 702,
-     "lines": 386
+     "lines": 439
     },
     "part_id": "warning-assignment",
     "path": "docs/tasks/live-document-pressure-headroom/warning-assignment.md",
-    "sha256": "4b90295abadd4055d8241a4847990da23adf77b369b8a8f9ca34b2fa42e07b93",
+    "sha256": "09bea34f9391f8961479bfeb79f9da9ee8db246c962ac2311f297c89a4923edb",
     "state": "active"
    },
    {
@@ -665,7 +665,7 @@
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8",
-   "lifecycle": "open",
+   "lifecycle": "closed",
    "origin": "structural",
    "part_id": "warning-assignment",
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8"
@@ -832,6 +832,18 @@
    "lifecycle": "open",
    "origin": "post_migration",
    "part_id": "warning-assignment"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a",
+   "lifecycle": "open",
+   "origin": "post_migration",
+   "part_id": "warning-assignment"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b",
+   "lifecycle": "open",
+   "origin": "post_migration",
+   "part_id": "warning-assignment"
   }
  ],
  "limits": {
@@ -964,7 +976,6 @@
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.6`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`",
-   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.9`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.10`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.11`",
@@ -980,7 +991,9 @@
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.42`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.45`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`",
-   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34e`"
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34e`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b`"
   ]
  },
  "migration_metadata": {

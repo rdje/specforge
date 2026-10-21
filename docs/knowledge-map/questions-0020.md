@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > which formal signal declaration predicates does the dense prose authority gate accept
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > which frozen boundary values in behavioral_qualification.json stay exact
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > which frozen fabrication defects still reproduce in current SpecForge
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which functions call classify_signal_constraint_kind
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > which functions decide whether a clause states an obligation
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
@@ -44,6 +54,8 @@
   > which mdBook quantitative assertions still lack claim authority
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > which mdBook quantitative census totals may be published and which must be read from the report
+- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
+  > which members may be sealed (only one at or past its per-file rollover, so sealing cannot silence a growing file)
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > which metric counts class-scoped absent values (signal_presence_qualified_absent_values)
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
@@ -285,15 +297,3 @@
   > why are SWD recognized phases signal_set empty and transactions ports empty
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > why are TGA_O and STALL_O refused by the heading rule
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > why are TGD_I and TGD_O refused by the shipped heading rule
-- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
-  > why are USB 3.2 LTSSM substates like Polling.Active protocol states / what is merge_transition_states / table_state
-- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > why are USB 3.2's RxD and TxEQ not expanded
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > why are USER_GUIDE.md and the root architecture documents only pointers
-- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
-  > why are Wishbone's MAY sentences classed timing_constraint
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap

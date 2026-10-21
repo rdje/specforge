@@ -45,13 +45,13 @@ Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.12`.
 The nearest measured stop is `.12`, which owns the 909-byte table row `.27a` relocated onto the
 `doctrine_instance` surface.
 
-Open leaves, read from the contract's own route lifecycles rather than restated: the assigned warning
-successors `.8`-`.13`; the `pipeline/isf-adapter.md` book cut `.34c`; the
-`direction/temporal-intent-capture.md` line warning `.34e`; the alignment-index residual `.16` and the
-task-evidence manifest's byte ceiling `.17a` (`.17`, the leaf-route count, closed by ADR 0056); the semantic-part and
-ledger splits `.14b`/`.14c`; the classification-refusal control `.6`; the claim registry's lifecycle `.36d`; the
-ownership-citation registry's bound `.42`; the FSMGen ledger's line target `.45`; and the containers `.2`, `.4`, `.14`
-and `.36`.
+Open leaves, read from the contract's own route lifecycles rather than restated: the assigned warning successors
+`.9`-`.13` and `.8.a`/`.8.b` (`.8` closed by ADR 0058); the `pipeline/isf-adapter.md` book cut `.34c`; the
+`direction/temporal-intent-capture.md` line warning `.34e`; the alignment-index residual `.16` and the task-evidence
+manifest's byte ceiling `.17a` (`.17`, the leaf-route count, closed by ADR 0056); the semantic-part and ledger
+splits `.14b`/`.14c`; the classification-refusal control `.6`; the claim registry's lifecycle `.36d`; the
+ownership-citation registry's bound `.42`; the FSMGen ledger's line target `.45`; and the containers `.2`, `.4`,
+`.14` and `.36`.
 
 **This section is overwritten, never appended to.** It stated the frontier in two lines and then carried a
 paragraph per closure, which made it the largest single writer on this root's binding axis: 39 of the 83
@@ -76,7 +76,8 @@ primary detail-routing authority.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.6`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`
-- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.9`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.10`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.11`

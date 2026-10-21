@@ -77,7 +77,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.5` | `closed` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.6` | `open` | [Task plane cardinality](task-plane-cardinality.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `closed` | [Warning assignment](warning-assignment.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.8` | `open` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.8` | `closed` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.9` | `open` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36` | `open` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36a` | `closed` | [Current and open work](current-and-open-work.md) |
