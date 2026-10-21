@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.i.a",
-      "literal" : "`.54.a.i.a` — a prior acts only with two documents' support, and never re-types a layout header.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.ii",
+      "literal" : "`.54.a.ii` — the corpus memory's refresh runs as ADR 0036 declares it, under `.54.a.i`'s rule.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -1161,7 +1161,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.i.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       }
@@ -1299,13 +1299,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
          "metrics" : {
-            "bytes" : 36362,
-            "line_bytes" : 171,
-            "lines" : 377
+            "bytes" : 39641,
+            "line_bytes" : 221,
+            "lines" : 408
          },
          "part_id" : "packet-and-memory-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-         "sha256" : "0b2b48ba2392b535ef2f4ebc8efbd113d6727fc6c12538b802b5a25ab34261cc",
+         "sha256" : "1d867e7020ac484c2ed1b84717872917dd337893b49c9bbca00c4a2d82f16e65",
          "state" : "active"
       },
       {

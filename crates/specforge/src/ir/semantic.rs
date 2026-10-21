@@ -12362,7 +12362,8 @@ fn load_semantic_prior_guidance(
             Err(AppError::MissingPath(_)) => return Ok(None),
             Err(error) => return Err(error),
         };
-    let corpus_memory = CorpusMemory::load_from_path(&prior_memory_path)?;
+    // EXTRACTION-REPRESENTATION-GAPS.54.a.i.a — only a prior two documents support may act.
+    let corpus_memory = CorpusMemory::load_from_path(&prior_memory_path)?.acting_priors();
     Ok(Some(SemanticPriorGuidance {
         corpus_memory,
         prior_scope: PriorScope::Global,
@@ -14367,6 +14368,30 @@ mod tests {
         phase_occurrence_is_passive_predicate, split_control_header_keyword, width_hint_key,
     };
 
+    #[test]
+    fn the_semantic_stage_acts_only_on_priors_two_documents_support() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.54.a.i.a
+        let tempdir = tempdir()?;
+        let path = tempdir.path().join("corpus_memory.json");
+        fs::write(
+            &path,
+            crate::ir::prior_memory::store_with_phrase_support(&[1, 3]).to_pretty_json()?,
+        )?;
+        let guidance = super::load_semantic_prior_guidance(Some(&path))?.expect("the store loads");
+        let phrases: Vec<&str> = guidance
+            .corpus_memory
+            .semantic_phrase_priors
+            .iter()
+            .map(|prior| prior.normalized_phrase.as_str())
+            .collect();
+        assert_eq!(
+            phrases,
+            ["phrase 3"],
+            "a prior one document taught does not act"
+        );
+        Ok(())
+    }
+
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
         StructuredTableCellRecord {
             text: text.to_string(),
@@ -14419,8 +14444,9 @@ mod tests {
                 cycle_window: Some(cycle_window),
                 actor_grounded: false,
                 handshake_completion: false,
-                support_count: 1,
-                supporting_document_keys: vec!["seed_doc".to_string()],
+                // EXTRACTION-REPRESENTATION-GAPS.54.a.i.a — a prior acts only on two documents' support
+                support_count: 2,
+                supporting_document_keys: vec!["seed_doc".to_string(), "second_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::High,
             }],
             table_shape_priors: Vec::new(),

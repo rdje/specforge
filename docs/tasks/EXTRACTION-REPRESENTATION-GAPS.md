@@ -38,17 +38,16 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.54.a.i.a` — a prior acts only with two documents' support, and never re-types a layout header.
+`.54.a.ii` — the corpus memory's refresh runs as ADR 0036 declares it, under `.54.a.i`'s rule.
 
-Then, in order: `.54.a.ii` (the corpus memory's refresh under `.54.a.i`'s rule, with the 24-document behavioral
-re-qualification), `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
-`.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi`
-(today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and
-unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once
-`KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
-`.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a legacy register-map document's re-ingest. Closed leaves are read
-from the route catalog's lifecycles, not restated here; the list this paragraph carried until `2026-10-19` is in the
-`register-binding-leaves` part.
+It re-pins an equivalent store and re-runs the 24-document behavioral qualification. Then, in order: `.46.c` waits for
+a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`), `.3.g.iii` (multi-column encodings),
+`.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a
+converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables), `.44`
+(Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
+initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and
+`.41.d` for a legacy register-map document's re-ingest. Closed leaves are read from the route catalog's lifecycles,
+not restated here; the list this paragraph carried until `2026-10-19` is in the `register-binding-leaves` part.
 
 Every new leaf and dated entry goes to the `packet-and-memory-leaves` part. Since `2026-10-21` (`.56.a`) a part whose
 every leaf is closed is archived, byte-exact, under `docs/archive/tasks/extraction-representation-gaps/` and takes no
@@ -103,7 +102,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.37`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
 

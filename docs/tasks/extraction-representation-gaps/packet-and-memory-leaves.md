@@ -80,7 +80,7 @@ whole.
   so its re-qualification becomes a re-pin of an equivalent store.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a`
-  Status: `open` (`2026-10-21`; CODE; opened by `.54.a.i`)
+  Status: `done` (`2026-10-21`; CODE; opened by `.54.a.i`; checklist below)
   Goal: **a prior acts only with two documents' support, and never re-types a layout header.** **Reproduce:** the
   pinned store recalls AXI `AWTAGOP` as ready-like from a single-document phrase prior learned before `.50`.
   Acceptance: every prior-memory lookup in `crates/specforge/src/ir/prior_memory.rs` (each family's
@@ -88,6 +88,37 @@ whole.
   whose header a message-field or register layout reader recognizes takes no learned kind in `effective_table_kind`.
   Then measure every chain at every stage: the expected EvidenceIR effect is exactly AXI's `AWTAGOP` hint. Rebuild the
   affected chains, and keep the book's corpus-memory and handshake pages in lockstep.
+  **Done `2026-10-21`.** `CorpusMemory::acting_priors()` keeps, in every family, the priors whose `support_count` (the
+  learner's count of distinct supporting documents) reaches `MIN_ACTING_SUPPORT` (2). The evidence and semantic stage
+  guidance and the validation reader load the store through it, so every lookup inherits the rule, and the store file
+  keeps every prior. `effective_table_kind` gives no learned kind to a header `is_recognized_layout_header`
+  recognizes: the bit, three-column bit, dword, register-field, byte-location, descriptor and width-and-offset
+  layouts. All 31 chains were rebuilt stage by stage, and only AXI moved. EvidenceIR loses the `AWTAGOP` ready-like
+  hint (56 -> 55), and SemanticIR and IntentIR drop that tag from its four interface records. Every `.isf` text is
+  byte-identical.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — `.54.a.i`'s scratch stores: the pinned store, a candidate relearned from the 31 chains,
+  and the candidate with no table priors, only two-document table priors, leave-one-out, two-document priors in every
+  family, and empty. Each was an EvidenceIR dry-run of the 31 chains, then the rule applied through the real loader.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/prior_memory.rs`: every lookup acted on any prior, and
+  nearly every prior rests on one document, so a store replays each document's own past readings. Table-shape priors
+  learn the converter's raw kind (`learn_priors.rs` `harvest_table_shape_priors_from_source_ir`). New
+  `MIN_ACTING_SUPPORT`, `acting_priors`, `store_with_phrase_support` (test support); `is_recognized_layout_header`,
+  `dword_layout_header` (shared with the dword family) in `evidence.rs`; the three load sites. RED, each file restored
+  byte-identically, every mutation failing a named test (6): one document acting, a family left unfiltered, and each of the evidence, semantic and validation loads skipping the rule, and a learned kind re-typing a layout.
+- [x] **ADDRESSED (verified)** — all 31 chains rebuilt stage by stage: AXI alone moves, as measured beforehand.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `84135ba92`'s. `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 /
+  1,908 passed and 1 failed: the semantic fixture's temporal prior rested on one document. Given two, it passes.
+  `flow_census.json` rolled (+3 functions, +1 decision site, +14 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006, 0036)** — the rule counts supporting documents and never reads the current one; the
+  layout guard reads the table's own header. No document, family or name.
+- [x] **LOCKSTEP** — book `quality/corpus-memory.md` and `domain/handshake-semantics.md`; KM cards
+  `corpus-memory-schema-7-neutral-scope` and `a-hint-role-counts-only-for-the-signal-that-bears-it` amended; ROADMAP
+  R15f. No decision record (`decision_records` past rollover); the rule is recorded at `.54.a.i`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
   Status: `open` (`2026-10-21`; CODE; split from `.54.a`; waits for `.54.a.i`)

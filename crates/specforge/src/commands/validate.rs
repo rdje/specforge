@@ -999,7 +999,10 @@ fn load_prior_memory_for_validation(prior_memory_path: Option<&Path>) -> Option<
     let prior_memory_path =
         resolve_existing(prior_memory_path, PersistedPathOrigin::RepositoryOwned).ok()?;
 
-    CorpusMemory::load_from_path(&prior_memory_path).ok()
+    // EXTRACTION-REPRESENTATION-GAPS.54.a.i.a — only a prior two documents support may act.
+    CorpusMemory::load_from_path(&prior_memory_path)
+        .ok()
+        .map(|memory| memory.acting_priors())
 }
 
 fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
@@ -7884,6 +7887,21 @@ mod tests {
         SignalConstraintRecord, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
         TableKind, TimingConstraintRecord, VisualAsset, VisualAssetKind,
     };
+
+    #[test]
+    fn validation_reads_only_priors_two_documents_support() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.54.a.i.a
+        let tempdir = tempdir()?;
+        let path = tempdir.path().join("corpus_memory.json");
+        fs::write(
+            &path,
+            crate::ir::prior_memory::store_with_phrase_support(&[1, 2]).to_pretty_json()?,
+        )?;
+        let memory = load_prior_memory_for_validation(Some(&path)).expect("the store loads");
+        assert_eq!(memory.semantic_phrase_priors.len(), 1);
+        assert_eq!(memory.semantic_phrase_priors[0].support_count, 2);
+        Ok(())
+    }
 
     #[test]
     fn stage_staleness_flags_emptied_relations_against_nonempty_upstream() {

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > why is '1110' fourteen and not one thousand one hundred ten
+- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
+  > why is 'A 2 ms timer shall be started' not timing_constraint (none of the admitting words)
+- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
+  > why is 'A device shall not assume that transactions occur at the same location' filed apparatus
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > why is 'Connection Manager assumes the configuration of Asymmetric Link failed' an assumption (of stays in the object)
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
@@ -292,9 +298,3 @@
   > why is an identifier-shaped section title not enough to declare a wire
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > why is an in-repo gold document re-ingest blocked by PRODUCTION-GENERICITY
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why is arm C excluded on caption_admission
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why is arm C excluded on declaration_row
-- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
-  > why is bReserved a field and also a reserved span (field_id)

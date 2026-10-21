@@ -80,6 +80,49 @@ pub struct CorpusMemory {
     pub extraction_profile_priors: Vec<ExtractionProfilePriorRecord>,
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a` — the fewest documents a prior must rest on before it may act.
+pub const MIN_ACTING_SUPPORT: usize = 2;
+
+/// `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a` — a store holding one semantic phrase prior per support count, for the
+/// stages' load tests (`phrase N` rests on N documents).
+#[cfg(any(test, feature = "test-support"))]
+pub fn store_with_phrase_support(support_counts: &[usize]) -> CorpusMemory {
+    CorpusMemory {
+        schema_version: CORPUS_MEMORY_SCHEMA_VERSION,
+        update_policy: CorpusMemoryUpdatePolicyRecord {
+            advisory_only: true,
+            requires_validated_intent_ir: true,
+            rejects_error_findings: true,
+            excludes_alias_dependent_semantic_consensus: true,
+            local_grounding_required_for_canonical_promotion: true,
+        },
+        source_artifacts: Vec::new(),
+        actor_taxonomy_priors: Vec::new(),
+        semantic_phrase_priors: support_counts
+            .iter()
+            .map(|&support| SemanticPhrasePriorRecord {
+                prior_id: format!("semantic_phrase_prior_{support}"),
+                normalized_phrase: format!("phrase {support}"),
+                role: InterfaceSignalSemanticRole::HandshakeReadyLike,
+                prior_scope: PriorScope::Global,
+                source_kind: SignalSemanticHintSourceKind::ProseStatement,
+                support_count: support,
+                supporting_document_keys: (0..support)
+                    .map(|index| format!("document_{index}"))
+                    .collect(),
+                strongest_automation_confidence: AutomationConfidence::High,
+                strongest_grounding_strength: SemanticGroundingStrength::SingleSource,
+            })
+            .collect(),
+        semantic_modality_reliability_priors: Vec::new(),
+        temporal_phrase_priors: Vec::new(),
+        table_shape_priors: Vec::new(),
+        visual_motif_priors: Vec::new(),
+        negative_knowledge_priors: Vec::new(),
+        extraction_profile_priors: Vec::new(),
+    }
+}
+
 impl CorpusMemory {
     /// Load current or legacy prior memory without allowing a historical named-family value to
     /// select extraction behavior. Identity-scoped prior families from schemas 1 through 6 are
@@ -112,6 +155,41 @@ impl CorpusMemory {
 
     pub fn to_pretty_json(&self) -> Result<String> {
         Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a` — the priors that may act: those at least [`MIN_ACTING_SUPPORT`]
+    /// documents support (`support_count`, the learner's count of distinct supporting documents), in every family. The store keeps every learned prior as provenance. A prior resting on one
+    /// document is that document's own past reading, and replaying it to the document carries no evidence: it kept
+    /// AXI's `AWTAGOP` ready-like after the reader withdrew the reading. The rule counts documents and never reads the
+    /// current one, so lookup stays identity-independent (ADR 0036).
+    pub fn acting_priors(&self) -> Self {
+        let acts = |support_count: usize| support_count >= MIN_ACTING_SUPPORT;
+        let mut acting = self.clone();
+        acting
+            .actor_taxonomy_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
+            .semantic_phrase_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
+            .semantic_modality_reliability_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
+            .temporal_phrase_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
+            .table_shape_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
+            .visual_motif_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
+            .negative_knowledge_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
+            .extraction_profile_priors
+            .retain(|prior| acts(prior.support_count));
+        acting
     }
 
     fn persisted_clone(&self) -> Result<Self> {
@@ -1858,6 +1936,63 @@ mod tests {
         // must return 0, not 1 (the !matches! excludes SingleSource).
         let prior = make_reliability_prior(2, SemanticGroundingStrength::SingleSource);
         assert_eq!(semantic_modality_reliability_prior_bonus(&prior), 0);
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.54.a.i.a — a prior acts only on two documents' support, in every family.
+    #[test]
+    fn acting_priors_keep_only_priors_two_documents_support() {
+        let corpus = make_test_corpus();
+        assert_eq!(
+            corpus.acting_priors(),
+            corpus,
+            "every prior here rests on two documents or more"
+        );
+        let mut single = corpus.clone();
+        single
+            .actor_taxonomy_priors
+            .iter_mut()
+            .for_each(|prior| prior.support_count = 1);
+        single
+            .semantic_phrase_priors
+            .iter_mut()
+            .for_each(|prior| prior.support_count = 1);
+        single
+            .temporal_phrase_priors
+            .iter_mut()
+            .for_each(|prior| prior.support_count = 1);
+        single
+            .table_shape_priors
+            .iter_mut()
+            .for_each(|prior| prior.support_count = 1);
+        single
+            .visual_motif_priors
+            .iter_mut()
+            .for_each(|prior| prior.support_count = 1);
+        single
+            .negative_knowledge_priors
+            .iter_mut()
+            .for_each(|prior| prior.support_count = 1);
+        single
+            .extraction_profile_priors
+            .iter_mut()
+            .for_each(|prior| prior.support_count = 1);
+        let acting = single.acting_priors();
+        assert!(acting.actor_taxonomy_priors.is_empty());
+        assert!(acting.semantic_phrase_priors.is_empty());
+        assert!(acting.temporal_phrase_priors.is_empty());
+        assert!(acting.table_shape_priors.is_empty());
+        assert!(acting.visual_motif_priors.is_empty());
+        assert!(acting.negative_knowledge_priors.is_empty());
+        assert!(acting.extraction_profile_priors.is_empty());
+        assert_eq!(
+            acting.source_artifacts, single.source_artifacts,
+            "provenance is kept"
+        );
+        assert_eq!(
+            single.table_shape_priors.len(),
+            corpus.table_shape_priors.len(),
+            "the store itself keeps every prior"
+        );
     }
 
     // CorpusMemory filter method unit tests

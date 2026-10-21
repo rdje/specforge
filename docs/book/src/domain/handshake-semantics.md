@@ -163,6 +163,8 @@ The safety rule is the same as elsewhere:
 - the phrase must still appear in the current document
 - the prior only guides interpretation
 - the prior does not invent a signal, role, or fact by itself
+- the prior must rest on at least two documents: a prior one document taught is that document's own past reading, and
+  replaying it to that document carries no evidence (`EXTRACTION-REPRESENTATION-GAPS.54.a.i.a`)
 - the current text must still make the signal the bearer: a remembered role holds only when the text has no words of that role of its own and the signal indicates, or opens the sentence as its subject (*XACK can receive the transfer*)
 
 ## Handshake completion

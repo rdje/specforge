@@ -209,6 +209,9 @@ to it. So a fixed point keeps a reading the reader has withdrawn: AXI's `AWTAGOP
 back after every relearn. The decided rule: **a prior acts only when at least two documents support it.** It counts
 documents and never reads the current one, so it stays identity-independent. Under it the pinned store changes exactly
 that one hint on the 31 chains, and a store relearned from all 31 is EvidenceIR-identical to it. A table whose header a
-layout reader recognizes is never re-typed by a learned kind (implementation `.54.a.i.a`). Meanwhile a remembered semantic
+layout reader recognizes is never re-typed by a learned kind. Both rules hold since `.54.a.i.a` (`2026-10-21`). Each
+stage acts on `CorpusMemory::acting_priors()`, the priors with `support_count` at least two, while the store keeps
+every learned prior as provenance. On the 31 chains only AXI moves: the stale `AWTAGOP` ready-like hint and its
+interface tags are gone, and every `.isf` text is byte-identical. Meanwhile a remembered semantic
 role holds only where the current text makes the signal its bearer (`.50`; see *Prior-guided meaning* in
 `domain/handshake-semantics.md`).

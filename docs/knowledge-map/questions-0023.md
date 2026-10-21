@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > why does ACE table_0275 stay flagged after presence capture
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -181,6 +183,8 @@
   > why does a dynamic constraint record need no modal
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why does a field repeat on value sub-rows (row-spanning cells)
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > why does a learned table kind not re-type a bit layout (is_recognized_layout_header)
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > why does a list condition with two values drop its first members
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
@@ -196,6 +200,8 @@
   > 19:02, 78 minutes later)
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > why does a presence matrix look identical to a signal table to a structural rule (both are a name column beside a short-token column; N/O/C for not-present/optional/conditional occupies exactly the shape a Type column occupies, so only the meaning of the tokens separates them and only reading them recovers it)
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > why does a prior need two documents' support to act (CorpusMemory::acting_priors, MIN_ACTING_SUPPORT)
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > why does a rebuild drop the extraction-quality gauge
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -292,9 +298,3 @@
   > why does an incidental 'can' in a source block not drop its other constraints
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
-- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
-  > why does bind_stated_absent_values run after the convergent loop
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > why does caption_text disappear on re-ingest
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests

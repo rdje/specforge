@@ -54,7 +54,8 @@ role.
 **Corpus memory.** A recalled phrase (`semantic_phrase_role_in_text`) has no position, so it holds only when the text
 has no phrase of that role of its own and the signal indicates, or opens a sentence as its subject (*XACK can receive
 the transfer*). The local memory was learned from the old readings; with the new reader it adds one hint across the 31
-chains (AXI `AWTAGOP` ready-like, from *already*) — owned by `.54`.
+chains (AXI `AWTAGOP` ready-like, from *already*). Since `.54.a.i.a` (`2026-10-21`) a prior acts only on two
+documents' support, and that one-document phrase prior no longer acts.
 
 **Measured `2026-10-21` (31 chains):** 136 -> 97 hints (67 kept, 68 withdrawn, 29 gained — AXI's valid indicators
 now from their own words); conflicts 4 -> 1 (Wishbone `ACK_I`, which the document gives both roles). AXI `Y`, a code

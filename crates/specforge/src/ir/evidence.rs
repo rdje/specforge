@@ -4248,7 +4248,8 @@ fn load_evidence_prior_guidance(
             Err(error) => return Err(error),
         };
 
-    let corpus_memory = CorpusMemory::load_from_path(&prior_memory_path)?;
+    // EXTRACTION-REPRESENTATION-GAPS.54.a.i.a — only a prior two documents support may act.
+    let corpus_memory = CorpusMemory::load_from_path(&prior_memory_path)?.acting_priors();
     Ok(Some(EvidencePriorGuidance {
         prior_memory_path: prior_memory_path.clone(),
         prior_scope: PriorScope::Global,
@@ -4822,6 +4823,27 @@ fn is_tie_off_actor_text(value: &str) -> bool {
     matches!(normalize_actor_term(value).as_str(), "tie off" | "tieoff")
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a` — does a message-field or register layout reader recognize this table's
+/// header: the bit, byte-location, descriptor, width-and-offset or dword layouts, or a register field table? Such a
+/// header decides its own table, so no learned kind re-types it: USB 3.2's converter-mistyped status tables had taught
+/// `bit | description` -> signal description to the document's other bit layouts.
+fn is_recognized_layout_header(table: &crate::ir::source::StructuredTableRecord) -> bool {
+    let Some(header) = table.header_rows.first() else {
+        return false;
+    };
+    let titles: Vec<String> = header
+        .iter()
+        .map(|cell| cell.text.trim().to_ascii_lowercase())
+        .collect();
+    bit_position_layout_header(header)
+        || bit_assignment_layout_header(header)
+        || dword_layout_header(header)
+        || is_register_field_header(&titles)
+        || byte_location_layout_columns(table).is_some()
+        || descriptor_layout_columns(table).is_some()
+        || width_offset_layout_columns(table).is_some()
+}
+
 fn effective_table_kind(
     table: &crate::ir::source::StructuredTableRecord,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -4830,6 +4852,9 @@ fn effective_table_kind(
         table.table_kind
     } else if untyped_table_is_a_signal_description(table) {
         TableKind::SignalDescription
+    } else if is_recognized_layout_header(table) {
+        // EXTRACTION-REPRESENTATION-GAPS.54.a.i.a — a layout reader decides this table by its header
+        TableKind::Unknown
     } else {
         prior_guidance
             .and_then(|prior_guidance| {
@@ -20640,6 +20665,18 @@ fn dword_layout_field_name(description: &str) -> Option<String> {
     Some(head.split_whitespace().collect::<Vec<_>>().join(" "))
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` — is this a dword packet layout's header (`DW | Bits | Description`)?
+fn dword_layout_header(header: &[StructuredTableCellRecord]) -> bool {
+    let titles: Vec<String> = header
+        .iter()
+        .map(|cell| cell.text.trim().to_ascii_lowercase())
+        .collect();
+    titles.len() >= 3
+        && titles[0] == "dw"
+        && titles[1] == "bits"
+        && titles[2].contains("description")
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` — a dword cell: one dword (`3`) or a span (`7:4`, `9:12`, either order).
 /// A symbolic span (`9+N`, `19:19 +(n-1)`) states no position and is `None`.
 fn parse_dword_span(cell: &str) -> Option<(u32, u32)> {
@@ -20682,15 +20719,7 @@ fn extract_dword_layout_fields(
         let Some(header) = table.header_rows.first() else {
             continue;
         };
-        let titles: Vec<String> = header
-            .iter()
-            .map(|cell| cell.text.trim().to_ascii_lowercase())
-            .collect();
-        if titles.len() < 3
-            || titles[0] != "dw"
-            || titles[1] != "bits"
-            || !titles[2].contains("description")
-        {
+        if !dword_layout_header(header) {
             continue;
         }
         // (first dword, last dword, high bit, low bit, description)
@@ -47446,6 +47475,107 @@ The control register.
             "a field its own description reserves is reserved space citing that description, with no keyword"
         );
         Ok(())
+    }
+
+    #[test]
+    fn the_evidence_stage_acts_only_on_priors_two_documents_support() -> Result<()> {
+        let tempdir = tempdir()?;
+        let path = tempdir.path().join("corpus_memory.json");
+        fs::write(
+            &path,
+            crate::ir::prior_memory::store_with_phrase_support(&[1, 2]).to_pretty_json()?,
+        )?;
+        let guidance = super::load_evidence_prior_guidance(Some(&path))?.expect("the store loads");
+        let phrases: Vec<&str> = guidance
+            .corpus_memory
+            .semantic_phrase_priors
+            .iter()
+            .map(|prior| prior.normalized_phrase.as_str())
+            .collect();
+        assert_eq!(
+            phrases,
+            ["phrase 2"],
+            "a prior one document taught does not act"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_learned_table_kind_never_retypes_a_layout_header() {
+        use crate::ir::prior_memory::{
+            CORPUS_MEMORY_SCHEMA_VERSION, CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorScope,
+            TableShapePriorRecord,
+        };
+        let prior = |signature: &str, kind: TableKind| TableShapePriorRecord {
+            prior_id: format!("prior_{signature}"),
+            normalized_header_signature: signature.to_string(),
+            table_kind: kind,
+            prior_scope: PriorScope::Global,
+            support_count: 3,
+            supporting_document_keys: vec!["a".into(), "b".into(), "c".into()],
+            strongest_automation_confidence: AutomationConfidence::High,
+        };
+        let guidance = super::EvidencePriorGuidance {
+            prior_memory_path: PathBuf::from("generated/prior_memory/corpus_memory.json"),
+            prior_scope: PriorScope::Global,
+            corpus_memory: CorpusMemory {
+                schema_version: CORPUS_MEMORY_SCHEMA_VERSION,
+                update_policy: CorpusMemoryUpdatePolicyRecord {
+                    advisory_only: true,
+                    requires_validated_intent_ir: true,
+                    rejects_error_findings: true,
+                    excludes_alias_dependent_semantic_consensus: true,
+                    local_grounding_required_for_canonical_promotion: true,
+                },
+                source_artifacts: Vec::new(),
+                actor_taxonomy_priors: Vec::new(),
+                semantic_phrase_priors: Vec::new(),
+                semantic_modality_reliability_priors: Vec::new(),
+                temporal_phrase_priors: Vec::new(),
+                table_shape_priors: vec![
+                    prior("bit | description", TableKind::SignalDescription),
+                    prior("code | meaning", TableKind::Encoding),
+                ],
+                visual_motif_priors: Vec::new(),
+                negative_knowledge_priors: Vec::new(),
+                extraction_profile_priors: Vec::new(),
+            },
+        };
+        let untyped = |header: [&str; 2]| StructuredTableRecord {
+            table_id: "table_t".to_string(),
+            asset_id: "asset_t".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![
+                header
+                    .iter()
+                    .map(|text| make_table_cell(text, true))
+                    .collect(),
+            ],
+            body_rows: vec![vec![
+                make_table_cell("0", false),
+                make_table_cell("x", false),
+            ]],
+            row_count: 1,
+            col_count: 2,
+        };
+        assert!(super::is_recognized_layout_header(&untyped([
+            "Bit",
+            "Description"
+        ])));
+        assert_eq!(
+            super::effective_table_kind(&untyped(["Bit", "Description"]), Some(&guidance)),
+            TableKind::Unknown,
+            "the bit layout's header decides its table"
+        );
+        assert_eq!(
+            super::effective_table_kind(&untyped(["Code", "Meaning"]), Some(&guidance)),
+            TableKind::Encoding,
+            "a header no layout reader recognizes still takes the learned kind"
+        );
     }
 
     #[test]

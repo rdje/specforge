@@ -2,6 +2,9 @@
 id: corpus-memory-schema-7-neutral-scope
 title: CorpusMemory schema 7 cannot route extraction by document identity
 answers:
+  - "why does a prior need two documents' support to act (CorpusMemory::acting_priors, MIN_ACTING_SUPPORT)"
+  - "why did AXI's AWTAGOP ready-like hint disappear (a one-document phrase prior no longer acts)"
+  - "why does a learned table kind not re-type a bit layout (is_recognized_layout_header)"
   - "Can CorpusMemory infer a protocol family from a filename?"
   - "What is PriorScope in CorpusMemory schema 7?"
   - "Can legacy named-family priors steer current extraction?"
@@ -46,3 +49,13 @@ inputs are now legacy schema-1 IntentIR, which `learn-priors` refuses. On the 31
 (a stale AXI `AWTAGOP` ready-like hint, and one duplicate AHB5 declaration it suppresses); a store relearned from the
 31 chains would drift in every family and move four chains. The refresh, with re-declared inputs and a re-pinned
 qualification, is owned by `.54.a`.
+
+**`2026-10-21` (`.54.a`-`.54.a.i.a`).** All 31 current chains are accepted learning inputs, but nearly every prior in
+both the pinned store and a relearned one rests on a single document. Such a prior replays that document's own past
+reading back to it, so ADR 0036's fixed point kept the `AWTAGOP` hint. Table-shape priors learn the converter's raw
+kind, so USB 3.2's mistyped status tables taught `bit | description` -> signal description to its own bit layouts. Now
+every stage acts on `CorpusMemory::acting_priors()`, the priors with `support_count >= MIN_ACTING_SUPPORT` (2). The
+rule counts documents, never reading the current one, and the store keeps every prior as provenance.
+`effective_table_kind` gives no learned kind to a header a layout reader recognizes (`is_recognized_layout_header`).
+On the 31 chains only AXI moves (the hint and its interface tags). A store relearned from all 31 chains is
+EvidenceIR-identical to the pinned one under the rule, so the refresh (`.54.a.ii`) re-pins an equivalent store.

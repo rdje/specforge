@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > why did adding equivalence_rules re-seal every chain
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why did adding signal_presence_records to SemanticIR and IntentIR re-seal every chain
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
@@ -296,5 +298,3 @@
   > why does 'You must not assume any timing information that is not explicit in the diagrams' stay apparatus
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
