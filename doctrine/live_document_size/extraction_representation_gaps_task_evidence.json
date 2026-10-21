@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii",
-      "literal" : "`.3.g.iii.b.ii` — a value combination reaches IntentIR and the ISF adapter.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii",
+      "literal" : "`.3.g.iii.b.iii` — decide how a value combination that names a member lowers to `.isf`.",
       "mode" : "eligible",
       "part_id" : "encoding-and-state-leaves"
    },
@@ -154,13 +154,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
             "metrics" : {
-               "bytes" : 15953,
+               "bytes" : 21843,
                "line_bytes" : 123,
-               "lines" : 178
+               "lines" : 241
             },
             "part_id" : "encoding-and-state-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-            "sha256" : "958fc1c6fecc990dfc9f63fc22822e52cd528de4a5dd476d0021157c4009e32c",
+            "sha256" : "d473290148494944fd8e62eb60d191dca3a8855030ae610503beee95fc6a4e59",
             "state" : "active"
          },
          {
@@ -1458,6 +1458,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
@@ -1588,7 +1594,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.g.iii.b.ii` — a value combination reaches IntentIR and the ISF adapter.",
+         "`.3.g.iii.b.iii` — decide how a value combination that names a member lowers to `.isf`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1628,7 +1634,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii`"
       ]
    },
    "migration_metadata" : {

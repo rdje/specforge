@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how do I add fact-card capacity
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how do I address exactly one converter item
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how do I adjudicate cross-table enum conflation
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
@@ -293,7 +297,3 @@
   > how does SpecForge distinguish legal conditions from protocol conditions
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how does SpecForge distinguish protocol requests from product listing requests
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > how does SpecForge emit temporal rules or a bounded-eventually into .isf
-- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > how does SpecForge expand a generic Ax name to AW and AR

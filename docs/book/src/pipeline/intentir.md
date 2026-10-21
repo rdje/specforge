@@ -111,8 +111,9 @@ IntentIR ignores them. Source evidence, technical invariant/constraint projectio
 
 ## How protocol observations cross the product boundary
 
-`IntentIR` carries the five typed protocol-observation collections from `SemanticIR` unchanged:
-`serial_frame_fields`, `protocol_operations`, `protocol_states`, `protocol_transitions`, and `interface_edge_timings`.
+`IntentIR` carries the six typed protocol-observation collections from `SemanticIR` unchanged:
+`serial_frame_fields`, `protocol_operations`, `protocol_states`, `protocol_transitions`, `value_combinations` (since
+`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`), and `interface_edge_timings`.
 The projection preserves record order, identifiers, optional values, and supporting-statement and supporting-table
 provenance. It does not sort, filter,
 reinterpret, or complete the observations. Empty collections are omitted when serialized and default to empty

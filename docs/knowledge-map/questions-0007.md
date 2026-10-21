@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > how does SpecForge emit temporal rules or a bounded-eventually into .isf
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > how does SpecForge expand a generic Ax name to AW and AR
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how does SpecForge extract register fields from tables
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -294,7 +298,3 @@
   > how is 'LPIs are always treated as Non-secure Group 1 interrupts' read
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > how is 'Lowercase x at the second letter denotes a collective term' read
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > how is 'must remain asserted until X' represented
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values

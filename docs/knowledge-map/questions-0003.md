@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > can the three wire-based golds be rebuilt through the evidence stage
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > can the trajectory controller mutate canonical semantic artifacts
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -296,5 +298,3 @@
   > does a conditional rule's consequent end at its sentence (yes, since .39.a)
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > does a constraint keep its list lead-in
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > does a count over generated/evidence_ir measure current extractor behaviour

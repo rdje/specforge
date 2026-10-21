@@ -5385,6 +5385,7 @@ fn validate_semantic_ir_with_prior_memory(
     println!("  protocol_operations: {}", ir.protocol_operations.len());
     println!("  protocol_states: {}", ir.protocol_states.len());
     println!("  protocol_transitions: {}", ir.protocol_transitions.len());
+    println!("  value_combinations: {}", ir.value_combinations.len());
     println!(
         "  signal_presence_records: {}",
         ir.signal_presence_records.len()
@@ -5616,6 +5617,10 @@ fn validate_semantic_ir_with_prior_memory(
             metric(
                 "protocol_transitions",
                 ir.protocol_transitions.len().to_string(),
+            ),
+            metric(
+                "value_combinations",
+                ir.value_combinations.len().to_string(),
             ),
             metric(
                 "signal_presence_records",
@@ -5990,6 +5995,7 @@ fn validate_intent_ir_with_prior_memory(
     println!("  protocol_operations: {}", ir.protocol_operations.len());
     println!("  protocol_states: {}", ir.protocol_states.len());
     println!("  protocol_transitions: {}", ir.protocol_transitions.len());
+    println!("  value_combinations: {}", ir.value_combinations.len());
     println!(
         "  signal_presence_records: {}",
         ir.signal_presence_records.len()
@@ -7581,6 +7587,10 @@ fn validate_intent_ir_with_prior_memory(
             metric(
                 "protocol_transitions",
                 ir.protocol_transitions.len().to_string(),
+            ),
+            metric(
+                "value_combinations",
+                ir.value_combinations.len().to_string(),
             ),
             metric(
                 "signal_presence_records",

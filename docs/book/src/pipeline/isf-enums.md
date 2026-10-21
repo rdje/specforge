@@ -507,8 +507,15 @@ Such a table is now an EvidenceIR `value_combinations` record (`EXTRACTION-REPRE
   `protocol_states`, each citing its table and the combination (`supporting_combination_ids`).
 
 With the false statements gone, AXI's `manager.isf` gains `(BTAGMATCH (NONE 0) (SEPARATE 1) (FAIL 2) (PASS 3))`
-from *Table A12.14*, FSMGen strict-clean. The record itself stops at EvidenceIR until `.3.g.iii.b.ii` carries it to
-IntentIR and the ISF adapter.
+from *Table A12.14*, FSMGen strict-clean.
+
+Since `.3.g.iii.b.ii` the record crosses SemanticIR and IntentIR unchanged. A key value that is a label of its key's
+encoding carries that encoding's codes (`AxMMUSECSID` `Non-secure` is `0b00`), as a stated absent value does: 31
+values in AXI. A list of alternatives (`Stall, NoStall, PRI`), a class of codes (`Cacheable`) and a label written
+without its member's abbreviation (`Non-secure` for `Non-secure (NS)`) join nothing. The ISF adapter states each
+record as one `isf_protocol_value_combination_*` residual naming the decode it lacks: 13 across 4 documents on
+`2026-10-22`. An FSMGen strict probe expressed APB's decode as an enum for the member column and one guarded rule per
+row writing actor storage, with 0 diagnostics; how a combination lowers is `.3.g.iii.b.iii`'s.
 
 ### Which table an enum was read from
 

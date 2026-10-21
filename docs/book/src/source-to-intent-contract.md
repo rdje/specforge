@@ -80,7 +80,7 @@ The content families are:
 | Actors and connectivity | `actors`, `actor_signal_relations`, `signal_connectivity` | Producer/consumer or endpoint responsibilities are stated |
 | Normative and temporal behavior | `signal_constraints`, `conditional_rules`, `equivalence_rules`, `permission_rules`, `optional_features`, `software_intent`, `keyword_definitions`, `temporal_rules`, `actor_contracts`, `fidelity_findings` | Values, stability, ordering, latency, sampling, or handshakes are stated, one thing is treated as another, a subject may do something, a feature is optional, a software agent acts, or a keyword's definition obliges what it marks (both non-executable) |
 | Protocol structure and state | `transactions`, `protocol_graph`, `regular_states`, `state_transitions`, `control_blocks` | Transactions, phases, handshakes, states, or transitions are named |
-| Frame and protocol observations | `serial_frame_fields`, `protocol_operations`, `protocol_states`, `protocol_transitions`, `interface_edge_timings` | Frames, response branches, states, state transitions, or edge timing are stated |
+| Frame and protocol observations | `serial_frame_fields`, `protocol_operations`, `protocol_states`, `protocol_transitions`, `value_combinations`, `interface_edge_timings` | Frames, response branches, states, state transitions, or edge timing are stated |
 | Symbols and secondary storage | `symbol_definitions`, `register_records` | Encodings or register-backed secondary content exists |
 
 Packet, flit, header, and message fields expose a current conservation failure. They exist as
@@ -89,8 +89,9 @@ matching `IntentIR` carrier exists. Until that carrier lands, each source-ground
 family cannot pass, regardless of whether unrelated wire content lowers successfully.
 
 A table whose rows bind several signals' or fields' values to a member or a meaning is `EvidenceIR.value_combinations`
-(`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i`). It has no `IntentIR` carrier until `.3.g.iii.b.ii`; only the states
-such a table keys reach IntentIR, as `protocol_states`.
+(`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i`). IntentIR carries it verbatim since `.3.g.iii.b.ii`, with each label value
+joined to its key's encoding codes, and the states such a table keys are `protocol_states`. The ISF adapter states each
+record as a residual until `.3.g.iii.b.iii` decides how it lowers.
 
 ## Category 2 — register IP
 

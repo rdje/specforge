@@ -80,6 +80,8 @@
   > are transaction phase names allowlisted by protocol
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > are ungrounded SemanticIR records dropped silently or demoted
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > can .isf state a decode of a value combination (FSMGen strict probe: an enum plus one guarded rule per row writing actor storage, 0 diagnostics)
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > can DESCRIPTORS be widened to catch more logic-level bindings
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
@@ -296,5 +298,3 @@
   > can the signal-table name-column override be reused for enums
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > can the subject snap fabricate or rewrite a signal name
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > can the three wire-based golds be rebuilt through the evidence stage

@@ -11,10 +11,13 @@ answers:
   - "where do the Coherency Connection states Disabled, Connect, Enabled, Disconnect come from (merge_combination_states, supporting_combination_ids)"
   - "what is read_value_combinations / combination_key_name / is_combination_member_name / merge_combination_states"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b and .3.g.iii.b.i"
-date: 2026-10-21
+  - "does value_combinations reach IntentIR and the ISF adapter (.3.g.iii.b.ii: carried verbatim; one isf_protocol_value_combination residual per record)"
+  - "what is CombinationRow.value_encodings / CombinationValueEncoding / bind_combination_value_encodings"
+  - "can .isf state a decode of a value combination (FSMGen strict probe: an enum plus one guarded rule per row writing actor storage, 0 diagnostics)"
+date: 2026-10-22
 status: current
 tags: [evidence-ir, encodings, value-combinations, protocol-states, multi-key-tables, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (ValueCombinationRecord; read_value_combinations; combination_key_columns; combination_key_name; is_combination_member_name; merge_combination_states; value_combination_surface; scan_encoding_tables_by_signal_anchor's combination_tables skip); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.g.iii.b, .3.g.iii.b.i)
+evidence: crates/specforge/src/ir/evidence.rs (ValueCombinationRecord; read_value_combinations; combination_key_columns; combination_key_name; is_combination_member_name; merge_combination_states; value_combination_surface; scan_encoding_tables_by_signal_anchor's combination_tables skip; bind_combination_value_encodings); crates/specforge/src/ir/semantic.rs and intent.rs (value_combinations carried); crates/specforge/src/ir/adapters.rs (the value_combination residual); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.g.iii.b, .3.g.iii.b.i)
 reverify: "cargo test --offline -p specforge-core --lib a_jointly_keyed_table_is_a_value_combination"
 ---
 
@@ -48,4 +51,15 @@ A13.10, A13.11, A13.14, and A15.26 with its continuation), ADIv6 3, RISC-V IOMMU
 states (4 ISF residual packets) and loses the 15 false statements. That frees its real `BTAGMATCH` encoding (*A12.14*,
 `table_0177`), which SemanticIR had dropped over the conflicting codes: `manager.isf` gains `(BTAGMATCH (NONE 0)
 (SEPARATE 1) (FAIL 2) (PASS 3))`, FSMGen strict-clean. The other 30 chains' later stages and `.isf` texts are
-byte-identical. The record stops at EvidenceIR until `.3.g.iii.b.ii` carries it.
+byte-identical.
+
+**Carried (`.3.g.iii.b.ii`, `2026-10-22`).** SemanticIR and IntentIR carry `value_combinations` verbatim
+(`semantic.carried_evidence`, `intent.carried_semantics`). After the convergent loop,
+`bind_combination_value_encodings` joins each key value that is a label of its key's encoding to that encoding's
+codes (`CombinationRow.value_encodings`), the way a stated absent value is joined. It tries the key's own enum, then
+its collectives, then, for a collective key, its members' enums. AXI has 31 joined values (`AxMMUSECSID`
+`Non-secure` -> `0b00`; `AxDOMAIN` `Shareable` -> `0b01`, `0b10`). Lists of alternatives, classes of codes and
+`Non-secure` against `Non-secure (NS)` join nothing. The ISF adapter states one `isf_protocol_value_combination_*`
+residual per record: 13 across AXI 7, ADIv6 3, RISC-V IOMMU 2 and APB 1. Every `.isf` text is unchanged. An FSMGen
+strict probe lowered APB's decode as an enum for the member column plus one rule per row guarded by the keys' values,
+writing actor storage, with 0 diagnostics; `.3.g.iii.b.iii` decides the lowering.

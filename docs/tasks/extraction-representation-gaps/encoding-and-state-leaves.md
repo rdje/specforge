@@ -151,7 +151,7 @@ several signals' values, code columns that repeat, tables whose every row is a h
   stays where those records put it. ADR 0038's permanent per-file warning is `LIVE-DOCUMENT-PRESSURE-HEADROOM.8`'s.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`
-  Status: `open` (`2026-10-21`; CODE; split from `.3.g.iii.b`)
+  Status: `done` (`2026-10-22`; CODE; split from `.3.g.iii.b`; checklist below; opened `.3.g.iii.b.iii`)
   Goal: **a value combination reaches IntentIR and the ISF adapter.** **Reproduce:** after `.3.g.iii.b.i`,
   `value_combinations` stops at EvidenceIR. Acceptance:
   - carry the record verbatim through SemanticIR and IntentIR;
@@ -159,6 +159,69 @@ several signals' values, code columns that repeat, tables whose every row is a h
   - state each combination as an ISF adapter residual packet that names what it lacks;
   - run an FSMGen strict probe to decide whether a combination that names a member lowers to a decode, and open
     that leaf.
+
+  **Done `2026-10-22`.**
+  - **Carried.** SemanticIR (`semantic.carried_evidence`) and IntentIR (`intent.carried_semantics`) carry
+    `value_combinations` verbatim, and the converge snapshots count them as they count `protocol_transitions`.
+  - **Label values.** `bind_combination_value_encodings` runs after the convergent loop, beside
+    `bind_stated_absent_values`. It joins each key value that is a label of its key's encoding to that encoding's codes
+    (`CombinationRow.value_encodings`, `CombinationValueEncoding`), through the key's enum, then its collectives, then,
+    for a collective key, its members' enums. A code literal, or a value with no letter, is no label.
+  - **Measured.** AXI has 31 joined values in four records (`AxMMUSECSID` `Non-secure` `0b00`, `Realm` `0b10`;
+    `AxDOMAIN` `Shareable` `0b01`/`0b10`; `AxMMUFLOW` `ATST` `0b01`). 17 label values join nothing: lists of
+    alternatives (`Stall, NoStall, PRI` 6, `NoStall, PRI` 1), classes of codes (`AxCACHE` `Cacheable` 2,
+    `Non-cacheable` 2, `Device` 1), and `AxPAS` `Non-secure` 3, whose member is written `Non-secure (NS)`.
+  - **Adapter.** The ISF adapter states one `isf_protocol_value_combination_*` residual per record, citing its tables:
+    13 (AXI 7, ADIv6 3, RISC-V IOMMU 2, APB 1).
+  - **Rebuilt.** All 31 chains were rebuilt stage by stage. Only AXI's EvidenceIR moved (its value encodings), the four
+    documents' SemanticIR and IntentIR gain the field, and every `.isf` text is byte-identical. The cascade re-sealed
+    content-identically.
+  - **Probe** (`.project-data/tmp`, FSMGen pin `54ac1c22`): APB's `PNSE | PPROT[1] | Physical address space` as an enum
+    `PAS` plus one rule per row guarded by `(& (== PNSE v) (== PPROT[1] w))`. It was strict-clean, 0 diagnostics,
+    writing an output port, writing actor storage declared `(width 2)`, and as a transaction of four `select`s. The
+    first attempt used `(bits PPROT 1 1)`, which is no expression operator: the transaction form failed on the
+    operator, and the rules form on rule writes FSMGen could not prove disjoint. `PPROT[1]` fixed both.
+  - **Found.** A storage variable declared `(type PAS)` with no width passes strict but prints `Use of uninitialized
+    value $width … Parser.pm line 8750`. `FSMGEN-REQUESTS.13` owns it, opened next.
+  - **Decided.** A member-naming combination with literal key values can lower. How it should lower is a design
+    question (which actor's storage, a flopped rule for a relation the document states combinationally, the
+    unresolved labels, don't-care marks and alternatives as guards), so `.3.g.iii.b.iii` is opened as a DESIGN leaf.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — the 13 records' stages after `.3.g.iii.b.i` (EvidenceIR only); their key values by
+  kind (code, bit, mark, label, list, class); the adapter's residual packets per chain.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` and `intent.rs` declared no carrier, so the
+  record stopped at EvidenceIR, and `crates/specforge/src/ir/adapters.rs` stated no residual for it. A label value
+  had no codes (`crates/specforge/src/ir/evidence.rs`). New `bind_combination_value_encodings` and
+  `CombinationValueEncoding`; carried fields in both stages; the adapter's `value_combination` residual. RED 5/5, each
+  file restored byte-identically and each mutation failing its test: a collective key reaching no member's encoding,
+  every value skipped as no label, SemanticIR dropping the record, IntentIR dropping it, the adapter stating no residual.
+- [x] **ADDRESSED (verified)** — 31 chains rebuilt stage by stage, the cascade re-sealed content-identically;
+  `.isf` texts byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `ce8443075`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,915 passed; the proof tests count 63 SemanticIR and 62 IntentIR rule
+  fields (42 carried) and the inventory 205 rules. `flow_census.json` rolled (+1 function, +7 decision sites, +36
+  helper edges, +2 semantic macros); boundary unchanged. The claim family inventory names `value_combinations` in
+  both carried families.
+- [x] **GENERICITY (ADR 0006)** — the key's own name, its collectives and the document's `Enum` statements; no
+  document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md`, `pipeline/semanticir.md`, `pipeline/intentir.md`,
+  `source-to-intent-contract.md`, `quality/validation.md`; KM card `a-jointly-keyed-table-is-a-value-combination`
+  amended. No production rule deleted or replaced.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.g.iii.b.ii`)
+  Goal: **decide how a value combination that names a member lowers to `.isf`.** **Reproduce:** the 13
+  `isf_protocol_value_combination_*` residuals, and `.3.g.iii.b.ii`'s strict-clean probe of APB's decode. Acceptance:
+  decide the target (an actor's storage, no invented port) and the owning actor. Decide whether a flopped rule
+  honestly states a relation the document states combinationally. Decide how guards read a don't-care mark (`-`), a
+  list of alternatives (`0b01 0b10`, `Stall, NoStall, PRI`), a class of codes (`Cacheable`) and a label written
+  without its member's abbreviation (`Non-secure` for `Non-secure (NS)`). Decide what a combination that names only a
+  meaning lowers to, if anything, and whether its states' keys become the states' encodings. Measure every chain,
+  then open the CODE leaf.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`
   Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)

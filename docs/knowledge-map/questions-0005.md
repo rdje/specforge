@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > does the book quantitative-claim grammar see a hyphenated count like 55-case or 153-line (yes since CLAIM-VERIFICATION-ADOPTION.24: numeral-hyphen-noun with the same closed noun list; it admitted 109 lines, all quantities, and exposed four stale present-tense passages; 32-bit and 4-way stay out because bit and way are not admitted nouns)
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > does the caption repair admit serialized table rows
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -92,6 +94,8 @@
   > does validate materialize SourceIR normalized manifests
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > does validate report message_field_records
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > does value_combinations reach IntentIR and the ISF adapter (.3.g.iii.b.ii: carried verbatim; one isf_protocol_value_combination residual per record)
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > does widening declared_node_statuses to the inline form change any existing migrated tree (no - claim_verification 0, pressure_headroom 0, spec_to_intent 1, before and after)
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -294,7 +298,3 @@
   > how do I add a reviewed residual gold key
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > how do I add a semantic part to a migrated task tree
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how do I add fact-card capacity
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how do I address exactly one converter item

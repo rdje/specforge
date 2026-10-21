@@ -1360,6 +1360,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.protocol_operations.len()
             + intent_ir.protocol_states.len()
             + intent_ir.protocol_transitions.len()
+            + intent_ir.value_combinations.len()
             + intent_ir.interface_edge_timings.len()
             + stated_absent_values.len()
             + intent_ir.equivalence_rules.len()
@@ -1406,6 +1407,18 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             &[],
             &record.supporting_table_ids,
             "an executable trigger (a timer whose expiry is a condition), an encoding for its states, and, when several next states are listed, the condition choosing one",
+        ));
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii — a row keyed by several signals' or fields' values. `.isf` can state a
+    // decode (`switch` and `select` over guards), but no lowering joins each key's width and encoding to a member type.
+    for record in &intent_ir.value_combinations {
+        residuals.push(protocol_residual_packet(
+            "value_combination",
+            "value combination",
+            &record.combination_id,
+            &[],
+            &record.table_ids,
+            "a decode over its keys: each key's declared width and, for a label value, its encoding's code; a member type for the members it names; and a guard per row",
         ));
     }
     for record in &intent_ir.interface_edge_timings {
@@ -2649,6 +2662,74 @@ mod tests {
         assert_eq!(
             isf.rule_count, emitted_rules,
             "rule_count must equal emitted (rule …) forms\n{src}"
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` — a value combination reaches the adapter as one residual citing
+    /// its tables, and the rendered `.isf` is unchanged.
+    #[test]
+    fn isf_adapter_residualizes_a_value_combination_citing_its_tables() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_value_combinations.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let baseline = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("baseline_adapter"),
+        )?;
+        let baseline_isf = baseline.isf.expect("baseline ISF artifact");
+        intent_ir.value_combinations = vec![crate::ir::evidence::ValueCombinationRecord {
+            combination_id: "value_combination_0001".to_string(),
+            table_ids: vec!["table_0239".to_string(), "table_0240".to_string()],
+            keys: ["SYSCOREQ", "SYSCOACK"]
+                .iter()
+                .map(|name| crate::ir::evidence::CombinationKey {
+                    title: name.to_string(),
+                    name: name.to_string(),
+                    bits: None,
+                })
+                .collect(),
+            member_column: Some("State".to_string()),
+            meaning_columns: Vec::new(),
+            rows: vec![crate::ir::evidence::CombinationRow {
+                table_id: "table_0239".to_string(),
+                values: vec!["1".to_string(), "0".to_string()],
+                member: Some("Connect".to_string()),
+                meanings: Vec::new(),
+                value_encodings: Vec::new(),
+            }],
+        }];
+        intent_ir.write_to_disk()?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("combination_adapter"),
+        )?;
+        let isf = artifact.isf.clone().expect("combination ISF artifact");
+        assert_eq!(isf.source_text, baseline_isf.source_text);
+        let packets = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| {
+                packet
+                    .packet_id
+                    .starts_with("isf_protocol_value_combination_")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(packets.len(), 1);
+        assert_eq!(
+            packets[0].packet_id,
+            "isf_protocol_value_combination_value_combination_0001"
+        );
+        assert!(packets[0].why_unresolved.contains("a decode over its keys"));
+        assert!(
+            packets[0]
+                .why_unresolved
+                .contains("supporting tables: table_0239, table_0240")
         );
         Ok(())
     }

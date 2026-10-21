@@ -590,12 +590,14 @@ This is the main semantic safety boundary before canonical intent.
 
 ## Lossless frame and protocol observations
 
-Five evidence-grounded protocol collections, and the signal-presence records, cross into `SemanticIR` unchanged:
+Six evidence-grounded protocol collections, and the signal-presence records, cross into `SemanticIR` unchanged:
 
 - `serial_frame_fields`
 - `protocol_operations`
 - `protocol_states`
 - `protocol_transitions`
+- `value_combinations` — tables whose rows several signals' or fields' values key together, each label value with its
+  key's encoding codes (`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`)
 - `interface_edge_timings`
 - `signal_presence_records` — which signals exist per variant, under what condition, and the value an absent one
   takes (`absent_value`, with the statement that states it; `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`), and the
@@ -648,6 +650,7 @@ state, encodings, values, ports, activation conditions, or storage targets.
   protocol_operations: N
   protocol_states: N
   protocol_transitions: N
+  value_combinations: N
   interface_edge_timings: N
   signal_presence_records: N
   check_signal_records: N

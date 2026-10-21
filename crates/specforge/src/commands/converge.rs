@@ -8,7 +8,8 @@ use crate::error::{AppError, Result};
 use crate::ir::adapters::{AdapterArtifact, AdapterLoweringStatus, AdapterTarget};
 use crate::ir::evidence::{
     EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
-    ProtocolTransitionRecord, SerialFrameField, StatementClass, VisualObservationKind,
+    ProtocolTransitionRecord, SerialFrameField, StatementClass, ValueCombinationRecord,
+    VisualObservationKind,
 };
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
@@ -230,6 +231,7 @@ fn run_convergence_with_roots(
                 + evidence_ir.protocol_operations.len()
                 + evidence_ir.protocol_states.len()
                 + evidence_ir.protocol_transitions.len()
+                + evidence_ir.value_combinations.len()
                 + evidence_ir.interface_edge_timings.len()
         );
 
@@ -958,6 +960,7 @@ struct EvidenceSnapshot {
     protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
     protocol_transitions: Vec<ProtocolTransitionRecord>,
+    value_combinations: Vec<ValueCombinationRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     alias_map_size: usize,
     timing_diagram_observations: usize,
@@ -1014,6 +1017,7 @@ impl EvidenceSnapshot {
             protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
             protocol_transitions: ir.protocol_transitions.clone(),
+            value_combinations: ir.value_combinations.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             alias_map_size: ir.signal_alias_map.len(),
             timing_diagram_observations,
@@ -1037,6 +1041,7 @@ impl EvidenceSnapshot {
             + self.protocol_operations.len()
             + self.protocol_states.len()
             + self.protocol_transitions.len()
+            + self.value_combinations.len()
             + self.interface_edge_timings.len()
             + self.alias_map_size
             + self.timing_diagram_observations
@@ -1069,6 +1074,7 @@ struct SemanticSnapshot {
     protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
     protocol_transitions: Vec<ProtocolTransitionRecord>,
+    value_combinations: Vec<ValueCombinationRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     signal_constraints: usize,
     conditional_rules: usize,
@@ -1105,6 +1111,7 @@ impl SemanticSnapshot {
             protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
             protocol_transitions: ir.protocol_transitions.clone(),
+            value_combinations: ir.value_combinations.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             signal_constraints: ir.signal_constraints.len(),
             conditional_rules: ir.conditional_rules.len(),
@@ -1136,6 +1143,7 @@ impl SemanticSnapshot {
             + self.protocol_operations.len()
             + self.protocol_states.len()
             + self.protocol_transitions.len()
+            + self.value_combinations.len()
             + self.interface_edge_timings.len()
             + self.signal_constraints
             + self.conditional_rules
@@ -1163,6 +1171,7 @@ struct IntentSnapshot {
     protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
     protocol_transitions: Vec<ProtocolTransitionRecord>,
+    value_combinations: Vec<ValueCombinationRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     signal_constraints: usize,
     conditional_rules: usize,
@@ -1195,6 +1204,7 @@ impl IntentSnapshot {
             protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
             protocol_transitions: ir.protocol_transitions.clone(),
+            value_combinations: ir.value_combinations.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             signal_constraints: ir.signal_constraints.len(),
             conditional_rules: ir.conditional_rules.len(),
@@ -1222,6 +1232,7 @@ impl IntentSnapshot {
             + self.protocol_operations.len()
             + self.protocol_states.len()
             + self.protocol_transitions.len()
+            + self.value_combinations.len()
             + self.interface_edge_timings.len()
             + self.signal_constraints
             + self.conditional_rules
@@ -2059,6 +2070,7 @@ mod tests {
                 supporting_combination_ids: Vec::new(),
             }],
             protocol_transitions: vec![protocol_transition("protocol_transition_0001")],
+            value_combinations: Vec::new(),
             interface_edge_timings: vec![InterfaceEdgeTimingRecord {
                 timing_id: "interface_edge_timing_0001".to_string(),
                 actor_name: "target".to_string(),
@@ -2103,6 +2115,7 @@ mod tests {
             protocol_operations: vec![protocol_operation("semantic_operation")],
             protocol_states: vec![protocol_state("semantic_state")],
             protocol_transitions: vec![protocol_transition("semantic_transition")],
+            value_combinations: Vec::new(),
             interface_edge_timings: vec![protocol_edge_timing("semantic_edge")],
             signal_constraints: 1,
             conditional_rules: 1,
@@ -2148,6 +2161,7 @@ mod tests {
             protocol_operations: vec![protocol_operation("intent_operation")],
             protocol_states: vec![protocol_state("intent_state")],
             protocol_transitions: vec![protocol_transition("intent_transition")],
+            value_combinations: Vec::new(),
             interface_edge_timings: vec![protocol_edge_timing("intent_edge")],
             signal_constraints: 1,
             conditional_rules: 1,
@@ -2186,6 +2200,7 @@ mod tests {
             protocol_operations: Vec::new(),
             protocol_states: Vec::new(),
             protocol_transitions: Vec::new(),
+            value_combinations: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_constraints: 0,
             conditional_rules: 0,

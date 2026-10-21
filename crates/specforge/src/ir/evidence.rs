@@ -954,6 +954,21 @@ pub struct CombinationRow {
     /// Each meaning column's cell, as written, in column order.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub meanings: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii — the keys whose cell is a label of that key's encoding
+    /// (`AxMMUSECSID` `Non-secure`), with the encoding table and the code of each row carrying the label. A code, a
+    /// don't-care mark or a label no encoding states has none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub value_encodings: Vec<CombinationValueEncoding>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` — a key value of a [`CombinationRow`] that names a member of the key's
+/// encoding.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CombinationValueEncoding {
+    /// The key, as its position in the record's `keys`.
+    pub key_index: usize,
+    /// The encoding table and the codes it gives the label.
+    pub encoding: StatedValueEncoding,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — an EQUIVALENCE RULE the document states: under an optional condition,
@@ -2542,6 +2557,14 @@ impl EvidenceIr {
             &check_coverage,
             &collective_signal_names,
             &source_ir.structured_tables,
+        );
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii — a combination's label values, joined to their keys' encodings.
+        let mut value_combinations = value_combinations;
+        bind_combination_value_encodings(
+            &mut value_combinations,
+            &extracted_statements,
+            &source_ir.structured_tables,
+            &collective_signal_names,
         );
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
         let equivalence_rules = equivalence_rule_surface(&extracted_statements);
@@ -31023,6 +31046,7 @@ fn read_value_combinations(
                             .iter()
                             .map(|&column| cells[column].clone())
                             .collect(),
+                        value_encodings: Vec::new(),
                     })
                     .collect(),
                 keys: entry.keys.into_iter().map(|(_, key)| key).collect(),
@@ -31030,6 +31054,61 @@ fn read_value_combinations(
         })
         .collect();
     (records, candidates)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` — each key value that is a label of its key's encoding, joined to
+/// that encoding's codes as [`AbsentValueEncodings`] joins a stated absent value: by the key's own enum, then by each
+/// collective it belongs to, and, for a key that is itself a collective (`AxCACHE`), by each member's enum. A value
+/// that is a code literal, or holds no letter (`0`, `-`), is no label. A label two rows share keeps both codes. Bound
+/// after the convergent loop, whose `Enum` statements name the encoding tables.
+fn bind_combination_value_encodings(
+    combinations: &mut [ValueCombinationRecord],
+    statements: &[ExtractedStatement],
+    structured_tables: &[StructuredTableRecord],
+    collectives: &[CollectiveSignalNameRecord],
+) {
+    if combinations.is_empty() {
+        return;
+    }
+    let encodings = AbsentValueEncodings::read(statements, structured_tables, collectives);
+    for combination in combinations.iter_mut() {
+        let names: Vec<Vec<&str>> = combination
+            .keys
+            .iter()
+            .map(|key| {
+                std::iter::once(key.name.as_str())
+                    .chain(
+                        collectives
+                            .iter()
+                            .filter(|collective| collective.collective_name == key.name)
+                            .flat_map(|collective| {
+                                collective.member_names.iter().map(String::as_str)
+                            }),
+                    )
+                    .collect()
+            })
+            .collect();
+        for row in &mut combination.rows {
+            row.value_encodings = row
+                .values
+                .iter()
+                .enumerate()
+                .filter(|(_, value)| {
+                    value.chars().any(|c| c.is_ascii_alphabetic())
+                        && !looks_like_encoding_literal(value)
+                })
+                .filter_map(|(key_index, value)| {
+                    let encoding = names[key_index]
+                        .iter()
+                        .find_map(|name| encodings.resolve(name, value))?;
+                    Some(CombinationValueEncoding {
+                        key_index,
+                        encoding,
+                    })
+                })
+                .collect();
+        }
+    }
 }
 
 /// `.3.g.iii.b.i` — the states a value combination keys: every member of a combination whose member column's title ends
@@ -48522,6 +48601,7 @@ The control register.
                 values: vec!["1".to_string(), "0".to_string()],
                 member: Some("Root".to_string()),
                 meanings: Vec::new(),
+                value_encodings: Vec::new(),
             }
         );
         let states = &combinations[1];
@@ -65355,6 +65435,70 @@ mod labeled_absent_value_tests {
                 .map(String::as_str)
                 .collect(),
         )
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` — a combination's label value joins its key's encoding; a code, a
+    /// don't-care mark and a label no encoding states join nothing; a collective key reaches its members' encodings.
+    #[test]
+    fn a_combination_label_value_joins_its_keys_encoding() {
+        let statements = with_encoding("ARDOMAIN", &[]);
+        let collectives = vec![CollectiveSignalNameRecord {
+            collective_id: "collective_0001".to_string(),
+            collective_name: "AxDOMAIN".to_string(),
+            member_names: vec!["ARDOMAIN".to_string(), "AWDOMAIN".to_string()],
+            supporting_statement_ids: Vec::new(),
+        }];
+        let row = |values: [&str; 2]| super::CombinationRow {
+            table_id: "table_combination".to_string(),
+            values: values.iter().map(|v| v.to_string()).collect(),
+            member: None,
+            meanings: vec!["meaning".to_string()],
+            value_encodings: Vec::new(),
+        };
+        let mut combinations = vec![super::ValueCombinationRecord {
+            combination_id: "value_combination_0001".to_string(),
+            table_ids: vec!["table_combination".to_string()],
+            keys: ["AxDOMAIN", "XCACHE"]
+                .iter()
+                .map(|name| super::CombinationKey {
+                    title: name.to_string(),
+                    name: name.to_string(),
+                    bits: None,
+                })
+                .collect(),
+            member_column: None,
+            meaning_columns: vec!["Meaning".to_string()],
+            rows: vec![
+                row(["Shareable", "Device"]),
+                row(["0b11", "-"]),
+                row(["Inner shareable", "0"]),
+            ],
+        }];
+        super::bind_combination_value_encodings(
+            &mut combinations,
+            &statements,
+            &[domain_encoding("ARDOMAIN")],
+            &collectives,
+        );
+        let rows = &combinations[0].rows;
+        assert_eq!(rows[0].value_encodings.len(), 1, "XCACHE has no encoding");
+        assert_eq!(rows[0].value_encodings[0].key_index, 0);
+        assert_eq!(
+            rows[0].value_encodings[0].encoding,
+            super::StatedValueEncoding {
+                table_id: "table_encoding".to_string(),
+                codes: vec!["0b01".to_string(), "0b10".to_string()],
+            },
+            "a label two rows share keeps both codes"
+        );
+        assert!(
+            rows[1].value_encodings.is_empty(),
+            "a code and a mark are no labels"
+        );
+        assert!(
+            rows[2].value_encodings.is_empty(),
+            "a label the encoding does not carry"
+        );
     }
 
     #[test]
