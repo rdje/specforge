@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > is one canonical probe per distinct seal a sample
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > is planned_live the current live window
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > is proof currency the same thing as normalized bundle retention
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > is qwen2.5:14b-instruct good enough for NLI
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -292,9 +298,3 @@
   > should I refuse an enum whose members span tables
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > should I split a conflated enum per table
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > should NLP-SHALLOW-PARSE.2f build coordination distribution
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > should NLP-SHALLOW-PARSE.2h add new passive/verb-sense direction code
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > should PROOF-SEAL-TOTAL be raised to gate tier

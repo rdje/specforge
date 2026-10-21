@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > where are the held-out APB AXI AHB normalized bundles kept
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > where are the persisted trajectory controller input and report
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > where are the tables in a batched backend.json
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where did SpecForge suggest LTL/MTL support in ISF
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > where did my signal constraint go between EvidenceIR and SemanticIR
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where did the .6d.ii.e.v.iii information-flow result move to
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -286,15 +298,3 @@
   > where is the required-residual rule frozen
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > where is the reviewed source-to-intent dataset
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > where is the set of retained normalized bundles declared
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > where is the shared section-heading container-walk that .10f and .10g both use
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > where is the sole source to EvidenceIR canonical loss
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > where is the source-to-Intent vertical evaluation schema

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-10-20 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md) | 2026-08-27 | `current` | SourceIR ingest is not reproducible across time, and no gate can see it |
 | [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md) | 2026-08-28 | `current` | Re-ingesting the corpus is a trade, not a refresh — it loses caption bindings to gain figure-interior text |
@@ -60,4 +61,3 @@
 | [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-10-19 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
 | [unattached-table-captions](../knowledge/unattached-table-captions.md) | 2026-09-28 | `current` | Docling files some table captions as page text; the bit-layout reader recovers them page by page |
 | [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md) | 2026-10-19 | `current` | The unread IntentIR behaviors are mostly permissions, and 645 of 813 timing_constraint statements state no ti… |
-| [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md) | 2026-10-20 | `current` | The IntentIR assumptions and behaviors no typed record understands fall into six families, and assumptions ar… |

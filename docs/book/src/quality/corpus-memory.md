@@ -192,3 +192,13 @@ One residual changed on the first pass, so negative-knowledge priors changed fro
 third confirmation were byte-identical. The final fixed point contains 29 actor, 83 semantic, four modality, 443
 temporal, zero table, 1,251 visual, 11 negative-knowledge, and two structural-profile priors. All measurable
 persisted stages reproduce exactly under the resulting store.
+
+**The fixed point cannot be re-run on its declared inputs today.** Since the proof migration, eight of those thirteen
+inputs are legacy schema-1 IntentIR, which `learn-priors` refuses (*inspection-only*), so the store can follow no reader
+change. `EXTRACTION-REPRESENTATION-GAPS.54` (`2026-10-21`) measured what it still does: on the retained chains it changes
+two evidence records, a stale ready-like hint learned from a reading the reader has since withdrawn and one duplicate
+declaration it suppresses. A store relearned from the proof-carrying chains would drift in every family. Because the
+behavioral qualification pins the store's hash beside its replay library, the refresh — re-declared inputs, this
+convergence loop, and the qualification replay — is one owned transaction (`.54.a`). Meanwhile a remembered semantic
+role holds only where the current text makes the signal its bearer (`.50`; see *Prior-guided meaning* in
+`domain/handshake-semantics.md`).

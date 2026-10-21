@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55BII-WIDTH-OFFSET-LAYOUTS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55BIII-DWORD-LAYOUTS",
    "baseline": {
-    "analyzed_functions": 2813,
-    "decision_sites": 15568,
-    "helper_edges": 19652,
-    "semantic_macros": 1621
+    "analyzed_functions": 2818,
+    "decision_sites": 15603,
+    "helper_edges": 19722,
+    "semantic_macros": 1624
    },
    "delta": {
-    "analyzed_functions": 5,
-    "decision_sites": 35,
-    "helper_edges": 70,
-    "semantic_macros": 3
+    "analyzed_functions": 6,
+    "decision_sites": 32,
+    "helper_edges": 69,
+    "semantic_macros": 2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.b.ii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.b.ii: a Width (bits) | Offset (DW:bit) | Description packet layout is read into message_field_records (WidthOffsetLayoutExtractor, width_offset_layout_columns, width_offset_field_name)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.b.iii",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.b.iii: a DW | Bits | Description packet layout with nested bit sub-rows is read into message_field_records (DwordLayoutExtractor, parse_dword_span, continues_dword_layout, dword_layout_field_name)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > how do I census which span a published constraint read its parts from
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how do I change the reviewed source-to-intent fixture projection
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how do I check the mdBook for stale behavioural claims
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
@@ -293,7 +297,3 @@
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > how does SpecForge handle one transaction and one rule writing the same named-drive target
-- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
-  > how does SpecForge know an agent is software (an English software noun, a glossary row, implemented in software)
-- [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
-  > how does SpecForge know which signals a check signal covers

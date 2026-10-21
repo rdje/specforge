@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iii",
-      "literal" : "`.55.b.iii` — a DW layout with nested bit sub-layouts reaches `message_field_records`.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.v",
+      "literal" : "`.55.b.v` — a status-word table whose field name opens its description reaches a field record.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -1089,7 +1089,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
@@ -1221,13 +1221,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
          "metrics" : {
-            "bytes" : 48529,
+            "bytes" : 52915,
             "line_bytes" : 154,
-            "lines" : 494
+            "lines" : 537
          },
          "part_id" : "hint-and-notation-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-         "sha256" : "f1c6e9b5a4f0edddf4eb781b695b1a6265813f57e73d4afd6eb76fdd37d4ed0a",
+         "sha256" : "4cc9c94267c4028bf0128962859f751547e88a15a8c712e1c60483d277a1c8b2",
          "state" : "active"
       },
       {

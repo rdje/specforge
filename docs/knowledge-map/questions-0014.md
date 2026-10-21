@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does the ingest traversal oracle check
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > what does the isf adapter do with a stated absent value / what is isf_protocol_signal_absent_value_
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what does the name-column override score, and what does it refuse
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > what does the pre-commit hook NOT check
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -250,6 +256,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.55.a and .55.b
 - [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.ii and .55.b.v
+- [a-dword-packet-layout-reaches-message-field-records](../knowledge/a-dword-packet-layout-reaches-message-field-records.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iii
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -290,11 +298,3 @@
   > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > what is REPLAY_PROJECTION_SHA256
-- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
-  > what is RegisterFieldRecord.signal_bindings
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what is SWD's actual intent / protocol (from the spec)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > what is SerialFrameField / serial_frame_fields / SerialFramePhase

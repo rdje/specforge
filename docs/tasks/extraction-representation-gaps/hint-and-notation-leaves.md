@@ -357,12 +357,29 @@ hint gives a signal, and the sentences that define the document's own notation. 
   a register's (the caption names a field: *wHubStatus*), and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`
-  Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
+  Status: `done` (`2026-10-21`; CODE; split from `.55.b`; checklist below)
   Goal: **a DW layout with nested bit sub-layouts reaches `message_field_records`.** USB4 inter-domain's 20 tables
   headed `DW | Bits | Description` give a field per DWORD and, inside a DWORD, sub-rows restating `Bits |
   Description` with names before a dash (*7:0 | HEC - Header Error Control*). **Reproduce:** `table_0009` (*Table 2-1 Inter-Domain
   Packet Format Fields*). Acceptance: read each DWORD row and each nested sub-row as a field of the caption's container
   with its DWORD offset and bit range, keep a restated sub-header out of the fields, and measure every chain.
+  **Decided `2026-10-21`.** A sixth registered strategy, `message_fields.dword_layout` (`extract_dword_layout_fields`),
+  reads a header opening `DW | Bits | Description`. A row whose dword cell states a dword or a span (`3`, `7:4`,
+  `9:12`, either order; `parse_dword_span`) and whose bit cell a range is a field: `byte_offset` the first dword's byte
+  offset, `bit_range` relative to it, a span of whole dwords `(32 × dwords − 1, 0)`. A nested sub-row (empty dword and
+  bit cells) is a field of the single dword the row above stated (*7:0 | HEC - Header Error Control* in dword 0); a
+  restated sub-header (`Bits | Description`), a value sub-table repeating its field's dword and bits, and a symbolic
+  dword (`9+N`) state nothing. The name (`dword_layout_field_name`) is the head before the first dash, period or colon
+  a space follows, or a short cell that is all name (*Route String High*); *Reserved* is padding. The container is the
+  caption's label, a caption the converter left beside the table, or the layout a caption-less fragment continues
+  bit-exactly within a page (`continues_dword_layout`: the next dword from bit 0, or the same dword above the last bit).
+  **Measured over all 31 chains** (evidence dry-run against `197b0ed39`'s): every extraction manifest gains the
+  strategy's entry (zero produced in 30); USB4 inter-domain's `message_field_records` 0 -> 56 in 14 containers
+  (*Inter-Domain Packet Format* 12, *Inter-Domain USB4NET Packet* 12, *Inter-Domain Error Response Packet* 4, …), from
+  17 of its 20 tables. Every chain rebuilt stage by stage, every later stage and `.isf` text byte-identical
+  (`DOC-INTENT-TAXONOMY.4b` carries message fields onward); the cascade re-sealed every chain. **Declared residual:**
+  three caption-less fragments (`table_0014`, `table_0016`, `table_0022`) follow packet-format diagrams whose captions
+  the converter lost, so neither a caption nor a continuation names their container.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`
   Status: `open` (`2026-10-21`; DESIGN; split from `.55.b`)
@@ -491,4 +508,30 @@ hint gives a signal, and the sentences that define the document's own notation. 
   packet or field name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*Width-and-offset packet layouts*); KM
   `a-width-offset-packet-layout-reaches-message-field-records`. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — USB4 inter-domain's 20 `DW | Bits | Description` tables read row by row (dword spans,
+  nested `Bits | Description` sub-rows, value sub-tables, symbolic dwords); every one absent from
+  `message_field_records`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: no message-field extractor read a dword
+  header, and no reader nests a dword's bit layout. New `DwordLayoutExtractor`, `dword_layout_field_name`,
+  `parse_dword_span`, `continues_dword_layout`, `extract_dword_layout_fields`, registered sixth. RED, the file restored
+  byte-identically after each (8 mutations, each failing a named test): the header, the nested sub-row, the value
+  sub-table, the span width, the same-dword continuation, any fragment continuing, the dash head, a reserved row.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: every manifest gains the strategy's entry, USB4
+  inter-domain 0 -> 56 fields in 14 containers from 17 of 20 tables; all 31 rebuilt stage by stage, every later stage
+  and `.isf` text byte-identical; `rebuild_stage_cascade.sh --write` re-sealed every chain, content-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `197b0ed39`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,895 passed, 0 failed. `flow_census.json` rolled (+6 functions, +32 decision
+  sites, +69 helper edges, +2 macros); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the header's own words, the caption's label and the description's head; no document,
+  packet or field name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*Dword packet layouts*); KM
+  `a-dword-packet-layout-reaches-message-field-records`. Lockstep repairs for this session's earlier slices: book
+  `quality/corpus-memory.md` (the fixed point cannot be re-run, `.54`), `pipeline/multimodal-evidence.md` (the caption
+  example, `.50`), `document-categories.md` (the message-field count), ROADMAP R15f and its owning tree's pointer to
+  `.54.a`. No production rule deleted or replaced.
 

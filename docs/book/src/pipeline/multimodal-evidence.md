@@ -166,9 +166,12 @@ Captions can also ground semantic roles.
 
 For example, a caption such as:
 
-`Figure 1: XREQ valid timing.`
+`Figure 1: XREQ indicates a valid request.`
 
-can contribute role evidence for `XREQ` when the surrounding context is strong enough.
+can contribute role evidence for `XREQ`, because the caption makes `XREQ` the agent that indicates the validity.
+A caption that only names a signal beside a role word (*XREQ valid timing*, *VALID before READY handshake*) states no
+role: the same bearer rule as prose applies (`EXTRACTION-REPRESENTATION-GAPS.50`; see *Who bears the role* in
+`domain/handshake-semantics.md`).
 
 The important safety rule is that visual captions are not magic.
 They become observations with supporting visual evidence ids, and those observations still flow through candidates, arbitration, and consensus before they become canonical role meaning.

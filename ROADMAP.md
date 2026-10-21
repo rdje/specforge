@@ -157,7 +157,7 @@ the [roadmap archive](docs/archive/roadmap/INDEX.md) rather than deleted.
 | R15c | In progress | Convergence accounting ships; anchored prose/figure rescan recall remains open. | [learning-plane audit](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | R15d | In progress | Typed conflict records ship; full-corpus multimodal arbitration remains open. | [learning-plane audit](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | R15e | In progress | Evaluation is an evergreen accuracy, residual-honesty, and false-positive-control lane. | [learning-plane audit](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
-| R15f | In progress | Typed prior memory ships; protocol scoping and guarded prior families keep advancing. | [learning-plane audit](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
+| R15f | In progress | Typed prior memory ships; its declared refresh is blocked until legacy learning inputs are re-declared. | [learning-plane audit](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | R15g | In progress | Corpus KB ships; additional validation-backed managed page families remain open. | [learning-plane audit](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | R16 | Program complete | The design-intent capture program closed; forward improvements use independent owned trees. | [R16 program](docs/tasks/R16-INTENT-CAPTURE.md) |
 <!-- roadmap_workstreams:end -->

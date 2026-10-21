@@ -138,6 +138,10 @@ dedicated child tree) when pursued.
     protocol-family scoping beyond AMBA inference w/o brittle logic; deepen
     negative-knowledge rescan selection; add new typed prior families only with
     full schema+harvester+consumer+guard coverage. Status `in_progress`.
+    `2026-10-21` (`EXTRACTION-REPRESENTATION-GAPS.54`): the store's declared refresh cannot run — 8 of its 13
+    learning inputs are legacy schema-1 IntentIR that `learn-priors` refuses; the refresh, with re-declared inputs
+    and a replay of the behavioral qualification that pins the store, is owned by
+    `EXTRACTION-REPRESENTATION-GAPS.54.a`.
   Commit: `see Commit Log`
 
 - ID: `R15C-R15G-LEARNING-PLANE-BACKFILL.5`

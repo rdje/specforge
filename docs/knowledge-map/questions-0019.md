@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > where is the set of retained normalized bundles declared
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > where is the shared section-heading container-walk that .10f and .10g both use
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > where is the sole source to EvidenceIR canonical loss
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > where is the source-to-Intent vertical evaluation schema
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > where is the spawn+poll+kill memory guard in materialize_pdf
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -284,16 +296,3 @@
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
   > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)
-- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
-  > which nouns were rejected from the candidate unit vocabulary and why (edges 3 real of 8 — four misses are the temporal chapter's own grammar examples like within 2 clock edges; names 2 of 3; relations 1 of 3, both misses section titles; contracts 0 of 3; identifiers 0 of 1, quoted source text; sentences 1 of 1 but only by an incidental prefix of sentence-start phrases;
-  > assertions, obligations, columns, entries and nodes cost zero because every line carrying one already carries an admitted noun)
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > which numerals in prose does the published-assertion gate treat as published values
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > which of Avalon's eight signals does the arrow form actually recover
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > which of the 482 dropped rows does the arrow form actually recover
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > which of the seven historical LLM-measured documents have a measured-stratum counterpart (only two — AXI ihi0022_h_c to ihi0022_l_2025_08 and APB ihi0024_d to ihi0024_e; ATB, AXI-Stream, LTI and both OpenCAPI transaction-layer documents have none, so .3j's census cannot be re-derived document-for-document)
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > which outcomes may a published value have

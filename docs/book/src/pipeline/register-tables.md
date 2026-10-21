@@ -250,6 +250,13 @@ offset and its dword-relative bit range from the stated start bit and width, val
 the table, and a caption-less fragment continues the layout it starts exactly where. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.ii`).
 
+**Dword packet layouts (`EXTRACTION-REPRESENTATION-GAPS.55.b.iii`).** USB4 writes its inter-domain packets as `DW |
+Bits | Description`, a field named before a dash (*HEC - Header Error Control*), a dword's own bits nested as
+sub-rows, and multi-dword fields as spans (`7:4`). A sixth strategy reads them: a span keeps its first dword's byte
+offset and a whole-dword bit range, a nested sub-row is a field of the dword above, and a restated sub-header, a value
+sub-table or a symbolic dword (`9+N`) states nothing. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iii`).
+
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 
 Every `.10` family above reads a *table*. Some specifications don't put their field layouts in tables at

@@ -20093,6 +20093,180 @@ fn extract_width_offset_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldR
     records
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` — a field's name as a dword layout writes it: the head before the first
+/// dash, period or colon a space follows (*HEC - Header Error Control*, *Route String Low. See …*), or a short cell
+/// that is all name (*Route String High*: at most six words, letter-led, no period). Eight words at most otherwise,
+/// letter-led, no inner period; a `Reserved…` row is padding, as in every message-field family.
+fn dword_layout_field_name(description: &str) -> Option<String> {
+    let description = description.trim();
+    if description
+        .get(..8)
+        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+    {
+        return None;
+    }
+    let separators = [" - ", " \u{2013} ", ". ", ": "];
+    let (head, max_words) = match separators
+        .iter()
+        .filter_map(|separator| description.find(separator))
+        .min()
+    {
+        Some(at) => (description[..at].trim_end(), 8),
+        None => (description, 6),
+    };
+    if head.is_empty()
+        || !head.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        || head.contains('.')
+        || head.split_whitespace().count() > max_words
+    {
+        return None;
+    }
+    Some(head.split_whitespace().collect::<Vec<_>>().join(" "))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` — a dword cell: one dword (`3`) or a span (`7:4`, `9:12`, either order).
+/// A symbolic span (`9+N`, `19:19 +(n-1)`) states no position and is `None`.
+fn parse_dword_span(cell: &str) -> Option<(u32, u32)> {
+    let cell = cell.trim();
+    if let Ok(dword) = cell.parse::<u32>() {
+        return Some((dword, dword));
+    }
+    let (a, b) = cell.split_once(':')?;
+    let (a, b): (u32, u32) = (a.trim().parse().ok()?, b.trim().parse().ok()?);
+    Some((a.min(b), a.max(b)))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` — does a fragment whose first field is `first` (first dword, last dword,
+/// high bit, low bit) continue a layout whose last field ended at `(dword, high bit)`? Bit-exactly: the next dword from
+/// bit 0, or the same dword above that bit.
+fn continues_dword_layout(end: (u32, u32), first: &(u32, u32, u32, u32, String)) -> bool {
+    let (last_dword, last_high) = end;
+    (first.0 == last_dword + 1 && first.3 == 0)
+        || (first.0 == last_dword && first.3 == last_high + 1)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` — packet fields from dword layouts (`DW | Bits | Description`, USB4's
+/// *Inter-Domain Packet Format Fields*). A row whose dword cell states a dword or a span and whose bit cell states a
+/// range is a field: `byte_offset` the first dword's byte offset, `bit_range` relative to it (a span of whole dwords is
+/// `(32 × dwords − 1, 0)`). A nested sub-row (empty dword and bit cells, the bit range and description in the next
+/// two) is a field of the dword the row above stated (*7:0 | HEC - Header Error Control* inside dword 0); a restated
+/// sub-header (`Bits | Description`), a value sub-table and a symbolic dword state nothing. The container is the
+/// caption's label, a caption the converter left beside the table, or the layout a caption-less fragment continues
+/// bit-exactly (`continues_dword_layout`), within a page.
+fn extract_dword_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> {
+    let recovered_captions = unattached_table_captions(source_ir);
+    let mut records: Vec<MessageFieldRecord> = Vec::new();
+    let mut index_by_key: BTreeMap<(String, String), usize> = BTreeMap::new();
+    // the open layout: its container, the page it reached, and its last field's last dword and high bit
+    let mut chain: Option<(String, Option<u32>, (u32, u32))> = None;
+    for table in &source_ir.structured_tables {
+        let Some(header) = table.header_rows.first() else {
+            continue;
+        };
+        let titles: Vec<String> = header
+            .iter()
+            .map(|cell| cell.text.trim().to_ascii_lowercase())
+            .collect();
+        if titles.len() < 3
+            || titles[0] != "dw"
+            || titles[1] != "bits"
+            || !titles[2].contains("description")
+        {
+            continue;
+        }
+        // (first dword, last dword, high bit, low bit, description)
+        let mut fields: Vec<(u32, u32, u32, u32, String)> = Vec::new();
+        let mut current_dword: Option<u32> = None;
+        for row in &table.body_rows {
+            let cell = |index: usize| row.get(index).map_or("", |c| c.text.trim());
+            let (dword_cell, bits_cell) = (cell(0), cell(1));
+            if dword_cell.is_empty() && bits_cell.is_empty() {
+                // a nested sub-row of the dword above
+                let (Some(dword), Some((high, low))) =
+                    (current_dword, parse_pure_bit_position(cell(2)))
+                else {
+                    continue;
+                };
+                fields.push((dword, dword, high, low, cell(3).to_string()));
+                continue;
+            }
+            let (Some((first, last)), Some((high, low))) = (
+                parse_dword_span(dword_cell),
+                parse_pure_bit_position(bits_cell),
+            ) else {
+                current_dword = None;
+                continue;
+            };
+            current_dword = (first == last).then_some(first);
+            if fields
+                .last()
+                .is_some_and(|f| (f.0, f.1, f.2, f.3) == (first, last, high, low))
+            {
+                continue; // a value sub-table restating its field's dword and bits
+            }
+            fields.push((first, last, high, low, cell(2).to_string()));
+        }
+        let Some(first_field) = fields.first() else {
+            continue;
+        };
+        let page = bit_position_table_page(table);
+        let caption = attached_table_caption(table)
+            .or_else(|| recovered_captions.get(table.table_id.as_str()).copied())
+            .unwrap_or("");
+        let container = match bit_position_container_label(caption) {
+            Some(label) => label,
+            None => match &chain {
+                Some((label, last_page, end))
+                    if continues_dword_layout(*end, first_field)
+                        && matches!((*last_page, page), (Some(a), Some(b)) if b >= a && b - a <= 1) =>
+                {
+                    label.clone()
+                }
+                _ => {
+                    chain = None;
+                    continue;
+                }
+            },
+        };
+        let last_field = fields
+            .iter()
+            .max_by_key(|field| (field.1, field.2))
+            .expect("fields are non-empty");
+        chain = Some((container.clone(), page, (last_field.1, last_field.2)));
+        for (first, last, high, low, description) in fields {
+            let Some(name) = dword_layout_field_name(&description) else {
+                continue;
+            };
+            let key = (container.to_ascii_lowercase(), name.to_ascii_uppercase());
+            if let Some(&existing) = index_by_key.get(&key) {
+                let record: &mut MessageFieldRecord = &mut records[existing];
+                if !record.supporting_table_ids.contains(&table.table_id) {
+                    record.supporting_table_ids.push(table.table_id.clone());
+                }
+                continue;
+            }
+            let (high, width) = if first == last {
+                (high, high - low + 1)
+            } else {
+                let width = (last - first + 1) * 32;
+                (width - 1, width)
+            };
+            index_by_key.insert(key, records.len());
+            records.push(MessageFieldRecord {
+                field_id: String::new(),
+                name,
+                container: container.clone(),
+                bit_width: Some(width),
+                bit_range: Some((high, if first == last { low } else { 0 })),
+                byte_offset: Some(first * 4),
+                description: Some(description),
+                supporting_table_ids: vec![table.table_id.clone()],
+            });
+        }
+    }
+    records
+}
+
 /// PDF-VARIANT-DIGESTION.10e — structure fields from byte-location placement tables (the
 /// `Byte Location | Size (Bytes) | Register Description` family). The probe overturned the
 /// recorded `.10a` hypothesis: these are NOT register-at-offset placement maps — every
@@ -20280,6 +20454,20 @@ impl Extractor<MessageFieldRecord> for WidthOffsetLayoutExtractor<'_> {
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
         extract_width_offset_layout_fields(self.source_ir)
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` — the dword packet layout strategy as a registered `Extractor`; see
+/// [`extract_dword_layout_fields`].
+struct DwordLayoutExtractor<'a> {
+    source_ir: &'a SourceIr,
+}
+impl Extractor<MessageFieldRecord> for DwordLayoutExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "message_fields.dword_layout"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
+        extract_dword_layout_fields(self.source_ir)
     }
 }
 
@@ -20898,12 +21086,14 @@ fn message_field_surface(
     };
     let section_header = SectionHeaderMessageFieldExtractor { source_ir };
     let width_offset = WidthOffsetLayoutExtractor { source_ir };
-    let extractors: [&dyn Extractor<MessageFieldRecord>; 5] = [
+    let dword = DwordLayoutExtractor { source_ir };
+    let extractors: [&dyn Extractor<MessageFieldRecord>; 6] = [
         &extractor,
         &bit_position,
         &byte_location,
         &section_header,
         &width_offset,
+        &dword,
     ];
     let mut run = run_surface("message_fields", &cx, &extractors, |field| {
         (
@@ -45474,6 +45664,155 @@ The control register.
             "captioned visual evidence should carry High automation confidence"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn a_dword_layout_names_its_fields_before_a_dash_or_as_a_short_cell() {
+        let name = super::dword_layout_field_name;
+        assert_eq!(name("HEC - Header Error Control").as_deref(), Some("HEC"));
+        assert_eq!(
+            name("Route String Low. See USB4.Table 6-1").as_deref(),
+            Some("Route String Low")
+        );
+        assert_eq!(
+            name("Route String High").as_deref(),
+            Some("Route String High")
+        );
+        assert_eq!(name("Reserved"), None, "padding, never a field");
+        assert_eq!(
+            name("This field carries the payload of the packet that the sender transmits"),
+            None,
+            "a long cell with no head is prose"
+        );
+    }
+
+    #[test]
+    fn a_dword_layout_reaches_message_field_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("dword.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Packets\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let table = |table_id: &str, page: &str, caption: Option<&str>, rows: &[[&str; 4]]| {
+            StructuredTableRecord {
+                table_id: table_id.to_string(),
+                asset_id: format!("asset_{table_id}"),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![
+                    ["DW", "Bits", "Description", "Description"]
+                        .iter()
+                        .map(|text| make_table_cell(text, true))
+                        .collect(),
+                ],
+                body_rows: rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|text| make_table_cell(text, false))
+                            .collect()
+                    })
+                    .collect(),
+                row_count: rows.len() as u32,
+                col_count: 4,
+            }
+        };
+        source_ir.structured_tables.push(table(
+            "table_packet",
+            "page_0013",
+            Some("Table 2-1.  Inter-Domain Packet Format Fields"),
+            &[
+                [
+                    "0",
+                    "31:0",
+                    "Header - Transport Layer Packet header",
+                    "Header - Transport Layer Packet header",
+                ],
+                ["", "", "Bits", "Description"],
+                ["", "", "7:0", "HEC - Header Error Control"],
+                ["", "", "15:8", "Length - Payload size in bytes"],
+                [
+                    "2:1",
+                    "31:0",
+                    "UUID - A 64 bit identifier",
+                    "UUID - A 64 bit identifier",
+                ],
+                ["2:1", "31:0", "DWORD", "Value"],
+                ["2:1", "31:0", "1", "0x0ED738B6"],
+                [
+                    "3",
+                    "7:0",
+                    "Event - Defines the event",
+                    "Event - Defines the event",
+                ],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_packet_continued",
+            "page_0014",
+            None,
+            &[
+                ["3", "15:8", "Reserved", "Reserved"],
+                [
+                    "4",
+                    "31:0",
+                    "Packet Type - The type of this packet",
+                    "Packet Type - The type of this packet",
+                ],
+                [
+                    "9+N",
+                    "31:0",
+                    "CRC - See the CRC table",
+                    "CRC - See the CRC table",
+                ],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_other_packet",
+            "page_0014",
+            None,
+            &[[
+                "9",
+                "31:0",
+                "Source Route - The sender's route",
+                "Source Route - The sender's route",
+            ]],
+        ));
+        let fields = super::extract_dword_layout_fields(&source_ir);
+        type Read<'a> = (&'a str, Option<u32>, Option<(u32, u32)>, Option<u32>);
+        let read: Vec<Read> = fields
+            .iter()
+            .map(|field| {
+                (
+                    field.name.as_str(),
+                    field.byte_offset,
+                    field.bit_range,
+                    field.bit_width,
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                ("Header", Some(0), Some((31, 0)), Some(32)),
+                ("HEC", Some(0), Some((7, 0)), Some(8)),
+                ("Length", Some(0), Some((15, 8)), Some(8)),
+                ("UUID", Some(4), Some((63, 0)), Some(64)),
+                ("Event", Some(12), Some((7, 0)), Some(8)),
+                ("Packet Type", Some(16), Some((31, 0)), Some(32)),
+            ],
+            "nested sub-rows, a dword span, a value sub-table, a same-dword continuation, a symbolic dword"
+        );
+        assert!(
+            fields
+                .iter()
+                .all(|field| field.container == "Inter-Domain Packet Format"),
+            "a caption-less fragment that does not continue the layout is no field"
+        );
         Ok(())
     }
 

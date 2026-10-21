@@ -140,6 +140,8 @@
   > how are USB descriptor tables (Offset | Field | Size | Value | Description) extracted (descriptor_layout_columns, EXTRACTION-REPRESENTATION-GAPS.55.b.i)
 - [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
   > how are USB packet header layouts (Width (bits) | Offset (DW:bit) | Description) extracted
+- [a-dword-packet-layout-reaches-message-field-records](../knowledge/a-dword-packet-layout-reaches-message-field-records.md)
+  > how are USB4 packet layouts (DW | Bits | Description) extracted
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how are authored examples identity literals and dated book measurements excluded
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -188,6 +190,8 @@
   > how are model proposed signal names grounded
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are multi-word field names like Validation Bits or FRU ID recovered
+- [a-dword-packet-layout-reaches-message-field-records](../knowledge/a-dword-packet-layout-reaches-message-field-records.md)
+  > how are nested Bits | Description sub-rows inside a dword read
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > how are new book quantitative regions adjudicated (excluded with scope_reason dated_boundary_evidence when the sentence or its lead-in anchors the figure to a completed measurement or a superseded state — measured, found, removed, restored, the old IntentIR, a before-and-after; incomplete with all three legs otherwise, which is the conservative default because it declares the
   > legs are missing rather than excusing the figure)
@@ -294,7 +298,3 @@
   > how do I census enum member and value fidelity
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > how do I census enum value provenance
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > how do I census which span a published constraint read its parts from
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > how do I change the reviewed source-to-intent fixture projection
