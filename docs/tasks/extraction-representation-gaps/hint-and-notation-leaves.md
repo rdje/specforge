@@ -294,12 +294,28 @@ hint gives a signal, and the sentences that define the document's own notation. 
   (`.55.b.iv`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.i`
-  Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
+  Status: `done` (`2026-10-21`; CODE; split from `.55.b`; checklist below)
   Goal: **a descriptor table reaches `message_field_records`.** USB 3.2's 28 tables headed `Offset | Field | Size |
   Value` (or `… | Description`) and captioned by the structure they lay out (*Standard Device Descriptor*, *Format of
   Setup Data*) reach no field record, 19 of them with a *Reserved* field. **Reproduce:** `table_0179` (*Table 9-11*: `0 | bLength | 1 |
   Number`). Acceptance: read the container from the caption, each row's field name, byte offset and
   size from its own columns, keep every table already captured unchanged, and measure every chain.
+  **Decided `2026-10-21`: a descriptor layout is a byte layout.** The `Byte Location | Size | Description` family
+  (`collect_byte_location_tables`) already reads structure layouts into `message_field_records` with the caption's
+  container label, byte-exact continuation stitching and size × 8. `descriptor_layout_columns` admits a second header
+  to it — an exact `offset`, an exact `field`, and the family's size and description columns — and, because the
+  converter types 26 of the 28 tables `encoding` for their `Value` column, accepts that kind as well as unknown (the
+  byte-location header keeps its unknown-only gate). A descriptor row's name is its `field` cell when
+  `is_message_field_name` accepts it, never the description's; a row whose field cell names no field yields nothing.
+  A reserved field the descriptor names (`bReserved`, `wReserved`) is kept, unlike a description led by *Reserved*.
+  **Measured over all 31 chains** (evidence dry-run against `87ba2963b`'s): 30 identical; USB 3.2 moves only
+  `message_field_records` (0 -> 122, in 20 containers: *Standard Device Descriptor* 14, *Configuration Summary
+  Descriptor* 9, *Enhanced SuperSpeed Hub Descriptor* 9, …; 5 reserved fields) and its extraction manifest; 27 of the
+  28 tables contribute. Rebuilt stage by stage: SemanticIR, IntentIR, the adapter and the `.isf` text byte-identical,
+  since `message_field_records` stop at EvidenceIR (carrying them is `DOC-INTENT-TAXONOMY.4b`'s, pending).
+  **Declared residual:** `table_0190` (a *SuperSpeedPlus Descriptor* continuation) heads `Offset | Field | Size | Value |
+  (empty) | Description ×3` and its rows span the description over four cells, so the collapsed row is a cell short of
+  the header's description column and `bmSublinkSpeedAttr[0]` is not read.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.ii`
   Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
@@ -399,3 +415,27 @@ hint gives a signal, and the sentences that define the document's own notation. 
 - [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md`, `semanticir.md`, `intentir.md`, `isf-adapter.md`,
   `quality/validation.md`, `source-to-intent-contract.md`; KM `a-keyword-definition-is-typed-with-the-obligations-it-states`.
   No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.i` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — every table of the 31 chains headed with exact `field`, an `offset` and a `size` column:
+  USB 3.2's 28 (26 typed `encoding`, 2 `unknown`), with captions and first rows; every one absent from
+  `message_field_records`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: the field-titled reader needs a caption
+  naming *fields* with a container noun, and the byte-location family needs a `byte location` header and an unknown
+  kind. New `descriptor_layout_columns` and `byte_layout_size_and_description`; `collect_byte_location_tables` admits
+  the descriptor header (unknown or encoding) and `ByteLocationRow.name` carries its `field` cell. RED, the file
+  restored byte-identically after each (4 mutations, each failing `a_descriptor_table_reaches_message_field_records`):
+  the descriptor header, the encoding kind, the name column, any field cell taken as a name.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 30 identical, USB 3.2 0 -> 122 message fields in 20
+  containers from 27 of 28 tables; rebuilt stage by stage, every later stage and `.isf` text byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `87ba2963b`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,891 passed, 0 failed. `flow_census.json` rolled (+2 functions, +9 decision
+  sites, +7 helper edges, +1 macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the table's own header words and the caption's label; no document, table or field
+  name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*Descriptor tables join the family*); KM
+  `byte-location-structure-field-extraction` amended. No production rule deleted or replaced.
+

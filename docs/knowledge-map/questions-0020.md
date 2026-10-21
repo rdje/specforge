@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > which prepositions make a value slot a relation
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which production carrier already emits typed actionable residuals
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -295,5 +297,3 @@
   > why can a legacy evidence artifact not be replayed
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > why can a name-shape heuristic not find a drifted table
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)

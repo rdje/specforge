@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55A-KEYWORD-DEFINITIONS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55BI-DESCRIPTOR-TABLES",
    "baseline": {
-    "analyzed_functions": 2808,
-    "decision_sites": 15536,
-    "helper_edges": 19604,
-    "semantic_macros": 1615
+    "analyzed_functions": 2811,
+    "decision_sites": 15559,
+    "helper_edges": 19645,
+    "semantic_macros": 1620
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 23,
-    "helper_edges": 41,
-    "semantic_macros": 5
+    "analyzed_functions": 2,
+    "decision_sites": 9,
+    "helper_edges": 7,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.a: a keyword the document defines is a typed record with the obligations it states (keyword_definition_surface, keyword_obligations, keyword_definition_residual_packet)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.b.i",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.b.i: a descriptor table (Offset | Field | Size | Value | Description) is a byte layout read into message_field_records (descriptor_layout_columns, byte_layout_size_and_description)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

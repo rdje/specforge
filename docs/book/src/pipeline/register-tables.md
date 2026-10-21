@@ -232,6 +232,16 @@ re-ingest recovers the caption), two more structures lost captions in individual
 period-bleed rows above stay name-less — absence, never invention.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10e`).
 
+**Descriptor tables join the family (`EXTRACTION-REPRESENTATION-GAPS.55.b.i`).** USB lays its descriptors out as
+`Offset | Field | Size | Value | Description` under a caption naming the structure (*Standard Device Descriptor*,
+*Format of Setup Data*), and the converter calls them encoding tables for their `Value` column, so no field reached a
+record. An exact `offset`, an exact `field` and the family's size and description columns now make a byte layout
+whatever kind the converter guessed (unknown or encoding); the field's name comes from its own column, not the
+description, and the caption label, byte-exact continuation stitching and size-to-width arithmetic are the family's.
+A reserved field the descriptor names (`bReserved`, `wReserved`) is a field like any other here. These records stay
+in EvidenceIR: carrying `message_field_records` onward is `DOC-INTENT-TAXONOMY.4b`'s.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.i`).
+
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 
 Every `.10` family above reads a *table*. Some specifications don't put their field layouts in tables at

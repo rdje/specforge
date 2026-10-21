@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.i",
-      "literal" : "`.55.b.i` — a descriptor table reaches `message_field_records`.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.ii",
+      "literal" : "`.55.b.ii` — a layout whose field name opens its description reaches `message_field_records`.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 39234,
+               "bytes" : 43142,
                "line_bytes" : 139,
-               "lines" : 401
+               "lines" : 441
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "bd4c7a63a9de0edffb01c8f8e68a1f18b0cc731e04e220575d392ccd54861f33",
+            "sha256" : "5beeff2763fb8bbf904caea3fd0dd0f38b896f2c447b4970236f6b84b3e87463",
             "state" : "active"
          },
          {
@@ -1284,7 +1284,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
@@ -1432,7 +1432,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.55.b.i` — a descriptor table reaches `message_field_records`.",
+         "`.55.b.ii` — a layout whose field name opens its description reaches `message_field_records`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1471,7 +1471,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`"

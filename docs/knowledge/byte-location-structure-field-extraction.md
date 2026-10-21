@@ -10,9 +10,10 @@ answers:
   - "what does byte_offset mean on a message field record when bit_range is None"
   - "how do byte-granular page fragments chain (offset plus size adjacency)"
   - "which strategy is message_fields.byte_location_table"
+  - "how are USB descriptor tables (Offset | Field | Size | Value | Description) extracted (descriptor_layout_columns, EXTRACTION-REPRESENTATION-GAPS.55.b.i)"
 date: 2026-06-11
 tags: [message-fields, structures, tables, grammar, digestion, ccix-class, probe-first]
-evidence: crates/specforge/src/ir/evidence.rs (byte_location_layout_columns, collect_byte_location_tables, byte_location_chain_adjacent, byte_location_field_name, extract_byte_location_structure_fields); docs/tasks/PDF-VARIANT-DIGESTION.md (.10e)
+evidence: crates/specforge/src/ir/evidence.rs (byte_location_layout_columns, descriptor_layout_columns, byte_layout_size_and_description, collect_byte_location_tables, byte_location_chain_adjacent, byte_location_field_name, extract_byte_location_structure_fields); docs/tasks/PDF-VARIANT-DIGESTION.md (.10e)
 reverify: cargo test --workspace --exclude specforge-production-graph --lib byte_location -- --nocapture ; plus the stub-copy dry-run protocol over generated/source_ir/ccix_*/source_ir.json
 ---
 
@@ -39,3 +40,10 @@ containers per version (≈161 total), zero pre-existing records changed, 12-doc
 manifest-only. Residual: lost-caption chains (Port 7-9 in all 4 versions; ATC + Log Info
 in r1.0a; Cache in rev1.1) — the re-ingest lever. Related:
 [[bit-position-structure-field-extraction]], [[offset-suffixed-dword-relative-bit-cells]].
+
+**`2026-10-21` (`EXTRACTION-REPRESENTATION-GAPS.55.b.i`).** The family also reads descriptor layouts: an exact
+`offset`, an exact `field` and the size and description columns (`descriptor_layout_columns`), accepted when the
+converter typed the table unknown or encoding (USB's descriptors are encoding for their `Value` column); the name
+comes from the `field` column (`is_message_field_name`), a reserved field included. USB 3.2: 27 of 28 descriptor tables
+give 122 fields in 20 containers (5 reserved); one continuation whose spanned header shifts its description column
+(`bmSublinkSpeedAttr[0]`) gives none.

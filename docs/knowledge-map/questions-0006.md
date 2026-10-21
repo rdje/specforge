@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > how do I check whether a held-out bundle still rebuilds its document
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how do I check whether a named frontier has an owning task-tree leaf
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -295,5 +297,3 @@
   > how does SpecForge know which signals a check signal covers
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does SpecForge measure source-to-IntentIR stage loss
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > how does SpecForge prevent analog dB limits from becoming digital timing intent

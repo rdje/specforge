@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > how does SpecForge prevent analog dB limits from becoming digital timing intent
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how does SpecForge prove a cited self-test contains a known-bad RED case
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -296,5 +298,3 @@
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how is IngestTerminatedBySignal different from IngestAbortedForMemory
-- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
-  > how is PSEL tied to PSELx without reading the trailing x

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why were PWR and OPEN promoted as conditional-rule consequent signals
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > why were RISC-V Debug register fields in the wrong register
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)

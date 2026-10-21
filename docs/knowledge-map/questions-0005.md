@@ -136,6 +136,8 @@
   > how are TRM register bit assignments tables without access/reset columns handled
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > how are USB 3.2 timer tables with a Timeout Value column read
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how are USB descriptor tables (Offset | Field | Size | Value | Description) extracted (descriptor_layout_columns, EXTRACTION-REPRESENTATION-GAPS.55.b.i)
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how are authored examples identity literals and dated book measurements excluded
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -296,5 +298,3 @@
   > how do I change the reviewed source-to-intent fixture projection
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how do I check the mdBook for stale behavioural claims
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > how do I check whether a held-out bundle still rebuilds its document

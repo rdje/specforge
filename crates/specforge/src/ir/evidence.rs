@@ -19628,6 +19628,15 @@ fn byte_location_layout_columns(table: &StructuredTableRecord) -> Option<(usize,
     let cells = effective_row_cells(first);
     let lower: Vec<String> = cells.iter().map(|c| c.to_ascii_lowercase()).collect();
     let location = lower.iter().position(|c| c.contains("byte location"))?;
+    byte_layout_size_and_description(&lower, location)
+}
+
+/// The size and description columns of a byte layout whose location column is known: a `size`-led column and a
+/// `description`-containing one, distinct from each other and from the location.
+fn byte_layout_size_and_description(
+    lower: &[String],
+    location: usize,
+) -> Option<(usize, usize, usize)> {
     let size = lower.iter().position(|c| c.starts_with("size"))?;
     let description = lower.iter().position(|c| c.contains("description"))?;
     (location != size && size != description && location != description).then_some((
@@ -19637,14 +19646,39 @@ fn byte_location_layout_columns(table: &StructuredTableRecord) -> Option<(usize,
     ))
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.i` — does this table carry a descriptor layout header (`Offset | Field | Size
+/// | Value | Description`, USB's *Standard Device Descriptor*)? An exact `offset` column for the byte location, an
+/// exact `field` column naming each field, and the byte layout's size and description columns. Returns the location,
+/// size, description and name columns.
+fn descriptor_layout_columns(
+    table: &StructuredTableRecord,
+) -> Option<(usize, usize, usize, usize)> {
+    let first = table.header_rows.first()?;
+    let lower: Vec<String> = effective_row_cells(first)
+        .iter()
+        .map(|c| c.trim().to_ascii_lowercase())
+        .collect();
+    let location = lower.iter().position(|c| c == "offset")?;
+    let name = lower.iter().position(|c| c == "field")?;
+    let (location, size, description) = byte_layout_size_and_description(&lower, location)?;
+    (name != location && name != size && name != description).then_some((
+        location,
+        size,
+        description,
+        name,
+    ))
+}
+
 /// One eligible row of a byte-location placement table: the field's literal starting byte
 /// offset within its structure, the literal size in bytes when the cell is a plain count
 /// (a symbolic `(indicated by VenLen)` variable-length tail stays `None` — honest
-/// absence), and the description cell carrying the fused field name.
+/// absence), the description cell carrying the fused field name, and the field's own name
+/// when a descriptor layout states it in a column of its own.
 struct ByteLocationRow {
     byte_offset: u32,
     size_bytes: Option<u32>,
     description: String,
+    name: Option<String>,
 }
 
 /// One shape-qualified byte-location placement table, parsed for chain construction. The
@@ -19671,16 +19705,22 @@ fn collect_byte_location_tables<'a>(
 ) -> Vec<ByteLocationTable<'a>> {
     let mut tables: Vec<ByteLocationTable<'a>> = Vec::new();
     for table in &source_ir.structured_tables {
-        if !matches!(
-            effective_table_kind(table, prior_guidance),
-            TableKind::Unknown
-        ) {
-            continue;
-        }
-        let Some((location_col, size_col, description_col)) = byte_location_layout_columns(table)
-        else {
-            continue;
-        };
+        // `EXTRACTION-REPRESENTATION-GAPS.55.b.i` — a descriptor layout names each field in a column of its own; its
+        // `Value` column leads the converter to call it an encoding table, which its exact header overrules.
+        let kind = effective_table_kind(table, prior_guidance);
+        let (location_col, size_col, description_col, name_col) =
+            if let Some((location, size, description)) = byte_location_layout_columns(table)
+                && matches!(kind, TableKind::Unknown)
+            {
+                (location, size, description, None)
+            } else if let Some((location, size, description, name)) =
+                descriptor_layout_columns(table)
+                && matches!(kind, TableKind::Unknown | TableKind::Encoding)
+            {
+                (location, size, description, Some(name))
+            } else {
+                continue;
+            };
         let mut rows: Vec<ByteLocationRow> = Vec::new();
         for row in &table.body_rows {
             let cells = effective_row_cells(row);
@@ -19697,10 +19737,24 @@ fn collect_byte_location_tables<'a>(
                 .get(size_col)
                 .and_then(|c| c.trim().parse::<u32>().ok())
                 .filter(|&s| s > 0 && s <= 4096);
+            let name = match name_col {
+                Some(column) => {
+                    let Some(name) = cells
+                        .get(column)
+                        .map(|cell| cell.trim())
+                        .filter(|cell| is_message_field_name(cell))
+                    else {
+                        continue; // a descriptor row names its field, or it is no field
+                    };
+                    Some(name.to_string())
+                }
+                None => None,
+            };
             rows.push(ByteLocationRow {
                 byte_offset,
                 size_bytes,
                 description: description.clone(),
+                name,
             });
         }
         if rows.is_empty() {
@@ -19900,7 +19954,11 @@ fn extract_byte_location_structure_fields(
         for &member in &chain.members {
             let parsed = &tables[member];
             for row in &parsed.rows {
-                let Some(name) = byte_location_field_name(&row.description) else {
+                let Some(name) = row
+                    .name
+                    .clone()
+                    .or_else(|| byte_location_field_name(&row.description))
+                else {
                     continue;
                 };
                 let key = (label.to_ascii_lowercase(), name.to_ascii_uppercase());
@@ -45230,6 +45288,115 @@ The control register.
             "captioned visual evidence should carry High automation confidence"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn a_descriptor_table_reaches_message_field_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("descriptor.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Descriptors\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let header = ["Offset", "Field", "Size", "Value", "Description"];
+        let table = |table_id: &str, page: &str, caption: Option<&str>, rows: &[[&str; 5]]| {
+            StructuredTableRecord {
+                table_id: table_id.to_string(),
+                asset_id: format!("asset_{table_id}"),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Encoding,
+                header_rows: vec![
+                    header
+                        .iter()
+                        .map(|text| make_table_cell(text, true))
+                        .collect(),
+                ],
+                body_rows: rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|text| make_table_cell(text, false))
+                            .collect()
+                    })
+                    .collect(),
+                row_count: rows.len() as u32,
+                col_count: 5,
+            }
+        };
+        source_ir.structured_tables.push(table(
+            "table_device",
+            "page_0010",
+            Some("Table 9-11.  Standard Device Descriptor"),
+            &[
+                [
+                    "0",
+                    "bLength",
+                    "1",
+                    "Number",
+                    "Size of this descriptor in bytes",
+                ],
+                [
+                    "1",
+                    "bDescriptorType",
+                    "1",
+                    "Constant",
+                    "DEVICE Descriptor Type",
+                ],
+                ["2", "bReserved", "1", "Number", "Reserved; set to zero"],
+                ["", "", "", "", "continued prose"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_device_continued",
+            "page_0011",
+            None,
+            &[
+                [
+                    "3",
+                    "iProduct",
+                    "1",
+                    "Index",
+                    "Index of string descriptor describing product",
+                ],
+                [
+                    "4",
+                    "see the text below",
+                    "1",
+                    "Index",
+                    "a field cell that names no field",
+                ],
+            ],
+        ));
+        let fields = super::extract_byte_location_structure_fields(&source_ir, None);
+        let read: Vec<(&str, &str, Option<u32>, Option<u32>)> = fields
+            .iter()
+            .map(|field| {
+                (
+                    field.container.as_str(),
+                    field.name.as_str(),
+                    field.byte_offset,
+                    field.bit_width,
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                ("Standard Device Descriptor", "bLength", Some(0), Some(8)),
+                (
+                    "Standard Device Descriptor",
+                    "bDescriptorType",
+                    Some(1),
+                    Some(8)
+                ),
+                ("Standard Device Descriptor", "bReserved", Some(2), Some(8)),
+                ("Standard Device Descriptor", "iProduct", Some(3), Some(8)),
+            ],
+            "the named field column is read, a reserved field kept, the continuation stitched"
+        );
         Ok(())
     }
 
