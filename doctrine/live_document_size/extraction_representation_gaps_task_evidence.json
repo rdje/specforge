@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56",
-      "literal" : "`.56` — the ERG task-evidence collection stays under its total-bytes bound.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.a",
+      "literal" : "`.56.a` — a task-evidence part whose every leaf is closed moves to the archive terminal and out of the live total.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -136,13 +136,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
             "metrics" : {
-               "bytes" : 8969,
+               "bytes" : 12965,
                "line_bytes" : 171,
-               "lines" : 100
+               "lines" : 141
             },
             "part_id" : "packet-and-memory-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-            "sha256" : "f5b0ab9a3eedd198847a4f61f9a398e09b8987002d886760741d0ad936d1cefe",
+            "sha256" : "9fe9fe34bf7cc3d030c5029699fa8c0e4aaf951572f3548587340a549396c0dc",
             "state" : "active"
          },
          {
@@ -1332,12 +1332,24 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.b",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
@@ -1468,7 +1480,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.56` — the ERG task-evidence collection stays under its total-bytes bound.",
+         "`.56.a` — a task-evidence part whose every leaf is closed moves to the archive terminal and out of the live total.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1507,8 +1519,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.56`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.56.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.56.b`"
       ]
    },
    "migration_metadata" : {

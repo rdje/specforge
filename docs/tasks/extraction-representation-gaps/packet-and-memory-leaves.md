@@ -57,7 +57,7 @@ whole.
   residual, from what the document states rather than from a vocabulary list (ADR 0006), and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56`
-  Status: `open` (`2026-10-21`; DESIGN; found by `.55.b.iv`)
+  Status: `done` (`2026-10-21`; DESIGN; found by `.55.b.iv`; opened `.56.a`, `.56.b`)
   Goal: **the ERG task-evidence collection stays under its total-bytes bound.** The contract
   (`doctrine/live_document_size/extraction_representation_gaps_task_evidence.json`, `limits.parts`) bounds every
   part's bytes together at a 786,432-byte health target with an 80% warning; the 17 parts hold about 656 KB
@@ -69,6 +69,47 @@ whole.
   legacy and rolled-over parts are history, so seal them into a dated archive capsule the way the roadmap seals its
   rolled-over direction, or derive the bound from the part quantum (ADR 0029) — leave measured headroom, and keep
   every leaf route and claim region resolving.
+  **Measured `2026-10-21`** (after `.55.b.iv.a`): the 17 parts hold 661,007 bytes, 84.1% of the 786,432 target and
+  56.0% of the 1,179,648 ceiling, which is the portable cap `check_active_task_evidence.pl` enforces on every tree.
+  Acceptance checklists are 261,379 bytes (39.5%), the largest term a CODE slice adds. Eight parts route only closed
+  leaves: `table-census-leaves`, `hint-and-notation-leaves`, `unread-intent-leaves`, `default-and-assumption-leaves`,
+  `environment-assumption-leaves`, the two `acceptance-checklists` halves and `changelog`. Together they hold
+  327,205 bytes, 49.5% of the live total. 37 of the 173 routed leaves are open, and the other nine parts hold them.
+  Among the other seven task-evidence trees, CORPUS-COVERAGE's parts warn on `lines_total` (85.9%) and no leaf owns
+  it; the rest sit at 28.6-60.7% of bytes.
+  **Decided.** The bound is right and stays; the remedy is to shrink the live resource. LDPH `.14e` removed the part
+  count and kept `bytes_total` and `lines_total` as the bound on what a tree holds live. ADR 0032 found that adding
+  parts never reduces that total, and raising the target past the portable cap is not available. The adoption guide
+  (§6) names the remedy for this shape: move sealed history, at whole-record boundaries, to a declared archive
+  terminal and leave one checked live pointer. So a part whose every routed leaf is closed may move to the tree's
+  archive directory. It moves byte-exact, bound to its sealing commit and blob (the checker's existing `sealed`
+  proof), and counts toward the tree's archive surface instead of the live parts total. Its leaves route to the
+  archived path, and every reference to it follows. No record is edited, merged or deleted; amending a sealed leaf
+  takes a new record in a live part, as the post-migration records already do. Applied today, the eight parts leave
+  333,802 live bytes (42.4%), and the transition repeats whenever the total warns again. Splitting checklists from
+  records inside a live part is declined: it would cut leaves' records apart, and whole closed parts already carry
+  half the total. Implementation: `.56.a`; the corpus tree's adoption: `.56.b`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.56.a`
+  Status: `open` (`2026-10-21`; CODE; opened by `.56`)
+  Goal: **a task-evidence part whose every leaf is closed moves to the archive terminal and out of the live total.**
+  Acceptance: `scripts/check_active_task_evidence.pl` gains an archived part. It lives under `archive_directory`, is
+  sealed by commit and blob and checked byte-for-byte against that commit, and is excluded from the live `parts`
+  totals. Every leaf it routes must be closed, it may not be the current frontier's part, and its source regions
+  still resolve once each. The route catalog and index point at the archived path. The tree's archive surface admits
+  it under a consumed `ceiling_increase_authorities` record. `--self-test` covers the green case and each refusal
+  (an open leaf, the frontier's part, a byte drift, a missing authority). Then move ERG's eight all-closed parts,
+  following every reference to their paths (KM cards, the manifest, routes, the contract, `surfaces.jsonl`), copy ->
+  verify -> use -> delete. Measure the live total after the move, and keep the book's `reference/live-docs.md` in
+  lockstep.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.56.b`
+  Status: `open` (`2026-10-21`; DOC; opened by `.56`)
+  Goal: **every task-evidence collection whose live total warns takes the archive transition.** On `2026-10-21`
+  CORPUS-COVERAGE's parts are at 85.9% of their `lines_total` target and no leaf owns the warning. Acceptance: once
+  `.56.a` lands, census every contract under `doctrine/live_document_size/*task_evidence*.json`, apply the
+  transition to each whose live total warns and that has all-closed parts, with a dated pointer in its tree. A tree
+  whose warning has no all-closed part gets an owned leaf in that tree saying so.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` (CODE) — DONE `2026-10-21`
 

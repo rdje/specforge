@@ -66,8 +66,9 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a` | [Packet and memory leaves](packet-and-memory-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.56` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b` | [Packet and memory leaves](packet-and-memory-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.56.a` | [Packet and memory leaves](packet-and-memory-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.56.b` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 
 ## Complete route catalog
 
