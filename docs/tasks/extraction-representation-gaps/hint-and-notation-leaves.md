@@ -235,7 +235,7 @@ hint gives a signal, and the sentences that define the document's own notation. 
   documents' packet-field tables to reach a deterministic field record first (`.55.b`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.a`
-  Status: `open` (`2026-10-21`; CODE; split from `.55`)
+  Status: `done` (`2026-10-21`; CODE; split from `.55`; checklist below)
   Goal: **a keyword the document defines is a typed record with the obligations it states.** USB 3.2's and USB4
   inter-domain's *Reserved*, *N/A*, *Optional*, *Shall*, *Should*, *May*, *Normative* and *Informative* definitions are
   apparatus statements since `.51`, so the rule *A reserved bit, byte, word or field shall be set to zero by the
@@ -244,6 +244,22 @@ hint gives a signal, and the sentences that define the document's own notation. 
   words) into a typed record — the keyword, its defining statement, and each obligation clause with its agent and
   modality — carry it through SemanticIR and IntentIR, give the adapter an explicit disposition, and measure every
   chain.
+  **Decided `2026-10-21`.** `keyword_definition_surface` reads a statement of any class that opens (past list markers)
+  with a keyword-shaped word and *is a keyword*; the record (`KeywordDefinitionRecord`, family `evidence.normative`)
+  holds the keyword, its defining sentence, and one `KeywordObligation` per *shall*, *must* or *should* in the
+  definition (*not* after it negates: `prohibition`, `discouragement`) — the keyword opening its own definition (*Shall
+  is a keyword …*) is not one. The clause runs from the last *and* before the modal to the last *and* before the next
+  modal, so *shall be set to zero by the sender and shall be ignored by the receiver* is two; the agents are the words
+  after *by*, not a reference to the document (*by this specification*). The same keyword twice is one record citing
+  both. SemanticIR and IntentIR carry it unchanged; every adapter names a document's definitions in one
+  `isf_keyword_obligations_not_bound` residual listing those that oblige what they mark.
+  **Measured over all 31 chains** (evidence dry-run against `f65e7611d`'s): 29 identical; USB 3.2 and USB4 inter-domain
+  each gain 8 records (*Informative*, *May*, *N/A*, *Normative*, *Optional*, *Reserved*, *Shall*, *Should*) and 7
+  obligations — *Reserved* 5 (not utilized by a vendor implementation; set to zero by the sender; ignored by the
+  receiver; its values not sent by the sender; ignored by the receiver if received), *N/A* 1 (not checked or used by
+  the recipient), *Optional* 1 (an implemented feature implemented as defined). Rebuilt stage by stage: the field
+  crosses all three stages, each adapter gains its one residual (USB4 inter-domain 2 -> 3, USB 3.2 94 -> 95), every
+  `.isf` text byte-identical; the new rule field re-sealed the whole cascade.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b`
   Status: `open` (`2026-10-21`; DESIGN; split from `.55`)
@@ -303,3 +319,30 @@ hint gives a signal, and the sentences that define the document's own notation. 
 - [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (a signal inventory by structure) and `domain/handshake-semantics.md`
   (a compared value); KM `a-hint-role-counts-only-for-the-signal-that-bears-it` amended. No production rule deleted
   or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.a` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — every statement of the 31 chains opening *X is a keyword*: 16, in USB 3.2 and USB4
+  inter-domain, all apparatus since `.51`; each definition read in full for its modals and agents.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no IR surface held a keyword or the obligation its definition states. New
+  `KeywordDefinitionRecord`, `KeywordObligation`, `KeywordObligationModality`, `keyword_definition_surface`,
+  `keyword_obligations` (`crates/specforge/src/ir/evidence.rs`), carried by `semantic.rs` and `intent.rs`, disposed by
+  `keyword_definition_residual_packet` (`adapters.rs`), counted by `validate`; the family inventories and the census's
+  typed surfaces name it. RED, both files restored byte-identically after each (8 mutations, each failing a named
+  test): the wiring, *is a keyword*, the opening keyword read as a modal, the negation, the clause split, the document
+  as an agent, the merge, every keyword named by the residual.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 29 identical, the two USB documents 8 records and 7
+  obligations each; both rebuilt stage by stage, the field crossing all three stages and each adapter gaining its
+  residual, every `.isf` text byte-identical; `rebuild_stage_cascade.sh --write` re-sealed every chain, every rebuilt
+  artifact content-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `f65e7611d`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,890 passed, 0 failed. `flow_census.json` rolled (+3 functions, +23
+  decision sites, +41 helper edges, +5 macros) and its boundary moved for the new producer (rule roots 130 -> 131,
+  grammar declassifiers 71 -> 72, with its rationale).
+- [x] **GENERICITY (ADR 0006)** — the definition's own words (*is a keyword*, English modals, *by*); no document,
+  keyword or field name.
+- [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md`, `semanticir.md`, `intentir.md`, `isf-adapter.md`,
+  `quality/validation.md`, `source-to-intent-contract.md`; KM `a-keyword-definition-is-typed-with-the-obligations-it-states`.
+  No production rule deleted or replaced.

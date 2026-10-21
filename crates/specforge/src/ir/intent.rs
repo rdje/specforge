@@ -14,9 +14,9 @@ use crate::ir::derivation::{
 };
 use crate::ir::evidence::{
     CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord,
-    InterfaceEdgeTimingRecord, OptionalFeatureRecord, PermissionRuleRecord,
-    ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
-    SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
+    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, OptionalFeatureRecord,
+    PermissionRuleRecord, ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord,
+    SerialFrameField, SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
     SignalSemanticConflictRecord, SoftwareIntentRecord,
 };
 use crate::ir::semantic::{
@@ -211,6 +211,10 @@ pub struct IntentIr {
     /// SemanticIR (ADR 0016); non-executable by design.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub software_intent: Vec<SoftwareIntentRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.55.a — the keywords the document defines and the obligations they state,
+    /// carried losslessly from SemanticIR (ADR 0016); non-executable by design.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub keyword_definitions: Vec<KeywordDefinitionRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.24.b — declared signals with one instance per actor of a role, carried from
     /// SemanticIR: the adapter lists a family the lowered actor drives as one instance.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -345,6 +349,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("permission_rules", "intent.carried_semantics"),
     ("optional_features", "intent.carried_semantics"),
     ("software_intent", "intent.carried_semantics"),
+    ("keyword_definitions", "intent.carried_semantics"),
     ("signal_families", "intent.carried_semantics"),
     ("operation_kinds", "intent.carried_semantics"),
     ("regular_states", "intent.carried_semantics"),
@@ -403,6 +408,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "permission_rules",
     "optional_features",
     "software_intent",
+    "keyword_definitions",
     "signal_families",
     "operation_kinds",
     "regular_states",
@@ -776,6 +782,7 @@ impl IntentIr {
             permission_rules: semantic_ir.permission_rules.clone(),
             optional_features: semantic_ir.optional_features.clone(),
             software_intent: semantic_ir.software_intent.clone(),
+            keyword_definitions: semantic_ir.keyword_definitions.clone(),
             signal_families: semantic_ir.signal_families.clone(),
             operation_kinds: semantic_ir.operation_kinds.clone(),
             system_contract,
@@ -857,6 +864,7 @@ impl IntentIr {
         insert_field!(permission_rules);
         insert_field!(optional_features);
         insert_field!(software_intent);
+        insert_field!(keyword_definitions);
         insert_field!(signal_families);
         insert_field!(operation_kinds);
         insert_field!(regular_states);
@@ -1443,6 +1451,7 @@ impl IntentIr {
             permission_rules: Vec::new(),
             optional_features: Vec::new(),
             software_intent: Vec::new(),
+            keyword_definitions: Vec::new(),
             signal_families: Vec::new(),
             operation_kinds: Vec::new(),
             system_contract: None,
@@ -6809,8 +6818,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 60);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 40);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 61);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 41);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()

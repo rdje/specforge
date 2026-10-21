@@ -612,6 +612,8 @@ Five evidence-grounded protocol collections, and the signal-presence records, cr
   optional for S to V*) and its condition, as written (`EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d`)
 - `software_intent` — each statement whose subject is an agent the document makes software: the agent as written,
   how the document makes it software and the modality; non-executable by design (`EXTRACTION-REPRESENTATION-GAPS.3.d.i`)
+- `keyword_definitions` — each keyword the document defines, its defining sentence and each obligation the definition
+  states (clause, modality, the agents after *by*); non-executable by design (`EXTRACTION-REPRESENTATION-GAPS.55.a`)
 
 This projection is intentionally lossless rather than interpretive. Record order, ids, optional values, and
 every `supporting_statement_ids` and `supporting_table_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
@@ -654,6 +656,7 @@ state, encodings, values, ports, activation conditions, or storage targets.
   permission_rules: N
   optional_features: N
   software_intent: N
+  keyword_definitions: N
 ```
 
 IntentIR carries the same collections unchanged, and the `.isf` adapter keeps one residual per record (one for all

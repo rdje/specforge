@@ -4,41 +4,41 @@
   "pinned": {
    "boundary_rows": 144,
    "canonical_seams": 12,
-   "grammar_declassifiers": 71,
+   "grammar_declassifiers": 72,
    "non_authoritative_regions": 9,
    "proof_gates": 25,
    "protected_calls": 28,
    "protected_constructions": 19,
    "protected_types": 15,
-   "rule_roots": 130,
+   "rule_roots": 131,
    "source_fields": 13,
    "source_parameters": 3,
    "source_returns": 2,
    "source_types": 22,
    "trusted_regions": 11
   },
-  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact. Moved by EXTRACTION-REPRESENTATION-GAPS.24.b: two rule roots (semantic.rs#document_signal_coreference_records, #document_signal_family_records) register the producers of semantic.statement_lift's two new fields, signal_coreferences and signal_families; each is a registered derivation with proof claims, so its producer is a rule root, not unrooted code. Moved again by EXTRACTION-REPRESENTATION-GAPS.10.g.ii: one rule root (semantic.rs#document_operation_kind_records) registers the producer of semantic.statement_lift's operation_kinds field, by the same reasoning. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: one producer entrypoint (evidence.rs#protocol_transition_surface) registers the producer of evidence.protocol_structure's new field protocol_transitions; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i: one producer entrypoint (evidence.rs#check_signal_surface) registers the producer of evidence.declaration's new field check_signal_records; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii: one producer entrypoint (evidence.rs#collective_signal_name_surface) registers the producer of evidence.declaration's new field collective_signal_names; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii: one producer entrypoint (evidence.rs#equivalence_rule_surface) registers the producer of evidence.normative's new field equivalence_rules; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a: one producer entrypoint (evidence.rs#permission_rule_surface) registers the producer of evidence.normative's new field permission_rules; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d: one producer entrypoint (evidence.rs#optional_feature_surface) registers the producer of evidence.normative's new field optional_features; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.i: one producer entrypoint (evidence.rs#software_intent_surface) registers the producer of evidence.normative's new field software_intent; grammar_introduces, so rule_roots and grammar_declassifiers each move by one."
+  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact. Moved by EXTRACTION-REPRESENTATION-GAPS.24.b: two rule roots (semantic.rs#document_signal_coreference_records, #document_signal_family_records) register the producers of semantic.statement_lift's two new fields, signal_coreferences and signal_families; each is a registered derivation with proof claims, so its producer is a rule root, not unrooted code. Moved again by EXTRACTION-REPRESENTATION-GAPS.10.g.ii: one rule root (semantic.rs#document_operation_kind_records) registers the producer of semantic.statement_lift's operation_kinds field, by the same reasoning. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: one producer entrypoint (evidence.rs#protocol_transition_surface) registers the producer of evidence.protocol_structure's new field protocol_transitions; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i: one producer entrypoint (evidence.rs#check_signal_surface) registers the producer of evidence.declaration's new field check_signal_records; the family is grammar_introduces, so the one registration is both a rule root and a grammar root, and rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.ii: one producer entrypoint (evidence.rs#collective_signal_name_surface) registers the producer of evidence.declaration's new field collective_signal_names; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii: one producer entrypoint (evidence.rs#equivalence_rule_surface) registers the producer of evidence.normative's new field equivalence_rules; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a: one producer entrypoint (evidence.rs#permission_rule_surface) registers the producer of evidence.normative's new field permission_rules; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d: one producer entrypoint (evidence.rs#optional_feature_surface) registers the producer of evidence.normative's new field optional_features; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.3.d.i: one producer entrypoint (evidence.rs#software_intent_surface) registers the producer of evidence.normative's new field software_intent; grammar_introduces, so rule_roots and grammar_declassifiers each move by one. Moved again by EXTRACTION-REPRESENTATION-GAPS.55.a: one producer entrypoint (evidence.rs#keyword_definition_surface) registers the producer of evidence.normative's new field keyword_definitions; grammar_introduces, so rule_roots and grammar_declassifiers each move by one."
  },
  "contract_id": "production-genericity-flow-census",
  "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-53-KEY-TABLE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55A-KEYWORD-DEFINITIONS",
    "baseline": {
-    "analyzed_functions": 2807,
-    "decision_sites": 15532,
-    "helper_edges": 19601,
-    "semantic_macros": 1614
+    "analyzed_functions": 2808,
+    "decision_sites": 15536,
+    "helper_edges": 19604,
+    "semantic_macros": 1615
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 4,
-    "helper_edges": 3,
-    "semantic_macros": 1
+    "analyzed_functions": 3,
+    "decision_sites": 23,
+    "helper_edges": 41,
+    "semantic_macros": 5
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.53",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.53: a table whose first column is headed Code or Key holds codes, not signal names (table_keys_codes_rather_than_signals); a compared value is not a role label."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.a: a keyword the document defines is a typed record with the obligations it states (keyword_definition_surface, keyword_obligations, keyword_definition_residual_packet)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

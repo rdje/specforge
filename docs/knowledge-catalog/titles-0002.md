@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md) | 2026-10-20 | `current` | An assume-sentence whose subject is the document, a diagram key or an example is classified apparatus, a stat… |
 | [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md) | 2026-09-29 | `current` | A relation verb after "and [then]" whose shared verb relates no signal keeps the plain subject only when a ve… |
 | [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md) | 2026-10-19 | `current` | A sentence that treats one thing as another is an equivalence_rules record — subject, equivalent, condition… |
 | [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md) | 2026-09-26 | `current` | IntentIR makes a temporal invariant from a signal constraint only when the constraint holds at every cycle… |
@@ -60,4 +61,3 @@
 | [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md) | 2026-09-15 | `current` | Partitioning a task tree costs four surface records, and the registry that holds them has no warning band |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
-| [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
 | [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |
 | [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md) | 2026-09-12 | `current` | Four producers mint a SignalConstraintRecord and only two reach the kind classifier, so a census of the const… |
 | [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md) | 2026-09-23 | `current` | A signal constraint read from a list item or table row drops the scope its lead-in or caption states — 186… |
@@ -60,4 +61,3 @@
 | [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md) | 2026-09-22 | `current` | An enum member is named from the column the document names it in — the signal seam's calibrated score, tran… |
 | [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md) | 2026-09-22 | `current` | Neither standing oracle can see an enum member value — 0 of 156 kg-bench fixtures mention one and eval-extr… |
 | [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md) | 2026-09-18 | `current` | All 18 escape-fragmented catalog names are artefacts and adjudicate to removal — the English-word risk is t… |
-| [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md) | 2026-09-13 | `current` | A Markdown backslash-escape fragments an identifier, the fragment is DECLARED as a signal, and its own synthe… |

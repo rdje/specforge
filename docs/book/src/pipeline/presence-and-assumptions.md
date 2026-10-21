@@ -246,6 +246,17 @@ interpret notation still read these sentences: AXI's collective names come from 
 function that describes hardware, outside such a section, keeps its class. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.51`).
 
+**A keyword's definition is typed with the obligations it states.** A notation section can define a keyword that
+carries a rule on everything it marks: *Reserved is a keyword indicating reserved bits … A reserved bit, byte, word or
+field shall be set to zero by the sender and shall be ignored by the receiver*. Since
+`EXTRACTION-REPRESENTATION-GAPS.55.a` (`2026-10-21`) EvidenceIR reads every *X is a keyword …* definition, whatever
+class its statement has, into a `keyword_definitions` record — the keyword, its defining sentence, and each
+*shall*, *must* or *should* in it as an obligation with its clause, modality and the agents after *by* (*the sender*,
+*the receiver*; not *this specification*) — which SemanticIR and IntentIR carry unchanged. The keyword opening its own
+definition (*Shall is a keyword …*) is not a modal. No field record carries a keyword yet, so every adapter names the
+obliging keywords in one `isf_keyword_obligations_not_bound` residual and nothing is lowered. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.a`).
+
 **An equivalence rule is a typed record.** A sentence that treats one thing as another states a rule of the
 hardware, often under a condition, and it stays an abstraction by class. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`
 (`2026-10-19`) EvidenceIR also carries each one as an `equivalence_rules` record, which SemanticIR and IntentIR

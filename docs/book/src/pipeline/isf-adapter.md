@@ -503,7 +503,10 @@ which names them by their id range: `.isf` has no construct for an optional beha
 permitted part are phrases, not an actor and an action. A document's optional features (`.3.d.iii.d`) share one packet
 likewise, `isf_protocol_optional_features`: `.isf` has no construct for a feature that may be absent. A document's
 software intent (`.3.d.i`) shares one packet, `isf_software_intent_not_applicable`: `.isf` describes hardware, and the
-packet is the explicit non-applicable disposition the category contract requires for software semantics.
+packet is the explicit non-applicable disposition the category contract requires for software semantics. A
+document's keyword definitions (`.55.a`) share one packet, `isf_keyword_obligations_not_bound`, naming the keywords
+whose definition obliges the fields it marks (*Reserved*: sent as zero, ignored on receipt): no field record carries a
+keyword yet (`.55.b`).
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
 unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,

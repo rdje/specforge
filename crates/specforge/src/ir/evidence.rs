@@ -410,6 +410,11 @@ pub struct EvidenceIr {
     /// name none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub software_intent: Vec<SoftwareIntentRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.55.a — the keywords the document defines (*Reserved is a keyword …*) and the
+    /// obligations their definitions state. Non-executable by design. Empty (serde-skipped) for documents that define
+    /// none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub keyword_definitions: Vec<KeywordDefinitionRecord>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.4: typed obligations on declared MESSAGE FIELDS ("the TagOp
     /// field is inapplicable and must be 0b00"). A field obligation is protocol intent on flit/
     /// message CONTENT, not on a wire — so it lives in its own surface instead of either polluting
@@ -962,6 +967,49 @@ pub struct SoftwareIntentRecord {
     pub supporting_statement_ids: Vec<String>,
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.55.a` — the modality of an obligation a keyword's definition states.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum KeywordObligationModality {
+    /// *shall*, *must*.
+    Obligation,
+    /// *shall not*, *must not*.
+    Prohibition,
+    /// *should*.
+    Recommendation,
+    /// *should not*.
+    Discouragement,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.a` — one obligation a keyword's definition states (*A reserved bit, byte, word or
+/// field shall be set to zero by the sender*): its clause as written, its modality, and the agents named after *by*.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct KeywordObligation {
+    pub text: String,
+    pub modality: KeywordObligationModality,
+    /// The nouns after *by* in the clause (`sender`, `receiver`); empty when it names none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub agents: Vec<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.a` — a keyword the document defines (*Reserved is a keyword indicating reserved
+/// bits, bytes, words, fields, and code values …*): the keyword as written, its defining sentence, and the obligations
+/// the definition states. Non-executable for IntentIR (ADR 0033 decision 6): carried so that a document-wide rule on
+/// the fields a keyword marks is typed rather than lost with the apparatus a conventions section is (`.51`); binding it
+/// to those fields waits for them to reach a record (`.55.b`).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct KeywordDefinitionRecord {
+    /// Stable id, e.g. `keyword_0003`.
+    pub keyword_id: String,
+    pub keyword: String,
+    /// The sentence that defines it (*Reserved is a keyword indicating …*).
+    pub definition: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub obligations: Vec<KeywordObligation>,
+    /// The statement(s) that define it; the same keyword defined twice is one record.
+    pub supporting_statement_ids: Vec<String>,
+}
+
 /// EXTRACTION-QUALITY-GAUGE.0 — the persisted per-document extraction-quality gauge: the result of
 /// one NLI-oracle pass over `signal_constraints` ("does the source sentence entail this constraint
 /// as a claim?"). The not-entailed fraction is a cheap, automatic production-readiness signal that
@@ -1217,6 +1265,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("permission_rules", "evidence.normative"),
     ("optional_features", "evidence.normative"),
     ("software_intent", "evidence.normative"),
+    ("keyword_definitions", "evidence.normative"),
     ("extracted_contracts", "evidence.contract"),
     ("constrained_extraction_stats", "evidence.contract"),
     (
@@ -1636,6 +1685,7 @@ impl EvidenceIr {
         insert_field!(permission_rules);
         insert_field!(optional_features);
         insert_field!(software_intent);
+        insert_field!(keyword_definitions);
         insert_field!(signal_alias_map);
         insert_field!(signal_polarities);
         insert_field!(signal_polarity_conflicts);
@@ -2359,6 +2409,8 @@ impl EvidenceIr {
         let optional_features = optional_feature_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.i — what the document's software agents do.
         let software_intent = software_intent_surface(&extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.55.a — the keywords the document defines.
+        let keyword_definitions = keyword_definition_surface(&extracted_statements);
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
         // bit ranges and explicit prose composition lists. Both read names and ordering from the current
@@ -2507,6 +2559,7 @@ impl EvidenceIr {
             permission_rules,
             optional_features,
             software_intent,
+            keyword_definitions,
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_transitions,
@@ -22955,6 +23008,135 @@ fn withhold_software_rules(
 /// statement order: an English software noun, a name a glossary row defines as software, or a name the document says
 /// is implemented in software (each defining statement read first, in order). A table row and an apparatus statement
 /// are not read; the same statement text twice is one record.
+/// `EXTRACTION-REPRESENTATION-GAPS.55.a` — the keywords the document defines, read from the definition's own words
+/// (*Reserved is a keyword indicating …*) whatever class the statement has: a conventions section files it as apparatus
+/// (`.51`). Each *shall*, *must* or *should* (with *not*, its negation) in the definition is one obligation, except the
+/// keyword itself opening the definition (*Shall is a keyword …*); its clause runs from the last *and* before the modal
+/// to the last *and* before the next modal, and its agents are the words after *by* (*by the sender*), not a reference
+/// to the document (*by this specification*). The same keyword defined twice is one record citing both statements.
+fn keyword_definition_surface(statements: &[ExtractedStatement]) -> Vec<KeywordDefinitionRecord> {
+    let mut records: Vec<KeywordDefinitionRecord> = Vec::new();
+    for statement in statements {
+        let text = without_list_markers(statement.text.trim());
+        let mut words = text.split_whitespace();
+        let Some(keyword) = words.next() else {
+            continue;
+        };
+        let keyword_shaped = keyword.starts_with(|c: char| c.is_ascii_uppercase())
+            && keyword
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || matches!(c, '/' | '-' | '_'));
+        if !keyword_shaped || words.take(3).collect::<Vec<_>>() != ["is", "a", "keyword"] {
+            continue;
+        }
+        if let Some(record) = records.iter_mut().find(|record| record.keyword == keyword) {
+            record
+                .supporting_statement_ids
+                .push(statement.statement_id.clone());
+            continue;
+        }
+        let sentences: Vec<&str> = text
+            .split(". ")
+            .map(|sentence| sentence.trim().trim_end_matches('.').trim())
+            .filter(|sentence| !sentence.is_empty())
+            .collect();
+        let obligations = sentences
+            .iter()
+            .enumerate()
+            .flat_map(|(index, sentence)| {
+                keyword_obligations(sentence, (index == 0).then_some(keyword))
+            })
+            .collect();
+        records.push(KeywordDefinitionRecord {
+            keyword_id: format!("keyword_{:04}", records.len()),
+            keyword: keyword.to_string(),
+            definition: sentences
+                .first()
+                .map_or_else(String::new, |s| format!("{s}.")),
+            obligations,
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+        });
+    }
+    records
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.a` — the obligations one sentence of a keyword's definition states, skipping the
+/// keyword itself when it opens the sentence.
+fn keyword_obligations(sentence: &str, opening_keyword: Option<&str>) -> Vec<KeywordObligation> {
+    const AGENT_STOPS: [&str; 10] = [
+        "and", "or", "if", "unless", "to", "as", "when", "while", "shall", "must",
+    ];
+    let lowered = sentence.to_ascii_lowercase();
+    let words = identifier_words(&lowered);
+    let modals: Vec<(usize, KeywordObligationModality)> = words
+        .iter()
+        .enumerate()
+        .filter(|&(index, &(_, word))| {
+            matches!(word, "shall" | "must" | "should")
+                && !(index == 0 && opening_keyword.is_some_and(|k| k.eq_ignore_ascii_case(word)))
+        })
+        .map(|(index, &(_, word))| {
+            let negated = words.get(index + 1).is_some_and(|&(_, next)| next == "not");
+            let modality = match (word, negated) {
+                ("should", false) => KeywordObligationModality::Recommendation,
+                ("should", true) => KeywordObligationModality::Discouragement,
+                (_, false) => KeywordObligationModality::Obligation,
+                (_, true) => KeywordObligationModality::Prohibition,
+            };
+            (index, modality)
+        })
+        .collect();
+    let and_before = |from: usize, to: usize| {
+        lowered[from..to]
+            .rfind(" and")
+            .map(|offset| from + offset + " and".len())
+    };
+    let mut obligations = Vec::new();
+    let mut floor = 0usize;
+    for (position, &(index, modality)) in modals.iter().enumerate() {
+        let modal_start = words[index].0;
+        let start = and_before(floor, modal_start).unwrap_or(floor);
+        let end = modals
+            .get(position + 1)
+            .and_then(|&(next, _)| {
+                and_before(modal_start, words[next].0).map(|end| end - " and".len())
+            })
+            .unwrap_or(sentence.len());
+        let clause = sentence[start..end]
+            .trim_matches(|c: char| c == ',' || c.is_whitespace())
+            .to_string();
+        let mut agents = Vec::new();
+        let clause_words: Vec<&str> = identifier_words(&lowered[start..end])
+            .into_iter()
+            .map(|(_, word)| word)
+            .collect();
+        if let Some(by) = clause_words.iter().position(|word| *word == "by") {
+            let mut rest = clause_words[by + 1..]
+                .iter()
+                .skip_while(|word| matches!(**word, "the" | "a" | "an"));
+            let first = rest.next();
+            if let Some(first) = first.filter(|word| !matches!(**word, "this" | "these")) {
+                let agent = std::iter::once(*first)
+                    .chain(
+                        rest.take_while(|word| !AGENT_STOPS.contains(word))
+                            .take(1)
+                            .copied(),
+                    )
+                    .collect::<Vec<_>>()
+                    .join(" ");
+                agents.push(agent);
+            }
+        }
+        obligations.push(KeywordObligation {
+            text: clause,
+            modality,
+            agents,
+        });
+        floor = end;
+    }
+    obligations
+}
+
 fn software_intent_surface(statements: &[ExtractedStatement]) -> Vec<SoftwareIntentRecord> {
     let mut names: Vec<(String, SoftwareAgentBasis, String)> = Vec::new();
     for statement in statements {
@@ -41417,7 +41599,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 46);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 47);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -47294,6 +47476,38 @@ The control register.
     }
 
     // ── Layer A: section-aware boilerplate suppression ────────────────────
+
+    #[test]
+    fn a_keyword_defined_in_a_notation_section_reaches_evidence_ir() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# 1.6 Conventions\n",
+                "N/A is a keyword that indicates that a field or value is not applicable and shall not be checked or used by the recipient.\n",
+            ),
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let keywords: Vec<(&str, usize)> = evidence_ir
+            .keyword_definitions
+            .iter()
+            .map(|record| (record.keyword.as_str(), record.obligations.len()))
+            .collect();
+        assert_eq!(
+            keywords,
+            [("N/A", 1)],
+            "an apparatus definition is still typed"
+        );
+        Ok(())
+    }
 
     #[test]
     fn a_heading_names_the_documents_notation_or_puts_it_to_use() {
@@ -63319,5 +63533,105 @@ mod parity_sense_tests {
         ] {
             assert_eq!(stated_parity_sense(&statements), None);
         }
+    }
+}
+
+#[cfg(test)]
+mod keyword_definition_tests {
+    use super::{
+        EvidenceModality, ExtractedStatement, KeywordObligationModality, StatementClass,
+        keyword_definition_surface,
+    };
+
+    fn statement(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::Apparatus,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+        }
+    }
+
+    #[test]
+    fn a_keywords_definition_is_typed_with_the_obligations_it_states() {
+        let records = keyword_definition_surface(&[
+            statement(
+                "s0",
+                "Reserved is a keyword indicating reserved bits, bytes, words, fields, and code values that are set aside for future standardization. A reserved bit, byte, word or field shall be set to zero by the sender and shall be ignored by the receiver. Reserved field values shall not be sent by the sender and, if received, shall be ignored by the receiver.",
+            ),
+            statement(
+                "s1",
+                "Shall is a keyword indicating a mandatory (normative) requirement. Designers are mandated to implement all such requirements.",
+            ),
+            statement(
+                "s2",
+                "Optional is a keyword that describes features not mandated by this specification. However, if an optional feature is implemented, the feature shall be implemented as defined by this specification.",
+            ),
+            statement("s3", "The sender shall set the field to zero."),
+            statement(
+                "s4",
+                "Reserved is a keyword indicating reserved bits set aside for future standardization.",
+            ),
+        ]);
+        let keywords: Vec<&str> = records
+            .iter()
+            .map(|record| record.keyword.as_str())
+            .collect();
+        assert_eq!(keywords, ["Reserved", "Shall", "Optional"]);
+
+        let reserved = &records[0];
+        assert_eq!(
+            reserved.supporting_statement_ids,
+            ["s0", "s4"],
+            "defined twice, one record"
+        );
+        let read: Vec<(KeywordObligationModality, Vec<String>, &str)> = reserved
+            .obligations
+            .iter()
+            .map(|obligation| {
+                (
+                    obligation.modality,
+                    obligation.agents.clone(),
+                    obligation.text.as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                (
+                    KeywordObligationModality::Obligation,
+                    vec!["sender".to_string()],
+                    "A reserved bit, byte, word or field shall be set to zero by the sender"
+                ),
+                (
+                    KeywordObligationModality::Obligation,
+                    vec!["receiver".to_string()],
+                    "shall be ignored by the receiver"
+                ),
+                (
+                    KeywordObligationModality::Prohibition,
+                    vec!["sender".to_string()],
+                    "Reserved field values shall not be sent by the sender"
+                ),
+                (
+                    KeywordObligationModality::Obligation,
+                    vec!["receiver".to_string()],
+                    "if received, shall be ignored by the receiver"
+                ),
+            ]
+        );
+        assert!(
+            records[1].obligations.is_empty(),
+            "the keyword opening its definition is not a modal"
+        );
+        assert_eq!(records[2].obligations.len(), 1);
+        assert!(
+            records[2].obligations[0].agents.is_empty(),
+            "*by this specification* names the document, not an agent"
+        );
     }
 }

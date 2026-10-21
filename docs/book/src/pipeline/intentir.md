@@ -132,6 +132,8 @@ adapter keeps one residual naming them all. `optional_features` cross likewise (
 sentence calls optional, who may implement it and its condition, as written, with one residual naming them all.
 `software_intent` crosses likewise (`.3.d.i`): each statement about an agent the document makes software, never
 lowered, with one residual that is the category contract's explicit non-applicable disposition.
+`keyword_definitions` cross likewise (`.55.a`): each keyword the document defines (*Reserved is a keyword …*) with the
+obligations its definition states, never lowered, with one residual naming those that oblige the fields they mark.
 
 These records are canonical product data, but they are not automatically executable behavior. A named protocol
 state without transitions, guards, initial-state identity, or encoding is still incomplete; frame, operation,

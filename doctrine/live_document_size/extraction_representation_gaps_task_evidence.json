@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.a",
-      "literal" : "`.55.a` — a keyword the document defines is a typed record with the obligations it states.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a",
+      "literal" : "`.54.a` — the corpus memory's refresh runs as ADR 0036 declares it.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 29986,
+               "bytes" : 34292,
                "line_bytes" : 139,
-               "lines" : 305
+               "lines" : 348
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "a34cadb1b8f2ba1d8e70fdfe7c5289201076a3d55f4e1341017c99931a69655d",
+            "sha256" : "8c1c7787f57727d4d9bb32d9909df6ac9c796a221a89aef57c7a8b25ffb92252",
             "state" : "active"
          },
          {
@@ -1272,7 +1272,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
@@ -1408,7 +1408,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.55.a` — a keyword the document defines is a typed record with the obligations it states.",
+         "`.54.a` — the corpus memory's refresh runs as ADR 0036 declares it.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1447,7 +1447,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b`"
       ]
    },

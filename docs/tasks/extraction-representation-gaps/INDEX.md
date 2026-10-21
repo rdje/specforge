@@ -65,7 +65,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.a` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 
 ## Complete route catalog

@@ -12,8 +12,8 @@ use crate::ir::derivation::{
     SymbolCapabilityClass, VerifiedProofLedger, production_semantic_implementation_digest,
 };
 use crate::ir::evidence::{
-    OptionalFeatureRecord, PermissionRuleRecord, SignalPresenceRecord, SoftwareIntentRecord,
-    StatedAbsentValue,
+    KeywordDefinitionRecord, OptionalFeatureRecord, PermissionRuleRecord, SignalPresenceRecord,
+    SoftwareIntentRecord, StatedAbsentValue,
 };
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
@@ -1172,6 +1172,46 @@ fn software_intent_residual_packet(
     })
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.55.a — one residual for the keywords the document defines, naming those whose
+/// definition states an obligation on the fields it marks: no field record carries the keyword yet (`.55.b`), so none
+/// is lowered.
+fn keyword_definition_residual_packet(
+    records: &[KeywordDefinitionRecord],
+) -> Option<ResidualDecisionPacket> {
+    let first = records.first()?;
+    let last = records.last()?;
+    let obliging = records
+        .iter()
+        .filter(|record| !record.obligations.is_empty())
+        .map(|record| format!("`{}` ({})", record.keyword, record.obligations.len()))
+        .collect::<Vec<_>>();
+    Some(ResidualDecisionPacket {
+        packet_id: "isf_keyword_obligations_not_bound".to_string(),
+        question: "Which fields does each obligation a keyword's definition states bind?".to_string(),
+        why_unresolved: format!(
+            "{} keyword definition(s) (`{}`-`{}`); {} state obligations on what the keyword marks: {}. No field record carries a keyword, so no obligation reaches a field and none is rendered; the definitions remain exact in IntentIR.",
+            records.len(),
+            first.keyword_id,
+            last.keyword_id,
+            obliging.len(),
+            if obliging.is_empty() { "none".to_string() } else { obliging.join(", ") }
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "keep_keyword_obligations_unbound".to_string(),
+                description: "Keep each keyword definition and its obligations in IntentIR and emit no syntax until a field the document marks with the keyword reaches a record.".to_string(),
+                downstream_impact: "Independently licensed ISF remains usable; the document-wide rule stays typed and visible.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "bind_keyword_obligations_to_marked_fields".to_string(),
+                description: "Bind each obligation to every field the document's field tables mark with the keyword (a reserved field sent as zero and ignored on receipt).".to_string(),
+                downstream_impact: "A future adapter could zero reserved fields on transmit and mask them on receive once the fields are captured and FSMGen-strict verified.".to_string(),
+            },
+        ],
+    })
+}
+
 fn protocol_residual_packet(
     surface_id: &str,
     surface_label: &str,
@@ -1399,6 +1439,10 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
     ));
     // EXTRACTION-REPRESENTATION-GAPS.3.d.i — nor for what a software agent does, which is non-executable by design.
     residuals.extend(software_intent_residual_packet(&intent_ir.software_intent));
+    // EXTRACTION-REPRESENTATION-GAPS.55.a — nor for a keyword's obligation, which no field record carries yet.
+    residuals.extend(keyword_definition_residual_packet(
+        &intent_ir.keyword_definitions,
+    ));
     for (record, absent_value, class_ordinal) in stated_absent_values {
         residuals.push(absent_value_residual_packet(
             record,
@@ -3280,5 +3324,45 @@ mod tests {
         assert!(AdapterArtifact::load_from_path(&path).is_err());
         assert!(AdapterArtifact::load_for_inspection(&path).is_err());
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod keyword_definition_residual_tests {
+    use super::keyword_definition_residual_packet;
+    use crate::ir::evidence::{
+        KeywordDefinitionRecord, KeywordObligation, KeywordObligationModality,
+    };
+
+    #[test]
+    fn a_keywords_obligations_are_named_as_unbound() {
+        assert!(keyword_definition_residual_packet(&[]).is_none());
+        let record = |id: &str, keyword: &str, obligations: usize| KeywordDefinitionRecord {
+            keyword_id: id.to_string(),
+            keyword: keyword.to_string(),
+            definition: format!("{keyword} is a keyword."),
+            obligations: (0..obligations)
+                .map(|_| KeywordObligation {
+                    text: "shall be ignored by the receiver".to_string(),
+                    modality: KeywordObligationModality::Obligation,
+                    agents: vec!["receiver".to_string()],
+                })
+                .collect(),
+            supporting_statement_ids: vec!["s0".to_string()],
+        };
+        let packet = keyword_definition_residual_packet(&[
+            record("keyword_0000", "May", 0),
+            record("keyword_0001", "Reserved", 5),
+        ])
+        .expect("a residual");
+        assert_eq!(packet.packet_id, "isf_keyword_obligations_not_bound");
+        assert!(
+            packet
+                .why_unresolved
+                .contains("`keyword_0000`-`keyword_0001`")
+        );
+        assert!(packet.why_unresolved.contains("1 state obligations"));
+        assert!(packet.why_unresolved.contains("`Reserved` (5)"));
+        assert!(!packet.why_unresolved.contains("`May`"));
     }
 }
