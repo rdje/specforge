@@ -1,7 +1,10 @@
 {
   "failure_class": "unknown",
   "feedback_record": "unstated-reset",
-  "forwarded": null,
+  "forwarded": {
+    "date": "2026-09-30",
+    "channel": "owner; FSMGen recorded its receipt in its 2026-09-30 intake audit, which this register did not record at the time (reconciled by FSMGEN-REQUESTS.14)"
+  },
   "id": "sf-isf-unstated-reset",
   "kind": "question",
   "owner": "FSMGEN-REQUESTS.9",
@@ -9,9 +12,13 @@
   "schema_version": 1,
   "signed_off": "2026-09-29",
   "specforge_side": "SPECFORGE's .isf adapter refuses a document whose clock and reset are not grounded in its own sentences (no source-grounded system clock/reset contract) and does not rely on FSMGen's default; the answer decides how FSMGEN-REQUESTS.9 lowers such a document",
-  "status": "signed_off",
+  "status": "resolved_upstream",
   "title": "Which .isf form states that the specification names no reset pin, and can a defaulted reset be told from a stated one?",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-09-30",
+    "kind": "FSMGen answer, read from its checkout",
+    "summary": "Answered under SEMANTIC-INTROSPECTION-MCP-FRONTIER.60.3 (done). An omitted (reset ...) selects asynchronous active-low rst_n and reports origin legacy_default; an explicit reset reports explicit; a clock-only named domain has no reset, reports domain_absent, and guarantees no startup state or values. No form leaves reset policy unresolved until instantiation; SPECFORGE decides whether its adapter may accept the compiler default. The origin report needs a FSMGen revision newer than the pin. Source: FSMGen checkout 23eed7627, docs/SPECFORGE_FEEDBACK_RESPONSE.md (unpublished; published main is still 54ac1c22, the SPECFORGE pin)."
+  },
   "verified_on": [
     {
       "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",

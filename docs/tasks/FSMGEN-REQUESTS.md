@@ -37,7 +37,7 @@ drafting to integration, and forwarded by the owner. The process is
 ## Task Tree
 
 - ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`,
-  `.10`, `.11`
+  `.10`, `.11`, `.12`, `.13`, `.14`
 
 - ID: `FSMGEN-REQUESTS.0` · Status: `done` (`2026-09-24`; PROCESS + CHECK) · Goal: **a signoff-level
   request process, enforced.** `docs/upstream/fsmgen/PROCESS.md` builds on FSMGen's published
@@ -208,22 +208,48 @@ drafting to integration, and forwarded by the owner. The process is
   `bin/fsmgen-issue-bundle`, `commands.sh` re-run from the export root; the export removed after copying. The ledger
   holds 16 open records, its cap.
 
+- ID: `FSMGEN-REQUESTS.13` · Status: `open` (`2026-10-22`; REQUEST — classify, reproduce, bundle, sign off; found by
+  `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`) · Goal: **a storage variable typed by an enum checks without a Perl
+  warning.** On the pin `54ac1c22`, `(storage (var pas (type PAS) (reset 0)))` with `PAS` a declared 2-bit enum passes
+  `--strict --check --json` with 0 diagnostics but prints `Use of uninitialized value $width in pattern match (m//) at
+  …/FSM/Adapter/ISF/Parser.pm line 8750.` on stderr; the same actor declaring `(width 2)` is silent. Acceptance:
+  classify it against FSMGen's typed-storage contract, then reproduce on the pin and on upstream HEAD from a complete,
+  known-good-checked export. Bundle it if HEAD still warns, or record that the next pin carries the fix. The ledger is
+  at its 16-record cap, so filing needs that cap's remedy first (`LIVE-DOCUMENT-PRESSURE-HEADROOM.45` owns its lines).
+
+- ID: `FSMGEN-REQUESTS.14` · Status: `done` (`2026-10-22`; INTAKE) · Goal: **reconcile the register with FSMGen's
+  `2026-10-21` acknowledgement.** The owner pinged FSMGen on `2026-10-21` about `.7`–`.10` and `.12`. FSMGen's response
+  (its checkout at `23eed7627`, `docs/SPECFORGE_FEEDBACK_RESPONSE.md`, *SPECFORGE request handoff — 2026-10-21*;
+  published `main` is still the pin `54ac1c22`) acknowledges all five, and names the register's `awaiting forward` for
+  `.7`–`.10` as stale: FSMGen had recorded their receipt in its `2026-09-30` intake audits.
+  **Recorded:**
+  - `.7`, `.8` and `.10` are `acknowledged` (SEM `.60.1`, `.60.2` and `.60.4`). `.10` is partly delivered in the
+    checkout: record input ports, not outputs.
+  - `.9` is `resolved_upstream`, ledger `answered` (SEM `.60.3`). An omitted reset is FSMGen's `rst_n` default,
+    reported `legacy_default`. A clock-only domain has no reset and no startup state. SPECFORGE decides whether its
+    adapter may accept the default, as its `specforge_side` already says.
+  - `.12` is `acknowledged` under SEM `.92`: decision `0117` selects `(^ X)`, `(& X)`, `(| X)` and
+    `(reduce-groups OP X N)`, with delivery open under `ISF-REDUCTION-DELIVERY`.
+  - `.5`'s scalar contract is implemented there (SEM `.38.1`, `2026-09-30`).
+  Each `forwarded` records the receipt date FSMGen states. Nothing here is published, so every leaf stays open until a
+  pin contains its change (`FSMGEN-REFRESH-INTEGRATE-10`), and the push hold stands. FSMGen's `2026-10-02` delivery
+  status for the older requests is read by that refresh, which re-runs every bundle.
+
 ## Current Frontier
 
-`.12` — `sf-isf-byte-group-reduction` signed off `2026-10-20`; waits for the owner to forward it, before FSMGen's
-next push.
+`.13` — classify and reproduce the typed-storage `$width` warning (found `2026-10-22`); it needs the ledger cap's
+remedy before it can be filed.
 
-`.7`-`.10` — four requests found while measuring what USB 3.2's link layer needs from `.isf` (`2026-09-29`):
-durations in time units, named timers, the unstated-reset question, packet-typed ports. Signed off here; the owner
-forwards. The ledger's open-record cap moved 12 -> 16 for them (as 8 -> 12 did for `EXTRACTION-REPRESENTATION-GAPS.19`),
-and its line target is owned by `LIVE-DOCUMENT-PRESSURE-HEADROOM.45`.
+`.7`, `.8`, `.10`, `.12` — acknowledged by FSMGen (`2026-10-21`, `.14`): owned by SEM `.60.1`, `.60.2`, `.60.4` and `.92`,
+implementation open (`.10` partly delivered in FSMGen's checkout). `.9` — answered (`2026-09-30`). None is in a
+published FSMGen revision: published `main` is still the pin `54ac1c22`. Each advances when a published revision
+contains its change; the push waits for that (`FSMGEN-REFRESH-INTEGRATE-10`).
 
-`.5` — `sf-isf-storage-register-access` forwarded and acknowledged `2026-09-26`; FSMGen is reproducing it.
-The six requests and the question forwarded `2026-09-25` (owned in `EXTRACTION-REPRESENTATION-GAPS`) were accepted
-by FSMGen on `2026-09-26` (`.6`).
-`.1`, `.2`, `.3` — all forwarded and acknowledged (`2026-09-24`); FSMGen is working on them. Each advances when
-a published FSMGen revision contains its change: pin it (`FSMGEN-REFRESH-INTEGRATE` procedure), re-run the
-bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22` predates all three.
+`.5` — `sf-isf-storage-register-access` acknowledged `2026-09-26`; its scalar contract is implemented in FSMGen's
+checkout (SEM `.38.1`). The six requests and the question forwarded `2026-09-25` (owned in
+`EXTRACTION-REPRESENTATION-GAPS`) were accepted by FSMGen on `2026-09-26` (`.6`). `.1`, `.2`, `.3` — forwarded and
+acknowledged (`2026-09-24`). Each advances when a published FSMGen revision contains its change: pin it
+(`FSMGEN-REFRESH-INTEGRATE` procedure), re-run the bundle's `commands.sh`, write `RESOLUTION.md`, close.
 
 ## Changelog
 
@@ -243,3 +269,5 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
   `EXTRACTION-REPRESENTATION-GAPS.46`); the ledger reaches its 16-record cap.
 - `2026-10-21`: the owner pinged FSMGen on the urgency of `.7`-`.10` and `.12` (relayed). No acknowledgement is
   recorded yet. Each leaf still closes on the first FSMGen pin that contains its change.
+- `2026-10-22`: `.14` — FSMGen's `2026-10-21` acknowledgement of `.7`–`.10` and `.12` reconciled into the packets and the
+  ledger (`.9` answered); `.13` opened for the typed-storage `$width` warning.

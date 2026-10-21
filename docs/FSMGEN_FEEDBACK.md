@@ -165,19 +165,19 @@ reach no `.isf`.
 - Owner: `FSMGEN-REQUESTS.5`
 - Evidence: `docs/upstream/fsmgen/sf-isf-storage-register-access/README.md`
 
-Forwarded and acknowledged `2026-09-26`: FSMGen is reproducing the controls and tracks scalar support apart from
-the optional bank extension (no task id yet). A `(var …)` refuses `(access ro)`, which only a field may carry; asks for the same token set on the word itself, report-only and independent of its fields. 101 registers in
+Forwarded and acknowledged `2026-09-26`; the scalar contract is implemented in FSMGen's checkout under SEM `.38.1`
+(`2026-09-30`, unpublished), the optional bank extension apart. A `(var …)` refuses `(access ro)`, which only a field may carry; asks for the same token set on the word itself, report-only and independent of its fields. 101 registers in
 two current chains state an access (TMC 50 of 50, ADIv6 51 of 82), 61 of them with no field at all.
 
 ### duration-time-units — a duration stated in time units, lowered to a counter
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.7`
 - Evidence: `docs/upstream/fsmgen/sf-isf-duration-time-units/README.md`
 
-Signed off `2026-09-29`; waits for the owner to forward it. `.isf` takes `wait`, `watchdog` and `latency` bounds in
+Signed off `2026-09-29`; received by FSMGen `2026-09-30` and acknowledged `2026-10-21`: accepted under SEM `.60.1`, implementation open (`FSMGEN-REQUESTS.14`). `.isf` takes `wait`, `watchdog` and `latency` bounds in
 cycles only, and a static wait lowers to one state per cycle. Asks for durations in time units against a declared
 clock frequency, lowered to a counter. USB 3.2 states its link timeouts in ms and µs; 172 timing records on the 31
 chains are in time units.
@@ -186,11 +186,11 @@ chains are in time units.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.8`
 - Evidence: `docs/upstream/fsmgen/sf-isf-named-timers/README.md`
 
-Signed off `2026-09-29`; waits for the owner to forward it. One watchdog per transaction, and its timeout is an
+Signed off `2026-09-29`; received `2026-09-30`, acknowledged `2026-10-21`: accepted under SEM `.60.2`, implementation open. One watchdog per transaction, and its timeout is an
 error path (`last_error`). Asks for author-declared timers, started and stopped in bodies, running concurrently,
 whose expiry is an ordinary condition: USB 3.2's link-layer timers and its 25 LTSSM state timeouts.
 
@@ -198,11 +198,11 @@ whose expiry is an ordinary condition: USB 3.2's link-layer timers and its 25 LT
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `question`
-- Status: `open`
+- Status: `answered`
 - Owner: `FSMGEN-REQUESTS.9`
 - Evidence: `docs/upstream/fsmgen/sf-isf-unstated-reset/README.md`
 
-Signed off `2026-09-29`; waits for the owner to forward it. An omitted `(reset …)` is reported exactly like a stated
+Signed off `2026-09-29`; answered `2026-09-30` (SEM `.60.3`): an omitted reset is FSMGen's `rst_n` default, reported `legacy_default`; a clock-only domain has none and no startup state; SPECFORGE decides whether to accept the default. An omitted `(reset …)` is reported exactly like a stated
 `(rst_n async active_low)`, and a clock-only domain reports `reset: null`. Asks which form SPECFORGE should write
 when a specification names no reset pin, and whether a defaulted reset can be told from a stated one.
 
@@ -210,11 +210,11 @@ when a specification names no reset pin, and whether a defaulted reset can be to
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.10`
 - Evidence: `docs/upstream/fsmgen/sf-isf-aggregate-interface-ports/README.md`
 
-Signed off `2026-09-29`; waits for the owner to forward it. A record type is accepted on storage only. Asks for
+Signed off `2026-09-29`; received `2026-09-30`, acknowledged `2026-10-21`: accepted under SEM `.60.4`; record input ports delivered in FSMGen's checkout, outputs open. A record type is accepted on storage only. Asks for
 record-typed ports whose fields a transaction reads and drives by name; 191 untyped layout tables on the 31
 chains, 75 of them USB 3.2's packet formats. Builds on FSMGen's `2026-06-22` storage-field answer.
 
@@ -222,11 +222,11 @@ chains, 75 of them USB 3.2's packet formats. Builds on FSMGen's `2026-06-22` sto
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.12`
 - Evidence: `docs/upstream/fsmgen/sf-isf-byte-group-reduction/README.md`
 
-Signed off `2026-10-20`; waits for the owner to forward it. `^` takes two operands only, so a parity bit per byte of a
+Signed off `2026-10-20`; handed over and acknowledged `2026-10-21`: accepted under SEM `.92`, contract `(^ X)` and `(reduce-groups OP X N)` selected, delivery open. `^` takes two operands only, so a parity bit per byte of a
 parameter-sized bus cannot be stated. Asks for one-operand reductions and a per-group reduction over a parameterised
 width; 49 of the 153 AMBA5 check signals SPECFORGE carries are byte-granular.
 

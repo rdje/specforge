@@ -15,9 +15,9 @@
   "status": "acknowledged",
   "title": "A scalar storage var can state its own access (ro, rw, wo, ...) as checked, report-only metadata, as a field can",
   "upstream_reference": {
-    "date": "2026-09-26",
-    "kind": "reply relayed by the owner",
-    "summary": "FSMGen: \"The request is consistent with the current contract: field-level access metadata works, but storage-word access is rejected. It asks for independent word-level metadata that leaves generated hardware unchanged. I'm reproducing the supplied controls and tracking scalar support separately from the optional bank extension.\" No FSMGen task id yet."
+    "date": "2026-09-30",
+    "kind": "FSMGen response, read from its checkout",
+    "summary": "The scalar contract is implemented under SEMANTIC-INTROSPECTION-MCP-FRONTIER.38.1: width-based var and variable declarations accept (access TOKEN) with the field vocabulary, reported beside width and fields; the optional bank extension stays separate. Not in a published revision. Earlier: reply relayed by the owner on 2026-09-26. Source: FSMGen checkout 23eed7627, docs/SPECFORGE_FEEDBACK_RESPONSE.md (unpublished; published main is still 54ac1c22, the SPECFORGE pin)."
   },
   "verified_on": [
     {

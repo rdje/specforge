@@ -1,7 +1,10 @@
 {
   "failure_class": "rejected-input",
   "feedback_record": "named-timers",
-  "forwarded": null,
+  "forwarded": {
+    "date": "2026-09-30",
+    "channel": "owner; FSMGen recorded its receipt in its 2026-09-30 intake audit, which this register did not record at the time (reconciled by FSMGEN-REQUESTS.14)"
+  },
   "id": "sf-isf-named-timers",
   "kind": "feature_request",
   "owner": "FSMGEN-REQUESTS.8",
@@ -9,9 +12,13 @@
   "schema_version": 1,
   "signed_off": "2026-09-29",
   "specforge_side": "SPECFORGE carries each timer's value, unit and the state it runs in (EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c) and lowers none; carrying the state each expiry leads to is EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g; USB 3.2 is classed physical-link (default: no executable target, ADR 0033 section 6) and its owner directed these link-layer requests on 2026-09-29",
-  "status": "signed_off",
+  "status": "acknowledged",
   "title": "Several author-declared named timers, started and stopped in bodies, whose expiry is an ordinary condition",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-10-21",
+    "kind": "FSMGen response, read from its checkout",
+    "summary": "Accepted under SEMANTIC-INTROSPECTION-MCP-FRONTIER.60.2 (contract selection .60.2.2); implementation open; cycle-based timers can ship before physical-time units. Baseline qualified 2026-09-30 (docs/audits/specforge-timer-intake-20260930/). Source: FSMGen checkout 23eed7627, docs/SPECFORGE_FEEDBACK_RESPONSE.md (unpublished; published main is still 54ac1c22, the SPECFORGE pin)."
+  },
   "verified_on": [
     {
       "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",

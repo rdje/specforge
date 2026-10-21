@@ -1,7 +1,10 @@
 {
   "failure_class": "rejected-input",
   "feedback_record": "byte-group-reduction",
-  "forwarded": null,
+  "forwarded": {
+    "date": "2026-10-21",
+    "channel": "owner handoff; FSMGen acknowledged receipt the same day"
+  },
   "id": "sf-isf-byte-group-reduction",
   "kind": "feature_request",
   "owner": "FSMGEN-REQUESTS.12",
@@ -9,9 +12,13 @@
   "schema_version": 1,
   "signed_off": "2026-10-20",
   "specforge_side": "SPECFORGE lowers one-bit parity checks over fixed-width signals since EXTRACTION-REPRESENTATION-GAPS.46.b; the 49 byte-granular checks over a parameterised width stay residuals, owned by EXTRACTION-REPRESENTATION-GAPS.46.c until a pin carries the form",
-  "status": "signed_off",
+  "status": "acknowledged",
   "title": "A reduction operator, and a per-byte reduction over a parameterised width, for parity check signals",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-10-22",
+    "kind": "FSMGen response, read from its checkout",
+    "summary": "Accepted under SEMANTIC-INTROSPECTION-MCP-FRONTIER.92; decision 0117 selects unary (^ X), (& X), (| X) and grouped (reduce-groups OP X N), least-significant group first with an unpadded short final group; delivery under ISF-REDUCTION-DELIVERY (.1.1 scalar widths, .1.2.1 private records, 2026-10-21/22); not implemented in source admission yet. Baseline: docs/audits/specforge-reduction-intake-20261021/. Source: FSMGen checkout 23eed7627, docs/SPECFORGE_FEEDBACK_RESPONSE.md (unpublished; published main is still 54ac1c22, the SPECFORGE pin)."
+  },
   "verified_on": [
     {
       "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
