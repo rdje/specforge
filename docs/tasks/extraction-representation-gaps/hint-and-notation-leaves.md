@@ -131,7 +131,7 @@ hint gives a signal, and the sentences that define the document's own notation. 
   every `.isf` text byte-identical (`Y` was in no interface).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54`
-  Status: `open` (`2026-10-21`; DESIGN; found by `.50`)
+  Status: `done` (`2026-10-21`; DESIGN; found by `.50`; opened `.54.a`)
   Goal: **a remembered hint role does not outlive the reading it was learned from.** The local corpus memory
   (`generated/prior_memory/corpus_memory.json`, learned `2026-08-12` by `learn-priors`, untracked) holds 83 semantic
   phrase priors harvested from that day's hints, among them the readings `.50` withdraws (*Enum ARSNOOP CLEANINVALID =
@@ -144,6 +144,37 @@ hint gives a signal, and the sentences that define the document's own notation. 
   the corpus differently. Acceptance: decide when the memory is relearned (after a reader change, from rebuilt
   IntentIR) or whether a recall must also pass the current reader's own reading of the phrase it was learned from;
   measure every prior family's drift, not only semantic phrases, before relearning.
+  **Measured `2026-10-21`.** The store is ADR 0036's fixed point (SHA-256 `a416cc8b…`), and it is reviewed authority:
+  `doctrine/production_genericity/behavioral_qualification.json` and the retained holdout evidence pin that hash.
+  (1) **Its refresh cannot run.** ADR 0036 decision 4 refreshes the store by validating its declared inputs,
+  relearning, replaying every affected chain and relearning until byte-stable; 8 of its 13 inputs (AXI-Stream, CXS,
+  ATP, GFB, HBM2, NVMe, both TileLinks) are now legacy schema-1 IntentIR outside the chain set, and `learn-priors`
+  refuses them (*IntentIR schema version 1 is legacy/proofless and inspection-only*). (2) **What it does today.** An
+  evidence dry-run of all 31 chains without the store differs from one with it in two records: AXI's `AWTAGOP`
+  ready-like hint (from the old reader's *already*) and one duplicate AHB5 declaration it suppresses (*Signal HCLK is
+  width 1.*, which renumbers 25 later synthesized statements); relations, polarities, constraints and every other
+  family are identical. (3) **What a relearn would do.** A store learned from the 31 proof-carrying chains drifts
+  in every family (actor taxonomy 29 -> 24, semantic phrases 83 -> 64, temporal 443 -> 1,140, table shapes 0 -> 128,
+  visual motifs 1,251 -> 1,430, negative knowledge 11 -> 13, profiles 2 -> 3) and moves four chains' evidence
+  (actor relations +27/−24 in one, polarities, table declarations, 8 table hints and 4 constraints in AXI, 821
+  statement positions).
+  **Decided:** a recalled role is already bounded by the current text (`.50`: it holds only where the text has no
+  words of that role and the signal indicates or opens the sentence), so the store is not relearned piecemeal by a
+  reader change. It is refreshed by the protocol ADR 0036 declares — re-declared inputs that validate today, the
+  convergence loop, and a replay of the qualification evidence that pins it — as one owned transaction, `.54.a`.
+  Until then `AWTAGOP` stays the declared residual.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`
+  Status: `open` (`2026-10-21`; CODE; opened by `.54`)
+  Goal: **the corpus memory's refresh runs as ADR 0036 declares it.** The store pinned by the behavioral
+  qualification (`a416cc8b…`) was learned from 13 IntentIR inputs, 8 of which are now legacy and refused by
+  `learn-priors`, so its declared refresh cannot run and it still recalls readings the current reader withdraws (AXI
+  `AWTAGOP` ready-like). **Reproduce:** `specforge learn-priors` over the store's `source_artifacts` fails on the
+  first legacy input. **Impact:** the store cannot follow any reader change, and a checkout without it reads two
+  records differently. Acceptance: re-declare the learning inputs as the IntentIR that validates today (the 31
+  proof-carrying chains, or a stated subset), run ADR 0036's convergence loop to a byte-stable store, replay every
+  affected chain and the behavioral holdout evidence, re-pin the hash in `behavioral_qualification.json` and the
+  holdout evidence with the measured drift, and decide what triggers the next refresh.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.50` (CODE) — DONE `2026-10-21`
 

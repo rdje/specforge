@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54",
-      "literal" : "`.54` — a remembered hint role does not outlive the reading it was learned from.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55",
+      "literal" : "`.55` — an obligation a keyword's definition carries reaches a carrier.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 23474,
+               "bytes" : 26598,
                "line_bytes" : 139,
-               "lines" : 237
+               "lines" : 268
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "fc73a73d99697a60fe5257c572e85abeb8b0433242a981c22d524919e766d444",
+            "sha256" : "235e456de362083712b99dcaafddf5b10bb7b802c4d6fa08eae2252820bbfa66",
             "state" : "active"
          },
          {
@@ -1254,12 +1254,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
@@ -1390,7 +1396,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.54` — a remembered hint role does not outlive the reading it was learned from.",
+         "`.55` — an obligation a keyword's definition carries reaches a carrier.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1428,8 +1434,8 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`"
       ]
    },
    "migration_metadata" : {

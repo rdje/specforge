@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
   > does a doc comment change move the production seal
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
@@ -296,5 +298,3 @@
   > does the caption repair admit serialized table rows
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > does the co-reference rule resurrect resolve_indexed_signal_family
-- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
-  > does the collective-name reader still read AxCACHE from the conventions section

@@ -9,7 +9,10 @@ answers:
   - "Did identity-independent prior learning converge?"
   - "Why was the old prior-memory store rejected?"
   - "What current priors are learned without protocol families?"
-date: 2026-08-12
+  - "can the corpus memory store be refreshed (legacy learning inputs)"
+  - "what does the corpus memory change on the 31 chains"
+  - "what is EXTRACTION-REPRESENTATION-GAPS.54 and .54.a"
+date: 2026-10-21
 status: current
 tags: [genericity, prior-memory, learning, schema, validation]
 evidence: crates/specforge/src/ir/prior_memory.rs; crates/specforge/src/commands/learn_priors.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; docs/decisions/0036-prior-memory-is-identity-independent.md; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6d.ii.d.i)
@@ -36,3 +39,10 @@ The later proof migration leaves 24 documents measurable through current Evidenc
 legacy/proofless frontier rather than current replay claims. The neutral store can influence a document only
 through matching normalized current-document evidence or a structural fingerprint, and schema-3 EvidenceIR
 captures the exact prior used by its executable replay. One globally contested actor term remains unresolved.
+
+**`2026-10-21` (`EXTRACTION-REPRESENTATION-GAPS.54`).** The store is still `a416cc8b…`, pinned by
+`doctrine/production_genericity/behavioral_qualification.json`, but its refresh cannot run: 8 of its 13 learning
+inputs are now legacy schema-1 IntentIR, which `learn-priors` refuses. On the 31 chains it changes two evidence records
+(a stale AXI `AWTAGOP` ready-like hint, and one duplicate AHB5 declaration it suppresses); a store relearned from the
+31 chains would drift in every family and move four chains. The refresh, with re-declared inputs and a re-pinned
+qualification, is owned by `.54.a`.

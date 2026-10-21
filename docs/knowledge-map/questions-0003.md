@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can the trajectory controller use one weighted score
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > can the word when in a statement make its whole section a semantic phase
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -296,5 +298,3 @@
   > does a count over generated/evidence_ir measure current extractor behaviour
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > does a debug build and a release build accept the same persisted artifact
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > does a deterministic semantic->intent rebuild recover lost actor_signal_relations

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
+  > does the collective-name reader still read AxCACHE from the conventions section
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > does the constraint record source_text become the clause
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -296,5 +298,3 @@
   > how do I check the mdBook for stale behavioural claims
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > how do I check whether a held-out bundle still rebuilds its document
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > how do I check whether a named frontier has an owning task-tree leaf

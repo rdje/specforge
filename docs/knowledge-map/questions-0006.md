@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > how do I check whether a named frontier has an owning task-tree leaf
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > how do I check whether a persisted artifact field describes current behaviour
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -295,5 +297,3 @@
   > how does SpecForge measure source-to-IntentIR stage loss
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > how does SpecForge prevent analog dB limits from becoming digital timing intent
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how does SpecForge prove a cited self-test contains a known-bad RED case

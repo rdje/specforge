@@ -264,6 +264,8 @@
   > can the active-task evidence checker support the alignment task through data
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > can the corpus be rebuilt on a CI runner
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > can the corpus memory store be refreshed (legacy learning inputs)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > can the declaration reader be run over a legacy or proofless EvidenceIR
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
@@ -296,5 +298,3 @@
   > can the three wire-based golds be rebuilt through the evidence stage
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > can the trajectory controller mutate canonical semantic artifacts
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > can the trajectory controller use one weighted score
