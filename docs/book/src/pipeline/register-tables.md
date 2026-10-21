@@ -274,8 +274,8 @@ names as reserved (`bReserved`) keeps its field record and gains a span linked b
 defines the keyword *Reserved*, every span cites that `keyword_definitions` record. That way *set to zero by the
 sender and ignored by the receiver* reaches the bits it governs. A value sub-row (*0000b | Reserved*) reserves a code
 value, not space, so it is no span. USB 3.2 now has 38 spans and USB4 inter-domain 5, all cited; the CoreSight TMC
-has 1, uncited. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iv.a`; the marks
-still unread are `.55.b.iv.b`'s).
+has 1, uncited. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iv.a`; a field's
+restated sub-table is `.55.b.iv.b.i`'s, a field's own section `.55.b.iv.b.ii`'s).
 
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 

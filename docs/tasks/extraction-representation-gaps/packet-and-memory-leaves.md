@@ -44,7 +44,7 @@ whole.
   C2C's abbreviated `RsvdZero`, are `.55.b.iv.b`'s.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b`
-  Status: `open` (`2026-10-21`; DESIGN; found by `.55.b.iv.a`)
+  Status: `done` (`2026-10-21`; DESIGN; found by `.55.b.iv.a`; opened `.55.b.iv.b.i`, `.55.b.iv.b.ii`)
   Goal: **the reserved marks no message-field family reads are typed or declared.** `.55.b.iv.a` types the reserved
   rows a layout places. Four kinds of mark remain. USB 3.2 has 8 value sub-rows (*0000b | Reserved*, *0BH - FFH |
   Reserved*) and USB4 inter-domain 3; each reserves a code value of the field above, which the Reserved definition
@@ -55,6 +55,45 @@ whole.
   `table_0102` (*| | 0000b | Reserved*) and `table_0103` (*| | 6:2 | Reserved.*). Acceptance: decide for each kind
   whether it becomes a typed record (a reserved value of its field, a reserved span of a sub-layout) or a declared
   residual, from what the document states rather than from a vocabulary list (ADR 0006), and measure every chain.
+  **Measured `2026-10-21`.** The value sub-rows and nested bits are one structure. After a field's row, a
+  layout restates a sub-header in the description columns: *Value | Type of LMP* or *Bits | Description* (*Bit |
+  Encoding* in a descriptor). The rows under it belong to that field. A `Value` sub-table lists its stated code
+  values and meanings (*0001b | Set Link Function*); a `Bits` sub-table lays out its own bits (*1 |
+  Force_LinkPM_Accept*, *6:2 | Reserved.*). In the field-bearing tables, USB 3.2 restates 5 value and 5 bit
+  sub-headers (37 and 17 rows), and USB4 inter-domain 2 and 1 (7 and 5 rows). The families skip them all, named
+  values and sub-fields included, so the reserved ones are the visible part of a larger loss. CHI C2C does not use
+  `Rsvd` as an abbreviation of a keyword. It defines the field itself in a section headed by its name (*B4.2.1.5
+  RsvdZero*: *the use of the bits is Reserved and a Transmitter must set the field value to zero, a Receiver must
+  ignore the field and an intermediate agent must forward them unchanged*). It has about ten such sections, one per
+  field, and no reader binds them to the field records, which carry no description. The unit-suffixed offset (*80 |
+  0:16b*) is ambiguous: USB writes `b` for a binary value, and `16b` is no binary number.
+  **Decided.** (1) A sub-header restated after a field row opens that field's sub-table. Its `Value` rows become the
+  field's stated values (value literal, meaning); a meaning that opens with *Reserved* marks a reserved value, which
+  cites the keyword. Its `Bits` rows become the field's own layout: named sub-fields, and reserved bits as reserved
+  spans of the field. This is `.55.b.iv.b.i`. (2) A section whose heading names a declared field describes that field.
+  A field whose own description says its bits are Reserved is reserved space, and carries the obligations the
+  description states, with no keyword needed. This is `.55.b.iv.b.ii`. (3) `0:16b` stays a declared residual: a bit
+  position is never guessed from a cell its own notation makes ambiguous.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i`
+  Status: `open` (`2026-10-21`; CODE; opened by `.55.b.iv.b`)
+  Goal: **a field's restated sub-table types its values and its own bits.** USB 3.2's *Link Management Packet Subtype
+  Field* lists LMP subtypes under *Value | Type of LMP*, and *Set Link Function* lays out its bits under *Bits |
+  Description*. No family reads either. **Reproduce:** USB 3.2 `table_0102` and `table_0103`. Acceptance: in every
+  message-field family whose rows can carry one, read the sub-header restated after a field row and assign the
+  following rows to that field until the next field row. `Value` rows become the field's stated values (a Reserved
+  meaning marks a reserved value citing the keyword); `Bits` rows become the field's sub-fields and reserved spans,
+  at the parent's position reading. Keep every existing field record's identity, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii`
+  Status: `open` (`2026-10-21`; CODE; opened by `.55.b.iv.b`)
+  Goal: **a section headed by a declared field's name describes that field.** CHI C2C describes each message field in
+  its own section (*B4.2.1.1 Message type, MsgType* … *B4.2.1.5 RsvdZero*), but its field records carry no
+  description, and *RsvdZero*'s states that the field's bits are Reserved, with three obligations. **Reproduce:** CHI
+  C2C `RsvdZero` (`message_field_0023`, no description) beside its section's statement. Acceptance: bind a section
+  whose heading names exactly one declared field (the name alone or after a comma) to that field's records as its
+  description. A field whose own description says its bits are Reserved becomes a reserved span carrying the
+  description's obligations, with no keyword citation where the document defines none. Measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56`
   Status: `done` (`2026-10-21`; DESIGN; found by `.55.b.iv`; opened `.56.a`, `.56.b`)

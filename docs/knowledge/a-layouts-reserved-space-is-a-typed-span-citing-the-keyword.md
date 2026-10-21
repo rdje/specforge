@@ -9,7 +9,7 @@ answers:
   - "why is bReserved a field and also a reserved span (field_id)"
   - "why is Route String/Reserved, RSVDC or RsvdZero not a reserved span (is_reserved_field_name)"
   - "why is a value sub-row 0000b | Reserved not a reserved span"
-  - "what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a and .55.b.iv.b"
+  - "what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a, .55.b.iv.b, .55.b.iv.b.i and .55.b.iv.b.ii"
 date: 2026-10-21
 status: current
 tags: [evidence-ir, message-fields, reserved-spans, keyword-definitions, packet-layouts, descriptors, padding, extraction-representation-gaps]
@@ -39,6 +39,7 @@ value sub-row (*0000b | Reserved*), which reserves a code value, not space.
 fields, in 22 containers. USB4 inter-domain has 5. Both cite *Reserved* (`keyword_0005`). The CoreSight TMC has 1
 uncited span (*Reserved, SBZ*), in a page-table entry whose fields no family reads. Of USB 3.2's 47 reserved rows in
 field-bearing tables, 8 are value sub-rows, 5 are bits nested inside a field, 1 has a unit-suffixed offset (`0:16b`),
-and 2 are the named `wReserved`. USB4's 3 left over are value sub-rows. These marks, and CHI C2C's `RsvdZero`, are
-owned by `.55.b.iv.b`. `reserved_spans` stops at EvidenceIR, like `message_field_records`; carrying both onward is
+and 2 are the named `wReserved`. USB4's 3 left over are value sub-rows. `.55.b.iv.b` found the value sub-rows and
+nested bits to be a field's restated sub-table (`.55.b.iv.b.i`), and CHI C2C's `RsvdZero` to be defined in its own
+field section (`.55.b.iv.b.ii`); `0:16b` stays a declared residual. `reserved_spans` stops at EvidenceIR, like `message_field_records`; carrying both onward is
 `DOC-INTENT-TAXONOMY.4b`'s.

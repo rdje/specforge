@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b",
-      "literal" : "`.55.b.iv.b` — the reserved marks no message-field family reads are typed or declared.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i",
+      "literal" : "`.55.b.iv.b.i` — a field's restated sub-table types its values and its own bits.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -1119,7 +1119,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       },
@@ -1131,6 +1131,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
@@ -1269,13 +1281,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
          "metrics" : {
-            "bytes" : 17032,
+            "bytes" : 20970,
             "line_bytes" : 171,
-            "lines" : 181
+            "lines" : 220
          },
          "part_id" : "packet-and-memory-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-         "sha256" : "9081bba32db3d822a13b85e3b2d65ff5608ec437ba0000e5f72c49fe1c968a21",
+         "sha256" : "2431d6ac949d82a249086da3fa3a9a1c16dcd70038972bb414e43a34ef631748",
          "state" : "active"
       },
       {

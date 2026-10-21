@@ -265,7 +265,7 @@
 - [a-dword-packet-layout-reaches-message-field-records](../knowledge/a-dword-packet-layout-reaches-message-field-records.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iii
 - [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a and .55.b.iv.b
+  > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a, .55.b.iv.b, .55.b.iv.b.i and .55.b.iv.b.ii
 - [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.56 and .56.a
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
