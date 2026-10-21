@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.i",
-      "literal" : "`.54.a.i` — a learned table-shape prior cannot entrench a kind the table's own header contradicts.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.i.a",
+      "literal" : "`.54.a.i.a` — a prior acts only with two documents' support, and never re-types a layout header.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -142,13 +142,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
             "metrics" : {
-               "bytes" : 32622,
+               "bytes" : 36362,
                "line_bytes" : 171,
-               "lines" : 339
+               "lines" : 377
             },
             "part_id" : "packet-and-memory-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-            "sha256" : "640eb5bd0cbff3473c251113e47df766470fb5a80fd220ce1fcb6b74e615e72a",
+            "sha256" : "0b2b48ba2392b535ef2f4ebc8efbd113d6727fc6c12538b802b5a25ab34261cc",
             "state" : "active"
          },
          {
@@ -1392,12 +1392,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.i.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
@@ -1528,7 +1534,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.54.a.i` — a learned table-shape prior cannot entrench a kind the table's own header contradicts.",
+         "`.54.a.i.a` — a prior acts only with two documents' support, and never re-types a layout header.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1566,8 +1572,8 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a`"
       ]
    },
    "migration_metadata" : {

@@ -38,7 +38,7 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.54.a.i` — a learned table-shape prior cannot entrench a kind the table's own header contradicts.
+`.54.a.i.a` — a prior acts only with two documents' support, and never re-types a layout header.
 
 Then, in order: `.54.a.ii` (the corpus memory's refresh under `.54.a.i`'s rule, with the 24-document behavioral
 re-qualification), `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
@@ -103,7 +103,7 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.37`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
 

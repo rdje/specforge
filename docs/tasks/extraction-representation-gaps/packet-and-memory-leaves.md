@@ -41,7 +41,7 @@ whole.
   refresh waits on a decision about which kinds a learned shape prior may assign (`.54.a.i`), then runs (`.54.a.ii`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i`
-  Status: `open` (`2026-10-21`; DESIGN; split from `.54.a`)
+  Status: `done` (`2026-10-21`; DESIGN; split from `.54.a`; opened `.54.a.i.a`)
   Goal: **a learned table-shape prior cannot entrench a kind the table's own header contradicts.** 123 of the 128
   candidate table-shape priors rest on one document, and USB 3.2's converter-typed status tables teach `bit |
   description -> signal_description` to the document's untyped bit layouts. **Reproduce:** `learn-priors` over the 31
@@ -50,6 +50,44 @@ whole.
   header shape a reader recognizes (the bit-position vocabulary, the byte and dword layouts) outranks a learned kind,
   and whether the converter's own guess on such a header should be learned at all. Measure the decision on the
   AXI/AHB/TMC/RISC-V gains as well as the USB regressions; open the CODE leaf.
+  **Measured `2026-10-21`** (EvidenceIR dry-runs of the 31 chains on scratch stores; nothing pinned moved):
+  - **Most of the store is one document.** In the candidate, every one of the 64 semantic phrase priors rests on a
+    single document, as do 1,137 of 1,140 temporal, 1,423 of 1,430 visual and 123 of 128 table priors. The pinned store
+    is the same shape: all 83 semantic phrase priors, 431 of 443 temporal, 1,195 of 1,251 visual.
+  - **A single-document prior replays the document's own past reading back to it.** `AWTAGOP`'s ready-like phrase
+    prior was learned under the reader `.50` corrected, and relearning from today's IntentIR re-learns it, because the
+    memory itself produced the hint. ADR 0036's loop converges with the stale reading inside the fixed point.
+  - **A table-shape prior learns the converter's raw kind** (`harvest_table_shape_priors` reads SourceIR's
+    `table_kind`), so USB 3.2's mistyped status tables teach `bit | description -> signal_description`.
+  - **Removing all table priors leaves only RISC-V debug moving.** With no table priors, or only the 5 resting on two
+    or more documents, only RISC-V debug moves (-9 statements). Every other drift came from single-document table
+    priors.
+  - **Leave-one-out still lets the bad guess travel.** Dropping each document's own support removes `AWTAGOP` and
+    keeps AHB's duplicate suppression. But USB4 still loses 2 reserved spans: USB 3.2's guess travels to it.
+  - **Two-document support holds.** Applying only priors with support from at least two documents, the pinned store
+    changes one record on the 31 chains (`AWTAGOP`'s hint, gone). A store relearned from all 31 chains is
+    byte-identical in EvidenceIR to the pinned store under the same rule.
+
+  **Decided.** (1) A prior acts on a document only when at least two documents support it, in every family, at
+  lookup. A single-document prior stays in the store as provenance, but it is that document's own past reading and
+  carries no evidence. The rule counts documents and never reads the current one, so it stays identity-independent
+  (ADR 0036 decision 1). It is also what makes the convergence loop of decision 4 meaningful: a fixed point can no
+  longer hold a reading only the memory sustains. (2) A table whose header a layout reader recognizes (the bit,
+  byte, descriptor, width-and-offset or dword layouts) is never re-typed by a learned kind. Under (1) USB's guess is
+  inert, but two converters agreeing on a wrong guess would activate it. A new decision record is not written:
+  `decision_records` is past its rollover on `bytes_each` and `lines_each`. The rule lives in this record, the book's
+  corpus-memory page and a KM card. CODE: `.54.a.i.a`. The refresh (`.54.a.ii`) then changes no EvidenceIR record,
+  so its re-qualification becomes a re-pin of an equivalent store.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i.a`
+  Status: `open` (`2026-10-21`; CODE; opened by `.54.a.i`)
+  Goal: **a prior acts only with two documents' support, and never re-types a layout header.** **Reproduce:** the
+  pinned store recalls AXI `AWTAGOP` as ready-like from a single-document phrase prior learned before `.50`.
+  Acceptance: every prior-memory lookup in `crates/specforge/src/ir/prior_memory.rs` (each family's
+  `*_for`/`*_in_text`/kind lookups) applies only priors whose supporting documents number at least two. A table
+  whose header a message-field or register layout reader recognizes takes no learned kind in `effective_table_kind`.
+  Then measure every chain at every stage: the expected EvidenceIR effect is exactly AXI's `AWTAGOP` hint. Rebuild the
+  affected chains, and keep the book's corpus-memory and handshake pages in lockstep.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
   Status: `open` (`2026-10-21`; CODE; split from `.54.a`; waits for `.54.a.i`)

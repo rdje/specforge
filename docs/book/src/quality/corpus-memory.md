@@ -203,6 +203,12 @@ convergence loop, and the qualification replay — is one owned transaction (`.5
 current chains (`.54.a`, measured on scratch) shows why it cannot run blindly. It drops the stale hint, but its new
 table-shape priors rest mostly on one document each. USB 3.2's converter-mistyped status tables would teach *bit |
 description* -> signal description to the same document's bit layouts, and four status-word fields would vanish.
-When such a prior may type a table is decided first (`.54.a.i`). Meanwhile a remembered semantic
+Measuring further (`.54.a.i`) showed the cause is wider than tables. Nearly every prior, in both the pinned store
+and the candidate, rests on one document, and a single-document prior replays that document's own past reading back
+to it. So a fixed point keeps a reading the reader has withdrawn: AXI's `AWTAGOP` hint, learned before `.50`, comes
+back after every relearn. The decided rule: **a prior acts only when at least two documents support it.** It counts
+documents and never reads the current one, so it stays identity-independent. Under it the pinned store changes exactly
+that one hint on the 31 chains, and a store relearned from all 31 is EvidenceIR-identical to it. A table whose header a
+layout reader recognizes is never re-typed by a learned kind (implementation `.54.a.i.a`). Meanwhile a remembered semantic
 role holds only where the current text makes the signal its bearer (`.50`; see *Prior-guided meaning* in
 `domain/handshake-semantics.md`).
