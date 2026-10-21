@@ -204,7 +204,7 @@ hint gives a signal, and the sentences that define the document's own notation. 
   phrases kept, matched whole) and `contains_ready_like_acknowledgment_phrase` (folded into `READY_ROLE_PHRASES`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55`
-  Status: `open` (`2026-10-21`; DESIGN; found by `.51`)
+  Status: `done` (`2026-10-21`; DESIGN; found by `.51`; split into `.55.a`, `.55.b`)
   Goal: **an obligation a keyword's definition carries reaches a carrier.** USB 3.2 (*1.8.2.6 Reserved*) and the USB4
   inter-domain specification (*1.6.2.6 Reserved*) define the keyword *Reserved* and with it a rule on every field it
   marks: *A reserved bit, byte, word or field shall be set to zero by the sender and shall be ignored by the
@@ -218,6 +218,43 @@ hint gives a signal, and the sentences that define the document's own notation. 
   keyword definition's obligation binds the fields the document's tables mark with that keyword (and through which
   record: a field property, a constraint, a residual), read it from the definition rather than a document's name,
   and measure every chain's reserved and N/A fields.
+  **Measured `2026-10-21`.** Two of the 31 chains define keywords, eight each (*Informative*, *May*, *N/A*,
+  *Normative*, *Optional*, *Reserved*, *Shall*, *Should*): USB 3.2 (*1.8.2.x*) and the USB4 inter-domain specification
+  (*1.6.2.x*). Two carry an obligation on the fields they mark — *Reserved* (sent as zero, ignored on receipt, its
+  values never sent) and *N/A* (neither checked nor used by the recipient); *Optional* binds an implemented feature to
+  the specification; the rest define normative vocabulary. **Neither document's fields reach any record:** USB 3.2
+  has 88 field-layout tables (a *field*, *bit(s)*, *byte*, *dword* or *offset* header in its first two columns), 56 with
+  a *Reserved* cell, and USB4
+  inter-domain 30 and 10, but `register_records` is empty for both, and the packet-field catalog
+  (`MessageFieldRecord`, `EXTRACTION-QUALITY-GAUGE.FIELD`) is built only on the LLM constraint path. The documents with
+  captured reserved register fields (RISC-V IOMMU 36, TMC 45, OpenCAPI discovery 48, ADIv6 11, RISC-V debug 4) define
+  no such keyword.
+  **Decided:** ADR 0033 decision 6 keeps non-executable source knowledge typed and queryable, so a keyword definition
+  is carried as a typed record with the obligations its sentences state, before any field can bind it (`.55.a`); the
+  binding — a field the document marks with a defined keyword carries its obligation — needs the defining
+  documents' packet-field tables to reach a deterministic field record first (`.55.b`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.a`
+  Status: `open` (`2026-10-21`; CODE; split from `.55`)
+  Goal: **a keyword the document defines is a typed record with the obligations it states.** USB 3.2's and USB4
+  inter-domain's *Reserved*, *N/A*, *Optional*, *Shall*, *Should*, *May*, *Normative* and *Informative* definitions are
+  apparatus statements since `.51`, so the rule *A reserved bit, byte, word or field shall be set to zero by the
+  sender and shall be ignored by the receiver* is typed nowhere. **Reproduce:** USB 3.2 `statement_1200`, USB4
+  inter-domain `statement_0207`. Acceptance: read *X is a keyword …* definitions (wherever they stand, by their own
+  words) into a typed record — the keyword, its defining statement, and each obligation clause with its agent and
+  modality — carry it through SemanticIR and IntentIR, give the adapter an explicit disposition, and measure every
+  chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b`
+  Status: `open` (`2026-10-21`; DESIGN; split from `.55`)
+  Goal: **a packet-field table reaches a deterministic field record, and a field marked with a defined keyword
+  carries its obligation.** USB 3.2's 88 and USB4 inter-domain's 30 field-layout tables reach no record on the
+  deterministic chain (`register_records` empty; `MessageFieldRecord` only on the LLM path), so their 66 tables with
+  *Reserved* cells cannot carry the *Reserved* definition's rule. **Reproduce:** USB4 inter-domain *Table 2-1
+  Inter-Domain Packet Format Fields* (`DW | Bits | Description | Description`). Acceptance: decide the deterministic
+  carrier for a packet or message field (beside `register_records`, or the `.FIELD` catalog made deterministic),
+  capture the two documents' field tables by their structure, bind each field marked with a keyword `.55.a` records,
+  and measure every chain.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.51` (CODE) — DONE `2026-10-21`
 

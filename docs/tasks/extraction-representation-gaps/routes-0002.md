@@ -73,5 +73,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | `open` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.53` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.a` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55",
-      "literal" : "`.55` — an obligation a keyword's definition carries reaches a carrier.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.a",
+      "literal" : "`.55.a` — a keyword the document defines is a typed record with the obligations it states.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 26598,
+               "bytes" : 29986,
                "line_bytes" : 139,
-               "lines" : 268
+               "lines" : 305
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "235e456de362083712b99dcaafddf5b10bb7b802c4d6fa08eae2252820bbfa66",
+            "sha256" : "a34cadb1b8f2ba1d8e70fdfe7c5289201076a3d55f4e1341017c99931a69655d",
             "state" : "active"
          },
          {
@@ -1260,12 +1260,24 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
@@ -1396,7 +1408,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.55` — an obligation a keyword's definition carries reaches a carrier.",
+         "`.55.a` — a keyword the document defines is a typed record with the obligations it states.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1434,8 +1446,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b`"
       ]
    },
    "migration_metadata" : {
