@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv",
-      "literal" : "`.55.b.iv` — a captured field marked with a defined keyword carries its obligations.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a",
+      "literal" : "`.55.b.iv.a` — a layout's reserved space is typed and cites the document's *Reserved* definition.",
       "mode" : "eligible",
-      "part_id" : "hint-and-notation-leaves"
+      "part_id" : "packet-and-memory-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -124,13 +124,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 57399,
+               "bytes" : 57379,
                "line_bytes" : 154,
-               "lines" : 581
+               "lines" : 579
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "8f444cb3faa10ab3d0dad5463d475901a47897c1f627dfec144178a157d7f11d",
+            "sha256" : "924cc4e6e3675e4a908078e117d8b7968cf958de14fa53454853e2e3b5e1c255",
+            "state" : "active"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
+            "metrics" : {
+               "bytes" : 3869,
+               "line_bytes" : 119,
+               "lines" : 49
+            },
+            "part_id" : "packet-and-memory-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
+            "sha256" : "21e4e44e586fef8d71673009a03b1d424230f3643362200e02b784c2867c5d9b",
             "state" : "active"
          },
          {
@@ -1268,7 +1280,7 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "hint-and-notation-leaves"
+         "part_id" : "packet-and-memory-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.a",
@@ -1302,7 +1314,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
@@ -1311,6 +1323,18 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
       }
    ],
    "limits" : {
@@ -1438,7 +1462,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.55.b.iv` — a captured field marked with a defined keyword carries its obligations.",
+         "`.55.b.iv.a` — a layout's reserved space is typed and cites the document's *Reserved* definition.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1477,7 +1501,8 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.56`"
       ]
    },
    "migration_metadata" : {

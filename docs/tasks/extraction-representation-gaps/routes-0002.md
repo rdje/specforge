@@ -74,11 +74,13 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.53` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.54.a` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.54.a` | `open` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.a` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.i` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.iii` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.55.b.iv` | `open` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b.iv` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.55.b.v` | `closed` | [Hint and notation leaves](hint-and-notation-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` | `open` | [Packet and memory leaves](packet-and-memory-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.56` | `open` | [Packet and memory leaves](packet-and-memory-leaves.md) |

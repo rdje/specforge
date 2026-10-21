@@ -5,6 +5,7 @@
 
 Open ERG leaves continue here, after `register-binding-leaves` neared its rollover (`2026-10-20`): the roles a prose
 hint gives a signal, and the sentences that define the document's own notation. `.50` and `.51` moved here whole.
+Since `2026-10-21` new ERG leaves go to `packet-and-memory-leaves`; `.54.a` and `.55.b.iv.a` moved there whole.
 
 ## Post-migration records
 
@@ -163,21 +164,6 @@ hint gives a signal, and the sentences that define the document's own notation. 
   reader change. It is refreshed by the protocol ADR 0036 declares — re-declared inputs that validate today, the
   convergence loop, and a replay of the qualification evidence that pins it — as one owned transaction, `.54.a`.
   Until then `AWTAGOP` stays the declared residual.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`
-  Status: `open` (`2026-10-21`; CODE; opened by `.54`)
-  Goal: **the corpus memory's refresh runs as ADR 0036 declares it.** The store pinned by the behavioral
-  qualification (`a416cc8b…`) was learned from 13 IntentIR inputs, 8 of which are now legacy and refused by
-  `learn-priors`, so its declared refresh cannot run and it still recalls readings the current reader withdraws (AXI
-  `AWTAGOP` ready-like). **Reproduce:** `specforge learn-priors` over the store's `source_artifacts` fails on the
-  first legacy input. **Impact:** the store cannot follow any reader change, and a checkout without it reads two
-  records differently. Acceptance: re-declare the learning inputs as the IntentIR that validates today (the 31
-  proof-carrying chains, or a stated subset), run ADR 0036's convergence loop to a byte-stable store, replay every
-  affected chain and the behavioral holdout evidence, re-pin the hash in `behavioral_qualification.json` and the
-  holdout evidence with the measured drift, and decide what triggers the next refresh. **Cost, measured
-  `2026-10-21`:** `behavioral_qualification.json`'s frozen census pins the store with the replay library and entrypoint
-  hashes, which still match today's files, so a refresh re-runs `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`'s 24-document
-  behavioral replay under that contract before the hash moves.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.50` (CODE) — DONE `2026-10-21`
 
@@ -403,11 +389,23 @@ hint gives a signal, and the sentences that define the document's own notation. 
   the converter lost, so neither a caption nor a continuation names their container.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`
-  Status: `open` (`2026-10-21`; DESIGN; split from `.55.b`)
+  Status: `done` (`2026-10-21`; DESIGN; split from `.55.b`; opened `.55.b.iv.a`)
   Goal: **a captured field the document marks with a defined keyword carries that keyword's obligations.** Once
   `.55.b.i`-`.iii` capture USB's fields, a field named or described *Reserved* (or *N/A*) is still only a name.
   Acceptance: decide where the binding lives (a field property naming the `keyword_definitions` record, or a residual
   that lists the bound fields), read the mark from the field's own name or value cell, and measure every chain.
+  **Measured `2026-10-21`.** With `.55.b.i`-`.v` the three chains with message fields are USB 3.2 (209), USB4
+  inter-domain (56) and CHI C2C (149). The space a layout marks *Reserved* is mostly not a field: every message-field
+  family treats a *Reserved* row as padding, so USB 3.2's 47 and USB4 inter-domain's 6 such rows in captured tables are
+  no record; only USB 3.2's descriptors name reserved fields (`bReserved`, `wReserved`: 10 records). CHI C2C names 13
+  reserved-like fields (`RSVDC`, …) and defines no keyword. Only the two USB documents define *Reserved*
+  (`keyword_definitions`, `.55.a`).
+  **Decided:** keep the padding convention — a reserved span is not a field, and reversing it would rename every
+  family's records — and type the space instead: each row a captured layout marks with the reserved word becomes a
+  reserved span of its container (dword or byte offset, bit range or width, table), and where the document defines
+  *Reserved* as a keyword each span, and each field whose name is the keyword's word with a size prefix
+  (`bReserved`), cites that definition, so its obligations reach the space they govern. A document that defines no
+  such keyword keeps its spans uncited. Implementation: `.55.b.iv.a`.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.51` (CODE) — DONE `2026-10-21`
 

@@ -506,7 +506,7 @@ software intent (`.3.d.i`) shares one packet, `isf_software_intent_not_applicabl
 packet is the explicit non-applicable disposition the category contract requires for software semantics. A
 document's keyword definitions (`.55.a`) share one packet, `isf_keyword_obligations_not_bound`, naming the keywords
 whose definition obliges the fields it marks (*Reserved*: sent as zero, ignored on receipt): no field record carries a
-keyword yet (`.55.b`).
+keyword yet (`.55.b.iv.a`).
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
 unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,

@@ -254,7 +254,8 @@ class its statement has, into a `keyword_definitions` record — the keyword, it
 *shall*, *must* or *should* in it as an obligation with its clause, modality and the agents after *by* (*the sender*,
 *the receiver*; not *this specification*) — which SemanticIR and IntentIR carry unchanged. The keyword opening its own
 definition (*Shall is a keyword …*) is not a modal. No field record carries a keyword yet, so every adapter names the
-obliging keywords in one `isf_keyword_obligations_not_bound` residual and nothing is lowered. *Authoritative tracking:*
+obliging keywords in one `isf_keyword_obligations_not_bound` residual and nothing is lowered; typing a layout's
+reserved space with a citation of its definition is `.55.b.iv.a`'s. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.a`).
 
 **An equivalence rule is a typed record.** A sentence that treats one thing as another states a rule of the
