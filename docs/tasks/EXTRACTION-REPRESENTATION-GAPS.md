@@ -38,7 +38,7 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.g.iii.b.iii` — decide how a value combination that names a member lowers to `.isf`.
+`.3.g.iii.b.iv` — a value combination's residual says why it stays; a keyed state's says its encoding is stated.
 
 Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
 `.3.g.iii.c` (repeating code columns), `.57` (tables whose every row is a header row), `.3.c.iv` (per-bit encodings),
@@ -79,7 +79,7 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.57`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`

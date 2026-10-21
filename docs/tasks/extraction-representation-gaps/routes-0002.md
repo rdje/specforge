@@ -99,4 +99,5 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.58` | `closed` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |

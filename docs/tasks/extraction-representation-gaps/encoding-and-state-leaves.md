@@ -213,7 +213,7 @@ several signals' values, code columns that repeat, tables whose every row is a h
   amended. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iii`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.g.iii.b.ii`)
+  Status: `done` (`2026-10-22`; DESIGN; opened by `.3.g.iii.b.ii`; opened `.3.g.iii.b.iv`)
   Goal: **decide how a value combination that names a member lowers to `.isf`.** **Reproduce:** the 13
   `isf_protocol_value_combination_*` residuals, and `.3.g.iii.b.ii`'s strict-clean probe of APB's decode. Acceptance:
   decide the target (an actor's storage, no invented port) and the owning actor. Decide whether a flopped rule
@@ -222,6 +222,44 @@ several signals' values, code columns that repeat, tables whose every row is a h
   without its member's abbreviation (`Non-secure` for `Non-secure (NS)`). Decide what a combination that names only a
   meaning lowers to, if anything, and whether its states' keys become the states' encodings. Measure every chain,
   then open the CODE leaf.
+  **Measured `2026-10-22`** (31 chains, the 13 records):
+  - **Shape.** 8 name a member (APB's PAS; AXI's A4.7, A9.1, A13.14 and A15.26; ADIv6's two `TYPE | CLASS`) and 5 a
+    meaning only. Key values: literal codes and bits, 31 labels joined to codes, 17 labels with no code, and
+    don't-care marks (30 cells in 10 rows: A13.14 6 rows, A4.7 2, ADIv6 1 each).
+  - **Consumers.** No condition on the chains names a combination's member and needs it resolved to keys. AXI's
+    rules about a physical address space (*If AxMMUSECSID is Realm, the physical address space must be Non-secure or
+    Realm*, `condrule_0197`-`0199`) name the space that `AxPAS`'s own enum encodes. APB's conditions name none of
+    its four spaces. A15.26's state rules are read from the table's own rows (`condrule_0233`).
+  - **FSMGen.** Every `.isf` assignment is clocked. A rule and a drive assign with `<-` and update on the next clock
+    (book `13g`, `13c`), and a transaction is a state sequence. `.isf` has no combinational assignment.
+
+  **Decided.**
+  - **No lowering of the table itself.** A decode lowered to storage or a port adds a register and a one-cycle lag
+    the document does not state, and it invents a storage target, which ADR 0016 forbids. The probe showing FSMGen
+    accepts that form decides nothing about whether it is faithful. A meaning-only combination has nothing to lower.
+  - **A guard vocabulary, built when a consumer exists.** A condition that names a member ("if the physical address
+    space is Root") would resolve to the conjunction of its keys' values. A don't-care key drops out, alternatives
+    become a disjunction, and an unresolved label or a class of codes refuses the guard. With no such condition on
+    the chains today, nothing is built; the condition readers meeting one is the trigger. No FSMGen request is
+    warranted (ADR 0033: fidelity before speculative `.isf` expansion).
+  - **States keep their encoding as stated.** A15.26's four states are observable from `SYSCOREQ` and `SYSCOACK`, so
+    no state register is implied. The adapter's state residual already says the encoding is missing; for a state a
+    combination keys, that is no longer true, and the residual must say which combination states it.
+  - **Residual text.** Each value-combination residual names why it stays: no consumer, and no combinational
+    target in `.isf`.
+  - **Label near-miss.** `AxPAS` `Non-secure` against the member `Non-secure (NS)`: a label equal to a member's
+    name before a parenthesized abbreviation is that member. The same resolver serves stated absent values, so the
+    change is measured there too.
+  - CODE: `.3.g.iii.b.iv` (the two residual texts and the abbreviation match).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.g.iii.b.iii`)
+  Goal: **a value combination's residual says why it stays, a state a combination keys says its encoding is
+  stated, and a label matches a member written with a parenthesized abbreviation.** **Reproduce:** the 13
+  `isf_protocol_value_combination_*` residuals ask for a decode; AXI's four `combination_state_*` residuals list
+  "encoding" as missing; `AxPAS` `Non-secure` joins nothing against `Non-secure (NS)`. Acceptance: implement
+  `.3.g.iii.b.iii`'s three decisions; measure the residual texts, the joined labels and the stated absent values
+  on every chain; rebuild the chains that move.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`
   Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)

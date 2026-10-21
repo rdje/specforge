@@ -42,6 +42,8 @@
   > why is a timing-diagram key sentence an IntentIR assumption
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > why is a two-word relation actor ending in an -s word refused
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > why is a value combination not lowered to .isf (clocked-only assignments, invented storage target; .3.g.iii.b.iii)
 - [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
   > why is a value sub-row 0000b | Reserved not a reserved span
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -295,5 +297,3 @@
   > why must a pre-repair freeze not be wired as a doctrine
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
   > why must a provider beat the best local alternative and not the current rules
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > why must a replay comparison apply the base-name template withholding

@@ -14,6 +14,7 @@ answers:
   - "does value_combinations reach IntentIR and the ISF adapter (.3.g.iii.b.ii: carried verbatim; one isf_protocol_value_combination residual per record)"
   - "what is CombinationRow.value_encodings / CombinationValueEncoding / bind_combination_value_encodings"
   - "can .isf state a decode of a value combination (FSMGen strict probe: an enum plus one guarded rule per row writing actor storage, 0 diagnostics)"
+  - "why is a value combination not lowered to .isf (clocked-only assignments, invented storage target; .3.g.iii.b.iii)"
 date: 2026-10-22
 status: current
 tags: [evidence-ir, encodings, value-combinations, protocol-states, multi-key-tables, extraction-representation-gaps]
@@ -62,4 +63,10 @@ its collectives, then, for a collective key, its members' enums. AXI has 31 join
 `Non-secure` against `Non-secure (NS)` join nothing. The ISF adapter states one `isf_protocol_value_combination_*`
 residual per record: 13 across AXI 7, ADIv6 3, RISC-V IOMMU 2 and APB 1. Every `.isf` text is unchanged. An FSMGen
 strict probe lowered APB's decode as an enum for the member column plus one rule per row guarded by the keys' values,
-writing actor storage, with 0 diagnostics; `.3.g.iii.b.iii` decides the lowering.
+writing actor storage, with 0 diagnostics.
+
+**Not lowered (`.3.g.iii.b.iii`, `2026-10-22`).** Every `.isf` assignment is clocked, so a decode in storage adds a
+register, a one-cycle lag and an invented storage target (ADR 0016). A combination is a guard vocabulary instead
+(a condition naming a member resolves to its keys' values), built when a condition needs it; none does on the
+current chains. `.3.g.iii.b.iv` makes the residuals say so and lets a label match a member written with a
+parenthesized abbreviation.

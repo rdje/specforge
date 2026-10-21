@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why must a replay comparison apply the base-name template withholding
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > why must a slice start at bit 0 as well as span the stated width
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
