@@ -174,7 +174,10 @@ hint gives a signal, and the sentences that define the document's own notation. 
   records differently. Acceptance: re-declare the learning inputs as the IntentIR that validates today (the 31
   proof-carrying chains, or a stated subset), run ADR 0036's convergence loop to a byte-stable store, replay every
   affected chain and the behavioral holdout evidence, re-pin the hash in `behavioral_qualification.json` and the
-  holdout evidence with the measured drift, and decide what triggers the next refresh.
+  holdout evidence with the measured drift, and decide what triggers the next refresh. **Cost, measured
+  `2026-10-21`:** `behavioral_qualification.json`'s frozen census pins the store with the replay library and entrypoint
+  hashes, which still match today's files, so a refresh re-runs `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`'s 24-document
+  behavioral replay under that contract before the hash moves.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.50` (CODE) — DONE `2026-10-21`
 
@@ -233,6 +236,9 @@ hint gives a signal, and the sentences that define the document's own notation. 
   is carried as a typed record with the obligations its sentences state, before any field can bind it (`.55.a`); the
   binding — a field the document marks with a defined keyword carries its obligation — needs the defining
   documents' packet-field tables to reach a deterministic field record first (`.55.b`).
+  **Corrected `2026-10-21` (`.55.b`):** the packet-field catalog is not LLM-only. EvidenceIR's `message_field_surface`
+  runs four deterministic table extractors (field tables, bit-position layouts, byte-location placements, section
+  headers) and gives CHI C2C 149 `message_field_records`; the USB documents' tables pass none of its gates.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.a`
   Status: `done` (`2026-10-21`; CODE; split from `.55`; checklist below)
@@ -262,15 +268,62 @@ hint gives a signal, and the sentences that define the document's own notation. 
   `.isf` text byte-identical; the new rule field re-sealed the whole cascade.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b`
-  Status: `open` (`2026-10-21`; DESIGN; split from `.55`)
+  Status: `done` (`2026-10-21`; DESIGN; split from `.55`; split into `.55.b.i`-`.55.b.iv`)
   Goal: **a packet-field table reaches a deterministic field record, and a field marked with a defined keyword
   carries its obligation.** USB 3.2's 88 and USB4 inter-domain's 30 field-layout tables reach no record on the
-  deterministic chain (`register_records` empty; `MessageFieldRecord` only on the LLM path), so their 66 tables with
+  deterministic chain (`register_records` and `message_field_records` empty for both), so their 66 tables with
   *Reserved* cells cannot carry the *Reserved* definition's rule. **Reproduce:** USB4 inter-domain *Table 2-1
   Inter-Domain Packet Format Fields* (`DW | Bits | Description | Description`). Acceptance: decide the deterministic
   carrier for a packet or message field (beside `register_records`, or the `.FIELD` catalog made deterministic),
   capture the two documents' field tables by their structure, bind each field marked with a keyword `.55.a` records,
   and measure every chain.
+  **Measured `2026-10-21`.** The carrier exists: `message_field_records` (`MessageFieldRecord`: name, container, width,
+  bit position, DWORD offset), filled by `message_field_surface`'s four deterministic extractors, which key a
+  container on a caption naming fields or a container (*Request channel fields*), a bit-position header, a
+  byte-location header or a section header. USB's field tables take three shapes none of them reads: **descriptor
+  tables** `Offset | Field | Size | Value` captioned by the structure (*Table 9-11. Standard Device Descriptor*, *Table
+  9-3. Format of Setup Data*), USB 3.2 28 (19 with a *Reserved* cell); **packet-header layouts** `Width (bits) | Offset
+  (DW:bit) | Description` whose name opens the description (*Type. These 5 bits identify …*), USB 3.2 32 (26), and the
+  status-field layouts `Bit | Description` of the same name-in-description kind (*Table 10-10. Hub Status Field,
+  wHubStatus*), USB 3.2 10 and USB4 inter-domain 3; and **DW layouts with nested bit sub-layouts** `DW | Bits |
+  Description`, a field's name before a dash (*HEC - Header Error Control*) and sub-rows restating `Bits |
+  Description`, USB4 inter-domain 20 (6).
+  **Decided:** each shape is read by its own structure into the existing `message_field_records`, one CODE leaf each
+  (`.55.b.i` descriptor tables, `.55.b.ii` name-in-description layouts, `.55.b.iii` nested DW layouts); the binding —
+  a captured field the document marks with a defined keyword carries that keyword's obligations — follows them
+  (`.55.b.iv`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.i`
+  Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
+  Goal: **a descriptor table reaches `message_field_records`.** USB 3.2's 28 tables headed `Offset | Field | Size |
+  Value` (or `… | Description`) and captioned by the structure they lay out (*Standard Device Descriptor*, *Format of
+  Setup Data*) reach no field record, 19 of them with a *Reserved* field. **Reproduce:** `table_0179` (*Table 9-11*: `0 | bLength | 1 |
+  Number`). Acceptance: read the container from the caption, each row's field name, byte offset and
+  size from its own columns, keep every table already captured unchanged, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.ii`
+  Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
+  Goal: **a layout whose field name opens its description reaches `message_field_records`.** USB 3.2's 32 packet-header
+  layouts (`Width (bits) | Offset (DW:bit) | Description`: *Type. These 5 bits identify …*) and its 10 and USB4
+  inter-domain's 3 status-field layouts (`Bit | Description`: *Local Power Source: This field …*) reach no field
+  record. **Reproduce:** `table_0099` (*Table 8-1 Type Field Description*). Acceptance: read a name from the description's opening
+  words only where the cell states one (a word run before a period, colon or dash), its width and offset from their
+  columns, refuse a description that opens with prose, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`
+  Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
+  Goal: **a DW layout with nested bit sub-layouts reaches `message_field_records`.** USB4 inter-domain's 20 tables
+  headed `DW | Bits | Description` give a field per DWORD and, inside a DWORD, sub-rows restating `Bits |
+  Description` with names before a dash (*7:0 | HEC - Header Error Control*). **Reproduce:** `table_0009` (*Table 2-1 Inter-Domain
+  Packet Format Fields*). Acceptance: read each DWORD row and each nested sub-row as a field of the caption's container
+  with its DWORD offset and bit range, keep a restated sub-header out of the fields, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`
+  Status: `open` (`2026-10-21`; DESIGN; split from `.55.b`)
+  Goal: **a captured field the document marks with a defined keyword carries that keyword's obligations.** Once
+  `.55.b.i`-`.iii` capture USB's fields, a field named or described *Reserved* (or *N/A*) is still only a name.
+  Acceptance: decide where the binding lives (a field property naming the `keyword_definitions` record, or a residual
+  that lists the bound fields), read the mark from the field's own name or value cell, and measure every chain.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.51` (CODE) — DONE `2026-10-21`
 

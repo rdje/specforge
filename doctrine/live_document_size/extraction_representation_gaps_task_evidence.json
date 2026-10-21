@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a",
-      "literal" : "`.54.a` — the corpus memory's refresh runs as ADR 0036 declares it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.i",
+      "literal" : "`.55.b.i` — a descriptor table reaches `message_field_records`.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 34292,
+               "bytes" : 39234,
                "line_bytes" : 139,
-               "lines" : 348
+               "lines" : 401
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "8c1c7787f57727d4d9bb32d9909df6ac9c796a221a89aef57c7a8b25ffb92252",
+            "sha256" : "bd4c7a63a9de0edffb01c8f8e68a1f18b0cc731e04e220575d392ccd54861f33",
             "state" : "active"
          },
          {
@@ -1278,6 +1278,30 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
@@ -1408,7 +1432,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.54.a` — the corpus memory's refresh runs as ADR 0036 declares it.",
+         "`.55.b.i` — a descriptor table reaches `message_field_records`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1447,7 +1471,10 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.i`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`"
       ]
    },
    "migration_metadata" : {
