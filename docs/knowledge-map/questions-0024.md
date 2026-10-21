@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why does eMMC declare a signal called PARTITION
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why does eMMC declare a signal called t
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does eMMC table_0020 declare HS400 as a signal
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > why does folding a signal name's case matter beyond style
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does gate 2 of is_post_passive_binding_only_subject not exempt every table row
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
   > why does generated/ hold artifacts the canonical loader refuses
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
@@ -283,17 +297,3 @@
   > why is 0010 read as ten
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > why is 18 of 349 the wrong population for the constraint kind span
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why is 198 exactly the largest fact-card maximum the current projection allows
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > why is ADIv6 ABORT emitted 5 bits wide
-- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
-  > why is ADIv6 Table B2-7's bit-to-signal mapping not read
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > why is ADR 0038 not split or rewritten
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > why is AHB ADDR_WIDTH declared as 10
-- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
-  > why is AHB's HWRITE direction sentence not read
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why is APB Check signal descriptions not refused as a property table

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
+- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
+  > what is table_reading_orders
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > what is table_states_a_property_rather_than_a_signal_inventory
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -293,7 +297,3 @@
   > what is the standing per-doc quality report wired into converge/CI
 - [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
   > what is the subject of a relation verb after and then
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is the table-kind precision estimate and the flagged-mismatch list
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > what is the three-arm comparison

@@ -381,9 +381,9 @@ the same for `collective_signal_names` (an `evidence_collective_signal_name_inve
 `equivalence_rules` count on all three stages, `.3.d.iii.a` a `permission_rules` count, `.3.d.iii.d` an `optional_features` count, `.3.d.i` a `software_intent` count, and `.55.a` a `keyword_definitions` count.
 
 The typed **message-field inventory** (the in-memory structure and packet-field surface built
-by the bit-position and field-titled table readers) is also on the report: five metrics —
+by the bit-position and field-titled table readers) is also on the report: six metrics —
 `message_field_records`, `message_field_containers`, `message_fields_with_bit_range`,
-`message_fields_with_byte_offset`, `message_field_constraints` — plus an
+`message_fields_with_byte_offset`, `message_field_constraints`, and `reserved_spans` (`.55.b.iv.a`) — plus an
 `evidence_message_field_inventory` Info finding when the surface is non-empty (an NVMe rebuild
 reports *"216 field(s) across 113 container(s), 216 with literal bit positions"*). Two
 deliberate non-integrations keep the report honest: the inventory does **not** join the

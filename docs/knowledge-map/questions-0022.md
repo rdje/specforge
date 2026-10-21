@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why did max_facts become 379
+- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
+  > why did moving a sealed region out of an active task-evidence part break leaf lifecycles that were already correct
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > why did my Perl checker stop reporting after I moved a call inside another function
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why did my declaration census join at 92.8 percent
+- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
+  > why did my quoted bytes value fail LIVE-DOC-SIZE
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did normalize_prior_phrase grow a string exponentially
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why did only four documents refuse to load after an EvidenceIR producer change
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
@@ -284,17 +298,3 @@
   > why does AXI score 1.000 while losing 103 declaration rows
 - [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
   > why does AXI still list asserted/deasserted obligations as polarity unknown
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > why does AXI's BRESP presence record carry 0b000
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > why does Assumer no longer classify as an abstraction (whole-word match)
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why does AxBURST publish FIXED instead of FIXED_BURST
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does Bus Width not count as a width role
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists

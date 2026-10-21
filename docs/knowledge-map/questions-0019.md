@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > where is the per-author adopt-vs-defer provenance
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where is the persisted source-to-IntentIR result snapshot
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > where is the register-field gold seed
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > where is the required-residual rule frozen
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > where is the reviewed source-to-intent dataset
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -252,6 +260,8 @@
   > which held-out document has an eligible opaque alpha catalog
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which is cheaper, a seal check or a chain-currency replay
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > which keyword definition does a reserved bit cite (keyword_definition_id)
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
   > which leaf owns a missing piece
 - [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
@@ -287,14 +297,3 @@
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
   > REQUEST_COMPLETE)
-- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > which naming outranks which for an absent value (the signal itself, then a collective name, then a class)
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > which nine semantic negative fault classes are tested
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > which notations must a bit-range width rule read
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > which notations of the 482 dropped rows have been recovered
-- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
-  > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
-  > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)

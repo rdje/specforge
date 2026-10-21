@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md) | 2026-09-15 | `current` | Partitioning a task tree costs four surface records, and the registry that holds them has no warning band |
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
@@ -60,4 +61,3 @@
 | [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |
 | [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md) | 2026-09-23 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
 | [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md) | 2026-08-11 | `current` | Of the 33 documents that declare no signals, 32 have no declaration-bearing modality at all; one declares its… |
-| [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md) | 2026-09-22 | `current` | An enum member is named from the column the document names it in — the signal seam's calibrated score, tran… |

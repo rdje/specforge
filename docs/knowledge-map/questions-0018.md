@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > where are the AHB and AXI normalized bundles
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where are the KG-ISF-COMPLETENESS.5 per-leaf enum-gate results / where did the .5.i-.5.iii LANDED and .5.ii-.5.iv measurement sections move to (docs/research/generic-enum-conflation-results.md, partitioned out of generic-enum-conflation-measurement.md on 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e when that record reached 559/640 lines with .5.iv.a still to report; the
+  > measurement retains the defect, origin, corpus census, member-quality finding, decision, reproducer, conclusion and an Outcome section, and the results record holds every per-leaf section byte-identically in its original appended order)
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > where are the Rust toolchain gates registered
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
@@ -170,6 +175,8 @@
   > where does the phantom signal DATA in the CoreSight TMC come from
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > where does the post-boundary retention declaration live and why
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > where does the reserved space of a packet layout go (Reserved (R) . at 3:19)
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > where does the specforge chipdoc host library symlink currently resolve
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
@@ -290,11 +297,3 @@
   > where is the mdBook current-truth verifier
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where is the normative IntentIR product contract
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > where is the per-author adopt-vs-defer provenance
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where is the persisted source-to-IntentIR result snapshot
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > where is the register-field gold seed
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > where is the required-residual rule frozen

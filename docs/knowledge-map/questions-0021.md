@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the fired: behavioral features mostly empty in the clustering today
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > why are the system clock and reset not counted when choosing the initiator
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > why are there 82 retained phase records but 101 on a current rule replay
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why are there relations like Any reads CACHE or details reads TDO
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > why are there ten question keys per fact in the Knowledge Map budget
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > why are two containment records at the bottom of CHANGES
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > why can AXI Table A7.3 not be a flat enum
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -283,17 +297,3 @@
   > why did ingest stop with 'ingest aborted to protect the host'
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > why did intent_ir artifacts move when semantic_ir did not
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why did max_facts become 379
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > why did moving a sealed region out of an active task-evidence part break leaf lifecycles that were already correct
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why did my Perl checker stop reporting after I moved a call inside another function
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why did my declaration census join at 92.8 percent
-- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
-  > why did my quoted bytes value fail LIVE-DOC-SIZE
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did normalize_prior_phrase grow a string exponentially

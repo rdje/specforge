@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a",
-      "literal" : "`.55.b.iv.a` — a layout's reserved space is typed and cites the document's *Reserved* definition.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56",
+      "literal" : "`.56` — the ERG task-evidence collection stays under its total-bytes bound.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -1107,12 +1107,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
@@ -1245,13 +1251,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
          "metrics" : {
-            "bytes" : 3869,
-            "line_bytes" : 119,
-            "lines" : 49
+            "bytes" : 8969,
+            "line_bytes" : 171,
+            "lines" : 100
          },
          "part_id" : "packet-and-memory-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-         "sha256" : "21e4e44e586fef8d71673009a03b1d424230f3643362200e02b784c2867c5d9b",
+         "sha256" : "f5b0ab9a3eedd198847a4f61f9a398e09b8987002d886760741d0ad936d1cefe",
          "state" : "active"
       },
       {

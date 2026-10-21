@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -242,6 +244,8 @@
   > what is replay-declarations
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > what is replay_bytes and what depends on it
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > what is reserved_spans / ReservedSpanRecord / reserved_span_surface / record_reserved_span
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what is residual_gold_law
 - [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
@@ -294,7 +298,3 @@
   > what is swallowed_verb_governance
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > what is synthesize_register_field_tables
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
-- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
-  > what is table_reading_orders

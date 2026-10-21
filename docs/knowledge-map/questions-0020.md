@@ -2,6 +2,17 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > which naming outranks which for an absent value (the signal itself, then a collective name, then a class)
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > which nine semantic negative fault classes are tested
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > which notations must a bit-range width rule read
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > which notations of the 482 dropped rows have been recovered
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
+  > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > which nouns were rejected from the candidate unit vocabulary and why (edges 3 real of 8 — four misses are the temporal chapter's own grammar examples like within 2 clock edges; names 2 of 3; relations 1 of 3, both misses section titles; contracts 0 of 3; identifiers 0 of 1, quoted source text; sentences 1 of 1 but only by an incidental prefix of sentence-start phrases;
   > assertions, obligations, columns, entries and nodes cost zero because every line carrying one already carries an admitted noun)
@@ -37,6 +48,8 @@
   > which readers exclude the apparatus class (is_invariant_like, and every class-filtered reader by construction)
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > which readers use a recovered table caption
+- [a-keyword-definition-is-typed-with-the-obligations-it-states](../knowledge/a-keyword-definition-is-typed-with-the-obligations-it-states.md)
+  > which records cite the Reserved keyword definition (reserved_spans.keyword_definition_id)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > which refusal arm of the declaration reader is a real loss
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -284,17 +297,3 @@
   > why are the APB AHB AXI wire golds not in the corpus refresh frontier
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the fired: behavioral features mostly empty in the clustering today
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > why are the system clock and reset not counted when choosing the initiator
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why are there 82 retained phase records but 101 on a current rule replay
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > why are there relations like Any reads CACHE or details reads TDO
-- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
-  > why are there ten question keys per fact in the Knowledge Map budget
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > why are two containment records at the bottom of CHANGES

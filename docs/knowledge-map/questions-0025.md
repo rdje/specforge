@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > why is 198 exactly the largest fact-card maximum the current projection allows
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > why is ADIv6 ABORT emitted 5 bits wide
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > why is ADIv6 Table B2-7's bit-to-signal mapping not read
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why is ADR 0038 not split or rewritten
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why is AHB ADDR_WIDTH declared as 10
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > why is AHB's HWRITE direction sentence not read
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why is APB Check signal descriptions not refused as a property table
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
@@ -66,6 +80,8 @@
   > why is RUSERCHK missing from the AXI catalog
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > why is Reset value not a semantic phase
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > why is Route String/Reserved, RSVDC or RsvdZero not a reserved span (is_reserved_field_name)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > why is SWD per-signal phase membership degenerate / empty
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
@@ -102,6 +118,8 @@
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
 - [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
   > why is a Conventions, Typographic conventions, RTL notation or Signal Naming Conventions section apparatus
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > why is a Reserved row of a packet or descriptor layout not a message field
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > why is a bit slice not a spelling heuristic
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -206,6 +224,8 @@
   > why is a timing-diagram key sentence an IntentIR assumption
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > why is a two-word relation actor ending in an -s word refused
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > why is a value sub-row 0000b | Reserved not a reserved span
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is an AXI obligation about WSTRB demoted to a residual
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -226,6 +246,8 @@
   > why is arm C excluded on caption_admission
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > why is arm C excluded on declaration_row
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > why is bReserved a field and also a reserved span (field_id)
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why is bus not a valid parenthetical single-wire head
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
@@ -276,25 +298,3 @@
   > why is must be greater than 0 not a value binding
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why is my rebuilt chain stale even though the content matches
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why is nRESET not treated as a metavariable
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
-- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
-  > why is optionality not a permission_rules modality
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document
-- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
-  > why is placing a table by its page wrong
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is plural-rejection unsafe for phase names (access ends in ss)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > why is repeating the same check not independent verification
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why is residual actionability 8 of 16 in the current reviewed result
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why is scope binding not used for protocol states
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is scripts/lib/corpus_replay_binary.sh a shared predicate

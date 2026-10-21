@@ -84,9 +84,9 @@ The content families are:
 | Symbols and secondary storage | `symbol_definitions`, `register_records` | Encodings or register-backed secondary content exists |
 
 Packet, flit, header, and message fields expose a current conservation failure. They exist as
-`EvidenceIR.message_field_records` and `EvidenceIR.message_field_constraints`, but no matching `IntentIR`
-carrier exists. Until that carrier lands, each source-grounded record needs a residual and this family cannot
-pass, regardless of whether unrelated wire content lowers successfully.
+`EvidenceIR.message_field_records`, `EvidenceIR.message_field_constraints` and `EvidenceIR.reserved_spans`, but no
+matching `IntentIR` carrier exists. Until that carrier lands, each source-grounded record needs a residual and this
+family cannot pass, regardless of whether unrelated wire content lowers successfully.
 
 ## Category 2 — register IP
 

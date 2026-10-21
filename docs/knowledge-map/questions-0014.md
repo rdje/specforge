@@ -260,6 +260,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.ii and .55.b.v
 - [a-dword-packet-layout-reaches-message-field-records](../knowledge/a-dword-packet-layout-reaches-message-field-records.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iii
+- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a and .55.b.iv.b
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -296,5 +298,3 @@
   > what is PDF-VARIANT-DIGESTION.12b
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what is PDF-VARIANT-DIGESTION.3 prose entity capture
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > what is ProtocolStateRecord / protocol_states / DBGTAPSM

@@ -376,6 +376,11 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents that declare no message-field tables.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub message_field_records: Vec<MessageFieldRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a: the reserved space of the message containers — each row a
+    /// message-field family skips as *Reserved* padding and each field named as reserved — citing the document's
+    /// *Reserved* keyword definition. Empty (serde-skipped) for documents whose layouts reserve nothing.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub reserved_spans: Vec<ReservedSpanRecord>,
     /// PDF-VARIANT-DIGESTION.12b: typed SIGNAL-PRESENCE rows from presence matrices — tables that
     /// state, per interface class / protocol version / agent side, whether each signal exists
     /// (`Y`/`N`/`O`/`C`/… codes), optionally conditioned on a configuration property
@@ -629,6 +634,36 @@ pub struct MessageFieldRecord {
     pub description: Option<String>,
     /// The structured tables that declared this field (a caption-continuation table merges into
     /// the record its first declaration created).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — one reserved span of a message container: a row a captured layout
+/// marks *Reserved* (padding, which no message-field family makes a field), or a field the layout names as reserved
+/// (`bReserved`). The position is the declaring family's own reading, exactly as on [`MessageFieldRecord`]; the span
+/// cites the document's definition of the keyword *Reserved* when it defines one (*A reserved bit, byte, word or field
+/// shall be set to zero by the sender and shall be ignored by the receiver*).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ReservedSpanRecord {
+    /// Stable id, e.g. `reserved_span_0003`.
+    pub span_id: String,
+    /// The message/packet container, as the declaring family labels it.
+    pub container: String,
+    /// The row's text as written (`Reserved (R) .`), or the reserved field's name (`bReserved`).
+    pub text: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bit_width: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bit_range: Option<(u32, u32)>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub byte_offset: Option<u32>,
+    /// The `message_field_records` record, when the layout names the reserved space as a field.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub field_id: Option<String>,
+    /// The `keyword_definitions` record of *Reserved*, when the document defines the keyword.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword_definition_id: Option<String>,
+    /// The structured tables that declared the span.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
 }
@@ -1289,6 +1324,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_operations", "evidence.protocol_structure"),
     ("interface_edge_timings", "evidence.protocol_structure"),
     ("message_field_records", "evidence.message_structure"),
+    ("reserved_spans", "evidence.message_structure"),
     ("message_field_constraints", "evidence.message_structure"),
     ("validation_reports", "evidence.quality"),
     ("extraction_quality_gauge", "evidence.quality"),
@@ -1699,6 +1735,7 @@ impl EvidenceIr {
         insert_field!(protocol_operations);
         insert_field!(interface_edge_timings);
         insert_field!(message_field_records);
+        insert_field!(reserved_spans);
         insert_field!(message_field_constraints);
         insert_field!(validation_reports);
         insert_field!(extraction_quality_gauge);
@@ -2411,6 +2448,13 @@ impl EvidenceIr {
         let software_intent = software_intent_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.55.a — the keywords the document defines.
         let keyword_definitions = keyword_definition_surface(&extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a — the layouts' reserved space, citing the keyword's definition.
+        let reserved_spans = reserved_span_surface(
+            source_ir,
+            prior_guidance.as_ref(),
+            &message_field_records,
+            &keyword_definitions,
+        );
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
         // bit ranges and explicit prose composition lists. Both read names and ordering from the current
@@ -2552,6 +2596,7 @@ impl EvidenceIr {
             fact_provenance,
             serial_frame_fields,
             message_field_records,
+            reserved_spans,
             signal_presence_records,
             check_signal_records,
             collective_signal_names,
@@ -18532,6 +18577,60 @@ fn parse_message_field_width(cell: &str) -> Option<u32> {
     Some(hi.abs_diff(lo) + 1)
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — does a layout row's text open with *Reserved* (*Reserved (R) .*,
+/// *Reserved; set to zero*)? Such a row is padding in every message-field family, and its space a reserved span.
+fn is_reserved_led(text: &str) -> bool {
+    text.trim()
+        .get(..8)
+        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — is this field named as reserved space: the word *Reserved* alone, or
+/// after a lowercase type prefix of at most three letters (`bReserved`, `wReserved`, `bmReserved`)? A field reserved
+/// only in some packets (`Route String/Reserved`) or for another use (`RSVDC`) is not.
+fn is_reserved_field_name(name: &str) -> bool {
+    let name = name.trim();
+    name.eq_ignore_ascii_case("reserved")
+        || name.strip_suffix("Reserved").is_some_and(|prefix| {
+            (1..=3).contains(&prefix.len()) && prefix.bytes().all(|b| b.is_ascii_lowercase())
+        })
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — record the padding row `text` of `container` at the family's position
+/// reading. A fragment restating a positioned span merges its table into the span first recorded (the message-field
+/// continuation policy); a span with no position is one per row.
+fn record_reserved_span(
+    reserved: &mut Vec<ReservedSpanRecord>,
+    container: &str,
+    text: &str,
+    position: (Option<u32>, Option<(u32, u32)>, Option<u32>),
+    table_id: &str,
+) {
+    let (bit_width, bit_range, byte_offset) = position;
+    let positioned = bit_range.is_some() || byte_offset.is_some();
+    if let Some(span) = reserved.iter_mut().find(|span| {
+        positioned
+            && span.container.eq_ignore_ascii_case(container)
+            && (span.bit_width, span.bit_range, span.byte_offset) == position
+    }) {
+        if !span.supporting_table_ids.iter().any(|id| id == table_id) {
+            span.supporting_table_ids.push(table_id.to_string());
+        }
+        return;
+    }
+    reserved.push(ReservedSpanRecord {
+        span_id: String::new(),
+        container: container.to_string(),
+        text: text.trim().to_string(),
+        bit_width,
+        bit_range,
+        byte_offset,
+        field_id: None,
+        keyword_definition_id: None,
+        supporting_table_ids: vec![table_id.to_string()],
+    });
+}
+
 /// Walk the structured tables in document order and collect the declared message fields.
 /// Identity is (container, name) — `QoS` recurs per channel as distinct records; a continuation
 /// table's re-declaration merges its table id into the first record (first declaration wins for
@@ -18540,6 +18639,7 @@ fn parse_message_field_width(cell: &str) -> Option<u32> {
 fn extract_container_message_fields(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    reserved: &mut Vec<ReservedSpanRecord>,
 ) -> Vec<MessageFieldRecord> {
     let mut records: Vec<MessageFieldRecord> = Vec::new();
     let mut index_by_key: BTreeMap<(String, String), usize> = BTreeMap::new();
@@ -18597,6 +18697,18 @@ fn extract_container_message_fields(
                 continue;
             };
             if !is_message_field_name(&name) {
+                if is_reserved_led(&name) {
+                    let width = width_col
+                        .and_then(&cell)
+                        .and_then(|c| parse_message_field_width(&c));
+                    record_reserved_span(
+                        reserved,
+                        &container,
+                        &name,
+                        (width, None, None),
+                        &table.table_id,
+                    );
+                }
                 continue;
             }
             let key = (container.to_ascii_lowercase(), name.to_ascii_uppercase());
@@ -18641,7 +18753,7 @@ impl Extractor<MessageFieldRecord> for MessageFieldTableExtractor<'_> {
         "message_fields.container_field_table"
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
-        extract_container_message_fields(self.source_ir, self.prior_guidance)
+        extract_container_message_fields(self.source_ir, self.prior_guidance, &mut Vec::new())
     }
 }
 
@@ -19529,6 +19641,7 @@ fn stitch_bit_layout_chains(tables: &[BitLayoutTable<'_>]) -> Vec<BitLayoutChain
 fn extract_bit_position_structure_fields(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    reserved: &mut Vec<ReservedSpanRecord>,
 ) -> Vec<MessageFieldRecord> {
     let tables = collect_bit_layout_tables(source_ir, prior_guidance);
     let chains = stitch_bit_layout_chains(&tables);
@@ -19568,23 +19681,36 @@ fn extract_bit_position_structure_fields(
             }
             let mut head_named: BTreeSet<String> = BTreeSet::new();
             for row in &parsed.rows {
+                let mut pad = |text: &str| {
+                    record_reserved_span(
+                        reserved,
+                        label,
+                        text,
+                        (
+                            Some(row.high - row.low + 1),
+                            Some((row.high, row.low)),
+                            row.byte_offset,
+                        ),
+                        &parsed.table.table_id,
+                    );
+                };
                 let name = match &row.name {
                     // explicit name column (three-column family): `-` placeholders and
                     // `Reserved` padding are honest skips, never fields; a fused
                     // `CTP: Context-table Pointer` cell yields its leading mnemonic
                     // (`R: Reserved` skips like any Reserved row)
                     Some(explicit) => {
-                        if explicit == "-" || explicit.eq_ignore_ascii_case("reserved") {
+                        if explicit == "-" {
+                            continue;
+                        }
+                        if explicit.eq_ignore_ascii_case("reserved") {
+                            pad(explicit);
                             continue;
                         }
                         match explicit.split_once(':') {
                             Some((head, rest)) if is_message_field_name(head.trim()) => {
-                                if rest
-                                    .trim()
-                                    .get(..8)
-                                    .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
-                                    || rest.trim().eq_ignore_ascii_case("reserved")
-                                {
+                                if is_reserved_led(rest) {
+                                    pad(explicit);
                                     continue;
                                 }
                                 head.trim().to_string()
@@ -19609,7 +19735,12 @@ fn extract_bit_position_structure_fields(
                                     head_named.insert(name.clone());
                                     name
                                 }
-                                None => continue,
+                                None => {
+                                    if is_reserved_led(&row.description) {
+                                        pad(&row.description);
+                                    }
+                                    continue;
+                                }
                             },
                         }
                     }
@@ -19911,10 +20042,7 @@ fn stitch_byte_location_chains(tables: &[ByteLocationTable<'_>]) -> Vec<BitLayou
 /// A `Reserved…`-led row is padding, never a field.
 fn byte_location_field_name(description: &str) -> Option<String> {
     let description = description.trim();
-    if description
-        .get(..8)
-        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
-    {
+    if is_reserved_led(description) {
         return None;
     }
     const FRAMES: [&str; 7] = [
@@ -19985,10 +20113,7 @@ fn width_offset_layout_columns(table: &StructuredTableRecord) -> Option<(usize, 
 /// a sentence. A `Reserved…` row is padding.
 fn colon_head_field_name(description: &str) -> Option<String> {
     let description = description.trim();
-    if description
-        .get(..8)
-        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
-    {
+    if is_reserved_led(description) {
         return None;
     }
     let head = description[..description.find(": ")?].trim_end();
@@ -20037,10 +20162,7 @@ fn parse_dash_bit_range(cell: &str) -> Option<(u32, u32)> {
 /// every message-field family; a cell with no such head (a value sub-row, *Refer to sections …*) names nothing.
 fn width_offset_field_name(description: &str) -> Option<String> {
     let description = description.trim();
-    if description
-        .get(..8)
-        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
-    {
+    if is_reserved_led(description) {
         return None;
     }
     let bytes = description.as_bytes();
@@ -20081,7 +20203,10 @@ fn width_offset_field_name(description: &str) -> Option<String> {
 /// arithmetic on the two stated values. A row without both (a value sub-row) is skipped, not the table. The container
 /// is the caption's label, or a caption the converter left beside the table (`unattached_table_captions`); a table with
 /// neither continues the previous layout when its first field starts where that one's last field ends, within a page.
-fn extract_width_offset_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> {
+fn extract_width_offset_layout_fields(
+    source_ir: &SourceIr,
+    reserved: &mut Vec<ReservedSpanRecord>,
+) -> Vec<MessageFieldRecord> {
     struct Row {
         width: u32,
         dword: u32,
@@ -20149,6 +20274,19 @@ fn extract_width_offset_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldR
         ));
         for row in &rows {
             let Some(name) = width_offset_field_name(&row.description) else {
+                if is_reserved_led(&row.description) {
+                    record_reserved_span(
+                        reserved,
+                        &container,
+                        &row.description,
+                        (
+                            Some(row.width),
+                            Some((row.bit + row.width - 1, row.bit)),
+                            Some(row.dword * 4),
+                        ),
+                        &table.table_id,
+                    );
+                }
                 continue;
             };
             let key = (container.to_ascii_lowercase(), name.to_ascii_uppercase());
@@ -20181,10 +20319,7 @@ fn extract_width_offset_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldR
 /// letter-led, no inner period; a `Reserved…` row is padding, as in every message-field family.
 fn dword_layout_field_name(description: &str) -> Option<String> {
     let description = description.trim();
-    if description
-        .get(..8)
-        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
-    {
+    if is_reserved_led(description) {
         return None;
     }
     let separators = [" - ", " \u{2013} ", ". ", ": "];
@@ -20235,7 +20370,10 @@ fn continues_dword_layout(end: (u32, u32), first: &(u32, u32, u32, u32, String))
 /// sub-header (`Bits | Description`), a value sub-table and a symbolic dword state nothing. The container is the
 /// caption's label, a caption the converter left beside the table, or the layout a caption-less fragment continues
 /// bit-exactly (`continues_dword_layout`), within a page.
-fn extract_dword_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> {
+fn extract_dword_layout_fields(
+    source_ir: &SourceIr,
+    reserved: &mut Vec<ReservedSpanRecord>,
+) -> Vec<MessageFieldRecord> {
     let recovered_captions = unattached_table_captions(source_ir);
     let mut records: Vec<MessageFieldRecord> = Vec::new();
     let mut index_by_key: BTreeMap<(String, String), usize> = BTreeMap::new();
@@ -20316,7 +20454,26 @@ fn extract_dword_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> 
             .expect("fields are non-empty");
         chain = Some((container.clone(), page, (last_field.1, last_field.2)));
         for (first, last, high, low, description) in fields {
+            let (high, width) = if first == last {
+                (high, high - low + 1)
+            } else {
+                let width = (last - first + 1) * 32;
+                (width - 1, width)
+            };
             let Some(name) = dword_layout_field_name(&description) else {
+                if is_reserved_led(&description) {
+                    record_reserved_span(
+                        reserved,
+                        &container,
+                        &description,
+                        (
+                            Some(width),
+                            Some((high, if first == last { low } else { 0 })),
+                            Some(first * 4),
+                        ),
+                        &table.table_id,
+                    );
+                }
                 continue;
             };
             let key = (container.to_ascii_lowercase(), name.to_ascii_uppercase());
@@ -20327,12 +20484,6 @@ fn extract_dword_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> 
                 }
                 continue;
             }
-            let (high, width) = if first == last {
-                (high, high - low + 1)
-            } else {
-                let width = (last - first + 1) * 32;
-                (width - 1, width)
-            };
             index_by_key.insert(key, records.len());
             records.push(MessageFieldRecord {
                 field_id: String::new(),
@@ -20364,6 +20515,7 @@ fn extract_dword_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> 
 fn extract_byte_location_structure_fields(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
+    reserved: &mut Vec<ReservedSpanRecord>,
 ) -> Vec<MessageFieldRecord> {
     let tables = collect_byte_location_tables(source_ir, prior_guidance);
     let chains = stitch_byte_location_chains(&tables);
@@ -20381,6 +20533,19 @@ fn extract_byte_location_structure_fields(
                     .clone()
                     .or_else(|| byte_location_field_name(&row.description))
                 else {
+                    if is_reserved_led(&row.description) {
+                        record_reserved_span(
+                            reserved,
+                            label,
+                            &row.description,
+                            (
+                                row.size_bytes.map(|bytes| bytes * 8),
+                                None,
+                                Some(row.byte_offset),
+                            ),
+                            &parsed.table.table_id,
+                        );
+                    }
                     continue;
                 };
                 let key = (label.to_ascii_lowercase(), name.to_ascii_uppercase());
@@ -20505,7 +20670,7 @@ impl Extractor<MessageFieldRecord> for BitPositionTableExtractor<'_> {
         "message_fields.bit_position_table"
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
-        extract_bit_position_structure_fields(self.source_ir, self.prior_guidance)
+        extract_bit_position_structure_fields(self.source_ir, self.prior_guidance, &mut Vec::new())
     }
 }
 
@@ -20521,7 +20686,7 @@ impl Extractor<MessageFieldRecord> for ByteLocationTableExtractor<'_> {
         "message_fields.byte_location_table"
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
-        extract_byte_location_structure_fields(self.source_ir, self.prior_guidance)
+        extract_byte_location_structure_fields(self.source_ir, self.prior_guidance, &mut Vec::new())
     }
 }
 
@@ -20535,7 +20700,7 @@ impl Extractor<MessageFieldRecord> for WidthOffsetLayoutExtractor<'_> {
         "message_fields.width_offset_layout"
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
-        extract_width_offset_layout_fields(self.source_ir)
+        extract_width_offset_layout_fields(self.source_ir, &mut Vec::new())
     }
 }
 
@@ -20549,7 +20714,7 @@ impl Extractor<MessageFieldRecord> for DwordLayoutExtractor<'_> {
         "message_fields.dword_layout"
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
-        extract_dword_layout_fields(self.source_ir)
+        extract_dword_layout_fields(self.source_ir, &mut Vec::new())
     }
 }
 
@@ -21188,6 +21353,50 @@ fn message_field_surface(
         record.field_id = format!("message_field_{index:04}");
     }
     run.records
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — the reserved space of the document's message containers: each row a
+/// message-field family skips as *Reserved* padding, read with that family's own position reading and in the order of
+/// [`message_field_surface`], then each field record named as reserved (`is_reserved_field_name`), linked by its id.
+/// Every span cites the `keyword_definitions` record of *Reserved* when the document defines that keyword. The field
+/// records are unchanged: padding stays no field.
+fn reserved_span_surface(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+    message_field_records: &[MessageFieldRecord],
+    keyword_definitions: &[KeywordDefinitionRecord],
+) -> Vec<ReservedSpanRecord> {
+    let mut spans: Vec<ReservedSpanRecord> = Vec::new();
+    extract_container_message_fields(source_ir, prior_guidance, &mut spans);
+    extract_bit_position_structure_fields(source_ir, prior_guidance, &mut spans);
+    extract_byte_location_structure_fields(source_ir, prior_guidance, &mut spans);
+    extract_width_offset_layout_fields(source_ir, &mut spans);
+    extract_dword_layout_fields(source_ir, &mut spans);
+    for field in message_field_records
+        .iter()
+        .filter(|field| is_reserved_field_name(&field.name))
+    {
+        spans.push(ReservedSpanRecord {
+            span_id: String::new(),
+            container: field.container.clone(),
+            text: field.name.clone(),
+            bit_width: field.bit_width,
+            bit_range: field.bit_range,
+            byte_offset: field.byte_offset,
+            field_id: Some(field.field_id.clone()),
+            keyword_definition_id: None,
+            supporting_table_ids: field.supporting_table_ids.clone(),
+        });
+    }
+    let keyword = keyword_definitions
+        .iter()
+        .find(|definition| definition.keyword.eq_ignore_ascii_case("reserved"))
+        .map(|definition| definition.keyword_id.clone());
+    for (index, span) in spans.iter_mut().enumerate() {
+        span.span_id = format!("reserved_span_{index:04}");
+        span.keyword_definition_id = keyword.clone();
+    }
+    spans
 }
 
 /// PDF-VARIANT-DIGESTION.12b — the signal-presence matrix strategy as a registered `Extractor`;
@@ -38586,7 +38795,7 @@ The control register.
         };
         let raw = fs::read_to_string(&path).expect("readable SourceIR");
         let source_ir: SourceIr = serde_json::from_str(&raw).expect("parseable SourceIR");
-        let fields = super::extract_container_message_fields(&source_ir, None);
+        let fields = super::extract_container_message_fields(&source_ir, None, &mut Vec::new());
         println!(
             "{}",
             serde_json::to_string(&fields).expect("serializable records")
@@ -38620,7 +38829,7 @@ The control register.
                 eprintln!("{}: SKIP (older schema)", path.display());
                 continue;
             };
-            let fields = super::extract_container_message_fields(&source_ir, None);
+            let fields = super::extract_container_message_fields(&source_ir, None, &mut Vec::new());
             if fields.is_empty() {
                 continue;
             }
@@ -42115,7 +42324,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 47);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 48);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -45829,7 +46038,8 @@ The control register.
                 ["9-10", "LINK3 Version of the link adjacent to this port. This field shall equal the version."],
             ],
         ));
-        let fields = super::extract_bit_position_structure_fields(&source_ir, None);
+        let mut reserved = Vec::new();
+        let fields = super::extract_bit_position_structure_fields(&source_ir, None, &mut reserved);
         type Read<'a> = (&'a str, &'a str, Option<(u32, u32)>);
         let read: Vec<Read> = fields
             .iter()
@@ -45861,6 +46071,15 @@ The control register.
                 ),
             ],
             "a value sub-row, a dash range and a continuation"
+        );
+        let spans: Vec<Read> = reserved
+            .iter()
+            .map(|span| (span.container.as_str(), span.text.as_str(), span.bit_range))
+            .collect();
+        assert_eq!(
+            spans,
+            [("Port Status Field, wPortStatus", "Reserved", Some((4, 2)))],
+            "the padding row is a reserved span of its container"
         );
         Ok(())
     }
@@ -45980,7 +46199,8 @@ The control register.
                 "Source Route - The sender's route",
             ]],
         ));
-        let fields = super::extract_dword_layout_fields(&source_ir);
+        let mut reserved = Vec::new();
+        let fields = super::extract_dword_layout_fields(&source_ir, &mut reserved);
         type Read<'a> = (&'a str, Option<u32>, Option<(u32, u32)>, Option<u32>);
         let read: Vec<Read> = fields
             .iter()
@@ -46010,6 +46230,27 @@ The control register.
                 .iter()
                 .all(|field| field.container == "Inter-Domain Packet Format"),
             "a caption-less fragment that does not continue the layout is no field"
+        );
+        let spans: Vec<Read> = reserved
+            .iter()
+            .map(|span| {
+                (
+                    span.container.as_str(),
+                    span.byte_offset,
+                    span.bit_range,
+                    span.bit_width,
+                )
+            })
+            .collect();
+        assert_eq!(
+            spans,
+            [(
+                "Inter-Domain Packet Format",
+                Some(12),
+                Some((15, 8)),
+                Some(8)
+            )],
+            "the continuation's padding row is a reserved span of the layout it continues"
         );
         Ok(())
     }
@@ -46120,7 +46361,8 @@ The control register.
             None,
             &[["4", "0:5", "Subtype . These 4 bits identify the subtype."]],
         ));
-        let fields = super::extract_width_offset_layout_fields(&source_ir);
+        let mut reserved = Vec::new();
+        let fields = super::extract_width_offset_layout_fields(&source_ir, &mut reserved);
         type Read<'a> = (&'a str, &'a str, Option<u32>, Option<(u32, u32)>);
         let read: Vec<Read> = fields
             .iter()
@@ -46156,6 +46398,27 @@ The control register.
                 ),
             ],
             "the continuation joins where the layout ends; a caption-less table that does not continue is no field"
+        );
+        let spans: Vec<Read> = reserved
+            .iter()
+            .map(|span| {
+                (
+                    span.container.as_str(),
+                    span.text.as_str(),
+                    span.byte_offset,
+                    span.bit_range,
+                )
+            })
+            .collect();
+        assert_eq!(
+            spans,
+            [(
+                "Link Control Word Format",
+                "Reserved (R) .",
+                Some(12),
+                Some((21, 19))
+            )],
+            "the padding row keeps the layout's position reading"
         );
         Ok(())
     }
@@ -46239,7 +46502,12 @@ The control register.
                 ],
             ],
         ));
-        let fields = super::extract_byte_location_structure_fields(&source_ir, None);
+        let mut reserved = Vec::new();
+        let fields = super::extract_byte_location_structure_fields(&source_ir, None, &mut reserved);
+        assert!(
+            reserved.is_empty(),
+            "a reserved field the descriptor names is a field, not padding"
+        );
         let read: Vec<(&str, &str, Option<u32>, Option<u32>)> = fields
             .iter()
             .map(|field| {
@@ -46265,6 +46533,239 @@ The control register.
                 ("Standard Device Descriptor", "iProduct", Some(3), Some(8)),
             ],
             "the named field column is read, a reserved field kept, the continuation stitched"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_field_named_as_reserved_space_is_the_keyword_after_a_type_prefix() {
+        let named = super::is_reserved_field_name;
+        assert!(named("bReserved") && named("wReserved") && named("bmReserved"));
+        assert!(named("Reserved"), "the word alone");
+        assert!(
+            !named("Route String/Reserved"),
+            "reserved only in some packets"
+        );
+        assert!(!named("RSVDC[15:0]"), "reserved for another use");
+        assert!(!named("NotReserved") && !named("abcdReserved"));
+        assert!(super::is_reserved_led("Reserved (R) .") && !super::is_reserved_led("Type"));
+    }
+
+    #[test]
+    fn a_restated_reserved_row_is_one_span_and_an_unplaced_one_is_its_own() {
+        let mut spans = Vec::new();
+        let placed = (Some(3), Some((21, 19)), Some(12));
+        super::record_reserved_span(&mut spans, "Link", "Reserved", placed, "table_a");
+        super::record_reserved_span(&mut spans, "link", "Reserved (R)", placed, "table_b");
+        super::record_reserved_span(&mut spans, "Link", "Reserved", placed, "table_b");
+        super::record_reserved_span(
+            &mut spans,
+            "Link",
+            "Reserved",
+            (Some(4), None, None),
+            "table_a",
+        );
+        super::record_reserved_span(
+            &mut spans,
+            "Link",
+            "Reserved",
+            (Some(4), None, None),
+            "table_a",
+        );
+        let read: Vec<(&str, Vec<&str>)> = spans
+            .iter()
+            .map(|span| {
+                (
+                    span.text.as_str(),
+                    span.supporting_table_ids
+                        .iter()
+                        .map(String::as_str)
+                        .collect(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                ("Reserved", vec!["table_a", "table_b"]),
+                ("Reserved", vec!["table_a"]),
+                ("Reserved", vec!["table_a"]),
+            ],
+            "a positioned span merges its restatement; a span with no position is one per row"
+        );
+    }
+
+    #[test]
+    fn a_layouts_reserved_space_is_a_typed_span_citing_the_keyword() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reserved.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Layouts\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let table = |table_id: &str, caption: &str, header: &[&str], rows: &[&[&str]]| {
+            StructuredTableRecord {
+                table_id: table_id.to_string(),
+                asset_id: format!("asset_{table_id}"),
+                page_id: Some("page_0001".to_string()),
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![header.iter().map(|c| make_table_cell(c, true)).collect()],
+                body_rows: rows
+                    .iter()
+                    .map(|r| r.iter().map(|c| make_table_cell(c, false)).collect())
+                    .collect(),
+                row_count: rows.len() as u32,
+                col_count: header.len() as u32,
+            }
+        };
+        source_ir.structured_tables.push(table(
+            "table_rsp",
+            "Table B4.3: Response message fields",
+            &["Field name", "Width (bits)", "Value"],
+            &[
+                &["QoS", "4", ""],
+                &["Reserved (RES0)", "4", ""],
+                &["bReserved", "8", ""],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_entry",
+            "Table 3-4: Queue Entry Fields",
+            &["Bits", "Name", "Description"],
+            &[
+                &["31:16", "ID", "The entry identifier."],
+                &["15:8", "Reserved", "Reserved"],
+                &["7:4", "R: Reserved", "Reserved"],
+                &["3:0", "TYPE", "The entry type."],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_error",
+            "Table 7-6: Error Type Structure",
+            &[
+                "Byte Location",
+                "Size (Bytes)",
+                "Register Description",
+                "Attributes",
+                "M/O",
+            ],
+            &[
+                &[
+                    "0",
+                    "4",
+                    "Validation Bits All subsequent fields will have a validation bit.",
+                    "RO",
+                    "M",
+                ],
+                &["4", "1", "Reserved and Zero", "RsvdZ", "M"],
+            ],
+        ));
+        let fields = super::message_field_surface(
+            &source_ir,
+            None,
+            &mut super::ExtractionManifest::default(),
+        );
+        let keyword = super::KeywordDefinitionRecord {
+            keyword_id: "keyword_0001".to_string(),
+            keyword: "Reserved".to_string(),
+            definition: "Reserved is a keyword indicating reserved bits.".to_string(),
+            obligations: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+        };
+        let spans = super::reserved_span_surface(&source_ir, None, &fields, &[keyword]);
+        type Read<'a> = (
+            &'a str,
+            &'a str,
+            &'a str,
+            Option<u32>,
+            Option<(u32, u32)>,
+            bool,
+        );
+        let read: Vec<Read> = spans
+            .iter()
+            .map(|span| {
+                (
+                    span.span_id.as_str(),
+                    span.container.as_str(),
+                    span.text.as_str(),
+                    span.bit_width,
+                    span.bit_range,
+                    span.field_id.is_some(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                (
+                    "reserved_span_0000",
+                    "Response message",
+                    "Reserved (RES0)",
+                    Some(4),
+                    None,
+                    false
+                ),
+                (
+                    "reserved_span_0001",
+                    "Queue Entry",
+                    "Reserved",
+                    Some(8),
+                    Some((15, 8)),
+                    false
+                ),
+                (
+                    "reserved_span_0002",
+                    "Queue Entry",
+                    "R: Reserved",
+                    Some(4),
+                    Some((7, 4)),
+                    false
+                ),
+                (
+                    "reserved_span_0003",
+                    "Error Type Structure",
+                    "Reserved and Zero",
+                    Some(8),
+                    None,
+                    false
+                ),
+                (
+                    "reserved_span_0004",
+                    "Response message",
+                    "bReserved",
+                    Some(8),
+                    None,
+                    true
+                ),
+            ],
+            "padding of every family in surface order, then the fields named as reserved"
+        );
+        assert_eq!(spans[3].byte_offset, Some(4), "the byte layout's location");
+        let named = fields
+            .iter()
+            .find(|field| field.name == "bReserved")
+            .expect("bReserved stays a field");
+        assert_eq!(spans[4].field_id.as_deref(), Some(named.field_id.as_str()));
+        assert!(
+            spans
+                .iter()
+                .all(|span| span.keyword_definition_id.as_deref() == Some("keyword_0001")),
+            "every span cites the definition of Reserved"
+        );
+        assert!(
+            fields
+                .iter()
+                .all(|field| !field.name.starts_with("Reserved")),
+            "padding stays no field"
+        );
+        let uncited = super::reserved_span_surface(&source_ir, None, &fields, &[]);
+        assert!(
+            uncited
+                .iter()
+                .all(|span| span.keyword_definition_id.is_none()),
+            "a document that defines no keyword cites none"
         );
         Ok(())
     }

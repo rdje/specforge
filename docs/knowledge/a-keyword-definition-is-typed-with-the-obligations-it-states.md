@@ -9,10 +9,11 @@ answers:
   - "why does 'Shall is a keyword' state no obligation"
   - "why is 'by this specification' not an agent"
   - "what is EXTRACTION-REPRESENTATION-GAPS.55.a and .55.b"
+  - "which records cite the Reserved keyword definition (reserved_spans.keyword_definition_id)"
 date: 2026-10-21
 status: current
 tags: [evidence-ir, keyword-definitions, notation, obligations, reserved-fields, non-executable, carried-evidence, isf-adapter, adr-0033, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (KeywordDefinitionRecord; KeywordObligation; KeywordObligationModality; keyword_definition_surface; keyword_obligations; keyword_definition_tests); crates/specforge/src/ir/semantic.rs and intent.rs (keyword_definitions); crates/specforge/src/ir/adapters.rs (keyword_definition_residual_packet); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55, .55.a, .55.b)
+evidence: crates/specforge/src/ir/evidence.rs (KeywordDefinitionRecord; KeywordObligation; KeywordObligationModality; keyword_definition_surface; keyword_obligations; keyword_definition_tests); crates/specforge/src/ir/semantic.rs and intent.rs (keyword_definitions); crates/specforge/src/ir/adapters.rs (keyword_definition_residual_packet); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.55, .55.a, .55.b); docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md (.55.b.iv.a)
 reverify: "cargo test --offline -p specforge-core --lib keyword_definition"
 ---
 
@@ -32,9 +33,10 @@ keyword …*). A clause runs from the last *and* before its modal to the last *a
 to zero by the sender and shall be ignored by the receiver* is two); its agents are the words after *by* (*the
 sender*), never a reference to the document (*by this specification*). The same keyword twice is one record.
 
-**Disposition.** No field record carries a keyword, so every adapter names a document's definitions in one
-`isf_keyword_obligations_not_bound` residual listing the obliging ones; binding an obligation to the fields a document
-marks waits for its packet-field tables to reach a deterministic record (`.55.b`).
+**Disposition.** Since `.55.b.iv.a` (`2026-10-21`) the space a captured layout reserves cites the *Reserved*
+definition: EvidenceIR's `reserved_spans` (card `a-layouts-reserved-space-is-a-typed-span-citing-the-keyword`). No
+field record carries a keyword and the spans stop at EvidenceIR, so every adapter still names a document's
+definitions in one `isf_keyword_obligations_not_bound` residual listing the obliging ones.
 
 **Measured `2026-10-21` (31 chains):** USB 3.2 and USB4 inter-domain each define 8 keywords with 7 obligations
 (*Reserved* 5, *N/A* 1, *Optional* 1); no other chain defines one. Every `.isf` text byte-identical.

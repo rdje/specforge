@@ -253,9 +253,10 @@ field shall be set to zero by the sender and shall be ignored by the receiver*. 
 class its statement has, into a `keyword_definitions` record — the keyword, its defining sentence, and each
 *shall*, *must* or *should* in it as an obligation with its clause, modality and the agents after *by* (*the sender*,
 *the receiver*; not *this specification*) — which SemanticIR and IntentIR carry unchanged. The keyword opening its own
-definition (*Shall is a keyword …*) is not a modal. No field record carries a keyword yet, so every adapter names the
-obliging keywords in one `isf_keyword_obligations_not_bound` residual and nothing is lowered; typing a layout's
-reserved space with a citation of its definition is `.55.b.iv.a`'s. *Authoritative tracking:*
+definition (*Shall is a keyword …*) is not a modal. Since `.55.b.iv.a` the space a layout reserves cites the
+*Reserved* definition: EvidenceIR's `reserved_spans` (see *Reserved space is a typed span* under register tables). No
+field record carries a keyword and the spans stop at EvidenceIR, so every adapter still names the obliging keywords in
+one `isf_keyword_obligations_not_bound` residual and nothing is lowered. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.a`).
 
 **An equivalence rule is a typed record.** A sentence that treats one thing as another states a rule of the

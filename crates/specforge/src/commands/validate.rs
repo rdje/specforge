@@ -2583,6 +2583,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("    containers: {message_field_containers}");
     println!("    with_bit_range: {message_fields_with_bit_range}");
     println!("    with_byte_offset: {message_fields_with_byte_offset}");
+    // EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a — the layouts' reserved space.
+    println!("  reserved_spans: {}", ir.reserved_spans.len());
     println!(
         "  message_field_constraints: {}",
         ir.message_field_constraints.len()
@@ -3879,6 +3881,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                 "message_field_containers",
                 message_field_containers.to_string(),
             ),
+            metric("reserved_spans", ir.reserved_spans.len().to_string()),
             metric(
                 "message_fields_with_bit_range",
                 message_fields_with_bit_range.to_string(),

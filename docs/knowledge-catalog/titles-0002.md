@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md) | 2026-09-11 | `current` | A token with one interior lower-case position that wildcards onto two declared names is the document's placeh… |
 | [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md) | 2026-06-04 | `current` | validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs) |
 | [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md) | 2026-10-19 | `current` | A stated absent value may be a label of the signal's own encoding, and a value stated for one class of reques… |
 | [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md) | 2026-10-20 | `current` | An assume-sentence whose subject is the document, a diagram key or an example is classified apparatus, a stat… |
@@ -60,4 +61,3 @@
 | [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md) | 2026-08-30 | `current` | Published-claim controls bind exact known-bad evidence and reject scratch producers |
 | [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md) | 2026-09-22 | `current` | The claim registries pin TWO digest families — 731 line-range regions and 113 whole-file digests — and th… |
 | [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md) | 2026-08-30 | `current` | The local claim standard is a restatement, so currency is re-read section by section, not diffed |
-| [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md) | 2026-09-15 | `current` | Partitioning a task tree costs four surface records, and the registry that holds them has no warning band |

@@ -266,6 +266,17 @@ rejecting the table, and names a field the mnemonic chain cannot by the head a c
 table that writes a dash range is named by that head alone. A table the converter classified as a signal table is
 still never claimed. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.v`).
 
+**Reserved space is a typed span (`EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a`).** Every family above skips a row
+whose name or description opens with *Reserved*: it is padding, never a field. That space is now an EvidenceIR
+`reserved_spans` record of its container, at the family's own position reading: a width, a bit range with its byte
+offset, or a byte location with its size. A continuation that restates a span merges into it. A field the layout
+names as reserved (`bReserved`) keeps its field record and gains a span linked by `field_id`. Where the document
+defines the keyword *Reserved*, every span cites that `keyword_definitions` record. That way *set to zero by the
+sender and ignored by the receiver* reaches the bits it governs. A value sub-row (*0000b | Reserved*) reserves a code
+value, not space, so it is no span. USB 3.2 now has 38 spans and USB4 inter-domain 5, all cited; the CoreSight TMC
+has 1, uncited. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iv.a`; the marks
+still unread are `.55.b.iv.b`'s).
+
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 
 Every `.10` family above reads a *table*. Some specifications don't put their field layouts in tables at

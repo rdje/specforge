@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic whole-statement gates are schema-compatible audit data only |
 | [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic section phases are schema-compatible audit data only |
 | [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md) | 2026-09-20 | `current` | The 363 signal tables a legacy artifact's labels would recover cannot reach the canonical row reader, because… |
 | [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md) | 2026-09-13 | `current` | A legacy SourceIR loads with every typed classification neutralized to Unknown, so any pass keyed on table_ki… |
@@ -60,4 +61,3 @@
 | [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md) | 2026-09-17 | `current` | Partitioning a task tree costs four surface records, one driver entry and two census records per current surf… |
 | [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md) | 2026-08-10 | `current` | A passive obligation's constraint subject must be named before its must/shall be\|remain lead |
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
-| [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md) | 2026-09-20 | `current` | A signal table whose rows disagree about where their columns are is read per row against one anchor, and the… |

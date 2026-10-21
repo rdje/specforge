@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > why does AXI's BRESP presence record carry 0b000
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why does Assumer no longer classify as an abstraction (whole-word match)
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > why does AxBURST publish FIXED instead of FIXED_BURST
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does Bus Width not count as a width role
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > why does CoreSight TMC lack its AXI master interface signals
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -284,17 +298,3 @@
   > why does docling now extract text from inside a figure
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > why does docs/tasks have no file count cap
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > why does eMMC declare a signal called PARTITION
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > why does eMMC declare a signal called t
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does eMMC table_0020 declare HS400 as a signal
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > why does folding a signal name's case matter beyond style
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does gate 2 of is_post_passive_binding_only_subject not exempt every table row

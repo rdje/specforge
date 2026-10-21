@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md) | 2026-09-20 | `current` | A signal table whose rows disagree about where their columns are is read per row against one anchor, and the… |
 | [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md) | 2026-09-12 | `current` | A census over the persisted corpus measures what SpecForge PUBLISHED, not what today's extractor does — 54… |
 | [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md) | 2026-09-18 | `current` | The 149 persisted llm_sigcon_* records were minted 78 minutes before declared_signal_catalog existed — ever… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
@@ -60,4 +61,3 @@
 | [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md) | 2026-09-12 | `current` | A self-test coverage guard lives in the exit code, not the printed ratio — reading the print line got the c… |
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
 | [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
-| [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
