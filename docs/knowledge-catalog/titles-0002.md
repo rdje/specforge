@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md) | 2026-09-29 | `current` | A relation verb after "and [then]" whose shared verb relates no signal keeps the plain subject only when a ve… |
 | [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md) | 2026-10-19 | `current` | A sentence that treats one thing as another is an equivalence_rules record — subject, equivalent, condition… |
 | [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md) | 2026-09-26 | `current` | IntentIR makes a temporal invariant from a signal constraint only when the constraint holds at every cycle… |
 | [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md) | 2026-09-26 | `current` | An IntentIR temporal invariant lifted from a statement carries the kind its text states, or not_stated (Tempo… |
@@ -60,4 +61,3 @@
 | [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md) | 2026-08-15 | `current` | Clarification answers are untrusted envelopes and enter proof by authority kind |
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
-| [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |

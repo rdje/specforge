@@ -59,7 +59,7 @@ hint gives a signal, and the sentences that define the document's own notation. 
   since its only sentence denies the readiness.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.51`
-  Status: `open` (`2026-10-20`; CODE; found by `.3.d.iii.d`)
+  Status: `done` (`2026-10-21`; CODE; found by `.3.d.iii.d`; checklist below; opened `.55`)
   Goal: **a sentence defining the document's own notation is apparatus.** ADIv6's appendix E3 (*Pseudocode
   Definition*) explains the pseudocode language the document uses, and its sentences are read as protocol content:
   `.3.d.iii.d` read *The block of lines consisting of elsif and its indented statements is optional* as an optional
@@ -72,6 +72,34 @@ hint gives a signal, and the sentences that define the document's own notation. 
   numbering conventions) from one that uses it, by its heading and its own words rather than a document's name, file
   its sentences as apparatus, keep a pseudocode function that describes hardware behavior (*The pseudocode function
   EnterDormantState describes the function of the JTAG-to-DS sequence detector*) where it is, and measure every chain.
+  (The census's *ACE 2* is AHB5's, `ihi0033_c`: its typographical conventions.)
+  **Decided `2026-10-21`: the section decides, by its heading and its outline number.** A heading names the
+  document's notation (`names_document_notation`) when it holds *convention(s)*, *notation(s)*, *typographic* or
+  *typographical*, or names pseudocode as its topic (*Pseudocode Definition*, *About ARM pseudocode*, *Pseudo Code*)
+  — not pseudocode put to use, which an *of*/*for* after the word marks (*A3.1.7 Pseudocode description of the
+  transfers*). The converter gives every heading level 1, so the outline number decides membership (`outline_number`:
+  `E3.2.1`, `1.6.2.3`, a chapter's `2`, an appendix's `E3`): a numbered notation heading covers the headings numbered
+  under it and the unnumbered ones among them (*UNDEFINED*, *if … then … else …*), until a heading numbered outside
+  it; an unnumbered one covers only itself. `document_notation_sections` marks them and every sentence there is
+  `apparatus`, whatever class its words would give. Readers that interpret notation read every class, so the
+  collective-name reader still reads *AxCACHE refers to both ARCACHE and AWCACHE* from AXI's conventions.
+  **Measured over all 31 chains** (evidence dry-run against `4803a679d`'s): 11 identical; 20 documents move 447
+  statements to `apparatus` (416 source facts, 23 normative, 5 conditional, 2 derived, 1 design decision), and 8
+  evidence records leave: ADIv6's `elsif` option, its equivalence and conditional rule from *Integer constants …
+  Hexadecimal integer constants are treated as positive*, USB 3.2's and USB4 inter-domain's conditional rules from
+  their *Precedence* and *Reserved* keyword definitions (2 each), and Wishbone's *Array limits may also be shown within
+  the parenthesis* permission. The leaf's 55 statements fall to 14: table-of-contents rows, the protocol sentences
+  that use pseudocode (*EnterDormantState*, the claim-tag protocols, a cross-reference), and typographic items the
+  converter made unnumbered headings. Rebuilt stage by stage: SemanticIR and IntentIR lose the 8 and the 35
+  invariants and 29 constraints the notation sentences minted (ADIv6 20 / 18, USB 3.2 9 / 7, USB4 inter-domain 5 / 3,
+  Wishbone 1 / 1: *Each of the following simple statements must be terminated with a semicolon*, *Shall is a keyword
+  indicating a mandatory (normative) requirement*, the state-machine legend); ADIv6's adapter drops its equivalence
+  residual, its optional and Wishbone's permission residuals count one fewer; every `.isf` text byte-identical.
+  **Declared residuals:** an unnumbered conventions heading covers only itself, so a typographic item the converter
+  made its own heading (AXI's *monospace*, ADIv6's *Colored text Indicates a link:*, *SMALL CAPITALS*) keeps its
+  class; USB4's *1.2 Endian Conventions* is apparatus as a whole, its UUID-to-DWORD layout included, which no reader
+  consumed; the obligation the *Reserved* and *N/A* definitions carry (*a reserved bit … shall be set to zero by the
+  sender*) reaches no carrier (`.55`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.53`
   Status: `open` (`2026-10-21`; CODE; found by `.50`)
@@ -130,3 +158,44 @@ hint gives a signal, and the sentences that define the document's own notation. 
 - [x] **LOCKSTEP** — book `domain/handshake-semantics.md` (*Who bears the role*, and the prior rule); KM
   `a-hint-role-counts-only-for-the-signal-that-bears-it`. Production rules replaced: the substring role test (its
   phrases kept, matched whole) and `contains_ready_like_acknowledgment_phrase` (folded into `READY_ROLE_PHRASES`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55`
+  Status: `open` (`2026-10-21`; DESIGN; found by `.51`)
+  Goal: **an obligation a keyword's definition carries reaches a carrier.** USB 3.2 (*1.8.2.6 Reserved*) and the USB4
+  inter-domain specification (*1.6.2.6 Reserved*) define the keyword *Reserved* and with it a rule on every field it
+  marks: *A reserved bit, byte, word or field shall be set to zero by the sender and shall be ignored by the
+  receiver. Reserved field values shall not be sent by the sender and, if received, shall be ignored by the
+  receiver*; both define *N/A* with *shall not be checked or used by the recipient*. Until `.51` each Reserved
+  definition minted a conditional rule that read nothing of it (antecedent *otherwise stated, shall not be utilized
+  …*, consequent *shall not*); since `.51` the definitions are apparatus, as the rest of their conventions section.
+  **Reproduce:** `statement_1200`/`1195` (USB 3.2) and `statement_0207`/`0204` (USB4 inter-domain), class
+  `apparatus`. **Impact:** a document-wide rule on reserved and not-applicable fields reaches no record, so no field
+  a register or packet table marks *Reserved* carries "send zero, ignore on receipt". Acceptance: decide whether a
+  keyword definition's obligation binds the fields the document's tables mark with that keyword (and through which
+  record: a field property, a constraint, a residual), read it from the definition rather than a document's name,
+  and measure every chain's reserved and N/A fields.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.51` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — the leaf's census (55 statements naming pseudocode, *elsif*, *indented statements* or
+  *indentation*); every heading of the 31 chains holding *convention*, *notation*, *pseudocode* or *typograph*; each
+  such section's statements by class and every evidence record citing one, before any code (448 statements, 40
+  records, 32 of them AXI's collective names); the USB keyword definitions read in full.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: statements were classed by their words
+  alone, and the only section rule (Layer A) demotes a normative sentence in a boilerplate section to a source fact.
+  New `outline_number`, `names_document_notation`, `document_notation_sections`, read in the statement loop. RED, the
+  file restored byte-identically after each (7 mutations, each failing a named test): the wiring, the conventions
+  words, pseudocode put to use, the numbered family, its unnumbered members, the appendix number, a chapter's number.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 11 identical; 447 statements to `apparatus` in 20,
+  8 records gone, each listed; the 20 rebuilt stage by stage: 35 invariants and 29 constraints the notation sentences
+  minted leave SemanticIR and IntentIR, three adapter residuals follow, every `.isf` text byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: 10 of 11 seed reports
+  byte-identical to `4803a679d`'s (temp paths masked); `seed_swd` reports ADIv6's conditional rules 103 -> 102 and its
+  enrichment candidates 318 -> 306, the notation sentences, every score line unchanged. `kg-bench` 158/158. `cargo fmt
+  --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace
+  --lib --exclude specforge-production-graph` 474 / 171 / 1,886 passed, 0 failed. `flow_census.json` rolled (+3
+  functions, +11 decision sites, +8 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — English heading words and the headings' own outline numbers; no document, section
+  number or signal name.
+- [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md` (*A section that defines the document's notation*);
+  KM `a-section-defining-the-documents-notation-is-apparatus`. No production rule deleted or replaced.

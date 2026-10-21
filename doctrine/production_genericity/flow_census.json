@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-50-ROLE-BEARER",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-51-NOTATION-APPARATUS",
    "baseline": {
-    "analyzed_functions": 2786,
-    "decision_sites": 15308,
-    "helper_edges": 19060,
-    "semantic_macros": 1612
+    "analyzed_functions": 2804,
+    "decision_sites": 15521,
+    "helper_edges": 19593,
+    "semantic_macros": 1614
    },
    "delta": {
-    "analyzed_functions": 18,
-    "decision_sites": 213,
-    "helper_edges": 533,
-    "semantic_macros": 2
+    "analyzed_functions": 3,
+    "decision_sites": 11,
+    "helper_edges": 8,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.50",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.50: a semantic hint keeps a handshake role only when its text makes the signal the bearer (retain_borne_semantic_roles, SemanticRoleReading, semantic_role_phrase_spans)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.51",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.51: every sentence of a section that defines the document's own notation is apparatus (document_notation_sections, names_document_notation, outline_number)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

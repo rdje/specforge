@@ -204,7 +204,8 @@ pub enum StatementClass {
     /// that you are familiar with …*; *the bus or signal can assume any value within the shaded area*). No reader
     /// consumes it: measured, a diagram key's *You must not assume …* read as a source fact mints a conditional
     /// rule, and an example circuit's *assumes that output data is valid at the rising [CLK_I] edge* a semantic
-    /// hint on the clock.
+    /// hint on the clock. Since `EXTRACTION-REPRESENTATION-GAPS.51`, also every sentence of a section that defines the
+    /// document's own notation (`document_notation_sections`).
     Apparatus,
     Unknown,
 }
@@ -6968,6 +6969,91 @@ fn is_boilerplate_section_title(title: &str) -> bool {
             "related standards",
         ],
     )
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.51` — the outline number a heading opens with (`E3.1.1`, `1.6.2.3`, `2` in *2
+/// Overview*, and `E3` in *Appendix E3 …*), when it has one: an optional capital letter and digits, then any
+/// dot-separated digit groups. Unlike `heading_section_number`, a chapter's single number counts, so that a chapter
+/// heading ends the family before it.
+fn outline_number(title: &str) -> Option<String> {
+    let title = title.trim();
+    let rest = title
+        .get(..9)
+        .filter(|lead| lead.eq_ignore_ascii_case("appendix "))
+        .map_or(title, |_| &title[9..]);
+    let token = rest.split_whitespace().next()?.trim_end_matches('.');
+    let mut parts = token.split('.');
+    let first = parts.next()?;
+    let digits = first
+        .strip_prefix(|c: char| c.is_ascii_uppercase())
+        .unwrap_or(first);
+    let numbered = !digits.is_empty()
+        && digits.chars().all(|c| c.is_ascii_digit())
+        && parts.all(|part| !part.is_empty() && part.chars().all(|c| c.is_ascii_digit()));
+    numbered.then(|| token.to_string())
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.51` — whether a heading names the document's own notation: its conventions
+/// (*Typographic conventions*, *Signal Naming Conventions*), a notation (*RTL notation*, *State Machine Notation
+/// Information*), its typography (*Typographical*), or its pseudocode as the topic (*Pseudocode Definition*, *About ARM
+/// pseudocode*) — not pseudocode put to use (*Pseudocode description of the transfers*).
+fn names_document_notation(title: &str) -> bool {
+    let lowered = title.to_ascii_lowercase();
+    let words = identifier_words(&lowered)
+        .into_iter()
+        .map(|(_, word)| word)
+        .collect::<Vec<_>>();
+    if words.iter().any(|word| {
+        matches!(
+            *word,
+            "convention"
+                | "conventions"
+                | "notation"
+                | "notations"
+                | "typographic"
+                | "typographical"
+        )
+    }) {
+        return true;
+    }
+    let pseudocode = words
+        .iter()
+        .position(|word| *word == "pseudocode")
+        .or_else(|| {
+            words
+                .windows(2)
+                .position(|pair| pair == ["pseudo", "code"])
+                .map(|index| index + 1)
+        });
+    pseudocode.is_some_and(|index| {
+        !words[index + 1..]
+            .iter()
+            .any(|word| matches!(*word, "of" | "for"))
+    })
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.51` — which sections define the document's own notation, so that their sentences
+/// are apparatus. A heading naming the notation covers itself; a numbered one also covers the headings numbered under
+/// it and the unnumbered headings among them (*E3.2.1 General data type rules* and *if … then … else …* under
+/// *Appendix E3 Pseudocode Definition*), until a heading numbered outside it. An unnumbered one covers only itself:
+/// without a number nothing says where its subject ends.
+fn document_notation_sections(section_anchors: &[SectionAnchor]) -> Vec<bool> {
+    let mut family: Option<String> = None;
+    section_anchors
+        .iter()
+        .map(|anchor| {
+            let names = names_document_notation(&anchor.title);
+            if let Some(number) = outline_number(&anchor.title) {
+                let inside = family
+                    .as_ref()
+                    .is_some_and(|root| number == *root || number.starts_with(&format!("{root}.")));
+                if !inside {
+                    family = names.then_some(number);
+                }
+            }
+            names || family.is_some()
+        })
+        .collect()
 }
 
 fn classify_statement(text: &str) -> StatementClass {
@@ -29665,6 +29751,7 @@ fn assemble_evidence_statements(
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Result<AssembledEvidenceStatements> {
     let mut section_pages: Vec<Vec<u32>> = vec![Vec::new(); section_anchors.len()];
+    let notation_sections = document_notation_sections(section_anchors);
 
     let visual_motif_signal_names = collect_signal_names_from_tables(source_ir, prior_guidance)
         .into_iter()
@@ -29822,12 +29909,14 @@ fn assemble_evidence_statements(
             .map(|idx| is_boilerplate_section_title(&section_anchors[idx].title))
             .unwrap_or(false);
         let raw_class = classify_statement(&block.text);
-        let class =
-            if section_is_boilerplate && matches!(raw_class, StatementClass::NormativeStatement) {
-                StatementClass::SourceFact
-            } else {
-                raw_class
-            };
+        let class = if section_index.is_some_and(|idx| notation_sections[idx]) {
+            StatementClass::Apparatus
+        } else if section_is_boilerplate && matches!(raw_class, StatementClass::NormativeStatement)
+        {
+            StatementClass::SourceFact
+        } else {
+            raw_class
+        };
 
         extracted_statements.push(ExtractedStatement {
             statement_id: format!("statement_{statement_counter:04}"),
@@ -47108,6 +47197,118 @@ The control register.
     }
 
     // ── Layer A: section-aware boilerplate suppression ────────────────────
+
+    #[test]
+    fn a_heading_names_the_documents_notation_or_puts_it_to_use() {
+        use super::{names_document_notation, outline_number};
+        for title in [
+            "Typographic conventions",
+            "Typographical",
+            "1.5 Signal Naming Conventions",
+            "RTL notation",
+            "8.12.1.1 State Machine Notation Information",
+            "Appendix E3 Pseudocode Definition",
+            "Pseudocode descriptions",
+            "E3.1 About ARM pseudocode",
+            "1.6.8 Pseudo Code",
+        ] {
+            assert!(names_document_notation(title), "{title}");
+        }
+        for title in [
+            "A3.1.7 Pseudocode description of the transfers",
+            "E3.5 Statements and program structure",
+            "Signals",
+        ] {
+            assert!(!names_document_notation(title), "{title}");
+        }
+        assert_eq!(
+            outline_number("Appendix E3 Pseudocode Definition").as_deref(),
+            Some("E3")
+        );
+        assert_eq!(
+            outline_number("E3.1.1 General limitations").as_deref(),
+            Some("E3.1.1")
+        );
+        assert_eq!(outline_number("2 Overview").as_deref(), Some("2"));
+        assert_eq!(outline_number("UNDEFINED"), None);
+        assert_eq!(outline_number("32-bit transfers"), None);
+    }
+
+    #[test]
+    fn a_numbered_notation_heading_covers_the_headings_numbered_under_it() {
+        let anchor = |title: &str| super::SectionAnchor {
+            section_id: title.to_string(),
+            title: title.to_string(),
+            source_path: std::path::PathBuf::new(),
+            page_start: None,
+            page_end: None,
+            line_start: None,
+            line_end: None,
+        };
+        let anchors = [
+            "Appendix E2 Cross-over",
+            "Appendix E3 Pseudocode Definition",
+            "E3.2.1 General data type rules",
+            "UNDEFINED",
+            "Appendix E4 Revisions",
+            "Typographic conventions",
+            "SMALL CAPITALS",
+            "1.6 Conventions",
+            "1.6.2.6 Reserved",
+            "2 Overview",
+        ]
+        .map(anchor);
+        assert_eq!(
+            super::document_notation_sections(&anchors),
+            vec![
+                false, true, true, true, false, true, false, true, true, false
+            ]
+        );
+    }
+
+    #[test]
+    fn a_sentence_of_a_notation_section_is_apparatus() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# 1.5 Signal Naming Conventions\n",
+                "Array limits may also be shown within the parenthesis.\n",
+                "\n",
+                "# 2 Protocol Rules\n",
+                "Burst transfers shall not be interrupted by intervening requests.\n",
+            ),
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let class_of = |needle: &str| {
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .find(|statement| statement.text.contains(needle))
+                .map(|statement| statement.class)
+        };
+        assert_eq!(class_of("Array limits"), Some(StatementClass::Apparatus));
+        assert_eq!(
+            class_of("interrupted"),
+            Some(StatementClass::NormativeStatement)
+        );
+        assert!(
+            evidence_ir
+                .permission_rules
+                .iter()
+                .all(|rule| rule.subject.as_deref() != Some("Array limits")),
+            "a notation sentence grants no permission"
+        );
+        Ok(())
+    }
 
     #[test]
     fn is_boilerplate_section_title_matches_common_boilerplate_headings() {

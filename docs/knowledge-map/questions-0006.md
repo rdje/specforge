@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > how do I check whether a persisted artifact field describes current behaviour
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how do I check whether the persisted corpus seal is stale
 - [project-scratch-location](../knowledge/project-scratch-location.md)
@@ -295,5 +297,3 @@
   > how does SpecForge prevent analog dB limits from becoming digital timing intent
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how does SpecForge prove a cited self-test contains a known-bad RED case
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces

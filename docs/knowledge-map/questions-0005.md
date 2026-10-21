@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > does the constraint record source_text become the clause
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does the converge NLI pass measure quality or demote unsupported intent
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -296,5 +298,3 @@
   > how do I check whether a held-out bundle still rebuilds its document
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how do I check whether a named frontier has an owning task-tree leaf
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > how do I check whether a persisted artifact field describes current behaviour

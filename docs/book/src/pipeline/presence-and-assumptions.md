@@ -231,6 +231,21 @@ rule is: AXI's *the CHK signal cannot be used reliably*, USB's hub routing oblig
 cannot assume ordering between bulk and control transfers*. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.d.ii.b.iii.b`).
 
+### A section that defines the document's notation
+
+A document explains its own notation — the pseudocode it writes behaviour in, its typefaces, its keywords, how it
+names signals — and those sentences were read as protocol content: ADIv6's appendix *Pseudocode Definition* gave an
+optional feature (*The block of lines consisting of elsif and its indented statements is optional*) and invariants
+(*Each of the following simple statements must be terminated with a semicolon*). Since
+`EXTRACTION-REPRESENTATION-GAPS.51` (`2026-10-21`) every sentence of a section whose heading names the document's
+notation is apparatus: a heading holding *conventions*, *notation* or *typographic*, or one whose topic is pseudocode
+(*About ARM pseudocode*), but not pseudocode put to use (*Pseudocode description of the transfers*). The converter
+flattens headings, so the outline number decides membership: a numbered notation heading covers the headings
+numbered under it and the unnumbered ones among them, and an unnumbered one covers only itself. Readers that
+interpret notation still read these sentences: AXI's collective names come from its conventions. A pseudocode
+function that describes hardware, outside such a section, keeps its class. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.51`).
+
 **An equivalence rule is a typed record.** A sentence that treats one thing as another states a rule of the
 hardware, often under a condition, and it stays an abstraction by class. Since `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`
 (`2026-10-19`) EvidenceIR also carries each one as an `equivalence_rules` record, which SemanticIR and IntentIR

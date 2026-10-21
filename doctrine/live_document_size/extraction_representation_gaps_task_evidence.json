@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.51",
-      "literal" : "`.51` — a sentence defining the document's own notation is apparatus.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.53",
+      "literal" : "`.53` — a key table's codes are not signal names.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 12875,
+               "bytes" : 20001,
                "line_bytes" : 139,
-               "lines" : 132
+               "lines" : 201
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "0733ac2f9d6b36f6c9eb8e87a7cfbc782f06d98976a2c6b7b6ae91f4fce1e6cf",
+            "sha256" : "68a01d77897c808b348fc4be7fcf2d6744f0f530984d6788830863573d6693b0",
             "state" : "active"
          },
          {
@@ -1206,7 +1206,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.51",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
@@ -1254,6 +1254,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
@@ -1384,7 +1390,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.51` — a sentence defining the document's own notation is apparatus.",
+         "`.53` — a key table's codes are not signal names.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1421,10 +1427,10 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.37`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.51`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.53`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55`"
       ]
    },
    "migration_metadata" : {

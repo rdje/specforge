@@ -296,5 +296,5 @@
   > does the caption repair admit serialized table rows
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > does the co-reference rule resurrect resolve_indexed_signal_family
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > does the constraint record source_text become the clause
+- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
+  > does the collective-name reader still read AxCACHE from the conventions section
