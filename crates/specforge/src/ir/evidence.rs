@@ -433,6 +433,10 @@ pub struct EvidenceIr {
     /// stated names/actions without inventing transitions, encodings, or a machine identity.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub protocol_states: Vec<ProtocolStateRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i: the tables whose rows bind several declared names' values to a member
+    /// or a meaning. Empty (serde-skipped) for documents with none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub value_combinations: Vec<ValueCombinationRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: state transitions a document states, with what fires each. Empty
     /// (serde-skipped) for documents that state none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -902,6 +906,56 @@ pub struct CollectiveSignalNameRecord {
     pub supporting_statement_ids: Vec<String>,
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — a table whose rows bind several declared names' values to a member or a
+/// meaning: APB's `PNSE | PPROT[1] | Physical address space`, AXI *A15.26* `State | SYSCOREQ | SYSCOACK | Rules`, AXI
+/// *A12.15* `BTAGMATCH | BCOMP | Description`. No one key determines a row; the values do together, so the table is no
+/// one signal's encoding. A continuation page joins the table it continues. Every cell is as written: a value is never
+/// interpreted, widened or resolved against an encoding (`-`, `0bX`, `0b01 0b10` and `Non-secure` are kept as they are).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ValueCombinationRecord {
+    /// Stable id, e.g. `value_combination_0003`.
+    pub combination_id: String,
+    /// The table and, in order, each continuation of it.
+    pub table_ids: Vec<String>,
+    /// The columns titled by a declared signal or register field, in column order.
+    pub keys: Vec<CombinationKey>,
+    /// The title of the column whose cells name each row's member (`Physical address space`, `State`), when one does.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub member_column: Option<String>,
+    /// The titles of the other columns, in column order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub meaning_columns: Vec<String>,
+    /// The rows, in order.
+    pub rows: Vec<CombinationRow>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — a key column of a [`ValueCombinationRecord`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CombinationKey {
+    /// The column title as written (`PPROT[1]`, `Value of CSW.ERRNPASS`).
+    pub title: String,
+    /// The signal, collective or register field the title names (`PPROT`, `CSW.ERRNPASS`).
+    pub name: String,
+    /// The bit or slice the title selects, as written (`[1]`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bits: Option<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — one row of a [`ValueCombinationRecord`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CombinationRow {
+    /// The table (page fragment) the row sits in.
+    pub table_id: String,
+    /// Each key's cell, as written, in key order.
+    pub values: Vec<String>,
+    /// The member cell, when the table has a member column.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub member: Option<String>,
+    /// Each meaning column's cell, as written, in column order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub meanings: Vec<String>,
+}
+
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — an EQUIVALENCE RULE the document states: under an optional condition,
 /// one thing is treated as another (*LPIs are always treated as Non-secure Group 1 interrupts*; *If the instruction
 /// being stepped over would normally stall the hart, then instead the instruction is treated as a nop*). Every part
@@ -1147,6 +1201,10 @@ pub struct ProtocolStateRecord {
     /// names cites the transition's table.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i — the value combinations whose rows key this state by signals' values
+    /// (AXI *A15.26*: `Connect` is `SYSCOREQ` `1`, `SYSCOACK` `0`).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_combination_ids: Vec<String>,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — one source-stated state transition and what fires it. The states are
@@ -1362,6 +1420,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("actor_signal_relations", "evidence.actor_graph"),
     ("serial_frame_fields", "evidence.protocol_structure"),
     ("protocol_states", "evidence.protocol_structure"),
+    ("value_combinations", "evidence.protocol_structure"),
     ("protocol_transitions", "evidence.protocol_structure"),
     ("protocol_actors", "evidence.protocol_structure"),
     ("protocol_operations", "evidence.protocol_structure"),
@@ -1773,6 +1832,7 @@ impl EvidenceIr {
         insert_field!(actor_signal_relations);
         insert_field!(serial_frame_fields);
         insert_field!(protocol_states);
+        insert_field!(value_combinations);
         insert_field!(protocol_transitions);
         insert_field!(protocol_actors);
         insert_field!(protocol_operations);
@@ -2453,6 +2513,7 @@ impl EvidenceIr {
             signal_polarity_conflicts,
             actor_signal_relations,
             convergence_report,
+            value_combinations,
         ) = converge_evidence_extractions(
             source_ir,
             extracted_statements,
@@ -2461,6 +2522,7 @@ impl EvidenceIr {
             &mut statement_counter,
             prior_guidance.as_ref(),
             &table_declaration_catalog,
+            &register_records,
             statement_sections,
             &mut extraction_manifest,
         );
@@ -2527,6 +2589,12 @@ impl EvidenceIr {
         merge_transition_states(
             &mut protocol_states,
             &protocol_transitions,
+            &mut extraction_manifest,
+        );
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i — every state a value combination keys is a protocol state.
+        merge_combination_states(
+            &mut protocol_states,
+            &value_combinations,
             &mut extraction_manifest,
         );
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
@@ -2660,6 +2728,7 @@ impl EvidenceIr {
             keyword_definitions,
             message_field_constraints: Vec::new(),
             protocol_states,
+            value_combinations,
             protocol_transitions,
             protocol_actors,
             protocol_operations,
@@ -8973,6 +9042,7 @@ fn table_looks_like_encoding(
 fn scan_encoding_tables_by_signal_anchor(
     source_ir: &SourceIr,
     known_signals: &HashSet<String>,
+    combination_tables: &BTreeSet<String>,
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<ExtractedStatement> {
@@ -8995,6 +9065,10 @@ fn scan_encoding_tables_by_signal_anchor(
     for table in &source_ir.structured_tables {
         let kind = effective_table_kind(table, prior_guidance);
         if matches!(kind, TableKind::RegisterMap | TableKind::TimingParameter) {
+            continue;
+        }
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i — a value combination is no one value column's encoding.
+        if combination_tables.contains(&table.table_id) {
             continue;
         }
 
@@ -24809,6 +24883,7 @@ fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
                 action,
                 supporting_statement_ids: vec![statement.statement_id.clone()],
                 supporting_table_ids: Vec::new(),
+                supporting_combination_ids: Vec::new(),
             });
         }
     }
@@ -24889,6 +24964,7 @@ fn extract_quoted_mode_states(statements: &[ExtractedStatement]) -> Vec<Protocol
             action: action_by_name.get(name).cloned(),
             supporting_statement_ids: support.remove(name).unwrap_or_default(),
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         });
     }
     out
@@ -25040,6 +25116,7 @@ fn extract_transition_bound_states(statements: &[ExtractedStatement]) -> Vec<Pro
             action: None,
             supporting_statement_ids: support.remove(name).unwrap_or_default(),
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         });
     }
     out
@@ -25556,6 +25633,7 @@ fn extract_transition_phrase_states(statements: &[ExtractedStatement]) -> Vec<Pr
                 action: None,
                 supporting_statement_ids,
                 supporting_table_ids: Vec::new(),
+                supporting_combination_ids: Vec::new(),
             }
         })
         .collect()
@@ -30699,6 +30777,362 @@ fn protocol_transition_surface(
     transitions
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — the declared name a column title names, with the bit or slice it
+/// selects: a signal or a collective (`PNSE`, `PPROT[1]`, `ARBAR[0]`, `AxCACHE`), a register's field (`CSW.ERRSTOP`,
+/// where the register or the field is declared), or a field a register declares, written in capitals (`TYPE`). A
+/// leading *Value of* is the title's wording, not the name.
+fn combination_key_name(
+    title: &str,
+    signal_titles: &HashSet<String>,
+    register_names: &HashSet<&str>,
+    field_names: &HashSet<&str>,
+) -> Option<(String, Option<String>)> {
+    let title = title.trim();
+    let title = title.strip_prefix("Value of ").unwrap_or(title).trim();
+    let (base, bits) = match title.find('[') {
+        Some(open) if title.ends_with(']') => {
+            let inner = &title[open + 1..title.len() - 1];
+            let parts: Vec<&str> = inner.split(':').collect();
+            if parts.len() > 2
+                || parts
+                    .iter()
+                    .any(|part| part.is_empty() || !part.bytes().all(|b| b.is_ascii_digit()))
+            {
+                return None;
+            }
+            (&title[..open], Some(title[open..].to_string()))
+        }
+        _ => (title, None),
+    };
+    let is_identifier = |s: &str| {
+        s.starts_with(|c: char| c.is_ascii_alphabetic())
+            && s.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+    };
+    if is_identifier(base) && signal_titles.contains(base) {
+        return Some((base.to_string(), bits));
+    }
+    if bits.is_some() {
+        return None;
+    }
+    if let Some((register, field)) = base.split_once('.') {
+        return (is_identifier(register)
+            && is_identifier(field)
+            && (register_names.contains(register) || field_names.contains(field)))
+        .then(|| (base.to_string(), None));
+    }
+    (is_identifier(base)
+        && !base.chars().any(|c| c.is_ascii_lowercase())
+        && field_names.contains(base))
+    .then(|| (base.to_string(), None))
+}
+
+/// `.3.g.iii.b.i` — a cell names a member: present, no sentence (no closing full stop, no bullet), and a name
+/// [`encoding_member_name`] spells as more than a number.
+fn is_combination_member_name(cell: &str) -> bool {
+    let cell = cell.trim();
+    !cell.is_empty()
+        && !cell.ends_with('.')
+        && !cell.contains('•')
+        && !encoding_member_name(cell)
+            .bytes()
+            .all(|b| b.is_ascii_digit() || b == b'_')
+}
+
+/// `.3.g.iii.b.i` — the key columns of a header that keys its rows jointly, or `None`. Every column must be titled and
+/// none only by a number. Two or more columns must name different declared names ([`combination_key_name`]), at least
+/// one column must not, and the names must not all be members of one collective, which is one key written per channel.
+fn combination_key_columns(
+    titles: &[String],
+    signal_titles: &HashSet<String>,
+    collectives: &[CollectiveSignalNameRecord],
+    register_names: &HashSet<&str>,
+    field_names: &HashSet<&str>,
+) -> Option<Vec<(usize, CombinationKey)>> {
+    if titles
+        .iter()
+        .any(|title| title.is_empty() || title.bytes().all(|b| b.is_ascii_digit()))
+    {
+        return None;
+    }
+    let keys: Vec<(usize, CombinationKey)> = titles
+        .iter()
+        .enumerate()
+        .filter_map(|(column, title)| {
+            let (name, bits) =
+                combination_key_name(title, signal_titles, register_names, field_names)?;
+            Some((
+                column,
+                CombinationKey {
+                    title: title.clone(),
+                    name,
+                    bits,
+                },
+            ))
+        })
+        .collect();
+    let names: BTreeSet<&str> = keys.iter().map(|(_, key)| key.name.as_str()).collect();
+    if names.len() < 2 || keys.len() == titles.len() {
+        return None;
+    }
+    let one_collective = collectives.iter().any(|collective| {
+        names
+            .iter()
+            .all(|name| collective.member_names.iter().any(|member| member == name))
+    });
+    (!one_collective).then_some(keys)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — the tables whose rows bind several declared names' values to a member or
+/// a meaning, and how many tables of that shape there were.
+///
+/// A table of the shape titles its key columns as [`combination_key_columns`] requires, and it and its continuations
+/// hold two or more body rows. A continuation (`Table A15.26 Continued from previous page`) joins the nearest preceding
+/// table of the shape that its caption names, when both have the same header. The member column is the first other
+/// column whose cells are distinct names ([`is_combination_member_name`]). A table with an empty key cell or a row of
+/// another width is refused, because the converter records no span and the cell above would be a guess. A table
+/// whose rows sit in its header is `.57`'s.
+fn read_value_combinations(
+    source_ir: &SourceIr,
+    signal_titles: &HashSet<String>,
+    collectives: &[CollectiveSignalNameRecord],
+    register_records: &[RegisterRecord],
+) -> (Vec<ValueCombinationRecord>, usize) {
+    struct Shaped {
+        table_ids: Vec<String>,
+        reference: Option<String>,
+        titles: Vec<String>,
+        keys: Vec<(usize, CombinationKey)>,
+        rows: Vec<(String, Vec<String>)>,
+        refused: bool,
+    }
+    let register_names: HashSet<&str> = register_records
+        .iter()
+        .map(|record| record.register_name.as_str())
+        .collect();
+    let field_names: HashSet<&str> = register_records
+        .iter()
+        .flat_map(|record| record.fields.iter().map(|field| field.field_name.as_str()))
+        .collect();
+    let mut shaped: Vec<Shaped> = Vec::new();
+    for table in &source_ir.structured_tables {
+        let Some(header) = table.header_rows.last() else {
+            continue;
+        };
+        if table.body_rows.is_empty() {
+            continue;
+        }
+        let titles: Vec<String> = header
+            .iter()
+            .map(|cell| cell.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .collect();
+        let caption = caption_table_ref(table.caption_text.as_deref());
+        let head = match &caption {
+            Some((reference, true)) => shaped.iter().rposition(|entry| {
+                entry.reference.as_deref() == Some(reference.as_str()) && entry.titles == titles
+            }),
+            _ => None,
+        };
+        let index = match head {
+            Some(index) => {
+                shaped[index].table_ids.push(table.table_id.clone());
+                index
+            }
+            None => {
+                let Some(keys) = combination_key_columns(
+                    &titles,
+                    signal_titles,
+                    collectives,
+                    &register_names,
+                    &field_names,
+                ) else {
+                    continue;
+                };
+                shaped.push(Shaped {
+                    table_ids: vec![table.table_id.clone()],
+                    reference: caption.map(|(reference, _)| reference),
+                    titles,
+                    keys,
+                    rows: Vec::new(),
+                    refused: false,
+                });
+                shaped.len() - 1
+            }
+        };
+        let entry = &mut shaped[index];
+        for row in &table.body_rows {
+            let cells: Vec<String> = row
+                .iter()
+                .map(|cell| cell.text.trim().to_string())
+                .collect();
+            if cells.len() != entry.titles.len()
+                || entry
+                    .keys
+                    .iter()
+                    .any(|(column, _)| cells[*column].is_empty())
+            {
+                entry.refused = true;
+            }
+            entry.rows.push((table.table_id.clone(), cells));
+        }
+    }
+    shaped.retain(|entry| entry.rows.len() >= 2);
+    let candidates = shaped.len();
+    let records = shaped
+        .into_iter()
+        .filter(|entry| !entry.refused)
+        .enumerate()
+        .map(|(index, entry)| {
+            let key_columns: BTreeSet<usize> =
+                entry.keys.iter().map(|(column, _)| *column).collect();
+            let others: Vec<usize> = (0..entry.titles.len())
+                .filter(|column| !key_columns.contains(column))
+                .collect();
+            let member = others.iter().copied().find(|&column| {
+                let cells: Vec<&str> = entry
+                    .rows
+                    .iter()
+                    .map(|(_, cells)| cells[column].as_str())
+                    .collect();
+                cells.iter().all(|cell| is_combination_member_name(cell))
+                    && cells.iter().collect::<BTreeSet<_>>().len() == cells.len()
+            });
+            let meanings: Vec<usize> = others
+                .into_iter()
+                .filter(|&column| Some(column) != member)
+                .collect();
+            ValueCombinationRecord {
+                combination_id: format!("value_combination_{:04}", index + 1),
+                table_ids: entry.table_ids,
+                member_column: member.map(|column| entry.titles[column].clone()),
+                meaning_columns: meanings
+                    .iter()
+                    .map(|&column| entry.titles[column].clone())
+                    .collect(),
+                rows: entry
+                    .rows
+                    .iter()
+                    .map(|(table_id, cells)| CombinationRow {
+                        table_id: table_id.clone(),
+                        values: entry
+                            .keys
+                            .iter()
+                            .map(|(column, _)| cells[*column].clone())
+                            .collect(),
+                        member: member.map(|column| cells[column].clone()),
+                        meanings: meanings
+                            .iter()
+                            .map(|&column| cells[column].clone())
+                            .collect(),
+                    })
+                    .collect(),
+                keys: entry.keys.into_iter().map(|(_, key)| key).collect(),
+            }
+        })
+        .collect();
+    (records, candidates)
+}
+
+/// `.3.g.iii.b.i` — the states a value combination keys: every member of a combination whose member column's title ends
+/// in the word *state* (AXI *A15.26* `State`, LTI *B8.2* `Interface state`). A name matching a state already found,
+/// compared case-insensitively as [`merge_transition_states`] compares, cites the row's table and the combination; any
+/// other is a new record in row order. A caption names the states and no machine, so the machine stays unbound. The
+/// contribution is a `value_combination_states` entry of the `protocol_states` manifest, recorded only when a
+/// combination keys states.
+fn merge_combination_states(
+    states: &mut Vec<ProtocolStateRecord>,
+    combinations: &[ValueCombinationRecord],
+    manifest: &mut ExtractionManifest,
+) {
+    let keyed: Vec<(&ValueCombinationRecord, &CombinationRow)> = combinations
+        .iter()
+        .filter(|combination| {
+            combination
+                .member_column
+                .as_deref()
+                .and_then(|title| title.split_whitespace().last())
+                .is_some_and(|word| word.eq_ignore_ascii_case("state"))
+        })
+        .flat_map(|combination| combination.rows.iter().map(move |row| (combination, row)))
+        .collect();
+    if keyed.is_empty() {
+        return;
+    }
+    let mut kept = 0;
+    for (combination, row) in &keyed {
+        let Some(name) = row.member.as_deref() else {
+            continue;
+        };
+        let key = name.to_ascii_uppercase();
+        let index = match states
+            .iter()
+            .position(|state| state.state_name.to_ascii_uppercase() == key)
+        {
+            Some(index) => index,
+            None => {
+                kept += 1;
+                states.push(ProtocolStateRecord {
+                    state_id: format!("combination_state_{kept:04}"),
+                    machine_name: None,
+                    state_name: name.to_string(),
+                    action: None,
+                    supporting_statement_ids: Vec::new(),
+                    supporting_table_ids: Vec::new(),
+                    supporting_combination_ids: Vec::new(),
+                });
+                states.len() - 1
+            }
+        };
+        let state = &mut states[index];
+        if !state.supporting_table_ids.contains(&row.table_id) {
+            state.supporting_table_ids.push(row.table_id.clone());
+        }
+        if !state
+            .supporting_combination_ids
+            .contains(&combination.combination_id)
+        {
+            state
+                .supporting_combination_ids
+                .push(combination.combination_id.clone());
+        }
+    }
+    if let Some(surface) = manifest
+        .surfaces
+        .iter_mut()
+        .find(|surface| surface.surface == "protocol_states")
+    {
+        surface.eligible += 1;
+        surface
+            .entries
+            .push(crate::ir::extractor::ExtractorRunEntry {
+                name: "value_combination_states".to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced: keyed.len(),
+                kept,
+            });
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — the value combinations the last convergence pass read, recorded as the
+/// `value_combinations` surface: the tables of the shape, and those read (a refused table is one of the first only).
+fn value_combination_surface(
+    (records, candidates): (Vec<ValueCombinationRecord>, usize),
+    manifest: &mut ExtractionManifest,
+) -> Vec<ValueCombinationRecord> {
+    manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
+        surface: "value_combinations".to_string(),
+        eligible: 1,
+        entries: vec![crate::ir::extractor::ExtractorRunEntry {
+            name: "jointly_keyed_tables".to_string(),
+            tier: ExtractorTier::Pattern,
+            eligible: true,
+            produced: candidates,
+            kept: records.len(),
+        }],
+    });
+    records
+}
+
 /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i — every state a stated transition names is a protocol state.
 ///
 /// A transition names the state it leaves and the states it may enter, and the table it comes from states them as
@@ -30769,6 +31203,7 @@ fn merge_transition_states(
             action: None,
             supporting_statement_ids: Vec::new(),
             supporting_table_ids: tables.into_iter().collect(),
+            supporting_combination_ids: Vec::new(),
         });
         next_id += 1;
         kept += 1;
@@ -31756,6 +32191,7 @@ fn converge_evidence_extractions(
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
     table_declaration_catalog: &TableDeclarationCatalog,
+    register_records: &[RegisterRecord],
     statement_sections: HashMap<String, usize>,
     extraction_manifest: &mut ExtractionManifest,
 ) -> (
@@ -31766,6 +32202,7 @@ fn converge_evidence_extractions(
     Vec<SignalPolarityConflictRecord>,
     Vec<ActorSignalRelation>,
     EvidenceConvergenceReport,
+    Vec<ValueCombinationRecord>,
 ) {
     let mut signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
     let mut signal_widths_from_tables =
@@ -31809,6 +32246,7 @@ fn converge_evidence_extractions(
     let mut final_signal_polarities = Vec::new();
     let mut final_signal_polarity_conflicts = Vec::new();
     let mut final_actor_signal_relations = Vec::new();
+    let mut final_value_combinations = (Vec::new(), 0);
     let max_passes = source_ir.structured_tables.len().max(1) + 4;
     let mut new_facts_per_pass: Vec<usize> = Vec::new();
     let mut converged = false;
@@ -31878,26 +32316,38 @@ fn converge_evidence_extractions(
 
         let already_declared =
             collect_signals_with_explicit_direction_declarations(&extracted_statements);
-        let mut candidate_statements = scan_encoding_tables_by_signal_anchor(
-            source_ir,
-            &known_signals,
-            statement_counter,
-            prior_guidance,
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a — a column title may name a collective the document defines (`AxPAS`).
+        let collectives = collective_signal_name_surface(
+            &extracted_statements,
+            &known_signals.iter().cloned().collect(),
         );
-        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a — the enums a table states in its other signal-titled code columns; a
-        // column title may name a collective the document defines (`AxPAS`).
         let signal_titles: HashSet<String> = known_signals
             .iter()
             .cloned()
             .chain(
-                collective_signal_name_surface(
-                    &extracted_statements,
-                    &known_signals.iter().cloned().collect(),
-                )
-                .into_iter()
-                .map(|record| record.collective_name),
+                collectives
+                    .iter()
+                    .map(|record| record.collective_name.clone()),
             )
             .collect();
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i — a table whose rows several keys key together is a value
+        // combination. The single-column reader, which never asks whether a code determines its member, does not take
+        // it as one key's enum; a column whose codes do determine it is still that key's enum (`AxPAS` in A4.7).
+        let value_combinations =
+            read_value_combinations(source_ir, &signal_titles, &collectives, register_records);
+        let combination_tables: BTreeSet<String> = value_combinations
+            .0
+            .iter()
+            .flat_map(|record| record.table_ids.iter().cloned())
+            .collect();
+        let mut candidate_statements = scan_encoding_tables_by_signal_anchor(
+            source_ir,
+            &known_signals,
+            &combination_tables,
+            statement_counter,
+            prior_guidance,
+        );
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a — the enums a table states in its other signal-titled code columns.
         let minted: BTreeSet<(String, String)> = extracted_statements
             .iter()
             .chain(candidate_statements.iter())
@@ -31948,6 +32398,7 @@ fn converge_evidence_extractions(
         final_signal_polarities = signal_polarity.resolved_records;
         final_signal_polarity_conflicts = signal_polarity.conflicts;
         final_actor_signal_relations = actor_signal_relations;
+        final_value_combinations = value_combinations;
 
         new_facts_per_pass.push(new_dynamic_statements.len());
         if new_dynamic_statements.is_empty() {
@@ -31973,6 +32424,7 @@ fn converge_evidence_extractions(
         final_signal_polarity_conflicts,
         final_actor_signal_relations,
         convergence_report,
+        value_combination_surface(final_value_combinations, extraction_manifest),
     )
 }
 
@@ -35945,6 +36397,7 @@ mod tests {
             action: None,
             supporting_statement_ids: vec!["statement_0001".to_string()],
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         };
         let transition =
             |machine: &str, table: &str, source: &str, targets: &[&str]| ProtocolTransitionRecord {
@@ -42953,7 +43406,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 48);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 49);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -47826,6 +48279,328 @@ The control register.
         assert_eq!(id("16", "Message"), None, "a number is no name");
         assert_eq!(id("0", "PPROT"), None);
         assert_eq!(id("-", "HSIZE"), None, "no name at all");
+    }
+
+    #[test]
+    fn the_single_column_reader_leaves_a_value_combination_alone() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("responses.md");
+        fs::write(&source, "# Responses\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        // AXI A12.15: BTAGMATCH repeats its codes; with BCOMP it keys each response.
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_match".to_string(),
+            asset_id: "asset_table_match".to_string(),
+            page_id: None,
+            caption_text: Some("Table A12.15: Possible responses to a Match operation".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Encoding,
+            row_count: 5,
+            col_count: 3,
+            header_rows: rows(&[&["BTAGMATCH", "BCOMP", "Description"]]),
+            body_rows: rows(&[
+                &["0b01", "0b0", "Not legal."],
+                &[
+                    "0b01",
+                    "0b1",
+                    "Completion response, part of a two-part response.",
+                ],
+                &["0b10", "0b0", "Match Fail, part of a two-part response."],
+                &["0b11", "0b1", "Match Pass, one-part response."],
+            ]),
+        });
+        let known: std::collections::HashSet<String> = ["BTAGMATCH", "BCOMP"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        let read = |skip: &std::collections::BTreeSet<String>| -> Vec<String> {
+            let mut counter = 0;
+            super::scan_encoding_tables_by_signal_anchor(
+                &source_ir,
+                &known,
+                skip,
+                &mut counter,
+                None,
+            )
+            .into_iter()
+            .map(|statement| statement.text)
+            .collect()
+        };
+        assert!(
+            read(&std::collections::BTreeSet::new())
+                .iter()
+                .any(|text| text.starts_with("Enum BTAGMATCH ")),
+            "read alone, the value column is taken as BTAGMATCH's enum"
+        );
+        let combination: std::collections::BTreeSet<String> =
+            std::iter::once("table_match".to_string()).collect();
+        assert_eq!(read(&combination), Vec::<String>::new());
+        Ok(())
+    }
+
+    #[test]
+    fn a_jointly_keyed_table_is_a_value_combination_and_its_states_are_protocol_states()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("combinations.md");
+        fs::write(&source, "# Combinations\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, caption: Option<&str>, header: &[&str], body: &[&[&str]]| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                row_count: (1 + body.len()) as u32,
+                col_count: header.len() as u32,
+                header_rows: rows(&[header]),
+                body_rows: rows(body),
+            }
+        };
+        // APB: two signals' values key each physical address space.
+        source_ir.structured_tables.push(table(
+            "table_pas",
+            None,
+            &["PNSE", "PPROT[1]", "Physical address space"],
+            &[
+                &["0", "0", "Secure"],
+                &["0", "1", "Non-secure"],
+                &["1", "0", "Root"],
+                &["1", "1", "Realm"],
+            ],
+        ));
+        // AXI A15.26: the states, across a continuation page.
+        let header = ["State", "SYSCOREQ", "SYSCOACK", "Rules"];
+        source_ir.structured_tables.push(table(
+            "table_states",
+            Some("Table A15.26: Coherency Connection signaling states"),
+            &header,
+            &[
+                &["Disabled", "0", "0", "Manager: • Must not fetch."],
+                &["Connect", "1", "0", "Manager: • Must not fetch."],
+                &["Enabled", "1", "1", "Manager: • Can fetch."],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_states_continued",
+            Some("Table A15.26 Continued from previous page"),
+            &header,
+            &[&["Disconnect", "0", "1", "Manager: • Must not fetch."]],
+        ));
+        // A register's fields key a meaning; no cell is a name.
+        source_ir.structured_tables.push(table(
+            "table_errors",
+            Some("Table C2-2"),
+            &[
+                "Value of CSW.ERRNPASS",
+                "Value of CSW.ERRSTOP",
+                "Functionality",
+            ],
+            &[
+                &["0b0", "0b0", "Errors are passed back."],
+                &["0b0", "0b1", "Errors stop the transfer."],
+            ],
+        ));
+        // Not read: one key per channel (one collective's members), one key, a bit matrix, an emptied key cell.
+        source_ir.structured_tables.push(table(
+            "table_cache",
+            None,
+            &["ARCACHE[3:0]", "AWCACHE[3:0]", "Memory type"],
+            &[
+                &["0b1010", "0b0110", "Write-Through No-Allocate"],
+                &["0b1010", "0b1110", "Write-Through Write-Allocate"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_one_key",
+            None,
+            &["PNSE", "Meaning"],
+            &[&["0", "Secure"], &["1", "Root"]],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_lanes",
+            None,
+            &["PNSE", "PPROT", "1", "0"],
+            &[&["0", "0", "Y", "N"], &["1", "1", "N", "Y"]],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_spanned",
+            None,
+            &["PNSE", "PPROT[1]", "Permitted"],
+            &[&["0", "0", "Yes"], &["", "1", "No"]],
+        ));
+        let titles: std::collections::HashSet<String> = [
+            "PNSE", "PPROT", "SYSCOREQ", "SYSCOACK", "ARCACHE", "AWCACHE",
+        ]
+        .into_iter()
+        .map(str::to_string)
+        .collect();
+        let collectives = vec![super::CollectiveSignalNameRecord {
+            collective_id: "collective_0001".to_string(),
+            collective_name: "AxCACHE".to_string(),
+            member_names: vec!["ARCACHE".to_string(), "AWCACHE".to_string()],
+            supporting_statement_ids: Vec::new(),
+        }];
+        let registers = vec![crate::ir::source::RegisterRecord {
+            register_id: "reg_csw".to_string(),
+            register_name: "CSW".to_string(),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields: Vec::new(),
+            supporting_table_ids: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+        }];
+        let (combinations, candidates) =
+            super::read_value_combinations(&source_ir, &titles, &collectives, &registers);
+        assert_eq!(
+            candidates, 4,
+            "the three read and the one refused for its emptied key cell"
+        );
+        assert_eq!(
+            combinations
+                .iter()
+                .map(|record| record.table_ids.join("+"))
+                .collect::<Vec<_>>(),
+            [
+                "table_pas",
+                "table_states+table_states_continued",
+                "table_errors"
+            ]
+        );
+        let pas = &combinations[0];
+        assert_eq!(pas.combination_id, "value_combination_0001");
+        assert_eq!(
+            pas.keys,
+            [
+                super::CombinationKey {
+                    title: "PNSE".to_string(),
+                    name: "PNSE".to_string(),
+                    bits: None,
+                },
+                super::CombinationKey {
+                    title: "PPROT[1]".to_string(),
+                    name: "PPROT".to_string(),
+                    bits: Some("[1]".to_string()),
+                },
+            ]
+        );
+        assert_eq!(pas.member_column.as_deref(), Some("Physical address space"));
+        assert!(pas.meaning_columns.is_empty());
+        assert_eq!(
+            pas.rows[2],
+            super::CombinationRow {
+                table_id: "table_pas".to_string(),
+                values: vec!["1".to_string(), "0".to_string()],
+                member: Some("Root".to_string()),
+                meanings: Vec::new(),
+            }
+        );
+        let states = &combinations[1];
+        assert_eq!(states.member_column.as_deref(), Some("State"));
+        assert_eq!(states.meaning_columns, ["Rules"]);
+        assert_eq!(states.rows[3].table_id, "table_states_continued");
+        assert_eq!(states.rows[3].values, ["0", "1"]);
+        let errors = &combinations[2];
+        assert_eq!(
+            errors
+                .keys
+                .iter()
+                .map(|key| key.name.as_str())
+                .collect::<Vec<_>>(),
+            ["CSW.ERRNPASS", "CSW.ERRSTOP"]
+        );
+        assert_eq!(errors.member_column, None, "a sentence names no member");
+        assert_eq!(errors.meaning_columns, ["Functionality"]);
+
+        // The states the combination keys: `Enabled` was found in prose, the other three are new.
+        let mut protocol_states = vec![super::ProtocolStateRecord {
+            state_id: "named_state_0001".to_string(),
+            machine_name: None,
+            state_name: "ENABLED".to_string(),
+            action: None,
+            supporting_statement_ids: vec!["statement_0001".to_string()],
+            supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
+        }];
+        let mut manifest = super::ExtractionManifest::default();
+        manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
+            surface: "protocol_states".to_string(),
+            eligible: 0,
+            entries: Vec::new(),
+        });
+        super::merge_combination_states(&mut protocol_states, &combinations, &mut manifest);
+        assert_eq!(
+            protocol_states
+                .iter()
+                .map(|state| (
+                    state.state_id.as_str(),
+                    state.state_name.as_str(),
+                    state.supporting_table_ids.join("+"),
+                    state.supporting_combination_ids.join("+"),
+                ))
+                .collect::<Vec<_>>(),
+            [
+                (
+                    "named_state_0001",
+                    "ENABLED",
+                    "table_states".to_string(),
+                    "value_combination_0002".to_string()
+                ),
+                (
+                    "combination_state_0001",
+                    "Disabled",
+                    "table_states".to_string(),
+                    "value_combination_0002".to_string()
+                ),
+                (
+                    "combination_state_0002",
+                    "Connect",
+                    "table_states".to_string(),
+                    "value_combination_0002".to_string()
+                ),
+                (
+                    "combination_state_0003",
+                    "Disconnect",
+                    "table_states_continued".to_string(),
+                    "value_combination_0002".to_string()
+                ),
+            ]
+        );
+        let entry = &manifest.surfaces[0].entries[0];
+        assert_eq!(
+            (entry.name.as_str(), entry.produced, entry.kept),
+            ("value_combination_states", 4, 3)
+        );
+        Ok(())
     }
 
     #[test]
@@ -54900,6 +55675,7 @@ mod wire_based_100_5h {
             action: None,
             supporting_statement_ids: support.iter().map(|s| (*s).to_string()).collect(),
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         }
     }
 

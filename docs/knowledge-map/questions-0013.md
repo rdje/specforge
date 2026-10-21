@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > what confidence axis correlates with extracted-constraint correctness
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what conserves between the PDF and SourceIR
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
@@ -295,5 +297,3 @@
   > what does the bounded current ROADMAP contain
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > what does the caption admission repair do to the whole corpus
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what does the corpus frontier refreshed list mean

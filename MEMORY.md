@@ -9,12 +9,12 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.g.iii.b.i` (joint-key rows read), `.3.g.iii.b.ii` (carried), `.3.g.iii.c`, `.57`; `.54.a.ii` after `.3.f.iii`; `.46.c` waits
-  on FSMGEN-REQUESTS.12, `.3.c.iv`-`.3.f.iii`, `.44`, SRC `.15` (self-test fixtures in `generated/`), KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`,
-  EGF `.14`/`.12`, TLIS `.3`-`.5`, LDPH `.17a`/`.34c`/`.42`. Score all 11 seeds every slice. Book regions: `adjudicate_book_quantity_regions.py`. Pin
-  `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
-  requests (cadence 300+ commits; don't poll). `FSMGEN-REQUESTS.7`-`.10`, `.12` await forward; close each on the
-  first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
+- Next action: FSMGEN-REQUESTS ping note, LDPH `.8` (seal ADRs), ERG `.3.g.iii.b.ii`, `.3.g.iii.c`, `.57`; `.54.a.ii`
+  after `.3.f.iii`; `.46.c` waits on FSMGEN-REQUESTS.12; `.3.c.iv`-`.3.f.iii`, `.44`, SRC `.15`, KG-ISF
+  `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`-`.5`, LDPH `.17a`/`.34c`/`.42`. Score 11 seeds per slice;
+  book regions: `adjudicate_book_quantity_regions.py`. Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for
+  FSMGen's next exceptional push after it fixes our requests (don't poll); close `FSMGEN-REQUESTS.7`-`.10`, `.12` on
+  the first pin containing each. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe in `ir/evidence.rs` replays
   `extract_actor_signal_relations` over all 78 chains (back the file up, `cmp` after); (b) `evidence --dry-run` over
   the 31 with the HEAD binary (`git stash`, build, copy) AND the new one. **Persisted artifacts are NOT a HEAD

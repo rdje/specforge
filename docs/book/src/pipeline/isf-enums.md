@@ -474,11 +474,41 @@ A column title names a signal when it is a declared signal or a collective name 
   and no code or member name repeats.
 - **Member names** come from the first column that is no signal and no code and whose names are distinct.
 - **Other cases.** A table whose every row the converter put in its header is read from its second row on. A column
-  that only jointly keys its member, or repeats codes, is left alone (`.3.g.iii.b.i`, `.3.g.iii.c`).
+  that only jointly keys its member, or repeats codes, is left alone here: the next section reads the first, and
+  `.3.g.iii.c` owns the second.
 
 AXI now lowers `(AxPAS (SECURE 0) (NON_SECURE__NS 1) (ROOT 2) (REALM 3) (SYSTEM_AGENT__SA 4) (NON_SECURE_PROTECTED__NSP
 5))`. AHB lowers `(HSIZE (BYTE 0) (HALFWORD 1) (WORD 2) (DOUBLEWORD 3) (HSIZE_4_WORD_LINE 4) (HSIZE_8_WORD_LINE 5))`,
 3 bits wide since `.58` keeps its two digit-led members. FSMGen's strict check accepts both.
+
+### A row keyed by several signals together
+
+Some tables key each row by several signals' values at once. APB's untitled `PNSE | PPROT[1] | Physical address
+space` names an address space for each pair of bits. AXI *Table A15.26* names the four Coherency Connection states
+(`Disabled`, `Connect`, `Enabled`, `Disconnect`) by `SYSCOREQ | SYSCOACK`. No column alone is an enum there, yet the
+single-column reader took one value column and published it. AXI got a `BTAGMATCH` with seven members on four codes, a
+`SYSCOACK` with `DISABLED = 0` and `CONNECT = 0`, and, from *Table A4.7*, an `AxPROT` with `SECURE = 0` and `ROOT = 0`.
+SemanticIR dropped all fifteen statements, so none reached an `.isf`. It also dropped AXI's real `BTAGMATCH`
+encoding (*Table A12.14*), whose codes the false members contradicted.
+
+Such a table is now an EvidenceIR `value_combinations` record (`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i`):
+
+- **Keys.** Two or more columns are titled by different declared names: a signal, a bit or slice of one, a
+  collective, a register's field (`CSW.ERRSTOP`), or a field a register declares, written in capitals (`TYPE`).
+  Every column is titled and none only by a number. Columns that all name members of one collective (A4.4's
+  `ARCACHE | AWCACHE`) are one key written per channel and are left to `.3.g.iii.c`.
+- **Member and meanings.** The member column is the first other column whose cells are distinct names. The rest are
+  meaning columns. Every cell is kept as written (`-`, `0b01 0b10`, `Non-secure`).
+- **Continuations and refusals.** A continuation page joins the table it continues. A table with an empty key cell
+  is refused and counted in the `value_combinations` manifest, because the converter records no span to fill it from.
+- **Precedence.** The single-column reader leaves such a table alone. A column whose codes do determine the member is
+  still its key's enum, so A4.7 keeps `AxPAS`.
+- **States.** A member column whose title ends in *state* names protocol states. A15.26's four join
+  `protocol_states`, each citing its table and the combination (`supporting_combination_ids`).
+
+With the false statements gone, AXI's `manager.isf` gains `(BTAGMATCH (NONE 0) (SEPARATE 1) (FAIL 2) (PASS 3))`
+from *Table A12.14*, FSMGen strict-clean. The record itself stops at EvidenceIR until `.3.g.iii.b.ii` carries it to
+IntentIR and the ISF adapter.
 
 ### Which table an enum was read from
 

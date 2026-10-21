@@ -2661,6 +2661,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     println!("  software_intent: {}", ir.software_intent.len());
     // EXTRACTION-REPRESENTATION-GAPS.55.a — the keywords the document defines.
     println!("  keyword_definitions: {}", ir.keyword_definitions.len());
+    // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i — the tables several keys key together.
+    println!("  value_combinations: {}", ir.value_combinations.len());
     println!(
         "  signal_polarity_conflicts: {}",
         ir.signal_polarity_conflicts.len()
@@ -3937,6 +3939,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "keyword_definitions",
                 ir.keyword_definitions.len().to_string(),
+            ),
+            metric(
+                "value_combinations",
+                ir.value_combinations.len().to_string(),
             ),
             metric(
                 "signal_polarity_conflicts",
@@ -10847,6 +10853,7 @@ mod tests {
             action: None,
             supporting_statement_ids: vec!["statement_state".to_string()],
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         }];
         semantic_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
             timing_id: "interface_edge_timing_0001".to_string(),
@@ -10959,6 +10966,7 @@ mod tests {
             action: None,
             supporting_statement_ids: vec!["statement_state".to_string()],
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         }];
         intent_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
             timing_id: "interface_edge_timing_0001".to_string(),

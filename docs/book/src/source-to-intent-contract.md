@@ -88,6 +88,10 @@ Packet, flit, header, and message fields expose a current conservation failure. 
 matching `IntentIR` carrier exists. Until that carrier lands, each source-grounded record needs a residual and this
 family cannot pass, regardless of whether unrelated wire content lowers successfully.
 
+A table whose rows bind several signals' or fields' values to a member or a meaning is `EvidenceIR.value_combinations`
+(`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i`). It has no `IntentIR` carrier until `.3.g.iii.b.ii`; only the states
+such a table keys reach IntentIR, as `protocol_states`.
+
 ## Category 2 — register IP
 
 Required modalities are register and field tables; bit-layout figures and geometric labels; register/field

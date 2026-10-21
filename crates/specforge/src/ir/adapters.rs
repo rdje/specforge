@@ -2720,6 +2720,7 @@ mod tests {
             action: None,
             supporting_statement_ids: vec!["statement_state".to_string()],
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         }];
         intent_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
             timing_id: "interface_edge_timing_0001".to_string(),

@@ -72,7 +72,7 @@ several signals' values, code columns that repeat, tables whose every row is a h
     `DLCR.TURNROUND`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i`
-  Status: `open` (`2026-10-21`; CODE; split from `.3.g.iii.b`)
+  Status: `done` (`2026-10-21`; CODE; split from `.3.g.iii.b`; checklist below)
   Goal: **a jointly keyed table is a value combination, and the states it keys are protocol states.**
   **Reproduce:** APB `table_0010`, AXI-L `table_0178` and `table_0239` + `table_0240`, and LTI `table_0040` have no
   record, and AXI-L's `BTAGMATCH` and `SYSCOACK` enum statements repeat codes. Acceptance:
@@ -82,6 +82,73 @@ several signals' values, code columns that repeat, tables whose every row is a h
   - merge the keyed states into `protocol_states` with `supporting_combination_ids`;
   - make the census script count a cited table as typed;
   - measure the 55 tables, the 11 withdrawn statements and the 12 states on every chain, then rebuild and re-seal.
+
+  **Done `2026-10-21`.** `read_value_combinations` runs in every convergence pass, after the pass's collectives
+  (`combination_key_columns`, `combination_key_name`, `is_combination_member_name`). Its table ids are the
+  `combination_tables` that `scan_encoding_tables_by_signal_anchor` skips, and the last pass's records become
+  `value_combinations` with a `jointly_keyed_tables` manifest entry (`value_combination_surface`).
+  `merge_combination_states` runs after `merge_transition_states`, and `ProtocolStateRecord` gains
+  `supporting_combination_ids`. On the 31 chains this gives 13 records in 4 documents, none refused. AXI-L has 7:
+  A4.7, A9.1, A12.15, A13.10, A13.11, A13.14, and A15.26 with its continuation. ADIv6 has 3 (`TYPE | CLASS` twice,
+  `CSW.ERRNPASS | CSW.ERRSTOP`), RISC-V IOMMU 2 (`IDT | DV_GSCV | PV_PSCV`) and APB 1 (`PNSE | PPROT[1]`). AXI-L gains
+  `Disabled`, `Connect`, `Enabled` and `Disconnect` as protocol states and loses 15 false enum statements (`AxPROT` 4,
+  `BTAGMATCH` 7, `SYSCOACK` 4). That frees its real `BTAGMATCH` encoding (*A12.14*, `table_0177`), which SemanticIR had
+  dropped over the conflicting codes. `manager.isf` gains `(type BTAGMATCH (bits 2))` and `(BTAGMATCH (NONE 0)
+  (SEPARATE 1) (FAIL 2) (PASS 3))`, FSMGen strict-clean with 0 diagnostics, and 4 state residual packets (72 -> 76).
+  AXI-L's SemanticIR captured-region residuals fall from 236 to 235 (`table_0177`). RISC-V IOMMU, APB and ADIv6
+  change only in EvidenceIR (their records and the manifest entry), and the other 27 chains only by the manifest
+  entry. The 30 chains other than AXI-L keep every later stage and `.isf` text byte-identical.
+
+  **Deviation from `.3.g.iii.b`.** `.3.g.iii.b` decided that a table read here is not also read as one key's
+  encoding. Applied to both encoding readers, that withdrew A4.7's true `AxPAS` enum, because `AxPAS` alone
+  determines A4.7's member. Only the single-column reader yields: it never asks whether a code determines its member.
+  `.3.g.iii.a`'s column reader mints only a column that does, so it is not restricted.
+
+  **Corrected `2026-10-21`** (`.3.g.iii.b`'s measurement, recorded in this part). Its script read all 78 persisted
+  EvidenceIR directories, not the 31 retained chains, and it read SourceIR before `source_ir_with_row_header_rows_in_body`
+  lifts row-header data rows. On the 31 chains the shape is the 13 tables above, in 4 documents. One keys states
+  (A15.26: 4 states), and none is refused. The single-column reader's false statements number 15, not 11: A4.7 also
+  gave `AxPROT` four members on two codes. The other 42 tables are in persisted chains outside the retained 31: SoC-600
+  TMC access tables, AXI H.c, LTI, AXI-Stream, ATB, SMMU and GIC. They take effect when those documents are re-ingested.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — the jointly keyed tables of the 31 chains (13 in 4 documents) and of the 78 persisted
+  directories (55); the `Enum` statements the single-column reader emits for A4.7, A12.15 and A15.26; AXI-L's
+  protocol states and `BTAGMATCH` symbol before and after.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: no reader recorded a row keyed by
+  several declared names. The single-column reader (`scan_encoding_tables_by_signal_anchor`) took one value column
+  of such a table without asking whether its codes determine the member, and so published enums with repeated codes.
+  SemanticIR then dropped those and AXI's true `BTAGMATCH` with them. New `ValueCombinationRecord`, `CombinationKey`
+  and `CombinationRow`, plus `read_value_combinations`, `combination_key_columns`, `combination_key_name`,
+  `is_combination_member_name`, `value_combination_surface` and `merge_combination_states`. RED 6/6, the file
+  restored byte-identically after each mutation, and each fails its test: one collective's members read as a joint
+  key, an emptied key cell read, a sentence naming a member, any member column naming states, a continuation standing
+  alone, and the single-column reader taking a combination.
+- [x] **ADDRESSED (verified)** — dry-run of the 31 chains as measured. All 31 rebuilt stage by stage, and
+  `rebuild_stage_cascade.sh --write` re-sealed every chain content-identically. FSMGen `--strict --check --json` on
+  AXI's `manager.isf`: success, 0 diagnostics.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `3900d932a`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,913 passed. The proof test counts 49 EvidenceIR fields and the rule
+  inventory 203 rules. `flow_census.json` rolled (+6 functions, +59 decision sites, +117 helper edges, +3 semantic
+  macros), and its boundary moved for the new producer (rule roots 133, grammar declassifiers 74). The census script
+  counts a combination's tables as typed, and the family inventories name `value_combinations` and its producer.
+- [x] **GENERICITY (ADR 0006)** — declared signal, collective, register and field names, column-title shape, the
+  word *state* closing a member column's title, and a caption's table reference; no document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A row keyed by several signals together*),
+  `source-to-intent-contract.md`, `quality/validation.md` and `reference/representation-gaps.md` (the state-machine
+  row, whose stale count of 45 states is now 78 in 7 documents); KM card
+  `a-jointly-keyed-table-is-a-value-combination` (new), and `a-signal-titled-code-column-determining-its-member-is-an-enum`
+  amended; ROADMAP states nothing this falsifies. No production rule deleted or replaced.
+
+- **Correction to `.54.a.i`, `.54.a.i.a` and `.56.b`** (`2026-10-21`; found during `.3.g.iii.b.i`). Each recorded
+  that no decision record was written because `decision_records` was past its rollover or at 59 of 74 files. That
+  reason was wrong. The per-file pressure (`bytes_each` 97.1%, `lines_each` 92.6%) is ADR 0038's alone, an accepted
+  record that cannot grow. A new ADR is a new small file, and the collection holds 59 of 74 files. The file-count
+  axis has the population and peak-day re-derivation of ADR 0041 (`DECISION-RECORD-CAPACITY-HEADROOM`). Each rule
+  stays where those records put it. ADR 0038's permanent per-file warning is `LIVE-DOCUMENT-PRESSURE-HEADROOM.8`'s.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`
   Status: `open` (`2026-10-21`; CODE; split from `.3.g.iii.b`)

@@ -215,6 +215,9 @@ def main() -> None:
         source = json.loads((GENERATED / "source_ir" / key / "source_ir.json").read_text())
         semantic = json.loads((GENERATED / "semantic_ir" / key / "semantic_ir.json").read_text())
         uncited = {r.get("region_id") for r in semantic.get("captured_region_residuals", [])}
+        # EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i: a value combination types its tables in EvidenceIR before
+        # SemanticIR carries it (.3.g.iii.b.ii).
+        uncited -= {table_id for record in evidence.get("value_combinations", []) for table_id in record["table_ids"]}
         signals = {record["signal_name"] for interface in semantic.get("interfaces", [])
                    for record in interface.get("signal_records", [])}
         for table in source["structured_tables"]:

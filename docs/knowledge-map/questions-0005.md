@@ -118,6 +118,8 @@
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how are ACK WDATA RDATA DATAIN bit-widths extracted
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > how are APB PNSE | PPROT[1] | Physical address space and AXI A15.26 SYSCOREQ | SYSCOACK read
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -296,5 +298,3 @@
   > how do I address exactly one converter item
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how do I adjudicate cross-table enum conflation
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > how do I avoid re-sealing all 31 chains for a behaviour-neutral refactor

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i",
-      "literal" : "`.3.g.iii.b.i` — a jointly keyed table is a value combination, and the states it keys are protocol states.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii",
+      "literal" : "`.3.g.iii.b.ii` — a value combination reaches IntentIR and the ISF adapter.",
       "mode" : "eligible",
       "part_id" : "encoding-and-state-leaves"
    },
@@ -1197,7 +1197,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
       },
@@ -1353,13 +1353,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
          "metrics" : {
-            "bytes" : 9296,
-            "line_bytes" : 119,
-            "lines" : 111
+            "bytes" : 15953,
+            "line_bytes" : 123,
+            "lines" : 178
          },
          "part_id" : "encoding-and-state-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-         "sha256" : "4ffeb40927d2217f2a87fbffeecc7a577be21da73965a682db2169371510601c",
+         "sha256" : "958fc1c6fecc990dfc9f63fc22822e52cd528de4a5dd476d0021157c4009e32c",
          "state" : "active"
       },
       {

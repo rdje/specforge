@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > how do I avoid re-sealing all 31 chains for a behaviour-neutral refactor
 - [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
   > how do I bring a task tree's parts bytes_total or lines_total warning down (archive the all-closed parts)
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
@@ -295,5 +297,3 @@
   > how does SpecForge expand a generic Ax name to AW and AR
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how does SpecForge extract register fields from tables
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > how does SpecForge flag vague or ambiguous spec language

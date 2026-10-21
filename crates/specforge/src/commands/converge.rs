@@ -1816,6 +1816,7 @@ mod tests {
             action: Some("transfers data".to_string()),
             supporting_statement_ids: vec!["statement_protocol".to_string()],
             supporting_table_ids: Vec::new(),
+            supporting_combination_ids: Vec::new(),
         }
     }
 
@@ -2055,6 +2056,7 @@ mod tests {
                 action: None,
                 supporting_statement_ids: Vec::new(),
                 supporting_table_ids: Vec::new(),
+                supporting_combination_ids: Vec::new(),
             }],
             protocol_transitions: vec![protocol_transition("protocol_transition_0001")],
             interface_edge_timings: vec![InterfaceEdgeTimingRecord {

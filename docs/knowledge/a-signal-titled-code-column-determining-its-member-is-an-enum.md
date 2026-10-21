@@ -40,7 +40,8 @@ the evidence convergence loop after the signal-anchor scan, on tables the conver
 - **No double reading.** A `(table, enum)` an earlier reader minted is left to it. The single-column reader now
   refuses a value column that is one bit of a split signal (`is_one_bit_of_a_split_signal`).
 
-Left alone: joint keys (`AxPROT[1]` + `AxNSE`) are `.3.g.iii.b.i`'s, repeating codes (A4.4's `ARCACHE`/`AWCACHE`)
+Left alone: joint keys (`AxPROT[1]` + `AxNSE`) are read as a value combination since `.3.g.iii.b.i`
+([[a-jointly-keyed-table-is-a-value-combination]]), repeating codes (A4.4's `ARCACHE`/`AWCACHE`)
 `.3.g.iii.c`'s, and untyped mapping tables are not read.
 
 **Measured `2026-10-21` (31 chains):** 29 identical. AXI gains `AxPAS` (6 members), and AHB's `HSIZE` statements now
