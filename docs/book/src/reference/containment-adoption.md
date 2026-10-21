@@ -251,6 +251,9 @@ collection seal a member that has reached its per-file rollover: the surface lis
 edit fails closed, and it is amended by a new member. The per-file milestones then measure the members that can
 still grow, while every ceiling, the file count and both aggregates still measure all of them. A member below
 rollover cannot be sealed, so the mechanism cannot quiet a file that is still growing.
+The record itself was the 60th of 74 files, so the count axis warned. ADR 0041's law re-derived it the same
+day: 77 files, which raises the fact bound from 577 to 580 and leaves the question-key budget and the shard count
+where they were.
 
 #### Remaining canonical collection catalogs landed
 

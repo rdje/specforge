@@ -136,6 +136,8 @@
   the unsealed members, while every ceiling, the file count and both aggregates still measure all of them. A member
   below rollover cannot be sealed. `decision_records` seals ADR 0038, an accepted record at 92.6% of its lines and
   97.1% of its bytes, whose warning had asked for a remedy that cannot apply to a file that does not grow.
+  ADR 0058, the 60th record, then re-derived the count by ADR 0041's law (`.8.a`): 60/F < 80% and, with the
+  nine-file peak day, 69/F < 90% give 77 files and 580 facts; question keys stay 6,144 and shards 42.
 - Precedent re-read `2026-09-23` (`LIVE-DOCUMENT-PRESSURE-HEADROOM.40`): the FSMGen adoption guide at `727e0d086`,
   SHA-256 `8f77fa39c9bcb9cfc43166259a627a6ced64682030088400b727dccc5d674a53`, against the `.8a` reading of
   `6f10b950…` (`70ba62f35`). Two rules were added since, both now neutral text above. Task-narrative bounding was

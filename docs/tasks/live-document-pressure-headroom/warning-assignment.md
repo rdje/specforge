@@ -423,12 +423,41 @@ owner's `Status` line rather than from any mention of the surface.
   local adoption note; `docs/DOCTRINE_INSTANCE.md`; book `reference/containment-adoption.md`; `MEMORY.md`.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a`
-  Status: `open` (`2026-10-21`; opened by `.8`)
+  Status: `done` (`2026-10-21`; CAPACITY; opened by `.8`; checklist below)
   Goal: re-derive `decision_records`' file count before the collection reaches its rollover
   Acceptance: ADR 0058 is the 60th of 74 files (81.1%, warning). Re-derive the count by ADR 0041's law (population
   below 80%, population plus the measured peak day below 90%), with the coupled fact-plane identities
   (`max_facts = max_cards + files - 1`, the question keys funded per fact) moving in one transaction under a
   single-use increase authority, as ADR 0055 did. Do not move a per-file bound.
+  **Done `2026-10-21`.** Git still shows the nine-file peak day (`2026-08-08`; then 8 on `2026-08-09`). ADR 0041's
+  law needs 60/F < 80% and 69/F < 90%, so F = **77**. `decision_records` moves 74 -> 77 files on both bands, with
+  aggregates at `files x per-file`: 39,424 lines and 2,523,136 bytes. One single-use increase authority carries it.
+  `max_facts` derives from the bound (76 answers-bearing slots): 577 -> **580** in `shard_contract.json` and
+  `.knowledge_map.conf`. Question keys stay **6,144** (580 x 10 rounds to the same 512-key quantum), so shards stay
+  42 and the projection's byte cap is untouched. Afterwards `decision_records` holds 60 of 77 files (77.9%) and
+  warns only on `.8.b`'s width. Opened `.8.a.i` to retire the authority once this is HEAD.
+
+## Acceptance Checklist (enforced) — `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a` (CAPACITY) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — `decision_records` at 60 of 74 files (81.1%); `git log --diff-filter=A` creation
+  days over `docs/decisions/0*.md` (peak 9).
+- [x] **ROOT CAUSE (WHY + WHERE)** — the count bound was derived at 57 files (ADR 0055); ADR 0058 is the third
+  record since, within the population-plus-peak margin the law reserves, so the bound is re-derived, not banked.
+- [x] **ADDRESSED (verified)** — `check_live_document_size.pl` with history accepts the increase under its
+  authority and reports no `files` warning; `check_fact_card_catalog.pl --check` derives `max_facts` 580 and keys
+  6,144; `check_knowledge_map_shard_contract.pl` feasible.
+- [x] **NO REGRESSION** — `check_fact_card_catalog.pl --self-test` 60/60; knowledge-map derive-and-diff OK; no
+  per-file bound, shard, projection or card bound moved.
+- [x] **GENERICITY** — the same law and coupled identities as ADR 0041 and ADR 0055; no record is named.
+- [x] **LOCKSTEP** — `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` local adoption note; book
+  `reference/containment-adoption.md`; `.knowledge_map.conf` comment.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a.i`
+  Status: `open` (`2026-10-21`; opened by `.8.a`)
+  Goal: retire the single-use decision-record increase authority `.8.a` consumed
+  Acceptance: after `.8.a` commits, the 77-file profile is HEAD state, so its increase record in
+  `ceiling_increase_authorities.jsonl` is banked; remove it without moving any surface, projection, decision or
+  limit, as `DECISION-RECORD-CAPACITY-HEADROOM.2a` and `.43a` did, and the live-size and doctrine gates pass.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b`
   Status: `open` (`2026-10-21`; opened by `.8`)

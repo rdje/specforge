@@ -46,7 +46,7 @@ The nearest measured stop is `.12`, which owns the 909-byte table row `.27a` rel
 `doctrine_instance` surface.
 
 Open leaves, read from the contract's own route lifecycles rather than restated: the assigned warning successors
-`.9`-`.13` and `.8.a`/`.8.b` (`.8` closed by ADR 0058); the `pipeline/isf-adapter.md` book cut `.34c`; the
+`.9`-`.13`, `.8.a.i` and `.8.b` (`.8` closed by ADR 0058); the `pipeline/isf-adapter.md` book cut `.34c`; the
 `direction/temporal-intent-capture.md` line warning `.34e`; the alignment-index residual `.16` and the task-evidence
 manifest's byte ceiling `.17a` (`.17`, the leaf-route count, closed by ADR 0056); the semantic-part and ledger
 splits `.14b`/`.14c`; the classification-refusal control `.6`; the claim registry's lifecycle `.36d`; the
@@ -76,7 +76,7 @@ primary detail-routing authority.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.6`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4`
-- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a.i`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.9`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.10`
