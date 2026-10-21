@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55BIVA-RESERVED-SPANS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55BIVBI-FIELD-SUB-TABLES",
    "baseline": {
-    "analyzed_functions": 2826,
-    "decision_sites": 15651,
-    "helper_edges": 19801,
-    "semantic_macros": 1626
+    "analyzed_functions": 2830,
+    "decision_sites": 15671,
+    "helper_edges": 19922,
+    "semantic_macros": 1628
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 20,
-    "helper_edges": 121,
-    "semantic_macros": 2
+    "analyzed_functions": 5,
+    "decision_sites": 23,
+    "helper_edges": 80,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a: every message-field family records its Reserved padding rows into reserved_spans at its own position reading, and the surface links fields named as reserved and cites the Reserved keyword definition (ReservedSpanRecord, is_reserved_led, is_reserved_field_name, record_reserved_span, reserved_span_surface)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i: a sub-header restated after a field row opens its sub-table, whose Value rows become the field's values and Bits rows its sub-fields and within-field reserved spans (field_sub_table_header, sub_row_cells, raw_column_index, read_field_sub_table, cite_reserved_values)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

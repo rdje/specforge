@@ -76,7 +76,7 @@ whole.
   position is never guessed from a cell its own notation makes ambiguous.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i`
-  Status: `open` (`2026-10-21`; CODE; opened by `.55.b.iv.b`)
+  Status: `done` (`2026-10-21`; CODE; opened by `.55.b.iv.b`; checklist below)
   Goal: **a field's restated sub-table types its values and its own bits.** USB 3.2's *Link Management Packet Subtype
   Field* lists LMP subtypes under *Value | Type of LMP*, and *Set Link Function* lays out its bits under *Bits |
   Description*. No family reads either. **Reproduce:** USB 3.2 `table_0102` and `table_0103`. Acceptance: in every
@@ -84,6 +84,47 @@ whole.
   following rows to that field until the next field row. `Value` rows become the field's stated values (a Reserved
   meaning marks a reserved value citing the keyword); `Bits` rows become the field's sub-fields and reserved spans,
   at the parent's position reading. Keep every existing field record's identity, and measure every chain.
+  **Done `2026-10-21`.** `MessageFieldRecord` gains `values` (`MessageFieldValue`) and `sub_fields`
+  (`MessageSubField`, bit ranges relative to the field), and `ReservedSpanRecord` gains `within_field_id`. The
+  width-and-offset, descriptor and dword families collect each field row's sub-rows (`sub_row_cells`,
+  `raw_column_index`), and `read_field_sub_table` reads them from the restated sub-header (`field_sub_table_header`).
+  `cite_reserved_values` cites the keyword on reserved values, and `reserved_span_surface` adds reserved sub-fields
+  as spans within their field. A bit range is kept relative to the field, as the document states it: a byte-located
+  parent has no bit position to add it to. **Found and fixed:** the dword family nested every empty-dword sub-row as a
+  field, so USB4's *Error Response* codes (*1 | Unknown Packet Type*, *3 | Not Supported*, *4 | Not Ready*) were three
+  bogus fields. Under a `Value` sub-header they are its values. Dry-run of the 31 chains: 29 identical. USB 3.2 keeps
+  its 209 fields; 10 gain 33 values (7 reserved, all cited) and 10 sub-fields (3 named), and the reserved spans go
+  38 -> 42 (4 within fields). USB4 inter-domain goes 56 -> 53 fields, and *Error Response* gains 4 values. Declared
+  residuals: a fused *Value Meaning* sub-header (USB4 `table_0044`); a bit cell fusing two rows (USB 3.2 `table_0184`,
+  *0 1*); the values of a sub-field (*00b Reserved* under *LatencyScale*), which stay in its description; the two-column
+  bit family's *| Value* rows.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — every sub-row of USB 3.2's and USB4's field-bearing tables printed with its table
+  header, before any code; the restated sub-header shapes (*Value | …*, *Bits | Description*, *Bit | Encoding*, fused
+  *Bits Description*, fused *Value Meaning*); and USB4's three nested fields that were code values.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: the width-and-offset and byte-location
+  families dropped any row with no field cells, and `extract_dword_layout_fields` nested every empty-dword row without
+  reading its sub-header. New `MessageFieldValue`, `MessageSubField`, `FieldSubTable`, `field_sub_table_header`,
+  `sub_row_cells`, `raw_column_index`, `read_field_sub_table`, `cite_reserved_values`, `within_field_id`; the families'
+  `sub_rows`. RED, the file restored byte-identically after each mutation, every one failing a named test. 12 of the
+  first 13 were killed: the value, bit and fused headers; spanning prose as a value; the continuation; a led row as a
+  sub-row; raw equal to effective index; descriptor sub-rows dropped; width-offset sub-rows dropped; a value row
+  nesting a field; no within-field span; every value cited. The 13th, an ellipsis guard, was redundant with the
+  distinct-cells guard and was removed. An empty value accepted is killed by its own case.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains as above; USB 3.2 and USB4 inter-domain rebuilt
+  stage by stage, every later stage and `.isf` text byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `531ed21f7`'s. `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean (after a test's tuple type was named); `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,904 passed. `flow_census.json` rolled (+5 functions, +23 decision sites,
+  +80 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the sub-header words the layout itself restates (*Value*, *Bit(s)*), the table's
+  own cells and the document's keyword definition; no document, container or field name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field's restated sub-table*, and the width-and-offset and
+  dword paragraphs corrected); KM card `a-fields-restated-sub-table-types-its-values-and-bits` (new) and
+  `a-dword-packet-layout-reaches-message-field-records` amended. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii`
   Status: `open` (`2026-10-21`; CODE; opened by `.55.b.iv.b`)

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-10-19 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
 | [unattached-table-captions](../knowledge/unattached-table-captions.md) | 2026-09-28 | `current` | Docling files some table captions as page text; the bit-layout reader recovers them page by page |
 | [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md) | 2026-10-19 | `current` | The unread IntentIR behaviors are mostly permissions, and 645 of 813 timing_constraint statements state no ti… |
 | [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md) | 2026-10-20 | `current` | The IntentIR assumptions and behaviors no typed record understands fall into six families, and assumptions ar… |

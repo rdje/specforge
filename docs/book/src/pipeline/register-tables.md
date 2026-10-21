@@ -247,15 +247,17 @@ in EvidenceIR: carrying `message_field_records` onward is `DOC-INTENT-TAXONOMY.4
 are written `Width (bits) | Offset (DW:bit) | Description`, the field's name heading its description (*Header
 Sequence Number . The valid values …*). A fifth message-field strategy reads them: the name is the head before the
 first period or colon (a trailing mnemonic outranking it, *Delayed (DL)* -> `DL`), the field keeps the dword's byte
-offset and its dword-relative bit range from the stated start bit and width, value sub-rows are skipped rather than
-the table, and a caption-less fragment continues the layout it starts exactly where. *Authoritative tracking:*
+offset and its dword-relative bit range from the stated start bit and width, a row with neither width nor offset
+belongs to the field above rather than ending the table (its sub-table, `.55.b.iv.b.i`), and a caption-less fragment
+continues the layout it starts exactly where. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.ii`).
 
 **Dword packet layouts (`EXTRACTION-REPRESENTATION-GAPS.55.b.iii`).** USB4 writes its inter-domain packets as `DW |
 Bits | Description`, a field named before a dash (*HEC - Header Error Control*), a dword's own bits nested as
 sub-rows, and multi-dword fields as spans (`7:4`). A sixth strategy reads them: a span keeps its first dword's byte
-offset and a whole-dword bit range, a nested sub-row is a field of the dword above, and a restated sub-header, a value
-sub-table or a symbolic dword (`9+N`) states nothing. *Authoritative tracking:*
+offset and a whole-dword bit range, a nested sub-row is a field of the dword above, a `Value` sub-table lists its
+field's code values (`.55.b.iv.b.i`), and a value sub-table restating its field's dword and bits or a symbolic dword
+(`9+N`) states nothing. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iii`).
 
 **Status words in the two-column family (`EXTRACTION-REPRESENTATION-GAPS.55.b.v`).** USB's status words (*Hub Status
@@ -276,6 +278,21 @@ sender and ignored by the receiver* reaches the bits it governs. A value sub-row
 value, not space, so it is no span. USB 3.2 now has 38 spans and USB4 inter-domain 5, all cited; the CoreSight TMC
 has 1, uncited. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iv.a`; a field's
 restated sub-table is `.55.b.iv.b.i`'s, a field's own section `.55.b.iv.b.ii`'s).
+
+**A field's restated sub-table (`EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i`).** After a field's row, USB restates a
+sub-header in the description columns, and the rows under it belong to that field until the next field row. *Value |
+Type of LMP* lists the field's code values, and *Bits | Description* (*Bit | Encoding* in a descriptor, *Bits
+Description* fused in one cell) lays out its own bits. The width-and-offset, descriptor and dword families now read
+them. A value row holds two distinct cells: a spanning prose cell repeats itself, as an ellipsis row does. It becomes
+one of the field record's `values`; one whose meaning opens with *Reserved* cites the keyword's definition. A bit row
+becomes one of its `sub_fields`, with the bit range relative to the field and a name when its description heads with
+one (*Force_LinkPM_Accept*); a row with an empty bit cell continues the sub-field above. A reserved sub-field is a
+reserved span within the field (`within_field_id`). The dword family nested every empty-dword sub-row as a field, so
+USB4's *Error Response* codes (*1 | Unknown Packet Type*, …) were three bogus fields; under a `Value` sub-header they
+are now its values. USB 3.2's fields gain 33 values (7 reserved) and 10 sub-fields, with 4 reserved spans within
+them. USB4 inter-domain loses the 3 bogus fields, and *Error Response* gains 4 values. Not read: a fused `Value
+Meaning` sub-header, and a bit cell holding two rows (*0 1*). *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iv.b.i`).
 
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 

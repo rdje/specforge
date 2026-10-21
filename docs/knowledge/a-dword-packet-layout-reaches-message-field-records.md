@@ -22,9 +22,10 @@ registered strategy, `message_fields.dword_layout`, reads it:
 
 - **Rows:** a dword cell stating one dword or a span (`3`, `7:4`, `9:12`; `parse_dword_span`) and a bit range is a
   field — `byte_offset` the first dword's byte offset, `bit_range` relative to it, a span of whole dwords
-  `(32 × dwords − 1, 0)`. A nested sub-row (empty dword and bit cells) is a field of the single dword above. A
-  restated sub-header, a value sub-table repeating its field's dword and bits, and a symbolic dword (`9+N`) state
-  nothing.
+  `(32 × dwords − 1, 0)`. A nested sub-row (empty dword and bit cells) is a field of the single dword above, unless
+  a `Value` sub-header opens it: since `.55.b.iv.b.i` such rows are the field's `values` (USB4's *Error Response*
+  codes had been three bogus nested fields). A value sub-table repeating its field's dword and bits, and a symbolic
+  dword (`9+N`), state nothing.
 - **Name** (`dword_layout_field_name`): the head before the first dash, period or colon a space follows, or a short
   cell that is all name (*Route String High*); *Reserved* is padding.
 - **Container:** the caption's label, a caption the converter left beside the table, or the layout a caption-less

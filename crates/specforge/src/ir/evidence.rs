@@ -636,6 +636,37 @@ pub struct MessageFieldRecord {
     /// the record its first declaration created).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the code values the layout states for this field in a `Value`
+    /// sub-table restated after its row (*0001b | Set Link Function*), as written.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub values: Vec<MessageFieldValue>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the field's own bit layout from a `Bits` sub-table restated after
+    /// its row (*1 | Force_LinkPM_Accept*), each bit range relative to the field's bit 0, as the document states it.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub sub_fields: Vec<MessageSubField>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — one code value a layout states for a message field, with its meaning.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MessageFieldValue {
+    /// The value cell as written (`0001b`, `1000b-1111b`, `All other values`).
+    pub value: String,
+    pub meaning: String,
+    /// The `keyword_definitions` record of *Reserved*, when the meaning reserves the value and the document defines
+    /// the keyword (*Reserved field values shall not be sent by the sender*).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword_definition_id: Option<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — one row of a message field's own bit layout.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MessageSubField {
+    /// `(high, low)` relative to the field's bit 0.
+    pub bit_range: (u32, u32),
+    /// The sub-field's name when its description heads with one (*Force_LinkPM_Accept*, *LatencyScale*).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    pub description: String,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — one reserved span of a message container: a row a captured layout
@@ -660,6 +691,10 @@ pub struct ReservedSpanRecord {
     /// The `message_field_records` record, when the layout names the reserved space as a field.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub field_id: Option<String>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the field whose own bit layout reserves this span; `bit_range` is
+    /// then relative to that field's bit 0.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub within_field_id: Option<String>,
     /// The `keyword_definitions` record of *Reserved*, when the document defines the keyword.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub keyword_definition_id: Option<String>,
@@ -2361,7 +2396,7 @@ impl EvidenceIr {
         // declare flit/message FIELDS (CHI's `TxnID`/`DBID` class) in container-captioned
         // field-titled tables. Fields are typed intent but NOT signals; this inventory is their
         // first-class home, and the register surface keeps priority over shared `Field` columns.
-        let message_field_records =
+        let mut message_field_records =
             message_field_surface(source_ir, prior_guidance.as_ref(), &mut extraction_manifest);
         // PDF-VARIANT-DIGESTION.12b — the signal-presence surface: presence matrices state which
         // signals exist per interface class / protocol version / agent side, with literal codes
@@ -2448,6 +2483,8 @@ impl EvidenceIr {
         let software_intent = software_intent_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.55.a — the keywords the document defines.
         let keyword_definitions = keyword_definition_surface(&extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i — a field's reserved code values cite the keyword's definition.
+        cite_reserved_values(&mut message_field_records, &keyword_definitions);
         // EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a — the layouts' reserved space, citing the keyword's definition.
         let reserved_spans = reserved_span_surface(
             source_ir,
@@ -18626,9 +18663,143 @@ fn record_reserved_span(
         bit_range,
         byte_offset,
         field_id: None,
+        within_field_id: None,
         keyword_definition_id: None,
         supporting_table_ids: vec![table_id.to_string()],
     });
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the kind of sub-table a layout restates after a field row, read from
+/// its sub-header: *Value | Type of LMP* lists the field's code values, *Bits | Description* (*Bit | Encoding*) lays out
+/// its own bits, and *Bits Description* in one cell lays them out with each row's bits and description fused.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum FieldSubTable {
+    Values,
+    Bits,
+    FusedBits,
+}
+
+fn field_sub_table_header(cells: &[String]) -> Option<FieldSubTable> {
+    let lower = |text: &str| text.trim().to_ascii_lowercase();
+    match cells {
+        [first, second] if !second.trim().is_empty() => match lower(first).as_str() {
+            "value" | "values" => Some(FieldSubTable::Values),
+            "bit" | "bits" => Some(FieldSubTable::Bits),
+            _ => None,
+        },
+        [only] => {
+            let words: Vec<String> = only.split_whitespace().map(lower).collect();
+            matches!(
+                words
+                    .iter()
+                    .map(String::as_str)
+                    .collect::<Vec<_>>()
+                    .as_slice(),
+                ["bit" | "bits", "description" | "encoding"]
+            )
+            .then_some(FieldSubTable::FusedBits)
+        }
+        _ => None,
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the description-region cells of a sub-row: a row whose cells before
+/// `raw_from` are all empty belongs to the field above. The cells are trimmed, with consecutive duplicates collapsed
+/// (a spanning cell repeats itself).
+fn sub_row_cells(row: &[StructuredTableCellRecord], raw_from: usize) -> Option<Vec<String>> {
+    (row.len() > raw_from
+        && row[..raw_from]
+            .iter()
+            .all(|cell| cell.text.trim().is_empty()))
+    .then(|| effective_row_cells(&row[raw_from..]))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the raw index of the cell heading effective column `effective` of a
+/// row, consecutive duplicates collapsing into their first cell as `effective_row_cells` reads them.
+fn raw_column_index(row: &[StructuredTableCellRecord], effective: usize) -> Option<usize> {
+    let mut column = None::<usize>;
+    let mut previous: Option<&str> = None;
+    for (index, cell) in row.iter().enumerate() {
+        let text = cell.text.trim();
+        if previous != Some(text) {
+            column = Some(column.map_or(0, |c| c + 1));
+            if column == Some(effective) {
+                return Some(index);
+            }
+        }
+        previous = Some(text);
+    }
+    None
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — read a field's sub-rows into its record. A restated sub-header opens
+/// a sub-table. A value row holds two distinct cells and a value (a spanning prose cell repeats itself, as does an
+/// ellipsis row). A bit row whose bits parse is a sub-field, named by its description's head; one with an empty bit cell
+/// continues the sub-field above. A fused row splits at its first space. Rows outside any sub-table are the field's
+/// wrapped prose and stay unread.
+fn read_field_sub_table(sub_rows: &[Vec<String>], field: &mut MessageFieldRecord) {
+    let mut kind: Option<FieldSubTable> = None;
+    for cells in sub_rows {
+        if let Some(header) = field_sub_table_header(cells) {
+            kind = Some(header);
+            continue;
+        }
+        let (bits, description) = match (kind, cells.as_slice()) {
+            (Some(FieldSubTable::Values), [value, meaning])
+                if value != meaning && !value.is_empty() =>
+            {
+                field.values.push(MessageFieldValue {
+                    value: value.clone(),
+                    meaning: meaning.clone(),
+                    keyword_definition_id: None,
+                });
+                continue;
+            }
+            (Some(FieldSubTable::Bits), [bits, description]) if bits != description => {
+                (bits.as_str(), description.as_str())
+            }
+            (Some(FieldSubTable::FusedBits), [only]) => match only.split_once(' ') {
+                Some((bits, description)) => (bits, description.trim()),
+                None => continue,
+            },
+            _ => continue,
+        };
+        match parse_pure_bit_position(bits) {
+            Some(bit_range) => field.sub_fields.push(MessageSubField {
+                bit_range,
+                name: dword_layout_field_name(description),
+                description: description.to_string(),
+            }),
+            None if bits.is_empty() => {
+                if let Some(last) = field.sub_fields.last_mut() {
+                    last.description.push(' ');
+                    last.description.push_str(description);
+                }
+            }
+            None => {}
+        }
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — a value whose meaning opens with *Reserved* cites the document's
+/// definition of the keyword, when it defines one.
+fn cite_reserved_values(
+    records: &mut [MessageFieldRecord],
+    keyword_definitions: &[KeywordDefinitionRecord],
+) {
+    let Some(keyword) = keyword_definitions
+        .iter()
+        .find(|definition| definition.keyword.eq_ignore_ascii_case("reserved"))
+    else {
+        return;
+    };
+    for value in records
+        .iter_mut()
+        .flat_map(|record| record.values.iter_mut())
+        .filter(|value| is_reserved_led(&value.meaning))
+    {
+        value.keyword_definition_id = Some(keyword.keyword_id.clone());
+    }
 }
 
 /// Walk the structured tables in document order and collect the declared message fields.
@@ -18733,6 +18904,8 @@ fn extract_container_message_fields(
                 byte_offset: None,
                 description,
                 supporting_table_ids: vec![table.table_id.clone()],
+                values: Vec::new(),
+                sub_fields: Vec::new(),
             });
         }
     }
@@ -19768,6 +19941,8 @@ fn extract_bit_position_structure_fields(
                     byte_offset: row.byte_offset,
                     description: (!row.description.is_empty()).then(|| row.description.clone()),
                     supporting_table_ids: vec![parsed.table.table_id.clone()],
+                    values: Vec::new(),
+                    sub_fields: Vec::new(),
                 });
             }
         }
@@ -19840,6 +20015,8 @@ struct ByteLocationRow {
     size_bytes: Option<u32>,
     description: String,
     name: Option<String>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the description cells of the sub-rows under this field.
+    sub_rows: Vec<Vec<String>>,
 }
 
 /// One shape-qualified byte-location placement table, parsed for chain construction. The
@@ -19883,13 +20060,25 @@ fn collect_byte_location_tables<'a>(
                 continue;
             };
         let mut rows: Vec<ByteLocationRow> = Vec::new();
+        let raw_description = table
+            .header_rows
+            .first()
+            .and_then(|header| raw_column_index(header, description_col));
         for row in &table.body_rows {
             let cells = effective_row_cells(row);
             let Some(byte_offset) = cells
                 .get(location_col)
                 .and_then(|c| c.trim().parse::<u32>().ok())
             else {
-                continue; // wrapped-prose continuation row: no placement stated
+                // wrapped-prose continuation row: no placement stated; a row whose leading cells are empty is a
+                // sub-row of the field above (`EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i`)
+                if let (Some(last), Some(cells)) = (
+                    rows.last_mut(),
+                    raw_description.and_then(|raw| sub_row_cells(row, raw)),
+                ) {
+                    last.sub_rows.push(cells);
+                }
+                continue;
             };
             let Some(description) = cells.get(description_col).filter(|c| !c.is_empty()) else {
                 continue;
@@ -19916,6 +20105,7 @@ fn collect_byte_location_tables<'a>(
                 size_bytes,
                 description: description.clone(),
                 name,
+                sub_rows: Vec::new(),
             });
         }
         if rows.is_empty() {
@@ -20212,6 +20402,8 @@ fn extract_width_offset_layout_fields(
         dword: u32,
         bit: u32,
         description: String,
+        // `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the description cells of the sub-rows under this field
+        sub_rows: Vec<Vec<String>>,
     }
     let recovered_captions = unattached_table_captions(source_ir);
     let mut records: Vec<MessageFieldRecord> = Vec::new();
@@ -20223,27 +20415,42 @@ fn extract_width_offset_layout_fields(
         else {
             continue;
         };
-        let rows: Vec<Row> = table
-            .body_rows
-            .iter()
-            .filter_map(|row| {
-                let cells = effective_row_cells(row);
-                let width = cells
-                    .get(width_col)?
-                    .trim()
-                    .parse::<u32>()
-                    .ok()
-                    .filter(|w| (1..=4096).contains(w))?;
-                let (dword, bit) = cells.get(offset_col)?.trim().split_once(':')?;
-                let description = cells.get(description_col)?.trim().to_string();
-                Some(Row {
-                    width,
-                    dword: dword.trim().parse().ok()?,
-                    bit: bit.trim().parse().ok()?,
-                    description,
-                })
+        let parse = |row: &[StructuredTableCellRecord]| {
+            let cells = effective_row_cells(row);
+            let width = cells
+                .get(width_col)?
+                .trim()
+                .parse::<u32>()
+                .ok()
+                .filter(|w| (1..=4096).contains(w))?;
+            let (dword, bit) = cells.get(offset_col)?.trim().split_once(':')?;
+            let description = cells.get(description_col)?.trim().to_string();
+            Some(Row {
+                width,
+                dword: dword.trim().parse().ok()?,
+                bit: bit.trim().parse().ok()?,
+                description,
+                sub_rows: Vec::new(),
             })
-            .collect();
+        };
+        let raw_description = table
+            .header_rows
+            .first()
+            .and_then(|header| raw_column_index(header, description_col));
+        let mut rows: Vec<Row> = Vec::new();
+        for row in &table.body_rows {
+            match parse(row) {
+                Some(parsed) => rows.push(parsed),
+                None => {
+                    if let (Some(last), Some(cells)) = (
+                        rows.last_mut(),
+                        raw_description.and_then(|raw| sub_row_cells(row, raw)),
+                    ) {
+                        last.sub_rows.push(cells);
+                    }
+                }
+            }
+        }
         let Some(first) = rows.first() else {
             continue;
         };
@@ -20298,7 +20505,7 @@ fn extract_width_offset_layout_fields(
                 continue;
             }
             index_by_key.insert(key, records.len());
-            records.push(MessageFieldRecord {
+            let mut record = MessageFieldRecord {
                 field_id: String::new(),
                 name,
                 container: container.clone(),
@@ -20307,7 +20514,11 @@ fn extract_width_offset_layout_fields(
                 byte_offset: Some(row.dword * 4),
                 description: Some(row.description.clone()),
                 supporting_table_ids: vec![table.table_id.clone()],
-            });
+                values: Vec::new(),
+                sub_fields: Vec::new(),
+            };
+            read_field_sub_table(&row.sub_rows, &mut record);
+            records.push(record);
         }
     }
     records
@@ -20396,11 +20607,25 @@ fn extract_dword_layout_fields(
         }
         // (first dword, last dword, high bit, low bit, description)
         let mut fields: Vec<(u32, u32, u32, u32, String)> = Vec::new();
+        // `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the sub-rows under each field, and the sub-table that is open
+        let mut sub_rows: Vec<Vec<Vec<String>>> = Vec::new();
+        let mut sub_table: Option<FieldSubTable> = None;
         let mut current_dword: Option<u32> = None;
         for row in &table.body_rows {
             let cell = |index: usize| row.get(index).map_or("", |c| c.text.trim());
             let (dword_cell, bits_cell) = (cell(0), cell(1));
             if dword_cell.is_empty() && bits_cell.is_empty() {
+                let cells = sub_row_cells(row, 2).unwrap_or_default();
+                if let Some(header) = field_sub_table_header(&cells) {
+                    sub_table = Some(header);
+                }
+                // a `Value` sub-table lists the field's code values; it nests no field
+                if sub_table == Some(FieldSubTable::Values) {
+                    if let Some(last) = sub_rows.last_mut() {
+                        last.push(cells);
+                    }
+                    continue;
+                }
                 // a nested sub-row of the dword above
                 let (Some(dword), Some((high, low))) =
                     (current_dword, parse_pure_bit_position(cell(2)))
@@ -20408,8 +20633,10 @@ fn extract_dword_layout_fields(
                     continue;
                 };
                 fields.push((dword, dword, high, low, cell(3).to_string()));
+                sub_rows.push(Vec::new());
                 continue;
             }
+            sub_table = None;
             let (Some((first, last)), Some((high, low))) = (
                 parse_dword_span(dword_cell),
                 parse_pure_bit_position(bits_cell),
@@ -20425,6 +20652,7 @@ fn extract_dword_layout_fields(
                 continue; // a value sub-table restating its field's dword and bits
             }
             fields.push((first, last, high, low, cell(2).to_string()));
+            sub_rows.push(Vec::new());
         }
         let Some(first_field) = fields.first() else {
             continue;
@@ -20453,7 +20681,7 @@ fn extract_dword_layout_fields(
             .max_by_key(|field| (field.1, field.2))
             .expect("fields are non-empty");
         chain = Some((container.clone(), page, (last_field.1, last_field.2)));
-        for (first, last, high, low, description) in fields {
+        for ((first, last, high, low, description), sub_rows) in fields.into_iter().zip(sub_rows) {
             let (high, width) = if first == last {
                 (high, high - low + 1)
             } else {
@@ -20485,7 +20713,7 @@ fn extract_dword_layout_fields(
                 continue;
             }
             index_by_key.insert(key, records.len());
-            records.push(MessageFieldRecord {
+            let mut record = MessageFieldRecord {
                 field_id: String::new(),
                 name,
                 container: container.clone(),
@@ -20494,7 +20722,11 @@ fn extract_dword_layout_fields(
                 byte_offset: Some(first * 4),
                 description: Some(description),
                 supporting_table_ids: vec![table.table_id.clone()],
-            });
+                values: Vec::new(),
+                sub_fields: Vec::new(),
+            };
+            read_field_sub_table(&sub_rows, &mut record);
+            records.push(record);
         }
     }
     records
@@ -20559,7 +20791,7 @@ fn extract_byte_location_structure_fields(
                     continue;
                 }
                 index_by_key.insert(key, records.len());
-                records.push(MessageFieldRecord {
+                let mut record = MessageFieldRecord {
                     field_id: String::new(),
                     name,
                     container: label.clone(),
@@ -20568,7 +20800,11 @@ fn extract_byte_location_structure_fields(
                     byte_offset: Some(row.byte_offset),
                     description: Some(row.description.clone()),
                     supporting_table_ids: vec![parsed.table.table_id.clone()],
-                });
+                    values: Vec::new(),
+                    sub_fields: Vec::new(),
+                };
+                read_field_sub_table(&row.sub_rows, &mut record);
+                records.push(record);
             }
         }
     }
@@ -21055,6 +21291,8 @@ fn extract_section_header_message_fields(source_ir: &SourceIr) -> Vec<MessageFie
                 byte_offset: None,
                 description: None,
                 supporting_table_ids: Vec::new(),
+                values: Vec::new(),
+                sub_fields: Vec::new(),
             });
         }
     }
@@ -21357,7 +21595,8 @@ fn message_field_surface(
 
 /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — the reserved space of the document's message containers: each row a
 /// message-field family skips as *Reserved* padding, read with that family's own position reading and in the order of
-/// [`message_field_surface`], then each field record named as reserved (`is_reserved_field_name`), linked by its id.
+/// [`message_field_surface`], then each field record named as reserved (`is_reserved_field_name`), linked by its id,
+/// then each reserved row of a field's own layout (`within_field_id`, `.55.b.iv.b.i`).
 /// Every span cites the `keyword_definitions` record of *Reserved* when the document defines that keyword. The field
 /// records are unchanged: padding stays no field.
 fn reserved_span_surface(
@@ -21384,9 +21623,31 @@ fn reserved_span_surface(
             bit_range: field.bit_range,
             byte_offset: field.byte_offset,
             field_id: Some(field.field_id.clone()),
+            within_field_id: None,
             keyword_definition_id: None,
             supporting_table_ids: field.supporting_table_ids.clone(),
         });
+    }
+    // `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the bits a field's own layout reserves, relative to that field
+    for field in message_field_records {
+        for sub in field
+            .sub_fields
+            .iter()
+            .filter(|sub| is_reserved_led(&sub.description))
+        {
+            spans.push(ReservedSpanRecord {
+                span_id: String::new(),
+                container: field.container.clone(),
+                text: sub.description.clone(),
+                bit_width: Some(sub.bit_range.0 - sub.bit_range.1 + 1),
+                bit_range: Some(sub.bit_range),
+                byte_offset: None,
+                field_id: None,
+                within_field_id: Some(field.field_id.clone()),
+                keyword_definition_id: None,
+                supporting_table_ids: field.supporting_table_ids.clone(),
+            });
+        }
     }
     let keyword = keyword_definitions
         .iter()
@@ -46549,6 +46810,407 @@ The control register.
         assert!(!named("RSVDC[15:0]"), "reserved for another use");
         assert!(!named("NotReserved") && !named("abcdReserved"));
         assert!(super::is_reserved_led("Reserved (R) .") && !super::is_reserved_led("Type"));
+    }
+
+    #[test]
+    fn a_fields_restated_sub_header_opens_its_sub_table() {
+        let row = |cells: &[&str]| -> Vec<String> { cells.iter().map(|c| c.to_string()).collect() };
+        let header = super::field_sub_table_header;
+        assert_eq!(
+            header(&row(&["Value", "Type of LMP"])),
+            Some(super::FieldSubTable::Values)
+        );
+        assert_eq!(
+            header(&row(&["Bit", "Encoding"])),
+            Some(super::FieldSubTable::Bits)
+        );
+        assert_eq!(
+            header(&row(&["Bits Description"])),
+            Some(super::FieldSubTable::FusedBits)
+        );
+        assert_eq!(
+            header(&row(&["Value Meaning"])),
+            None,
+            "a fused value header is not read"
+        );
+        assert_eq!(header(&row(&["0000b", "Reserved"])), None);
+        let cells = |texts: &[&str]| -> Vec<StructuredTableCellRecord> {
+            texts
+                .iter()
+                .map(|text| make_table_cell(text, false))
+                .collect()
+        };
+        assert_eq!(
+            super::raw_column_index(
+                &cells(&["Width", "Offset", "Description", "Description", "Notes"]),
+                3
+            ),
+            Some(4),
+            "a repeated spanning cell is one effective column"
+        );
+        assert_eq!(
+            super::sub_row_cells(&cells(&["", "", "Value", "Type of LMP"]), 2),
+            Some(row(&["Value", "Type of LMP"]))
+        );
+        assert_eq!(
+            super::sub_row_cells(&cells(&["see below", "", "Value", "Type of LMP"]), 2),
+            None,
+            "a row with a leading cell belongs to no field above"
+        );
+        let mut field = super::MessageFieldRecord {
+            field_id: String::new(),
+            name: "Subtype".to_string(),
+            container: "LMP".to_string(),
+            bit_width: Some(7),
+            bit_range: None,
+            byte_offset: None,
+            description: None,
+            supporting_table_ids: Vec::new(),
+            values: Vec::new(),
+            sub_fields: Vec::new(),
+        };
+        super::read_field_sub_table(
+            &[
+                row(&["Refer to section 8.1 for the encoding."]),
+                row(&["Value", "Type of LMP"]),
+                row(&["0000b", "Reserved"]),
+                row(&["0001b", "Set Link Function"]),
+                row(&["", "continues the meaning above"]),
+                row(&["\u{2026}", "\u{2026}"]),
+                row(&["For a hub, see below.", "For a hub, see below."]),
+                row(&["Bits", "Description"]),
+                row(&["1", "Force_LinkPM_Accept"]),
+                row(&["", "De-assert"]),
+                row(&["6:2", "Reserved."]),
+                row(&["Bits Description"]),
+                row(&["0 If this bit is set to 1, then this device supports it."]),
+            ],
+            &mut field,
+        );
+        let values: Vec<(&str, &str)> = field
+            .values
+            .iter()
+            .map(|value| (value.value.as_str(), value.meaning.as_str()))
+            .collect();
+        assert_eq!(
+            values,
+            [("0000b", "Reserved"), ("0001b", "Set Link Function")],
+            "prose before the sub-header, a row with no value, an ellipsis and a spanning prose cell state no value"
+        );
+        type Sub<'a> = ((u32, u32), Option<&'a str>, &'a str);
+        let subs: Vec<Sub> = field
+            .sub_fields
+            .iter()
+            .map(|sub| (sub.bit_range, sub.name.as_deref(), sub.description.as_str()))
+            .collect();
+        assert_eq!(
+            subs,
+            [
+                (
+                    (1, 1),
+                    Some("Force_LinkPM_Accept"),
+                    "Force_LinkPM_Accept De-assert"
+                ),
+                ((6, 2), None, "Reserved."),
+                (
+                    (0, 0),
+                    None,
+                    "If this bit is set to 1, then this device supports it."
+                ),
+            ],
+            "a named bit, its continuation, a reserved range and a fused row"
+        );
+    }
+
+    #[test]
+    fn a_width_offset_fields_sub_table_reaches_its_record() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("lmp.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Packets\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let rows: &[[&str; 4]] = &[
+            [
+                "4",
+                "0:5",
+                "Subtype . These 4 bits identify the LMP.",
+                "Subtype . These 4 bits identify the LMP.",
+            ],
+            ["", "", "Value", "Type of LMP"],
+            ["", "", "0000b", "Reserved"],
+            ["", "", "0001b", "Set Link Function"],
+            [
+                "7",
+                "0:9",
+                "Set Link Function . These 7 bits identify it.",
+                "Set Link Function . These 7 bits identify it.",
+            ],
+            ["", "", "Bits", "Description"],
+            ["", "", "1", "Force_LinkPM_Accept"],
+            ["", "", "6:2", "Reserved."],
+        ];
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_lmp".to_string(),
+            asset_id: "asset_table_lmp".to_string(),
+            page_id: Some("page_0240".to_string()),
+            caption_text: Some("Table 8-3.  Link Management Packet Subtype Field".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![
+                [
+                    "Width (bits)",
+                    "Offset (DW:bit)",
+                    "Description",
+                    "Description",
+                ]
+                .iter()
+                .map(|text| make_table_cell(text, true))
+                .collect(),
+            ],
+            body_rows: rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect(),
+            row_count: rows.len() as u32,
+            col_count: 4,
+        });
+        let fields = super::extract_width_offset_layout_fields(&source_ir, &mut Vec::new());
+        let names: Vec<&str> = fields.iter().map(|field| field.name.as_str()).collect();
+        assert_eq!(
+            names,
+            ["Subtype", "Set Link Function"],
+            "sub-rows are no fields"
+        );
+        assert_eq!(
+            fields[0]
+                .values
+                .iter()
+                .map(|value| value.value.as_str())
+                .collect::<Vec<_>>(),
+            ["0000b", "0001b"]
+        );
+        assert_eq!(
+            fields[1]
+                .sub_fields
+                .iter()
+                .map(|sub| sub.bit_range)
+                .collect::<Vec<_>>(),
+            [(1, 1), (6, 2)],
+            "the bits are relative to the field"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_dword_layouts_value_sub_table_lists_values_not_fields() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("error.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Packets\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let rows: &[[&str; 4]] = &[
+            [
+                "9",
+                "31:0",
+                "Error Response - The error code",
+                "Error Response - The error code",
+            ],
+            ["", "", "Value", "Meaning"],
+            ["", "", "1", "Unknown Packet Type"],
+            ["", "", "3", "Not Supported"],
+            ["", "", "All other values", "Reserved"],
+            ["10", "31:0", "CRC - The packet CRC", "CRC - The packet CRC"],
+            ["", "", "Bits", "Description"],
+            ["", "", "7:0", "HEC - Header Error Control"],
+        ];
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_error".to_string(),
+            asset_id: "asset_table_error".to_string(),
+            page_id: Some("page_0020".to_string()),
+            caption_text: Some("Table 2-6.  Inter-Domain Error Response Packet Fields".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![
+                ["DW", "Bits", "Description", "Description"]
+                    .iter()
+                    .map(|text| make_table_cell(text, true))
+                    .collect(),
+            ],
+            body_rows: rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect(),
+            row_count: rows.len() as u32,
+            col_count: 4,
+        });
+        let fields = super::extract_dword_layout_fields(&source_ir, &mut Vec::new());
+        let names: Vec<&str> = fields.iter().map(|field| field.name.as_str()).collect();
+        assert_eq!(
+            names,
+            ["Error Response", "CRC", "HEC"],
+            "a value row is no nested field; a Bits sub-table still nests fields"
+        );
+        assert_eq!(
+            fields[0]
+                .values
+                .iter()
+                .map(|value| (value.value.as_str(), value.meaning.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                ("1", "Unknown Packet Type"),
+                ("3", "Not Supported"),
+                ("All other values", "Reserved")
+            ]
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_fields_own_layout_reserves_bits_within_it_and_its_reserved_values_cite_the_keyword()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("descriptor.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Descriptors\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let rows: &[[&str; 6]] = &[
+            [
+                "0",
+                "bLength",
+                "1",
+                "Number",
+                "Size of descriptor",
+                "Size of descriptor",
+            ],
+            [
+                "3",
+                "bmAttributes",
+                "4",
+                "Bitmap",
+                "Bitmap encoding of features",
+                "Bitmap encoding of features",
+            ],
+            ["", "", "", "", "Bit", "Encoding"],
+            [
+                "",
+                "",
+                "",
+                "",
+                "1",
+                "LPM. A value of one means it is supported.",
+            ],
+            ["", "", "", "", "31:2", "Reserved. Shall be set to zero."],
+            [
+                "7",
+                "bU1DevExitLat",
+                "1",
+                "Number",
+                "U1 Device Exit Latency",
+                "U1 Device Exit Latency",
+            ],
+            ["", "", "", "", "Value", "Meaning"],
+            ["", "", "", "", "00H", "Zero."],
+            ["", "", "", "", "0BH - FFH", "Reserved"],
+        ];
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_ext".to_string(),
+            asset_id: "asset_table_ext".to_string(),
+            page_id: Some("page_0300".to_string()),
+            caption_text: Some("Table 9-15.  USB 2.0 Extension Descriptor".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Encoding,
+            header_rows: vec![
+                [
+                    "Offset",
+                    "Field",
+                    "Size",
+                    "Value",
+                    "Description",
+                    "Description",
+                ]
+                .iter()
+                .map(|text| make_table_cell(text, true))
+                .collect(),
+            ],
+            body_rows: rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect(),
+            row_count: rows.len() as u32,
+            col_count: 6,
+        });
+        let mut fields = super::message_field_surface(
+            &source_ir,
+            None,
+            &mut super::ExtractionManifest::default(),
+        );
+        let keyword = super::KeywordDefinitionRecord {
+            keyword_id: "keyword_0005".to_string(),
+            keyword: "Reserved".to_string(),
+            definition: "Reserved is a keyword indicating reserved bits.".to_string(),
+            obligations: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+        };
+        super::cite_reserved_values(&mut fields, std::slice::from_ref(&keyword));
+        let attributes = fields
+            .iter()
+            .find(|field| field.name == "bmAttributes")
+            .expect("bmAttributes");
+        assert_eq!(
+            attributes
+                .sub_fields
+                .iter()
+                .map(|sub| (sub.bit_range, sub.name.as_deref()))
+                .collect::<Vec<_>>(),
+            [((1, 1), Some("LPM")), ((31, 2), None)]
+        );
+        let latency = fields
+            .iter()
+            .find(|field| field.name == "bU1DevExitLat")
+            .expect("bU1DevExitLat");
+        assert_eq!(
+            latency
+                .values
+                .iter()
+                .map(|value| (value.value.as_str(), value.keyword_definition_id.as_deref()))
+                .collect::<Vec<_>>(),
+            [("00H", None), ("0BH - FFH", Some("keyword_0005"))],
+            "only the reserved value cites the keyword"
+        );
+        let spans = super::reserved_span_surface(&source_ir, None, &fields, &[keyword]);
+        type Within<'a> = (Option<&'a str>, Option<(u32, u32)>, Option<u32>);
+        let within: Vec<Within> = spans
+            .iter()
+            .filter(|span| span.within_field_id.is_some())
+            .map(|span| {
+                (
+                    span.within_field_id.as_deref(),
+                    span.bit_range,
+                    span.bit_width,
+                )
+            })
+            .collect();
+        assert_eq!(
+            within,
+            [(Some(attributes.field_id.as_str()), Some((31, 2)), Some(30))],
+            "the reserved bits are a span within their field, relative to it"
+        );
+        Ok(())
     }
 
     #[test]

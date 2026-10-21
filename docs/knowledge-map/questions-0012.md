@@ -152,6 +152,8 @@
   > what are EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i, .b.ii and .b.iii
 - [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
   > what are EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a, .b and .c
+- [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
+  > what are MessageFieldRecord.values / MessageFieldValue and MessageFieldRecord.sub_fields / MessageSubField
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -295,5 +297,3 @@
   > what confidence axis correlates with extracted-constraint correctness
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what conserves between the PDF and SourceIR
-- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
-  > what counts as a stated time (states_a_time)
