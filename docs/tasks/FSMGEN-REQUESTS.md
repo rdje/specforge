@@ -241,3 +241,5 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
   `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`); SpecForge now carries the transitions `sf-isf-named-timers` asks to lower.
 - `2026-10-20`: `.12` opened and signed off (`sf-isf-byte-group-reduction`, found by
   `EXTRACTION-REPRESENTATION-GAPS.46`); the ledger reaches its 16-record cap.
+- `2026-10-21`: the owner pinged FSMGen on the urgency of `.7`-`.10` and `.12` (relayed). No acknowledgement is
+  recorded yet. Each leaf still closes on the first FSMGen pin that contains its change.
