@@ -453,11 +453,14 @@ owner's `Status` line rather than from any mention of the surface.
   `reference/containment-adoption.md`; `.knowledge_map.conf` comment.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a.i`
-  Status: `open` (`2026-10-21`; opened by `.8.a`)
+  Status: `done` (`2026-10-22`; CAPACITY; opened by `.8.a`)
   Goal: retire the single-use decision-record increase authority `.8.a` consumed
   Acceptance: after `.8.a` commits, the 77-file profile is HEAD state, so its increase record in
   `ceiling_increase_authorities.jsonl` is banked; remove it without moving any surface, projection, decision or
   limit, as `DECISION-RECORD-CAPACITY-HEADROOM.2a` and `.43a` did, and the live-size and doctrine gates pass.
+  **Done `2026-10-22`.** `46ff0f3a6` made the 77-file profile HEAD state, so its increase record is banked. Removing
+  it leaves the registry's header only and changes no capacity or content. `check_live_document_size.pl` with
+  history passes over all 84 surfaces.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b`
   Status: `open` (`2026-10-21`; opened by `.8`)
