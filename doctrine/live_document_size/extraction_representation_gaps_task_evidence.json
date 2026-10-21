@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.58",
-      "literal" : "`.58` — an enum member whose document name starts with a digit reaches its symbol.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b",
+      "literal" : "`.3.g.iii.b` — a row binding several signals' or fields' values to a member or a meaning is typed.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -142,13 +142,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
             "metrics" : {
-               "bytes" : 50246,
+               "bytes" : 53077,
                "line_bytes" : 221,
-               "lines" : 529
+               "lines" : 557
             },
             "part_id" : "packet-and-memory-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-            "sha256" : "9b3315382f23223932f5d73785d4ac71923e7263a0d9a272f34b07e7fa66db1b",
+            "sha256" : "c14ad1ecb83ca7971c22d52268ead37ee57ed6bb19fb76cb7794b2cca608f70e",
             "state" : "active"
          },
          {
@@ -1434,7 +1434,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.58",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       }
@@ -1564,7 +1564,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.58` — an enum member whose document name starts with a digit reaches its symbol.",
+         "`.3.g.iii.b` — a row binding several signals' or fields' values to a member or a meaning is typed.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1604,8 +1604,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.58`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`"
       ]
    },
    "migration_metadata" : {

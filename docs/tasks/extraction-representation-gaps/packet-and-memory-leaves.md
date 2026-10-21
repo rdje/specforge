@@ -491,7 +491,7 @@ whole.
   deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.58`
-  Status: `open` (`2026-10-21`; CODE; found by `.3.g.iii.a`)
+  Status: `done` (`2026-10-21`; CODE; found by `.3.g.iii.a`; checklist below)
   Goal: **an enum member whose document name starts with a digit reaches its symbol.** SemanticIR's
   `parse_enum_symbol_definition` reads a member name through `parse_identifier`, which refuses a leading digit, and
   drops the statement without a residual. On the 31 chains that is 22 member statements in four documents. AXI 8
@@ -501,6 +501,34 @@ whole.
   SemanticIR. Acceptance: decide a member name that keeps the document's words and is a valid identifier (an
   `.isf` name must lead with a letter) or a typed residual naming the dropped members. Apply it at the one seam, and
   measure every chain, the `.isf` texts and FSMGen strict.
+  **Done `2026-10-21`.** The 22 are two kinds. Ten are document names that start with a digit: AXI's `AxSIZE` *1 byte
+  per transfer* … and AHB's *4-word line* and *8-word line*. Twelve "names" are only numbers: APB `PPROT` `0`/`1` from
+  the joint-key table, AHB `HPROT` from its flag table, and CHI C2C `Message` `0`-`16` from a credit-count column. They
+  are misreads, and no symbol ever formed from them. `encoding_member_identifier`, at the evidence member seam both
+  encoding readers share, keeps a digit-led name's words behind the enum's name (`AXSIZE_1_BYTE_PER_TRANSFER`,
+  `HSIZE_4_WORD_LINE`). A number-only name mints nothing, and its table stays a captured-region residual. All four
+  chains were rebuilt stage by stage: AXI gains `AxSIZE` (8 members, 3 bits), and AHB's `HSIZE` reaches 6 members and
+  its declared 3 bits. Both `manager.isf` are FSMGen strict-clean, and APB's and C2C's `.isf` texts are unchanged.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.58` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — the 22 digit-led member statements of the 31 chains with their tables, and the
+  symbols each document carries.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: the member seam let a name that starts
+  with a digit, or is only a number, into an `Enum` statement, and SemanticIR's `parse_identifier` then dropped it
+  silently. New `encoding_member_identifier` at both readers' seams. RED, the file restored byte-identically after
+  each (2 mutations, each failing the new test): a number naming a member, a leading digit kept bare.
+- [x] **ADDRESSED (verified)** — dry-run of the 31 chains: 27 identical, the four above as measured; rebuilt stage
+  by stage; FSMGen `--strict --check --json` clean on AXI's and AHB's `manager.isf`.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `5fa2118c1`'s. `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 /
+  1,910 passed and 1 failed: KG-ISF `.5.xiii`'s quantity-column test pinned the bare `1_BYTE_PER_TRANSFER`. It now
+  expects `AXSIZE_1_BYTE_PER_TRANSFER`, its rule unchanged, and passes. `flow_census.json` rolled (+1 function, +3
+  decision sites, +3 helper edges, +1 semantic macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the member's own name and the enum's own name; no document or table.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (the `AxSIZE` note and the multi-column section); KM card
+  `a-signal-titled-code-column-determining-its-member-is-an-enum` amended. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b`
   Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)

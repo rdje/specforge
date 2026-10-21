@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > why doesn't SpecForge use TLA+
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -296,5 +298,3 @@
   > why is a timing-diagram key sentence an IntentIR assumption
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > why is a two-word relation actor ending in an -s word refused
-- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
-  > why is a value sub-row 0000b | Reserved not a reserved span

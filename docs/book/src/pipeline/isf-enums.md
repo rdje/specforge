@@ -95,10 +95,13 @@ names it in* below. Every wire-protocol gold score is unchanged — the
 before and after eval reports are byte-identical across all five gold datasets, on chains rebuilt with
 both versions of the binary.
 
-*(`2026-10-21`.)* `AxSIZE`'s members arrive in EvidenceIR exactly as above, but no `AxSIZE` enum reaches SemanticIR
-or the `.isf`. Every member's name starts with a digit (`1_BYTE_PER_TRANSFER`), and SemanticIR's identifier parser
-drops such a member without a trace. The same happens to 22 member statements in four documents; recovering them is
-`EXTRACTION-REPRESENTATION-GAPS.58`'s.
+*(`2026-10-21`.)* Until `EXTRACTION-REPRESENTATION-GAPS.58`, no `AxSIZE` enum reached SemanticIR or the `.isf`.
+Every member's name starts with a digit (`1_BYTE_PER_TRANSFER`), and SemanticIR's identifier parser dropped such a
+member without a trace, as it did 22 member statements in four documents. Now a member name that starts with a digit
+keeps its words behind the enum's name, since an identifier leads with a letter: AXI lowers `(AxSIZE
+(AXSIZE_1_BYTE_PER_TRANSFER 0) … (AXSIZE_128_BYTES_PER_TRANSFER 7))`. A "name" that is only a number is no name. That
+is a quantity column, or a table read by the wrong key, such as APB's `PPROT` bits, AHB's `HPROT` flags and CHI C2C's
+message-credit counts. It mints nothing, and the table stays a captured region.
 
 The enums this change *removes* — the 54 still named `TABLE`, `FIGURE` and `CHAPTER` — are all in the
 legacy stratum, so they will disappear as those documents are re-ingested rather than today.
@@ -474,8 +477,8 @@ A column title names a signal when it is a declared signal or a collective name 
   that only jointly keys its member, or repeats codes, is left alone (`.3.g.iii.b`, `.3.g.iii.c`).
 
 AXI now lowers `(AxPAS (SECURE 0) (NON_SECURE__NS 1) (ROOT 2) (REALM 3) (SYSTEM_AGENT__SA 4) (NON_SECURE_PROTECTED__NSP
-5))`. AHB lowers `(HSIZE (BYTE 0) (HALFWORD 1) (WORD 2) (DOUBLEWORD 3))`; its `4-word line` and `8-word line` members
-are lost to the digit-leading name above (`.58`). FSMGen's strict check accepts both.
+5))`. AHB lowers `(HSIZE (BYTE 0) (HALFWORD 1) (WORD 2) (DOUBLEWORD 3) (HSIZE_4_WORD_LINE 4) (HSIZE_8_WORD_LINE 5))`,
+3 bits wide since `.58` keeps its two digit-led members. FSMGen's strict check accepts both.
 
 ### Which table an enum was read from
 

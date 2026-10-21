@@ -8,12 +8,13 @@ answers:
   - "why did AHB's HSIZE once read BYTE=0, HALFWORD=0, ... (one bit read alone)"
   - "why do AxPROT[1] and AxNSE not mint an enum from A4.7 (they key the space only jointly)"
   - "why does A4.4 not mint AWCACHE (its codes repeat)"
-  - "why does AHB's HSIZE lack 4_WORD_LINE and 8_WORD_LINE, and AXI have no AxSIZE (digit-leading member names, .58)"
+  - "why are AxSIZE members named AXSIZE_1_BYTE_PER_TRANSFER and HSIZE's HSIZE_4_WORD_LINE (encoding_member_identifier, .58)"
+  - "why does a member named only by a number mint nothing (16 message credits, a PPROT bit's 0)"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a"
 date: 2026-10-21
 status: current
 tags: [evidence-ir, encodings, enums, multi-column-tables, collective-names, isf-enums, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (synthesize_signal_column_encodings; is_one_bit_of_a_split_signal; encoding_member_name; synthesize_encoding_declarations_for_enum; the convergence loop's signal_titles and minted sets); docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md (.3.g.iii, .3.g.iii.a, .58)
+evidence: crates/specforge/src/ir/evidence.rs (synthesize_signal_column_encodings; is_one_bit_of_a_split_signal; encoding_member_name; encoding_member_identifier; synthesize_encoding_declarations_for_enum; the convergence loop's signal_titles and minted sets); docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md (.3.g.iii, .3.g.iii.a, .58)
 reverify: "cargo test --offline -p specforge-core --lib a_signal_titled_code_column_that_determines_its_member_is_an_enum"
 ---
 
@@ -44,6 +45,7 @@ Left alone: joint keys (`AxPROT[1]` + `AxNSE`) are `.3.g.iii.b`'s, repeating cod
 
 **Measured `2026-10-21` (31 chains):** 29 identical. AXI gains `AxPAS` (6 members), and AHB's `HSIZE` statements now
 carry the concatenated codes, so `HSIZE` reaches SemanticIR and the `.isf`. Each `manager.isf` gains the type and the
-enum, and FSMGen's strict check accepts both. AHB's `4-word line` and `8-word line` are lost to digit-leading names,
-which SemanticIR's identifier parser drops (22 member statements in four documents, AXI's whole `AxSIZE` among them),
-and `.58` owns that.
+enum, and FSMGen's strict check accepts both. SemanticIR's identifier parser used to drop a digit-leading member
+name. Since `.58`, `encoding_member_identifier` keeps the words behind the enum's name (`HSIZE_4_WORD_LINE`,
+`AXSIZE_1_BYTE_PER_TRANSFER`, so AXI's whole `AxSIZE` enum now lowers, and `HSIZE` is 3 bits). A name that is only a
+number (APB `PPROT` `0`, AHB `HPROT` `1`, CHI C2C message credits `16`) mints nothing.

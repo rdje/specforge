@@ -9146,8 +9146,7 @@ fn synthesize_signal_column_encodings(
             let members: Vec<(String, u32)> = rows
                 .iter()
                 .filter_map(|row| {
-                    let name = encoding_member_name(cell(row, name_col));
-                    (!name.is_empty()).then_some(())?;
+                    let name = encoding_member_identifier(cell(row, name_col), &signal)?;
                     Some((name, code(row)?))
                 })
                 .collect();
@@ -26123,6 +26122,23 @@ fn encoding_member_name(raw_name: &str) -> String {
         .to_string()
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.58` — an encoding member's identifier: the document's name as
+/// [`encoding_member_name`] spells it. A name that is only a number is no name: a quantity column, or a table read by
+/// the wrong key (*16* message credits, a `PPROT` bit's `0`). It mints nothing, and the table stays a captured region. A
+/// name that starts with a digit keeps its words behind the enum's name, because an identifier leads with a letter
+/// (*1 byte per transfer* -> `AXSIZE_1_BYTE_PER_TRANSFER`). Before this, SemanticIR's identifier parser dropped both
+/// kinds without a trace.
+fn encoding_member_identifier(raw_name: &str, enum_name: &str) -> Option<String> {
+    let name = encoding_member_name(raw_name);
+    if name.is_empty() || name.bytes().all(|b| b.is_ascii_digit() || b == b'_') {
+        return None;
+    }
+    if name.starts_with(|c: char| c.is_ascii_digit()) {
+        return Some(format!("{}_{name}", encoding_member_name(enum_name)));
+    }
+    Some(name)
+}
+
 fn synthesize_encoding_declarations_for_enum(
     table: &crate::ir::source::StructuredTableRecord,
     enum_name: &str,
@@ -26152,10 +26168,9 @@ fn synthesize_encoding_declarations_for_enum(
         if raw_name.is_empty() {
             continue;
         }
-        let member_name = encoding_member_name(raw_name);
-        if member_name.is_empty() {
+        let Some(member_name) = encoding_member_identifier(raw_name, enum_name) else {
             continue;
-        }
+        };
         // KG-ISF-COMPLETENESS.5.ii — per-member sentence-SPINE fragment gate. A conflated enum often
         // fuses a clean code table with a prose-description table sharing the same signal name (AXI
         // `BRESP` = `OKAY`/`EXOKAY`/… fused with whole sentences like
@@ -47793,6 +47808,27 @@ The control register.
     }
 
     #[test]
+    fn a_member_named_with_a_leading_digit_keeps_its_words_behind_its_enum() {
+        let id = super::encoding_member_identifier;
+        assert_eq!(
+            id("1 byte per transfer", "AxSIZE").as_deref(),
+            Some("AXSIZE_1_BYTE_PER_TRANSFER")
+        );
+        assert_eq!(
+            id("4-word line", "HSIZE").as_deref(),
+            Some("HSIZE_4_WORD_LINE")
+        );
+        assert_eq!(
+            id("Halfword", "HSIZE").as_deref(),
+            Some("HALFWORD"),
+            "a name stays itself"
+        );
+        assert_eq!(id("16", "Message"), None, "a number is no name");
+        assert_eq!(id("0", "PPROT"), None);
+        assert_eq!(id("-", "HSIZE"), None, "no name at all");
+    }
+
+    #[test]
     fn a_signal_titled_code_column_that_determines_its_member_is_an_enum() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("encodings.md");
@@ -63301,7 +63337,8 @@ mod kg_isf_completeness_5_xiii_a {
         assert_eq!(verdict(&axsize, "AxSIZE"), MemberNameColumn::Header);
         assert_eq!(
             minted(&axsize, "AxSIZE")[0],
-            "Enum AxSIZE 1_BYTE_PER_TRANSFER = 0."
+            // EXTRACTION-REPRESENTATION-GAPS.58 — a digit-led name keeps its words behind the enum's name
+            "Enum AxSIZE AXSIZE_1_BYTE_PER_TRANSFER = 0."
         );
     }
 

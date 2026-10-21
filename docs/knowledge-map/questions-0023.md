@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
+  > why does 'Shareable domain' carry two codes 0b01 and 0b10
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > why does 'These rules assume that the TS Delays are zero' stay apparatus (a rule's premise)
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
@@ -28,8 +30,6 @@
   > why does AHB's HSELx family produce no adapter residual
 - [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
   > why does AHB's HSIZE come from three columns HSIZE[2] | HSIZE[1] | HSIZE[0]
-- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
-  > why does AHB's HSIZE lack 4_WORD_LINE and 8_WORD_LINE, and AXI have no AxSIZE (digit-leading member names, .58)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > why does AMD IOMMU extract no register fields
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -205,6 +205,8 @@
   > why does a list condition with two values drop its first members
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why does a magnitude against a literal still yield no record
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > why does a member named only by a number mint nothing (16 message credits, a PPROT bit's 0)
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > why does a new SemanticIR have an empty gates array
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -296,5 +298,3 @@
   > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > why does an EvidenceIR artifact have no document_class

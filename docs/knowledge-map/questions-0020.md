@@ -255,6 +255,8 @@
   > why are AXI's AWSTASHNID AWSTASHNIDEN AWSTASHLPID AWSTASHLPIDEN LOW drives gone from manager.isf
 - [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
   > why are AXI's for a WriteZero transaction conditions still listed
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > why are AxSIZE members named AXSIZE_1_BYTE_PER_TRANSFER and HSIZE's HSIZE_4_WORD_LINE (encoding_member_identifier, .58)
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -295,5 +297,3 @@
   > why are extracted signal names truncated at the underscore
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why are held-out alpha failures not yet production name-coupling evidence
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)

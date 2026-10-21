@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > why did a temporal conflict disappear when a signal constraint was removed
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -296,5 +298,3 @@
   > why does 'It is permitted to signal an error' have no subject
 - [a-keyword-definition-is-typed-with-the-obligations-it-states](../knowledge/a-keyword-definition-is-typed-with-the-obligations-it-states.md)
   > why does 'Shall is a keyword' state no obligation
-- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
-  > why does 'Shareable domain' carry two codes 0b01 and 0b10
