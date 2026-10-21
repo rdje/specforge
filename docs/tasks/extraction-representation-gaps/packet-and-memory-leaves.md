@@ -127,6 +127,10 @@ whole.
   re-run the behavioral held-out qualification (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`'s 51 attempts, provider-free)
   against the new store, re-pin `behavioral_qualification.json` and `behavioral_holdout_evidence.json` with the
   measured drift, and state what triggers the next refresh.
+  **Ordered after the product leaves (`2026-10-21`).** Under `.54.a.i.a`'s rule the pinned store and one relearned
+  from the 31 chains give byte-identical EvidenceIR, so the refresh's effect is the store's provenance, not a reading.
+  Its cost is the held-out qualification: the previous run's 35 fresh-pipeline attempts took over two hours and keep
+  about 7 GB under `.project-data/tmp/spec-to-intent-f-iii-heldout`. It stays open and runs after `.3.f.iii`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a`
   Status: `done` (`2026-10-21`; CODE; split from `.55.b.iv`; opened `.55.b.iv.b`)
@@ -406,3 +410,69 @@ whole.
   `source-to-intent-contract.md`; KM card `a-layouts-reserved-space-is-a-typed-span-citing-the-keyword` (new) and
   `a-keyword-definition-is-typed-with-the-obligations-it-states` amended; ROADMAP states nothing this falsifies. No
   production rule deleted or replaced.
+
+- **`.3.g.iii`'s measurement and decision** (`2026-10-21`; the leaf's record is in `program-and-census`).
+  **Measured `2026-10-21`** (31 chains). 13 tables in three documents title two or more columns by declared or
+  collective signal names, and they take five shapes:
+  - **A member-named code column per signal.** AXI *A4.7 Physical address space encodings* gives `AxPAS` a distinct
+    code for each of its six members. The converter put all seven rows in the header, so no reader sees a data row,
+    and the table is a residual.
+  - **One signal's bits as columns.** AHB *3-2 Transfer size encoding* splits `HSIZE[2] | HSIZE[1] | HSIZE[0]`, whose
+    concatenation is `HSIZE`'s code; no enum comes of it today.
+  - **Codes that repeat.** AXI *A4.4 Memory type encoding* gives each memory type an `ARCACHE` and an `AWCACHE` code,
+    and both columns repeat codes (`0b1010` is both Write-Through No-Allocate and Write-Allocate on reads). Today only
+    `ARCACHE` is minted, a 6-member reading of 12 rows.
+  - **Members keyed jointly.** A4.7's `AxPROT[1]` + `AxNSE` (four of the members), APB's untitled `PNSE | PPROT[1] |
+    Physical address space`, and AXI *A15.26*'s `SYSCOREQ` + `SYSCOACK`, which key the four coherency-connection
+    states (across a continuation table). None is read.
+  - **Value-combination and mapping rows.** AXI *A9.1*, *A12.15*, *A13.10*, *A13.11*, *A13.14*: a row states signal
+    values and what they mean; all are residuals. Two tables are no encoding: *A6.5* lists signals that must match,
+    and an untitled address-alignment bit matrix.
+
+  Separately, 137 tables in 16 documents carry every row as a header row, A4.7 among them.
+
+  **Decided.**
+  - A code column that determines its member is that signal's enum: its codes are distinct across the rows that state
+    one, and one signal's bit columns concatenate into one code (`.3.g.iii.a`, which reads an encoding table's
+    header-only rows as data locally).
+  - Jointly keyed members and value-combination rows are one shape: a row binding several signals' values to a member
+    or a meaning. Its record and carriage are designed first (`.3.g.iii.b`).
+  - A column whose codes repeat maps several members to one code, an alias rather than an enum. How to carry it, and
+    whether today's lossy `ARCACHE` enum stands, is `.3.g.iii.c`'s.
+  - The signal list and the bit matrix stay declared residuals.
+  - The all-header-row tables are a converter defect every reader meets, and `.57` owns them.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a`
+  Status: `open` (`2026-10-21`; CODE; split from `.3.g.iii`)
+  Goal: **a code column that determines its member is that signal's enum.** **Reproduce:** AXI *A4.7* (`AxPAS`,
+  every row in the header) and AHB *3-2* (`HSIZE[2:0]` as three bit columns) mint no enum. Acceptance: in an encoding
+  table, read each signal-titled column whose codes are distinct across the rows that state one as that signal's
+  enum, named by the member column. Concatenate one signal's bit columns into its code. Read an encoding table whose
+  rows all sit in its header from its second row on. Keep every enum minted today unchanged, and measure every chain
+  and the wire golds.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b`
+  Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)
+  Goal: **a row binding several signals' or fields' values to a member or a meaning is typed.** **Reproduce:** APB's
+  `PNSE | PPROT[1] | Physical address space`, AXI *A15.26* `State | SYSCOREQ | SYSCOACK`, and AXI *A13.14*'s legal MMU
+  combinations are residuals. Acceptance: decide the record (the keys and values a row binds, and the member or
+  meaning it names), its carrier to IntentIR, and whether a joint key over states reaches `protocol_states`. Measure
+  the 9 tables of this shape on the 31 chains, and the untyped-table census's `signal_value_matrix` (22) and
+  `field_value_encoding` (14, keyed by register fields) families it now owns. Then open the CODE leaf.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`
+  Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)
+  Goal: **a code column that maps several members to one code is carried as what it is.** **Reproduce:** AXI *A4.4*:
+  `ARCACHE` `0b1010` is Write-Through No-Allocate and Write-Allocate on reads; today's `ARCACHE` enum keeps 6 of 12
+  rows and `AWCACHE` none. Acceptance: decide whether a repeating column is an aliasing encoding (code -> members) or
+  stays a residual. Decide whether today's 6-member enum is kept, re-read or withdrawn, and how the parenthesized
+  alternates (*0b1110 ( 0b0110 )*) read. Measure AXI and the wire golds.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.57`
+  Status: `open` (`2026-10-21`; DESIGN; found by `.3.g.iii`)
+  Goal: **a table whose every row the converter put in its header has one header row.** 137 tables in 16 documents
+  have more than one header row and no body row (the Cortex-A76 guide 37, AXI 26, USB 3.2 23, ADIv6 14), so every
+  table reader sees no data. AXI *A4.7* is one. **Reproduce:** `generated/source_ir/ihi0022…/source_ir.json`
+  `table_0061` (7 header rows, 0 body rows). Acceptance: census the 137 by shape (front matter, data tables, true
+  multi-row headers), decide whether SourceIR normalizes them or each reader does, from what the converter states,
+  and measure every chain.

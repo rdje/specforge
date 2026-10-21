@@ -477,7 +477,8 @@ None.
   genuine multi-key table as a relation, which `.5.xiv` set out of its scope, are `.3.g.iii`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii`
-  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.g.ii`)
+  Status: `done` (`2026-10-21`; DESIGN; found by `.3.g.ii`; split into `.3.g.iii.a`-`.c`; opened `.57`; measured and
+  decided in `packet-and-memory-leaves`)
   Goal: **an encoding with several signal-titled value columns is read by the column that determines its member.**
   AXI *Table A4.7: Physical address space encodings* titles three value columns by signals: `AxPAS` gives each space its
   own code (`Secure` `0b000` … `Non-secure Protected` `0b101`, a true `AxPAS` enum), while `AxPROT[1]` and `AxNSE` together key

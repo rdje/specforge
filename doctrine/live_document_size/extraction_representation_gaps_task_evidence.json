@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a.ii",
-      "literal" : "`.54.a.ii` — the corpus memory's refresh runs as ADR 0036 declares it, under `.54.a.i`'s rule.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a",
+      "literal" : "`.3.g.iii.a` — a code column that determines its member is that signal's enum.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -16,13 +16,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
             "metrics" : {
-               "bytes" : 54093,
+               "bytes" : 54184,
                "line_bytes" : 202,
-               "lines" : 612
+               "lines" : 613
             },
             "part_id" : "program-and-census",
             "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-            "sha256" : "0b6deac5f135a9b44ac3754d86cf88e309df92281e7a5ed2e885012ebf01a006",
+            "sha256" : "01d1c96f9b40cf4b806110661ed7e34b16578172d80ceb0bd853d546e7f3290b",
             "state" : "active"
          },
          {
@@ -142,13 +142,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
             "metrics" : {
-               "bytes" : 39641,
+               "bytes" : 45447,
                "line_bytes" : 221,
-               "lines" : 408
+               "lines" : 478
             },
             "part_id" : "packet-and-memory-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-            "sha256" : "1d867e7020ac484c2ed1b84717872917dd337893b49c9bbca00c4a2d82f16e65",
+            "sha256" : "2b0560750fe81bfa860de8e2347902af1249e0d975d63ed2b27012a96595002e",
             "state" : "active"
          },
          {
@@ -864,7 +864,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "program-and-census"
       },
@@ -1407,6 +1407,30 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.57",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
       }
    ],
    "limits" : {
@@ -1534,7 +1558,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.54.a.ii` — the corpus memory's refresh runs as ADR 0036 declares it, under `.54.a.i`'s rule.",
+         "`.3.g.iii.a` — a code column that determines its member is that signal's enum.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1546,7 +1570,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.4`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.5`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.6`",
@@ -1572,7 +1595,11 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`"
       ]
    },
    "migration_metadata" : {
