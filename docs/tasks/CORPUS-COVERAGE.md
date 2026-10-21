@@ -63,6 +63,9 @@ conditional-rule and signal-constraint grounding filters exactly when a document
 
 The index routes every established task id to one bounded semantic part. Its manifest authenticates part metrics,
 route ownership, and exact source regions; the archive capsule preserves the complete pre-containment source.
+Since `2026-10-21` (`EXTRACTION-REPRESENTATION-GAPS.56.b`) the three parts that route no leaf (`refresh-ledger`,
+`recent-chronology`, `legacy-chronology`) are archived byte-exact under `docs/archive/tasks/corpus-coverage/` and leave
+the live parts total: lines 85.9% -> 69.6% of the target.
 
 ## Slice Transaction
 

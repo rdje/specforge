@@ -259,12 +259,20 @@ whole.
   `MEMORY.md`. No record edited, merged or deleted.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56.b`
-  Status: `open` (`2026-10-21`; DOC; opened by `.56`)
+  Status: `done` (`2026-10-21`; DOC; opened by `.56`)
   Goal: **every task-evidence collection whose live total warns takes the archive transition.** On `2026-10-21`
   CORPUS-COVERAGE's parts are at 85.9% of their `lines_total` target and no leaf owns the warning. Acceptance: once
   `.56.a` lands, census every contract under `doctrine/live_document_size/*task_evidence*.json`, apply the
   transition to each whose live total warns and that has all-closed parts, with a dated pointer in its tree. A tree
   whose warning has no all-closed part gets an owned leaf in that tree saying so.
+  **Done `2026-10-21`.** Census of the eight contracts' live parts totals: only CORPUS-COVERAGE warns (lines 85.9%,
+  bytes 70.4%); the others sit at 28.6-60.7% of bytes and 38.6-67.6% of lines. Its three parts that route no leaf
+  (`refresh-ledger`, `recent-chronology`, `legacy-chronology`, unchanged since its `2026-08-10` migration) moved byte-
+  exact to `docs/archive/tasks/corpus-coverage/`, sealed at `84135ba92`, under a new
+  `corpus_task_evidence_archived_parts` surface (exact: 3 files). Its live total is now 245,685 bytes and 2,850 lines
+  (69.6% of the lines target), and its contract reports no warning. The corpus root carries a dated pointer. ADR
+  0045's rule that no tree is archived for capacity is unchanged; the book and KM card say so. A new decision record
+  was not written because `decision_records` is at 59 of 74 files, and the rule lives in `.56`.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` (CODE) — DONE `2026-10-21`
 

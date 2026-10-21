@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why does cargo test -p specforge not run the trajectory snapshot tests
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
@@ -295,5 +297,3 @@
   > why is 'A 2 ms timer shall be started' not timing_constraint (none of the admitting words)
 - [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
   > why is 'A device shall not assume that transactions occur at the same location' filed apparatus
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > why is 'Connection Manager assumes the configuration of Asymmetric Link failed' an assumption (of stays in the object)

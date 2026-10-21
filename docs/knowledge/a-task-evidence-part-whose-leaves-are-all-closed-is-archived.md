@@ -10,7 +10,8 @@ answers:
   - "where do I record a correction to a leaf whose part is archived (a new record in a live part)"
   - "why does the gap owner check find a closed leaf under docs/archive/tasks (task_evidence_declares)"
   - "what is erg_task_evidence_archived_parts"
-  - "what is EXTRACTION-REPRESENTATION-GAPS.56 and .56.a"
+  - "what is EXTRACTION-REPRESENTATION-GAPS.56, .56.a and .56.b"
+  - "does archiving parts contradict ADR 0045 (no tree is archived for capacity; the tree stays live)"
 date: 2026-10-21
 status: current
 tags: [task-evidence, live-document-size, archive-terminal, containment, partitioned-tree, adr-0032, extraction-representation-gaps]
@@ -44,4 +45,8 @@ a moved path is repointed (24 KM cards for ERG); `archived_from` keeps the live 
 
 **Measured `2026-10-21` (ERG):** 17 parts and 661,007 live bytes became 9 live parts with 337,798 bytes (43.0%) plus
 8 archived parts with 327,205 bytes. The `bytes_total` warning is gone. The `bytes_each` warning (85.4%) is the
-rolled-over `clause-and-register-leaves`. CORPUS-COVERAGE's `lines_total` warning (85.9%) is `.56.b`'s.
+rolled-over `clause-and-register-leaves`. **CORPUS-COVERAGE (`.56.b`):** its three parts that route no leaf
+(`refresh-ledger`, `recent-chronology`, `legacy-chronology`, all unchanged since its 2026-08-10 migration) moved the same
+way under `corpus_task_evidence_archived_parts`. Its live lines went from 85.9% to 69.6% of target, and no other
+contract's live total warns. ADR 0045's rule that no *tree* is archived for capacity is unchanged: the tree stays live,
+and only its closed parts move.

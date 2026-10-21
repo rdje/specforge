@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > how do I bring a task tree's parts bytes_total or lines_total warning down (archive the all-closed parts)
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how do I census enum member and value fidelity
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
@@ -295,5 +297,3 @@
   > how does SpecForge extract register fields from tables
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > how does SpecForge flag vague or ambiguous spec language
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does SpecForge group a transaction's signals by channel

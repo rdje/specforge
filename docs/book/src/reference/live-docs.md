@@ -1012,7 +1012,9 @@ amended by a new record in a live part, never by editing the archive. The archiv
 `archive_terminal` collection surface per tree, which a later archival extends rather than duplicates.
 The gap-owner check reads the archive directory too, so a gap owned by such a leaf still resolves. ERG
 went from 17 parts and 661,007 live bytes to 9 live parts holding 337,798 bytes (43.0%), with 327,205
-bytes archived.
+bytes archived. CORPUS-COVERAGE archived its three no-leaf history parts the same way, and its live lines fell from
+85.9% to 69.6% of target (`.56.b`). ADR 0045's rule that no *tree* is archived for capacity still holds: the tree
+stays live, and only its closed parts move.
 
 
 ## Closed task trees — how each was implemented and verified

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
@@ -296,5 +298,3 @@
   > how is 'the missing signals are assumed to be LOW' (signals covered by a check signal) bound now
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how is AXI per-signal channel membership recovered without a VLM

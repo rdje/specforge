@@ -60,6 +60,8 @@
             "state" : "legacy"
          },
          {
+            "archived_from" : "docs/tasks/corpus-coverage/refresh-ledger.md",
+            "git_blob" : "239943327f7c5a186363dba7cb8706c3281633f4",
             "heading" : "# CORPUS-COVERAGE — refresh ledger",
             "metrics" : {
                "bytes" : 59454,
@@ -67,11 +69,14 @@
                "lines" : 97
             },
             "part_id" : "refresh-ledger",
-            "path" : "docs/tasks/corpus-coverage/refresh-ledger.md",
+            "path" : "docs/archive/tasks/corpus-coverage/refresh-ledger.md",
+            "sealed_commit" : "84135ba922db568424209b8559a2ed0b86f6eb4e",
             "sha256" : "56efbc0f0d25d4d089f6ce4cfd7f7af65f22f2f1ef193cfcc144823439aa2956",
-            "state" : "legacy"
+            "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/corpus-coverage/recent-chronology.md",
+            "git_blob" : "468dcc8787f6cea473d8cb71d133dac36ce4b978",
             "heading" : "# CORPUS-COVERAGE — recent chronology",
             "metrics" : {
                "bytes" : 37987,
@@ -79,11 +84,14 @@
                "lines" : 337
             },
             "part_id" : "recent-chronology",
-            "path" : "docs/tasks/corpus-coverage/recent-chronology.md",
+            "path" : "docs/archive/tasks/corpus-coverage/recent-chronology.md",
+            "sealed_commit" : "84135ba922db568424209b8559a2ed0b86f6eb4e",
             "sha256" : "32eb6a549d75808c79285c519678af2e3fb3ee02aaa0ad219ee85526ffd7c809",
-            "state" : "legacy"
+            "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/corpus-coverage/legacy-chronology.md",
+            "git_blob" : "7d8146e723bfd7aed4863f3ea9715bf1c8cb4702",
             "heading" : "# CORPUS-COVERAGE — legacy chronology",
             "metrics" : {
                "bytes" : 26210,
@@ -91,9 +99,10 @@
                "lines" : 235
             },
             "part_id" : "legacy-chronology",
-            "path" : "docs/tasks/corpus-coverage/legacy-chronology.md",
+            "path" : "docs/archive/tasks/corpus-coverage/legacy-chronology.md",
+            "sealed_commit" : "84135ba922db568424209b8559a2ed0b86f6eb4e",
             "sha256" : "ee4f67c758b5d1970a710b281c0cddf03759aab2e98b5b20f88966fc241cc249",
-            "state" : "legacy"
+            "state" : "archived"
          },
          {
             "heading" : "# CORPUS-COVERAGE — refreshes 49–56",

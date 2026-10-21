@@ -9,9 +9,9 @@
 - [Refreshes 33 40](refreshes-33-40.md)
 - [Refreshes 41 43](refreshes-41-43.md)
 - [Repair acceptance and frontier](repair-acceptance-and-frontier.md)
-- [Refresh ledger](refresh-ledger.md)
-- [Recent chronology](recent-chronology.md)
-- [Legacy chronology](legacy-chronology.md)
+- [Refresh ledger](../../archive/tasks/corpus-coverage/refresh-ledger.md) — archived
+- [Recent chronology](../../archive/tasks/corpus-coverage/recent-chronology.md) — archived
+- [Legacy chronology](../../archive/tasks/corpus-coverage/legacy-chronology.md) — archived
 - [Refreshes 49 56](refreshes-49-56.md)
 - [Refreshes 51 56](refreshes-51-56.md)
 - [Frontier census integrity](frontier-census-integrity.md)

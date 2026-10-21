@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.b",
-      "literal" : "`.56.b` — every task-evidence collection whose live total warns takes the archive transition.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.54.a",
+      "literal" : "`.54.a` — the corpus memory's refresh runs as ADR 0036 declares it.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -142,13 +142,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
             "metrics" : {
-               "bytes" : 28469,
+               "bytes" : 29347,
                "line_bytes" : 171,
-               "lines" : 296
+               "lines" : 304
             },
             "part_id" : "packet-and-memory-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-            "sha256" : "86a86aad48312499950f945fe8975af4f8b23b533430583c87acb15a8b954fac",
+            "sha256" : "f9bc7892691d1cbce5e129ad7d9798f1d295eeaacc53cfba92a542ad7faea38f",
             "state" : "active"
          },
          {
@@ -1374,7 +1374,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       },
@@ -1516,7 +1516,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.56.b` — every task-evidence collection whose live total warns takes the archive transition.",
+         "`.54.a` — the corpus memory's refresh runs as ADR 0036 declares it.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1554,8 +1554,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.56.b`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`"
       ]
    },
    "migration_metadata" : {

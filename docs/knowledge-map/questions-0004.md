@@ -84,6 +84,8 @@
   > does any gate catch a book paragraph describing deleted behaviour
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does any gate fail when a persisted chain falls below the current canonical schema
+- [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
+  > does archiving parts contradict ADR 0045 (no tree is archived for capacity; the tree stays live)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -296,5 +298,3 @@
   > does the book quantitative-claim grammar see a hyphenated count like 55-case or 153-line (yes since CLAIM-VERIFICATION-ADOPTION.24: numeral-hyphen-noun with the same closed noun list; it admitted 109 lines, all quantities, and exposed four stale present-tense passages; 32-bit and 4-way stay out because bit and way are not admitted nouns)
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > does the caption repair admit serialized table rows
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > does the co-reference rule resurrect resolve_indexed_signal_family

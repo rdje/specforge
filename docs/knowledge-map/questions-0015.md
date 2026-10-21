@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
 - [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
@@ -296,5 +298,3 @@
   > what is sentence_names_relation / header_words
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > what is signal_coreferences / SignalCoreferenceRecord
-- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
-  > what is signal_families / SignalFamilyRecord
