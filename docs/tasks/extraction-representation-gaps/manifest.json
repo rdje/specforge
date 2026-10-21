@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a",
-      "literal" : "`.3.g.iii.a` — a code column that determines its member is that signal's enum.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.58",
+      "literal" : "`.58` — an enum member whose document name starts with a digit reaches its symbol.",
       "mode" : "eligible",
       "part_id" : "packet-and-memory-leaves"
    },
@@ -1167,7 +1167,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
       },
@@ -1185,6 +1185,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.57",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "packet-and-memory-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.58",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "packet-and-memory-leaves"
@@ -1323,13 +1329,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — packet and memory leaves",
          "metrics" : {
-            "bytes" : 45447,
+            "bytes" : 50246,
             "line_bytes" : 221,
-            "lines" : 478
+            "lines" : 529
          },
          "part_id" : "packet-and-memory-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/packet-and-memory-leaves.md",
-         "sha256" : "2b0560750fe81bfa860de8e2347902af1249e0d975d63ed2b27012a96595002e",
+         "sha256" : "9b3315382f23223932f5d73785d4ac71923e7263a0d9a272f34b07e7fa66db1b",
          "state" : "active"
       },
       {

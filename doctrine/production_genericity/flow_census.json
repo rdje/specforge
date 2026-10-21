@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-54AIA-TWO-DOCUMENT-PRIORS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3GIIIA-SIGNAL-CODE-COLUMNS",
    "baseline": {
-    "analyzed_functions": 2838,
-    "decision_sites": 15736,
-    "helper_edges": 20101,
+    "analyzed_functions": 2841,
+    "decision_sites": 15737,
+    "helper_edges": 20115,
     "semantic_macros": 1628
    },
    "delta": {
     "analyzed_functions": 3,
-    "decision_sites": 1,
-    "helper_edges": 14,
-    "semantic_macros": 0
+    "decision_sites": 30,
+    "helper_edges": 64,
+    "semantic_macros": 3
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.54.a.i.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.54.a.i.a: every stage acts only on priors two documents support (CorpusMemory::acting_priors, MIN_ACTING_SUPPORT), and a learned table kind never re-types a recognized layout header (is_recognized_layout_header, dword_layout_header)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a: an encoding table's signal-titled code column that determines its member is that signal's enum, and one signal's bit columns concatenate into one code (synthesize_signal_column_encodings, is_one_bit_of_a_split_signal, encoding_member_name)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -9036,6 +9036,148 @@ fn scan_encoding_tables_by_signal_anchor(
     statements
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a` — the enums an encoding table states in code columns titled by signals.
+///
+/// A table can title several columns by signals: AXI *A4.7* gives each physical address space its `AxPAS` code beside
+/// the `AxPROT[1]` and `AxNSE` bits that jointly key four of them, and AHB *3-2* writes `HSIZE` as the three columns
+/// `HSIZE[2] | HSIZE[1] | HSIZE[0]`. The single-column reading takes one value column, and a table keyed by more than it
+/// mints nothing. Here each signal-titled column is a code, and the bit columns of one signal are concatenated, most
+/// significant first, into its code. A code is that signal's enum only when it determines its member: two or more
+/// rows state one, and no code or member repeats. A column that only jointly determines its member is left to
+/// `.3.g.iii.b`, and one that repeats codes to `.3.g.iii.c`. Members are named by the first column that is no signal
+/// and no code and whose names are distinct. A converter that put every row of the table in its header leaves the
+/// data in the header's second row on. Only a table the converter typed as an encoding is read, and a `(table, enum)`
+/// another reader already minted is left to it.
+fn synthesize_signal_column_encodings(
+    source_ir: &SourceIr,
+    signal_titles: &HashSet<String>,
+    minted: &BTreeSet<(String, String)>,
+    statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<ExtractedStatement> {
+    // a column title's signal and, for a one-bit column, its bit (`HSIZE[2]` -> (`HSIZE`, Some(2)))
+    let titled = |title: &str| -> Option<(String, Option<u32>)> {
+        let title = title.trim();
+        let (base, bit) = match title.split_once('[') {
+            Some((base, rest)) => {
+                let inner = rest.strip_suffix(']')?;
+                (base.trim(), inner.trim().parse::<u32>().ok())
+            }
+            None => (title, None),
+        };
+        signal_titles
+            .contains(base)
+            .then(|| (base.to_string(), bit))
+    };
+    let mut statements = Vec::new();
+    for table in &source_ir.structured_tables {
+        if !matches!(
+            effective_table_kind(table, prior_guidance),
+            TableKind::Encoding
+        ) {
+            continue;
+        }
+        let Some(header) = table.header_rows.first() else {
+            continue;
+        };
+        let rows: &[Vec<crate::ir::source::StructuredTableCellRecord>] =
+            if table.body_rows.is_empty() && table.header_rows.len() > 1 {
+                &table.header_rows[1..]
+            } else {
+                &table.body_rows
+            };
+        let columns: Vec<Option<(String, Option<u32>)>> =
+            header.iter().map(|cell| titled(&cell.text)).collect();
+        if columns.iter().flatten().count() < 2 {
+            continue;
+        }
+        fn cell(row: &[crate::ir::source::StructuredTableCellRecord], col: usize) -> &str {
+            row.get(col).map_or("", |cell| cell.text.trim())
+        }
+        let Some(name_col) = (0..columns.len()).find(|&col| {
+            columns[col].is_none() && {
+                let names: Vec<&str> = rows
+                    .iter()
+                    .map(|row| cell(row, col))
+                    .filter(|name| !name.is_empty() && *name != "-")
+                    .collect();
+                let distinct: BTreeSet<&str> = names.iter().copied().collect();
+                names.len() >= 2
+                    && distinct.len() == names.len()
+                    && names.iter().all(|name| {
+                        !looks_like_encoding_literal(name) && name.parse::<f64>().is_err()
+                    })
+            }
+        }) else {
+            continue;
+        };
+        // each signal's columns (index, bit), in table order
+        type SignalColumns = (String, Vec<(usize, Option<u32>)>);
+        let mut signals: Vec<SignalColumns> = Vec::new();
+        for (col, column) in columns.iter().enumerate() {
+            let Some((signal, bit)) = column else {
+                continue;
+            };
+            match signals.iter_mut().find(|(name, _)| name == signal) {
+                Some((_, cols)) => cols.push((col, *bit)),
+                None => signals.push((signal.clone(), vec![(col, *bit)])),
+            }
+        }
+        for (signal, cols) in signals {
+            if minted.contains(&(table.table_id.clone(), signal.clone())) {
+                continue;
+            }
+            let split_bits = cols.len() > 1 && cols.iter().all(|(_, bit)| bit.is_some());
+            if cols.len() > 1 && !split_bits {
+                continue;
+            }
+            let mut ordered = cols.clone();
+            ordered.sort_by_key(|(_, bit)| std::cmp::Reverse(*bit));
+            let code = |row: &[crate::ir::source::StructuredTableCellRecord]| -> Option<u32> {
+                if split_bits {
+                    let bits: String = ordered.iter().map(|(col, _)| cell(row, *col)).collect();
+                    (bits.len() == ordered.len() && bits.bytes().all(|b| b == b'0' || b == b'1'))
+                        .then(|| u32::from_str_radix(&bits, 2).ok())
+                        .flatten()
+                } else {
+                    parse_encoding_member_value(cell(row, cols[0].0), table, row, cols[0].0)
+                }
+            };
+            let members: Vec<(String, u32)> = rows
+                .iter()
+                .filter_map(|row| {
+                    let name = encoding_member_name(cell(row, name_col));
+                    (!name.is_empty()).then_some(())?;
+                    Some((name, code(row)?))
+                })
+                .collect();
+            let codes: BTreeSet<u32> = members.iter().map(|(_, value)| *value).collect();
+            let names: BTreeSet<&str> = members.iter().map(|(name, _)| name.as_str()).collect();
+            if members.len() < 2 || codes.len() != members.len() || names.len() != members.len() {
+                continue;
+            }
+            for (member_name, value) in members {
+                if is_prose_fragment_member_name(&member_name)
+                    || is_width_parameter_leak_member(&member_name, &signal, Some(signal_titles))
+                {
+                    continue;
+                }
+                *statement_counter += 1;
+                statements.push(ExtractedStatement {
+                    statement_id: format!("statement_{statement_counter:04}"),
+                    class: StatementClass::SourceFact,
+                    modality: EvidenceModality::Text,
+                    text: format!("Enum {signal} {member_name} = {value}."),
+                    evidence_span_ids: vec![],
+                    supporting_table_ids: vec![table.table_id.clone()],
+                    related_visual_evidence_ids: vec![],
+                });
+            }
+        }
+    }
+    statements
+}
+
 fn collect_subject_signal_tokens_with_discovered_values(
     text: &str,
     discovered_values: &HashSet<String>,
@@ -25941,6 +26083,46 @@ fn synthesize_encoding_declarations(
     synthesize_encoding_declarations_for_enum(table, &enum_name, None, statement_counter)
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a` — is `col` titled by one bit of a signal (`HSIZE[2]`) whose other bits
+/// are columns of the same table (`HSIZE[1]`, `HSIZE[0]`)?
+fn is_one_bit_of_a_split_signal(
+    table: &crate::ir::source::StructuredTableRecord,
+    col: usize,
+) -> bool {
+    let Some(header) = table.header_rows.first() else {
+        return false;
+    };
+    let bit_of = |text: &str| -> Option<(String, u32)> {
+        let (base, rest) = text.trim().split_once('[')?;
+        let bit = rest.strip_suffix(']')?.trim().parse::<u32>().ok()?;
+        Some((base.trim().to_string(), bit))
+    };
+    let Some((base, bit)) = header.get(col).and_then(|cell| bit_of(&cell.text)) else {
+        return false;
+    };
+    header
+        .iter()
+        .filter_map(|cell| bit_of(&cell.text))
+        .any(|(other, other_bit)| other == base && other_bit != bit)
+}
+
+/// An encoding member's name as an enum spells it: alphanumerics and underscores, upper-cased, every other character an
+/// underscore, edge underscores trimmed.
+fn encoding_member_name(raw_name: &str) -> String {
+    raw_name
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '_' {
+                c.to_ascii_uppercase()
+            } else {
+                '_'
+            }
+        })
+        .collect::<String>()
+        .trim_matches('_')
+        .to_string()
+}
+
 fn synthesize_encoding_declarations_for_enum(
     table: &crate::ir::source::StructuredTableRecord,
     enum_name: &str,
@@ -25949,6 +26131,11 @@ fn synthesize_encoding_declarations_for_enum(
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
     let (header_name_col, value_col) = infer_encoding_column_indices(table, enum_name);
+    // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a — one bit of a signal written across several columns is no code on its
+    // own (AHB `HSIZE[2]` read alone made six members of two values); the signal-column reading concatenates them.
+    if is_one_bit_of_a_split_signal(table, value_col) {
+        return statements;
+    }
     // `KG-ISF-COMPLETENESS.5.xiii.a` — the member name comes from the column the document names it
     // in, and a table keyed by more than its value column mints nothing (see the adjudicator).
     let name_col = match adjudicate_member_name_column(table, header_name_col, value_col) {
@@ -25965,19 +26152,7 @@ fn synthesize_encoding_declarations_for_enum(
         if raw_name.is_empty() {
             continue;
         }
-        // Sanitize enum member name: keep alphanumeric + underscore, uppercase.
-        let member_name: String = raw_name
-            .chars()
-            .map(|c| {
-                if c.is_ascii_alphanumeric() || c == '_' {
-                    c.to_ascii_uppercase()
-                } else {
-                    '_'
-                }
-            })
-            .collect::<String>()
-            .trim_matches('_')
-            .to_string();
+        let member_name = encoding_member_name(raw_name);
         if member_name.is_empty() {
             continue;
         }
@@ -31694,6 +31869,45 @@ fn converge_evidence_extractions(
             statement_counter,
             prior_guidance,
         );
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a — the enums a table states in its other signal-titled code columns; a
+        // column title may name a collective the document defines (`AxPAS`).
+        let signal_titles: HashSet<String> = known_signals
+            .iter()
+            .cloned()
+            .chain(
+                collective_signal_name_surface(
+                    &extracted_statements,
+                    &known_signals.iter().cloned().collect(),
+                )
+                .into_iter()
+                .map(|record| record.collective_name),
+            )
+            .collect();
+        let minted: BTreeSet<(String, String)> = extracted_statements
+            .iter()
+            .chain(candidate_statements.iter())
+            .filter_map(|statement| {
+                let name = statement
+                    .text
+                    .strip_prefix("Enum ")?
+                    .split_whitespace()
+                    .next()?;
+                Some(
+                    statement
+                        .supporting_table_ids
+                        .iter()
+                        .map(move |table_id| (table_id.clone(), name.to_string())),
+                )
+            })
+            .flatten()
+            .collect();
+        candidate_statements.extend(synthesize_signal_column_encodings(
+            source_ir,
+            &signal_titles,
+            &minted,
+            statement_counter,
+            prior_guidance,
+        ));
         candidate_statements.extend(synthesize_directions_from_relations(
             &actor_signal_relations,
             &already_declared,
@@ -47576,6 +47790,146 @@ The control register.
             TableKind::Encoding,
             "a header no layout reader recognizes still takes the learned kind"
         );
+    }
+
+    #[test]
+    fn a_signal_titled_code_column_that_determines_its_member_is_an_enum() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("encodings.md");
+        fs::write(&source, "# Encodings\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str,
+                     kind: TableKind,
+                     header: Vec<Vec<StructuredTableCellRecord>>,
+                     body: Vec<Vec<StructuredTableCellRecord>>| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: None,
+                source_ref: None,
+                source_batch: None,
+                table_kind: kind,
+                row_count: (header.len() + body.len()) as u32,
+                col_count: header[0].len() as u32,
+                header_rows: header,
+                body_rows: body,
+            }
+        };
+        // AXI A4.7, every row in the header: AxPAS determines the space; AxPROT[1] and AxNSE only jointly.
+        source_ir.structured_tables.push(table(
+            "table_pas",
+            TableKind::Encoding,
+            rows(&[
+                &[
+                    "Physical address space",
+                    "AxPAS",
+                    "AxPROT[1]",
+                    "AxNSE",
+                    "Property",
+                ],
+                &["Secure", "0b000", "0b0", "0b0", "-"],
+                &["Non-secure (NS)", "0b001", "0b1", "0b0", "-"],
+                &["Root", "0b010", "0b0", "0b1", "RME_Support"],
+                &["Realm", "0b011", "0b1", "0b1", "RME_Support"],
+            ]),
+            Vec::new(),
+        ));
+        // AHB 3-2: one signal's bits as three columns.
+        source_ir.structured_tables.push(table(
+            "table_size",
+            TableKind::Encoding,
+            rows(&[&[
+                "HSIZE[2]",
+                "HSIZE[1]",
+                "HSIZE[0]",
+                "Size (bits)",
+                "Description",
+            ]]),
+            rows(&[
+                &["0", "0", "0", "8", "Byte"],
+                &["0", "0", "1", "16", "Halfword"],
+                &["0", "1", "0", "32", "Word"],
+                &["1", "1", "1", "1024", "-"],
+            ]),
+        ));
+        // AXI A4.4: both columns repeat codes, so neither determines the member.
+        source_ir.structured_tables.push(table(
+            "table_cache",
+            TableKind::Encoding,
+            rows(&[&["ARCACHE[3:0]", "AWCACHE[3:0]", "Memory type"]]),
+            rows(&[
+                &["0b1010", "0b0110", "Write-Through No-Allocate"],
+                &["0b1010", "0b1110", "Write-Through Write-Allocate"],
+                &["0b1110", "0b0110", "Write-Through Read-Allocate"],
+            ]),
+        ));
+        // the same shape typed as no encoding is not read
+        source_ir.structured_tables.push(table(
+            "table_map",
+            TableKind::Unknown,
+            rows(&[&["Space", "AxPAS", "AxNSE"]]),
+            rows(&[&["Secure", "0b000", "0b0"], &["Root", "0b010", "0b1"]]),
+        ));
+        let titles: std::collections::HashSet<String> =
+            ["AxPAS", "AxPROT", "AxNSE", "HSIZE", "ARCACHE", "AWCACHE"]
+                .into_iter()
+                .map(str::to_string)
+                .collect();
+        let mut counter = 0;
+        let texts = |minted: &std::collections::BTreeSet<(String, String)>,
+                     counter: &mut usize|
+         -> Vec<String> {
+            super::synthesize_signal_column_encodings(&source_ir, &titles, minted, counter, None)
+                .into_iter()
+                .map(|statement| {
+                    format!("{} {}", statement.supporting_table_ids[0], statement.text)
+                })
+                .collect()
+        };
+        assert_eq!(
+            texts(&std::collections::BTreeSet::new(), &mut counter),
+            [
+                "table_pas Enum AxPAS SECURE = 0.",
+                "table_pas Enum AxPAS NON_SECURE__NS = 1.",
+                "table_pas Enum AxPAS ROOT = 2.",
+                "table_pas Enum AxPAS REALM = 3.",
+                "table_size Enum HSIZE BYTE = 0.",
+                "table_size Enum HSIZE HALFWORD = 1.",
+                "table_size Enum HSIZE WORD = 2.",
+            ],
+            "a determining column and concatenated bits mint; joint, repeating and untyped columns do not"
+        );
+        let minted: std::collections::BTreeSet<(String, String)> =
+            [("table_pas".to_string(), "AxPAS".to_string())]
+                .into_iter()
+                .collect();
+        assert!(
+            texts(&minted, &mut counter)
+                .iter()
+                .all(|text| !text.starts_with("table_pas")),
+            "an enum another reader minted from the table is left to it"
+        );
+        let size = &source_ir.structured_tables[1];
+        assert!(super::is_one_bit_of_a_split_signal(size, 0));
+        assert!(!super::is_one_bit_of_a_split_signal(size, 3));
+        assert!(
+            super::synthesize_encoding_declarations_for_enum(size, "HSIZE", None, &mut counter)
+                .is_empty(),
+            "one bit read alone is no code"
+        );
+        Ok(())
     }
 
     #[test]

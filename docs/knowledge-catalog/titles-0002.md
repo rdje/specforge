@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md) | 2026-06-16 | `current` | The .1b.i consolidation strips a TRAILING universal verb/discourse-adverb off a relation-subject ("Subordinat… |
 | [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md) | 2026-06-23 | `current` | The .1c.i consolidation extends the .1b.i trailing strip to a closed class of trailing PREPOSITIONS + AUXILIA… |
 | [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md) | 2026-06-08 | `current` | A second agnostic FSM grammar — quoted operational modes of an actor (CAN error states) vs SWD's "<State> s… |
 | [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md) | 2026-08-14 | `current` | Alignment task evidence is a bounded active root over exact semantic and provenance authorities |
@@ -60,4 +61,3 @@
 | [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md) | 2026-06-23 | `current` | Cat-4 RISC-V CSR bit-position recovery (DOC-INTENT-TAXONOMY.4d.i) — NOT deterministically recoverable from… |
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
-| [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md) | 2026-09-16 | `current` | A caller's local $/ turns chomp into a no-op, and the guard it feeds then disables a whole check silently |

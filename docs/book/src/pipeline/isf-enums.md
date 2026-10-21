@@ -95,6 +95,11 @@ names it in* below. Every wire-protocol gold score is unchanged — the
 before and after eval reports are byte-identical across all five gold datasets, on chains rebuilt with
 both versions of the binary.
 
+*(`2026-10-21`.)* `AxSIZE`'s members arrive in EvidenceIR exactly as above, but no `AxSIZE` enum reaches SemanticIR
+or the `.isf`. Every member's name starts with a digit (`1_BYTE_PER_TRANSFER`), and SemanticIR's identifier parser
+drops such a member without a trace. The same happens to 22 member statements in four documents; recovering them is
+`EXTRACTION-REPRESENTATION-GAPS.58`'s.
+
 The enums this change *removes* — the 54 still named `TABLE`, `FIGURE` and `CHAPTER` — are all in the
 legacy stratum, so they will disappear as those documents are re-ingested rather than today.
 
@@ -375,6 +380,11 @@ and a third where one enum is assembled from two tables that each number their o
 those enums withdrawn entirely, and nothing added. AHB's `HTRANS` and `HRESP` are untouched beside the withdrawn
 `HSIZE` and `HPROT`, because their codes are distinct.
 
+Since `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a` (`2026-10-21`) the first shape is read for what it is: one signal's
+bit columns are concatenated into its code, so `HSIZE` is published again (see *A table that codes its member in
+several signal-titled columns* below). The `enum_code_collision_holdout_gold` fixture now collides on a single
+`TSIZE` column, so it still holds the rule.
+
 (Tracking: `KG-ISF-COMPLETENESS.5.xiv` for the measurement and `.5.xiv.a` for the rule.)
 
 ### The member's name comes from the column the document names it in
@@ -443,6 +453,29 @@ table in an older AXI revision, which the last condition refuses; AHB's *Table 3
 gives each `HPROT` bit its own column, so it is a set of flags rather than one enum, and stays unread.
 
 (Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.h`.)
+
+### A table that codes its member in several signal-titled columns
+
+Some encodings title more than one code column by a signal. AXI *Table A4.7* gives each physical address space its
+`AxPAS` code beside the `AxPROT[1]` and `AxNSE` bits that jointly key four of the spaces. AHB *Table 3-2* writes
+`HSIZE` as three one-bit columns, `HSIZE[2] | HSIZE[1] | HSIZE[0]`. The single-column reader takes one value column,
+and a table keyed by more than that column mints nothing. For `HSIZE` it was worse: it read `HSIZE[2]` alone and
+published six members on two codes.
+
+An encoding table's signal-titled columns are now read one signal at a time (`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a`).
+A column title names a signal when it is a declared signal or a collective name the document defines (`AxPAS`).
+
+- **Codes.** Each signal's column is its code. One signal's bit columns are concatenated into one code, most
+  significant first, and a single bit of such a signal is no longer read alone.
+- **When a column is an enum.** It is an enum only when its codes determine the member: two or more rows state one,
+  and no code or member name repeats.
+- **Member names** come from the first column that is no signal and no code and whose names are distinct.
+- **Other cases.** A table whose every row the converter put in its header is read from its second row on. A column
+  that only jointly keys its member, or repeats codes, is left alone (`.3.g.iii.b`, `.3.g.iii.c`).
+
+AXI now lowers `(AxPAS (SECURE 0) (NON_SECURE__NS 1) (ROOT 2) (REALM 3) (SYSTEM_AGENT__SA 4) (NON_SECURE_PROTECTED__NSP
+5))`. AHB lowers `(HSIZE (BYTE 0) (HALFWORD 1) (WORD 2) (DOUBLEWORD 3))`; its `4-word line` and `8-word line` members
+are lost to the digit-leading name above (`.58`). FSMGen's strict check accepts both.
 
 ### Which table an enum was read from
 

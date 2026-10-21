@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is an AXI obligation about WSTRB demoted to a residual
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > why is an eighth fact-card title part infeasible
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > why is an emitted-ISF count from an earlier refresh slice not the current number
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > why is an enum called TABLE or FIGURE
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why is an exact archive alone insufficient for the active corpus task
+- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
+  > why is an identifier-shaped section title not enough to declare a wire
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why is an in-repo gold document re-ingest blocked by PRODUCTION-GENERICITY
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > why is arm C excluded on caption_admission
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
@@ -282,19 +298,3 @@
   > why not scan the book for deleted Rust symbols
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > why not trim a two-word actor like HBM responds back to its head
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > why should corpus counts leave MEMORY md
-- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
-  > why was 'A device shall not assume that transactions occur at the same location' apparatus
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > why was 'Any AxSNOOP bits not driven by an interface are assumed to be LOW' not bound by .3.d.ii.a alone
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > why was 'the missing signals are assumed to be LOW' (signals covered by a check signal) not bound by .3.d.ii.a alone
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > why was ADIv6's CSYSPWRUPREQ power-up rule's antecedent the whole When sentence
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why was APB PSEL asserted missing from the reviewed population
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why was APB write_transfer / read_transfer membership only PCLK
-- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
-  > why was APB-E blocked with no source-grounded system clock/reset contract

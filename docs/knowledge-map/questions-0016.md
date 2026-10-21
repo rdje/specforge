@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
+  > what is signal_coreferences / SignalCoreferenceRecord
+- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > what is signal_families / SignalFamilyRecord
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is signal_presence_records and what does a SignalPresenceRecord hold
@@ -30,6 +32,8 @@
   > what is swallowed_verb_governance
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > what is synthesize_register_field_tables
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > what is synthesize_signal_column_encodings / is_one_bit_of_a_split_signal / encoding_member_name
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
@@ -293,7 +297,3 @@
   > what is the real membership test the LLM constraint path grounds a subject against (resolve_unique_document_identifier over declared_signal_catalog(ir) first and message_field_records names second — commands/extract_constraints_llm.rs:110-128 — NOT the seven signal-bearing EvidenceIR surfaces, which no producer consults)
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > what is the recall universe of promote_constraints (NOT the document — the distinct source_text of the constraints already persisted, one provider call each; a document with no Pattern constraints gets no LLM proposals at all)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the register-field eval surface (EvalTask::RegisterField)

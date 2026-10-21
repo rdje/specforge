@@ -252,6 +252,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c and .3.d.iii.e
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d and .51
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.41.c
 - [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
@@ -296,5 +298,3 @@
   > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.43
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > what is LOWand and why does the level test read a leading uppercase run
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class

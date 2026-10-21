@@ -443,13 +443,64 @@ whole.
   - The all-header-row tables are a converter defect every reader meets, and `.57` owns them.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a`
-  Status: `open` (`2026-10-21`; CODE; split from `.3.g.iii`)
+  Status: `done` (`2026-10-21`; CODE; split from `.3.g.iii`; checklist below; opened `.58`)
   Goal: **a code column that determines its member is that signal's enum.** **Reproduce:** AXI *A4.7* (`AxPAS`,
   every row in the header) and AHB *3-2* (`HSIZE[2:0]` as three bit columns) mint no enum. Acceptance: in an encoding
   table, read each signal-titled column whose codes are distinct across the rows that state one as that signal's
   enum, named by the member column. Concatenate one signal's bit columns into its code. Read an encoding table whose
   rows all sit in its header from its second row on. Keep every enum minted today unchanged, and measure every chain
   and the wire golds.
+  **Done `2026-10-21`.** `synthesize_signal_column_encodings` runs in the evidence convergence loop after the
+  signal-anchor scan. Column titles may be declared signals or collective names (`collective_signal_name_surface`
+  over the pass). `(table, enum)` pairs already minted are skipped. `is_one_bit_of_a_split_signal` stops the
+  single-column reader from taking one bit of a split signal alone: AHB `HSIZE[2]` had published `BYTE = 0`,
+  `HALFWORD = 0`, … and no symbol. Dry-run: 29 identical. AXI gains `AxPAS` (6 members), and AHB's `HSIZE` statements
+  carry the concatenated codes. Both rebuilt stage by stage: each gains one symbol and loses one captured-region
+  residual. Each `manager.isf` gains the type and the enum, FSMGen strict-clean with 0 diagnostics. **Found:**
+  SemanticIR's identifier parser drops an enum member whose name starts with a digit, without a trace. That is 22
+  member statements in four documents (AXI's whole `AxSIZE` enum, AHB's `4-word line` and `8-word line`, which also
+  sizes `HSIZE` as 2 bits); `.58` owns it.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — `.3.g.iii`'s census of the 13 multi-signal-column tables; the statements each reader
+  emits for A4.7, A4.4 and AHB 3-2; `AxPAS`'s collective record.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: the encoding readers take one value
+  column per table and refuse a multi-key table, never read a header-only table's rows, and read one bit of a split
+  signal as a code. New `synthesize_signal_column_encodings`, `is_one_bit_of_a_split_signal`, `encoding_member_name`
+  (the existing sanitizer, extracted), and the loop's `signal_titles` and `minted` sets. RED, the file restored
+  byte-identically after each (7 mutations, each failing the new test): one bit read alone, header-only rows unread,
+  repeating codes minting, any table kind, minted tables re-read, bits least significant first, numbers naming
+  members.
+- [x] **ADDRESSED (verified)** — dry-run of all 31 chains and the stage-by-stage rebuild of AXI and AHB as above;
+  FSMGen `--strict --check --json` clean on both `manager.isf`.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `3ba14a0fc`'s. `kg-bench` 157/158 at first: `enum_code_collision_holdout_gold` pinned `TSIZE`'s
+  exclusion on a split-bit table, which the misreading of one bit made collide. Its table now collides on a single
+  `TSIZE` column, so the fixture keeps its rule, and kg-bench is 158/158. `cargo fmt --check`; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean (after a type alias and `sort_by_key`). `cargo test --workspace
+  --lib --exclude specforge-production-graph` 474 / 171 / 1,910 passed, the kg-bench test 1 failed for the same
+  fixture, then passed. `flow_census.json` rolled (+3 functions, +30 decision sites, +64 helper edges, +3 semantic
+  macros); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — column titles the document's declarations and collective rules define, the codes'
+  own distinctness, and the converter's table kind; no document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A table that codes its member in several signal-titled columns*,
+  and the `AxSIZE` statement corrected; *A code that names two things names neither* dated); KM card
+  `a-signal-titled-code-column-determining-its-member-is-an-enum` (new) and `enum-member-values-have-no-oracle`
+  amended; kg-bench fixture `enum_code_collision_holdout_gold` re-based on a genuine collision. No production rule
+  deleted or replaced.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.58`
+  Status: `open` (`2026-10-21`; CODE; found by `.3.g.iii.a`)
+  Goal: **an enum member whose document name starts with a digit reaches its symbol.** SemanticIR's
+  `parse_enum_symbol_definition` reads a member name through `parse_identifier`, which refuses a leading digit, and
+  drops the statement without a residual. On the 31 chains that is 22 member statements in four documents. AXI 8
+  (`AxSIZE` `1_BYTE_PER_TRANSFER` … so no `AxSIZE` enum at all), APB 4, AHB 4 (`HSIZE`'s `4_WORD_LINE`,
+  `8_WORD_LINE`, and so `HSIZE` sizes 2 bits, not its declared 3), CHI C2C 6. **Reproduce:**
+  `generated/evidence_ir/ihi0022…/evidence_ir.json` *Enum AxSIZE 1_BYTE_PER_TRANSFER = 0.* and no `AxSIZE` in
+  SemanticIR. Acceptance: decide a member name that keeps the document's words and is a valid identifier (an
+  `.isf` name must lead with a letter) or a typed residual naming the dropped members. Apply it at the one seam, and
+  measure every chain, the `.isf` texts and FSMGen strict.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b`
   Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)

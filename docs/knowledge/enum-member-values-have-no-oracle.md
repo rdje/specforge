@@ -71,6 +71,9 @@ document-stated and the COLUMN is wrong. Three causes, not one: a split bit fiel
 `HSIZE[2] | HSIZE[1] | HSIZE[0] | …`), one bit of a wider field with the rest absent (`PPROT[1]`), a
 genuine multi-key table (`AWSNOOP` = `(AWSNOOP, AWDOMAIN) -> opcode`), and cross-table conflation
 (`AWATOP`). The unifying statement: **the value column does not functionally determine the member.**
+Since `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a` (`2026-10-21`) the split bit field is read as one code (card
+[[a-signal-titled-code-column-determining-its-member-is-an-enum]]), and `enum_code_collision_holdout_gold`
+collides on a single `TSIZE` column instead.
 
 Related: [[enum-member-name-column-needs-adjudication-not-a-score]],
 [[minted-enum-values-are-mostly-row-indices]], [[decimal-before-binary-needs-a-notational-witness]].

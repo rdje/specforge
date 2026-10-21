@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -296,5 +298,3 @@
   > what is sentence_end_in
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > what is sentence_names_relation / header_words
-- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
-  > what is signal_coreferences / SignalCoreferenceRecord

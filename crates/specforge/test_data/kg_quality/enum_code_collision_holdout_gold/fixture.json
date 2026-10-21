@@ -15,8 +15,8 @@
     ],
     "structured_tables": [
       {
-        "table_id": "table_tsize_split_bits",
-        "asset_id": "table_tsize_split_bits",
+        "table_id": "table_tsize_colliding_codes",
+        "asset_id": "table_tsize_colliding_codes",
         "page_id": "page_0001",
         "caption_text": "TSIZE encodings",
         "source_ref": null,
@@ -24,13 +24,7 @@
         "header_rows": [
           [
             {
-              "text": "TSIZE[1]",
-              "row_span": 1,
-              "col_span": 1,
-              "is_header": true
-            },
-            {
-              "text": "TSIZE[0]",
+              "text": "TSIZE",
               "row_span": 1,
               "col_span": 1,
               "is_header": true
@@ -46,13 +40,7 @@
         "body_rows": [
           [
             {
-              "text": "0",
-              "row_span": 1,
-              "col_span": 1,
-              "is_header": false
-            },
-            {
-              "text": "0",
+              "text": "0b00",
               "row_span": 1,
               "col_span": 1,
               "is_header": false
@@ -66,13 +54,7 @@
           ],
           [
             {
-              "text": "0",
-              "row_span": 1,
-              "col_span": 1,
-              "is_header": false
-            },
-            {
-              "text": "1",
+              "text": "0b00",
               "row_span": 1,
               "col_span": 1,
               "is_header": false
@@ -86,13 +68,7 @@
           ],
           [
             {
-              "text": "1",
-              "row_span": 1,
-              "col_span": 1,
-              "is_header": false
-            },
-            {
-              "text": "0",
+              "text": "0b01",
               "row_span": 1,
               "col_span": 1,
               "is_header": false
@@ -106,13 +82,7 @@
           ],
           [
             {
-              "text": "1",
-              "row_span": 1,
-              "col_span": 1,
-              "is_header": false
-            },
-            {
-              "text": "1",
+              "text": "0b01",
               "row_span": 1,
               "col_span": 1,
               "is_header": false
@@ -126,7 +96,7 @@
           ]
         ],
         "row_count": 5,
-        "col_count": 3
+        "col_count": 2
       },
       {
         "table_id": "table_tburst_encodings",

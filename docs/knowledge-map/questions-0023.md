@@ -2,8 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why does 'These rules assume that the TS Delays are zero' stay apparatus (a rule's premise)
+- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
+  > why does 'This register is optional' keep the demonstrative (no referent resolution)
+- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
+  > why does 'You must not assume any timing information that is not explicit in the diagrams' stay apparatus
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > why does A4.4 not mint AWCACHE (its codes repeat)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > why does ACE table_0275 stay flagged after presence capture
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -16,6 +26,10 @@
   > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > why does AHB's HSELx family produce no adapter residual
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > why does AHB's HSIZE come from three columns HSIZE[2] | HSIZE[1] | HSIZE[0]
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > why does AHB's HSIZE lack 4_WORD_LINE and 8_WORD_LINE, and AXI have no AxSIZE (digit-leading member names, .58)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > why does AMD IOMMU extract no register fields
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -36,6 +50,8 @@
   > why does AWDOMAIN carry three absent values (System domain, Shareable domain, Non-shareable)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > why does AXI have an AxPAS enum (Table A4.7, every row in the header)
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
   > why does AXI manager.isf not drive AWSNOOP ARSNOOP ARLOCK AWLOCK WSTRB from the tied LOW sentences
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -282,19 +298,3 @@
   > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > why does an EvidenceIR artifact have no document_class
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does an alphabetic constraint value require a word boundary but a numeric value does not
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > why does an enum get values 0 1 2 3 when the document states none
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why does an enum member have a whole sentence for a name
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > why does an evidence.rs or semantic.rs production edit not un-seal the corpus
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why does an evidence/converge build OOM on a doc with many multi-word actor names
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why does an incidental 'can' in a source block not drop its other constraints
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
