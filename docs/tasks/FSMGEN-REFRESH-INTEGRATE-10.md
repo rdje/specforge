@@ -53,6 +53,9 @@ Audit the published-contract delta as cycle 9 did, and integrate only what that 
   show this; `scripts/measure_isf_realized_ports.py <export>` inventories it), or each absence is owned.
 - Every open request bundle is re-run on the new pin; `FSMGEN-REQUESTS.2` and `EXTRACTION-REPRESENTATION-GAPS.21`
   close on it, and any other request the new pin answers is updated.
+- The typed-storage reset defect `FSMGEN-REQUESTS.13` found on the old pin is gone: with `PAS` a declared 2-bit type,
+  `(storage (var pas (type PAS) (reset 0)))` checks with no stderr and `(reset 7)` is refused as not fitting 2 bits,
+  as upstream `23eed7627` already does (added `2026-10-22`).
 - Every declared pin copy (feedback channel, derived-state authority, Knowledge Map, mdBook, live docs) agrees
   with the gitlink.
 - Full CI passes; committed through `COMMIT.md`.

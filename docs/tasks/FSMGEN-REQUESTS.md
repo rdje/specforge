@@ -208,14 +208,23 @@ drafting to integration, and forwarded by the owner. The process is
   `bin/fsmgen-issue-bundle`, `commands.sh` re-run from the export root; the export removed after copying. The ledger
   holds 16 open records, its cap.
 
-- ID: `FSMGEN-REQUESTS.13` · Status: `open` (`2026-10-22`; REQUEST — classify, reproduce, bundle, sign off; found by
-  `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`) · Goal: **a storage variable typed by an enum checks without a Perl
-  warning.** On the pin `54ac1c22`, `(storage (var pas (type PAS) (reset 0)))` with `PAS` a declared 2-bit enum passes
-  `--strict --check --json` with 0 diagnostics but prints `Use of uninitialized value $width in pattern match (m//) at
-  …/FSM/Adapter/ISF/Parser.pm line 8750.` on stderr; the same actor declaring `(width 2)` is silent. Acceptance:
-  classify it against FSMGen's typed-storage contract, then reproduce on the pin and on upstream HEAD from a complete,
-  known-good-checked export. Bundle it if HEAD still warns, or record that the next pin carries the fix. The ledger is
-  at its 16-record cap, so filing needs that cap's remedy first (`LIVE-DOCUMENT-PRESSURE-HEADROOM.45` owns its lines).
+- ID: `FSMGEN-REQUESTS.13` · Status: `done` (`2026-10-22`; DETERMINATION — no request; found by
+  `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`) · Goal: **a storage variable typed by an enum checks its reset value
+  without a Perl warning.** **Classified** against FSMGen's contract: `13j` documents `(var NAME (type T))`, with
+  `(width N)` and `(type T)` mutually exclusive, and `13a` *Storage reset values* says an over-width reset value fails
+  closed. A defect would be a `bug_report`.
+  **Reproduced on the pin `54ac1c22`** (`PAS` a declared 2-bit type):
+  - `(var pas (type PAS) (reset 0))` passes strict with 0 diagnostics but prints `Use of uninitialized value $width in
+    pattern match (m//) at …/FSM/Adapter/ISF/Parser.pm line 8750.`;
+  - `(var pas (type PAS) (reset 7))` passes strict, while `(var pas (width 2) (reset 7))` is refused (*reset value 7
+    does not fit in 2 bit(s)*);
+  - `(var pas (type PAS))` with no reset is silent.
+  The parser's width-fit check pattern-matches the undefined `$width` of typed storage (read-only reading of
+  `Parser.pm`). **Upstream HEAD `23eed7627`** (a complete `git archive` export, known-good-checked first: the
+  `(width 2)` actor checks with no stderr on both installations) fixes both. `(reset 0)` is silent, and `(reset 7)` is
+  refused with the same message as the width form. So no packet is filed and the ledger cap is not touched.
+  `FSMGEN-REFRESH-INTEGRATE-10`'s acceptance now re-checks both cases on the new pin. SPECFORGE emits no typed storage
+  today.
 
 - ID: `FSMGEN-REQUESTS.14` · Status: `done` (`2026-10-22`; INTAKE) · Goal: **reconcile the register with FSMGen's
   `2026-10-21` acknowledgement.** The owner pinged FSMGen on `2026-10-21` about `.7`–`.10` and `.12`. FSMGen's response
@@ -236,9 +245,6 @@ drafting to integration, and forwarded by the owner. The process is
   status for the older requests is read by that refresh, which re-runs every bundle.
 
 ## Current Frontier
-
-`.13` — classify and reproduce the typed-storage `$width` warning (found `2026-10-22`); it needs the ledger cap's
-remedy before it can be filed.
 
 `.7`, `.8`, `.10`, `.12` — acknowledged by FSMGen (`2026-10-21`, `.14`): owned by SEM `.60.1`, `.60.2`, `.60.4` and `.92`,
 implementation open (`.10` partly delivered in FSMGen's checkout). `.9` — answered (`2026-09-30`). None is in a
@@ -271,3 +277,5 @@ acknowledged (`2026-09-24`). Each advances when a published FSMGen revision cont
   recorded yet. Each leaf still closes on the first FSMGen pin that contains its change.
 - `2026-10-22`: `.14` — FSMGen's `2026-10-21` acknowledgement of `.7`–`.10` and `.12` reconciled into the packets and the
   ledger (`.9` answered); `.13` opened for the typed-storage `$width` warning.
+- `2026-10-22`: `.13` — the typed-storage reset defect reproduces on the pin and is fixed at upstream `23eed7627`; no
+  packet; `FSMGEN-REFRESH-INTEGRATE-10` re-checks it on the new pin.
