@@ -144,6 +144,8 @@
   > why is a table listed uncarried though its rows produced constraints
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > why is a table row not read as an absent-value sentence
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why is a table whose first column is headed Code or Key not a signal inventory (table_keys_codes_rather_than_signals, EXTRACTION-REPRESENTATION-GAPS.53)
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why is a table's caption_text null when the caption is printed on the page
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)

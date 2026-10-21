@@ -188,6 +188,7 @@ If prose and a signal-description table disagree about the same signal's active 
 When `EvidenceIR` synthesizes a formal declaration from a signal-description table, it also records a `table_signal_declaration_provenance` entry.
 That entry links the synthetic statement id back to the structured `SourceIR` table id, so later stages can preserve table support on canonical interface signals instead of losing the fact that the declaration came from a real table.
 Validation reports this count as `table_signal_declaration_provenance`, which makes the evidence-stage table bridge visible before `SemanticIR` and `IntentIR` decide what survives into canonical signal inventory.
+A table is a signal inventory by its structure, not its caption: a table whose first column is headed *Code* or *Key* alone holds codes its other columns define (AXI's *Key to signals table*: `Y`, `YM`, `O`), so its rows name no signal (`EXTRACTION-REPRESENTATION-GAPS.53`); a *Symbol* column still heads a signal list.
 
 It is not supposed to decide the final canonical meaning of the whole interface.
 Likewise, negative-knowledge priors may make validation more alert to a repeated evidence-stage conflict pattern, but they do not suppress the current evidence or decide the conflict.

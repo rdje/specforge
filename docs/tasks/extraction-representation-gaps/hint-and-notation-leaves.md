@@ -102,7 +102,7 @@ hint gives a signal, and the sentences that define the document's own notation. 
   sender*) reaches no carrier (`.55`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.53`
-  Status: `open` (`2026-10-21`; CODE; found by `.50`)
+  Status: `done` (`2026-10-21`; CODE; found by `.50`; checklist below)
   Goal: **a key table's codes are not signal names.** AXI's `table_0265` (*Table B2.1: Key to signals table*, header
   `Code | Manager interfaces | Subordinate interfaces`, rows `Y`, `YM`, `YS`, `O`, `NS`, `N`) is classed
   `signal_description`, so `collect_signal_names_from_tables` admits its codes as signal names; the older AXI edition's
@@ -116,6 +116,19 @@ hint gives a signal, and the sentences that define the document's own notation. 
   `collect_signal_names_from_tables` (the hint catalog, the declared-signal set, the visual-motif names) sees them.
   Acceptance: tell a key table (a column of codes that the other columns define) from a signal-description table by
   its own structure, not by its caption words alone, keep every genuine signal table, and measure every chain.
+  **Decided `2026-10-21`: a first column headed *Code* or *Key* alone holds codes, not signals.**
+  `table_keys_codes_rather_than_signals` joins `table_states_a_property_rather_than_a_signal_inventory` in
+  `should_treat_table_as_top_level_signal_description`, so every reader of signal tables (the name catalog, the hint
+  reader, the actor columns) passes such a table by; the caption's *signals* no longer makes it an inventory. A
+  *Symbol* column stays one: JESD's *Signal List and Description* heads its names so. Over every SourceIR the rule
+  matches the two AXI key tables and USB 3.2's state-machine key, and no signal table. **Found while measuring:**
+  with the codes gone, AXI's presence rows (*| ARREADY | AXI_Transport == Ready | O | Y | … |*) name one signal each,
+  so `.50`'s label rule read *Ready* closing the condition cell as the row's label — six ready-like hints right by
+  accident; a value compared in an expression (after `=`, `≠`, `<`, `>`) is now not a label.
+  **Measured over all 31 chains** (evidence dry-run against `84d060191`'s): 30 identical; AXI moves only
+  `signal_semantic_hints` (57 -> 56, the `Y` hint) and its extraction manifest; USB 3.2's key never reached the
+  catalog (its keys are not identifier-shaped). AXI rebuilt stage by stage: SemanticIR, IntentIR, the adapter and
+  every `.isf` text byte-identical (`Y` was in no interface).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54`
   Status: `open` (`2026-10-21`; DESIGN; found by `.50`)
@@ -199,3 +212,26 @@ hint gives a signal, and the sentences that define the document's own notation. 
   number or signal name.
 - [x] **LOCKSTEP** — book `pipeline/presence-and-assumptions.md` (*A section that defines the document's notation*);
   KM `a-section-defining-the-documents-notation-is-apparatus`. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.53` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — every `signal_description` table over all SourceIRs whose first header is *code*,
+  *key*, *symbol*, *legend* or *abbreviation*: the two AXI key tables, USB 3.2's key, two JESD signal and timing
+  tables; where AXI's codes surface in its evidence (3 hint targets).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `should_treat_table_as_top_level_signal_description`
+  took a caption naming *signals* as an inventory, so `collect_signal_names_from_tables` admitted the key's codes. New
+  `table_keys_codes_rather_than_signals`; `labels_role` refuses a compared value. RED, the file restored
+  byte-identically after each (4 mutations, each failing a named test): the wiring, the key words, any header word,
+  a compared value read as a label.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: 30 identical, AXI −1 hint (`Y`); without the
+  compared-value refusal the same run gained six presence-row hints, measured before it was added. AXI rebuilt stage
+  by stage: every later stage and `.isf` text byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `84d060191`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,887 passed, 0 failed. `flow_census.json` rolled (+1 function, +4 decision
+  sites, +3 helper edges, +1 macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the table's own first header word; no document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (a signal inventory by structure) and `domain/handshake-semantics.md`
+  (a compared value); KM `a-hint-role-counts-only-for-the-signal-that-bears-it` amended. No production rule deleted
+  or replaced.

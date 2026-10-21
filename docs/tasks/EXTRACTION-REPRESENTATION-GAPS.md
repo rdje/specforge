@@ -38,11 +38,10 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.53` — a key table's codes are not signal names.
+`.54` — a remembered hint role does not outlive the reading it was learned from.
 
-Then, in order: `.54` (a remembered hint role does not outlive the reading it was learned from), `.55` (an obligation
-a keyword's definition carries reaches a carrier), `.46.c` waits for a FSMGen pin carrying
-`sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit
+Then, in order: `.55` (an obligation a keyword's definition carries reaches a carrier), `.46.c` waits for a FSMGen pin
+carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit
 encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal
 table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a
 re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`,
@@ -101,7 +100,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.37`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.53`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`

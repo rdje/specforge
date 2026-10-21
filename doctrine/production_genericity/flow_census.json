@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-51-NOTATION-APPARATUS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-53-KEY-TABLE",
    "baseline": {
-    "analyzed_functions": 2804,
-    "decision_sites": 15521,
-    "helper_edges": 19593,
+    "analyzed_functions": 2807,
+    "decision_sites": 15532,
+    "helper_edges": 19601,
     "semantic_macros": 1614
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 11,
-    "helper_edges": 8,
-    "semantic_macros": 0
+    "analyzed_functions": 1,
+    "decision_sites": 4,
+    "helper_edges": 3,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.51",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.51: every sentence of a section that defines the document's own notation is apparatus (document_notation_sections, names_document_notation, outline_number)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.53",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.53: a table whose first column is headed Code or Key holds codes, not signal names (table_keys_codes_rather_than_signals); a compared value is not a role label."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

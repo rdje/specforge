@@ -4855,6 +4855,24 @@ fn is_headerless_connector_pin_diagram(
 /// selects **exactly 4, and all four satisfy condition 2 as well**. `property` is universal document
 /// grammar in the same class as the `signal`/`port`/`pin`/`name` words this gate already reads — not a
 /// document, vendor, protocol or symbol identity (ADR 0006).
+/// `EXTRACTION-REPRESENTATION-GAPS.53` — a key table: its first column, headed *Code* or *Key* alone, holds codes that
+/// its other columns define (AXI's *Key to signals table*: `Code | Manager interfaces | Subordinate interfaces`, rows
+/// `Y`, `YM`, `O`), so its rows name no signal whatever its caption says. A *Symbol* column is not one: a signal list
+/// heads its names so.
+fn table_keys_codes_rather_than_signals(table: &crate::ir::source::StructuredTableRecord) -> bool {
+    let Some(first_header) = table.header_rows.first().and_then(|row| row.first()) else {
+        return false;
+    };
+    let words: Vec<&str> = first_header
+        .text
+        .split(|character: char| !character.is_ascii_alphanumeric())
+        .filter(|word| !word.is_empty())
+        .collect();
+    matches!(words.as_slice(), [word] if ["code", "codes", "key", "keys"]
+        .iter()
+        .any(|key| word.eq_ignore_ascii_case(key)))
+}
+
 fn table_states_a_property_rather_than_a_signal_inventory(
     table: &crate::ir::source::StructuredTableRecord,
 ) -> bool {
@@ -4927,7 +4945,9 @@ fn should_treat_table_as_top_level_signal_description(
         return false;
     }
 
-    if table_states_a_property_rather_than_a_signal_inventory(table) {
+    if table_states_a_property_rather_than_a_signal_inventory(table)
+        || table_keys_codes_rather_than_signals(table)
+    {
         return false;
     }
 
@@ -13084,6 +13104,14 @@ impl SemanticRoleReading {
         tag: SignalSemanticTag,
     ) -> bool {
         if self.word(cue) != semantic_role_phrases(tag)[0] {
+            return false;
+        }
+        // `EXTRACTION-REPRESENTATION-GAPS.53` — a value compared in an expression is not a label: *AXI_Transport ==
+        // Ready* names a transport, not the row's signal.
+        if self.lowered[cell.0..cue.0]
+            .trim_end()
+            .ends_with(['=', '≠', '<', '>'])
+        {
             return false;
         }
         let next_word = self
@@ -45024,6 +45052,64 @@ The control register.
     }
 
     #[test]
+    fn a_key_tables_codes_are_not_signal_names() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("key.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Signals\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let table = |table_id: &str, caption: &str, header: [&str; 3], rows: &[[&str; 3]]| {
+            StructuredTableRecord {
+                table_id: table_id.to_string(),
+                asset_id: format!("asset_{table_id}"),
+                page_id: None,
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::SignalDescription,
+                header_rows: vec![
+                    header
+                        .iter()
+                        .map(|text| make_table_cell(text, true))
+                        .collect(),
+                ],
+                body_rows: rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|text| make_table_cell(text, false))
+                            .collect()
+                    })
+                    .collect(),
+                row_count: rows.len() as u32,
+                col_count: 3,
+            }
+        };
+        source_ir.structured_tables.push(table(
+            "table_key",
+            "Table B2.1: Key to signals table",
+            ["Code", "Manager interfaces", "Subordinate interfaces"],
+            &[
+                ["YM", "Mandatory", "Optional"],
+                ["O", "Optional", "Optional"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_signals",
+            "Table 75 Signal List and Description",
+            ["Symbol", "Type", "Description"],
+            &[["WRCK", "Input", "Wrapper clock"]],
+        ));
+        let names = super::collect_signal_names_from_tables(&source_ir, None);
+        assert!(
+            names.contains("WRCK"),
+            "a Symbol column still names signals: {names:?}"
+        );
+        assert!(!names.contains("YM") && !names.contains("O"), "{names:?}");
+        Ok(())
+    }
+
+    #[test]
     fn misclassified_field_table_does_not_synthesize_fake_signal_semantics() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("fields.md");
@@ -46534,6 +46620,17 @@ The control register.
     fn a_table_row_naming_one_signal_is_its_description() {
         use super::SemanticRoleSubject::Named;
         use super::SignalSemanticTag::HandshakeValidLike as Valid;
+        let compared = "| ARREADY | AXI_Transport == Ready | O |";
+        assert!(
+            borne_roles(
+                compared,
+                Named("ARREADY", (0, compared.len())),
+                &[super::SignalSemanticTag::HandshakeReadyLike],
+                &["ARREADY"]
+            )
+            .is_empty(),
+            "a compared value is not a label"
+        );
         let row = "| AWVALIDM | Output | Master | Write address valid. |";
         assert_eq!(
             borne_roles(

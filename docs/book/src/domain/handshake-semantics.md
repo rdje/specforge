@@ -45,7 +45,7 @@ So every source kind keeps a role only when its text makes the signal the role's
 
 - the signal is the agent of an indicating predicate whose complement holds the role: *STB_O indicates a valid data transfer cycle*, *keeps ACK_I asserted to indicate that it is ready*, *indicates that it has placed valid data on the data bus by asserting ACK_I*
 - the signal is the subject of a verb-phrase role: *XREADY can accept the transfer*
-- a description names its signal by the role: *Write address valid.*, *Ready indicator*, *The ready signal used by …* (a table row naming one signal is that signal's description)
+- a description names its signal by the role: *Write address valid.*, *Ready indicator*, *The ready signal used by …* (a table row naming one signal is that signal's description; a value compared in an expression, *AXI_Transport == Ready*, is not a label)
 
 The role does not count for the data a validity qualifies (*presents valid data on its DAT_O lines*, *PNSE must be valid when PSEL is asserted*), for a signal named beside the bearer (*If there is valid data, that is, ATVALID HIGH*), when it is denied (*not ready to accept*), or when what is indicated is a choice (*indicates which byte lanes contain valid data*).
 Role words match as whole words, so *invalid*, *validity* and *already* state nothing, and a role word written as a word (*Valid*) is not a signal that only case-folds to it (`VALID`).

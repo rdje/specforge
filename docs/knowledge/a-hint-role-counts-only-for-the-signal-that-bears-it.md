@@ -12,10 +12,11 @@ answers:
   - "why is Valid indicator a valid-like hint for AWVALID even though AXI declares a signal VALID"
   - "does corpus prior memory still give a hint a role (a remembered role must pass the same text)"
   - "what is EXTRACTION-REPRESENTATION-GAPS.50"
+  - "why is a table whose first column is headed Code or Key not a signal inventory (table_keys_codes_rather_than_signals, EXTRACTION-REPRESENTATION-GAPS.53)"
 date: 2026-10-21
 status: current
 tags: [evidence-ir, semantic-hints, handshake-roles, prior-memory, prose, signal-description-tables, visual-captions, adr-0006, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (VALID_ROLE_PHRASES; READY_ROLE_PHRASES; INDICATING_VERBS; ASSERTION_WORDS; is_role_label_word; semantic_role_phrase_spans; SemanticRoleSubject; retain_borne_semantic_roles; SemanticRoleReading; infer_signal_semantic_tags_from_description; synthesize_signal_semantic_hints_from_tables/_prose/_visual_evidence); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.50, .53, .54)
+evidence: crates/specforge/src/ir/evidence.rs (VALID_ROLE_PHRASES; READY_ROLE_PHRASES; INDICATING_VERBS; ASSERTION_WORDS; is_role_label_word; semantic_role_phrase_spans; SemanticRoleSubject; retain_borne_semantic_roles; SemanticRoleReading; infer_signal_semantic_tags_from_description; synthesize_signal_semantic_hints_from_tables/_prose/_visual_evidence; table_keys_codes_rather_than_signals); docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md (.50, .53, .54)
 reverify: "cargo test --offline -p specforge-core --lib a_prose_role_counts_only_for_the_signal_that_indicates_it a_description_names_its_signal_by_the_role_or_indicates_it a_remembered_role_holds_only_where_the_signal_states_it"
 ---
 
@@ -57,4 +58,6 @@ chains (AXI `AWTAGOP` ready-like, from *already*) — owned by `.54`.
 
 **Measured `2026-10-21` (31 chains):** 136 -> 97 hints (67 kept, 68 withdrawn, 29 gained — AXI's valid indicators
 now from their own words); conflicts 4 -> 1 (Wishbone `ACK_I`, which the document gives both roles). AXI `Y`, a code
-of a key table read as a signal, keeps ready-like from *| Ready | Y |* — owned by `.53`.
+of a key table read as a signal, kept ready-like from *| Ready | Y |* until `.53` (`2026-10-21`) stopped reading a
+table whose first column is headed *Code* or *Key* as a signal inventory; with the codes gone AXI's presence rows
+name one signal each, and a value compared in an expression (*AXI_Transport == Ready*) is not a label.
