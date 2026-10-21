@@ -199,6 +199,10 @@ change. `EXTRACTION-REPRESENTATION-GAPS.54` (`2026-10-21`) measured what it stil
 two evidence records, a stale ready-like hint learned from a reading the reader has since withdrawn and one duplicate
 declaration it suppresses. A store relearned from the proof-carrying chains would drift in every family. Because the
 behavioral qualification pins the store's hash beside its replay library, the refresh — re-declared inputs, this
-convergence loop, and the qualification replay — is one owned transaction (`.54.a`). Meanwhile a remembered semantic
+convergence loop, and the qualification replay — is one owned transaction (`.54.a.ii`). A candidate learned from the 31
+current chains (`.54.a`, measured on scratch) shows why it cannot run blindly. It drops the stale hint, but its new
+table-shape priors rest mostly on one document each. USB 3.2's converter-mistyped status tables would teach *bit |
+description* -> signal description to the same document's bit layouts, and four status-word fields would vanish.
+When such a prior may type a table is decided first (`.54.a.i`). Meanwhile a remembered semantic
 role holds only where the current text makes the signal its bearer (`.50`; see *Prior-guided meaning* in
 `domain/handshake-semantics.md`).

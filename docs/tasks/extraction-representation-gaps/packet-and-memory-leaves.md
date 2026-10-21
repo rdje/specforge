@@ -10,7 +10,7 @@ whole.
 ## Post-migration records
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`
-  Status: `open` (`2026-10-21`; CODE; opened by `.54`)
+  Status: `superseded` (`2026-10-21`; CODE; opened by `.54`; measured, then split into `.54.a.i` and `.54.a.ii`)
   Goal: **the corpus memory's refresh runs as ADR 0036 declares it.** The store pinned by the behavioral
   qualification (`a416cc8b…`) was learned from 13 IntentIR inputs, 8 of which are now legacy and refused by
   `learn-priors`, so its declared refresh cannot run and it still recalls readings the current reader withdraws (AXI
@@ -23,6 +23,41 @@ whole.
   `2026-10-21`:** `behavioral_qualification.json`'s frozen census pins the store with the replay library and entrypoint
   hashes, which still match today's files, so a refresh re-runs `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`'s 24-document
   behavioral replay under that contract before the hash moves.
+  **Measured `2026-10-21` (no store moved).** `learn-priors` over the 31 current chains' IntentIR accepts all 31 and
+  writes a candidate to scratch. Against the pinned store's 13 inputs, the counts are: actor 29 -> 24, semantic 83 ->
+  64, modality 4, temporal 443 -> 1,140, table 0 -> 128, visual 1,251 -> 1,430, negative 11 -> 13, profiles 2 -> 3. An
+  EvidenceIR dry-run of every chain under the candidate (`evidence --prior-memory`) moves 6 chains beyond the store
+  path:
+  - AXI loses the `AWTAGOP` hint (`.54`'s target), gains 8 hints and drops 1, nets 3 relations and 4 constraints, and
+    changes 591 statements without moving a class.
+  - AHB gains 14 relations; TMC gains 2 polarities and 3 declaration provenances; RISC-V debug loses 9 statements.
+  - **USB 3.2 loses its four status-word fields and 2 reserved spans, and USB4 inter-domain 2 reserved spans.**
+
+  The regression's cause: the candidate's 128 table-shape priors are new (the pinned store had none), and 123 of them
+  rest on one document. USB 3.2's four status tables that the converter mis-typed `signal_description` teach `bit |
+  description -> signal_description` (support 1). The prior then re-types the same document's untyped status-word
+  tables through `effective_table_kind`, and the bit family's kind gate refuses them. A store learned from today's
+  readings entrenches a converter guess the header shape contradicts. ADR 0036's loop would converge on it. So the
+  refresh waits on a decision about which kinds a learned shape prior may assign (`.54.a.i`), then runs (`.54.a.ii`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.i`
+  Status: `open` (`2026-10-21`; DESIGN; split from `.54.a`)
+  Goal: **a learned table-shape prior cannot entrench a kind the table's own header contradicts.** 123 of the 128
+  candidate table-shape priors rest on one document, and USB 3.2's converter-typed status tables teach `bit |
+  description -> signal_description` to the document's untyped bit layouts. **Reproduce:** `learn-priors` over the 31
+  chains to scratch, then `evidence --prior-memory <scratch>` on USB 3.2: `message_fields.bit_position_table` produces
+  4 -> 0. Acceptance: decide from what a shape prior is for whether it needs cross-document support. Decide whether a
+  header shape a reader recognizes (the bit-position vocabulary, the byte and dword layouts) outranks a learned kind,
+  and whether the converter's own guess on such a header should be learned at all. Measure the decision on the
+  AXI/AHB/TMC/RISC-V gains as well as the USB regressions; open the CODE leaf.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
+  Status: `open` (`2026-10-21`; CODE; split from `.54.a`; waits for `.54.a.i`)
+  Goal: **the corpus memory's refresh runs as ADR 0036 declares it, under `.54.a.i`'s rule.** Acceptance (`.54.a`'s,
+  unchanged): relearn from the 31 validated chains to a byte-stable store, replay every affected chain stage by stage,
+  re-run the behavioral held-out qualification (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`'s 51 attempts, provider-free)
+  against the new store, re-pin `behavioral_qualification.json` and `behavioral_holdout_evidence.json` with the
+  measured drift, and state what triggers the next refresh.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a`
   Status: `done` (`2026-10-21`; CODE; split from `.55.b.iv`; opened `.55.b.iv.b`)

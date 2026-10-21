@@ -141,7 +141,9 @@ dedicated child tree) when pursued.
     `2026-10-21` (`EXTRACTION-REPRESENTATION-GAPS.54`): the store's declared refresh cannot run — 8 of its 13
     learning inputs are legacy schema-1 IntentIR that `learn-priors` refuses; the refresh, with re-declared inputs
     and a replay of the behavioral qualification that pins the store, is owned by
-    `EXTRACTION-REPRESENTATION-GAPS.54.a`.
+    `EXTRACTION-REPRESENTATION-GAPS.54.a`. `2026-10-21` (`.54.a`, measured): all 31 current chains are accepted
+    inputs, but a store learned from them re-types USB 3.2's bit layouts through a single-document table-shape
+    prior; the rule for such priors is `.54.a.i`'s, the refresh `.54.a.ii`'s.
   Commit: `see Commit Log`
 
 - ID: `R15C-R15G-LEARNING-PLANE-BACKFILL.5`
