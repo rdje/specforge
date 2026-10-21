@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.ii",
-      "literal" : "`.55.b.ii` — a layout whose field name opens its description reaches `message_field_records`.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iii",
+      "literal" : "`.55.b.iii` — a DW layout with nested bit sub-layouts reaches `message_field_records`.",
       "mode" : "eligible",
       "part_id" : "hint-and-notation-leaves"
    },
@@ -124,13 +124,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — hint and notation leaves",
             "metrics" : {
-               "bytes" : 43142,
-               "line_bytes" : 139,
-               "lines" : 441
+               "bytes" : 48529,
+               "line_bytes" : 154,
+               "lines" : 494
             },
             "part_id" : "hint-and-notation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/hint-and-notation-leaves.md",
-            "sha256" : "5beeff2763fb8bbf904caea3fd0dd0f38b896f2c447b4970236f6b84b3e87463",
+            "sha256" : "f1c6e9b5a4f0edddf4eb781b695b1a6265813f57e73d4afd6eb76fdd37d4ed0a",
             "state" : "active"
          },
          {
@@ -1290,7 +1290,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
       },
@@ -1302,6 +1302,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.iv",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "hint-and-notation-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.55.b.v",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "hint-and-notation-leaves"
@@ -1432,7 +1438,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.55.b.ii` — a layout whose field name opens its description reaches `message_field_records`.",
+         "`.55.b.iii` — a DW layout with nested bit sub-layouts reaches `message_field_records`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1471,9 +1477,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.v`"
       ]
    },
    "migration_metadata" : {

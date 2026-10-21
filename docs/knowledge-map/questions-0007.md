@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how does SpecForge measure source-to-IntentIR stage loss
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > how does SpecForge prevent analog dB limits from becoming digital timing intent
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
@@ -296,5 +298,3 @@
   > how is For read transfers read as a guard
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how is IngestTerminatedBySignal different from IngestAbortedForMemory

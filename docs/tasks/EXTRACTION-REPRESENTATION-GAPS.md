@@ -38,11 +38,11 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.55.b.ii` — a layout whose field name opens its description reaches `message_field_records`.
+`.55.b.iii` — a DW layout with nested bit sub-layouts reaches `message_field_records`.
 
-Then, in order: `.55.b.iii` (a DW layout with nested bit sub-layouts), `.55.b.iv` (a captured field marked with a
-defined keyword carries its obligations), `.54.a` (the corpus memory's refresh runs as ADR 0036 declares it: a
-24-document behavioral replay), `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction`
+Then, in order: `.55.b.v` (a status-word table whose field name opens its description), `.55.b.iv` (a captured field
+marked with a defined keyword carries its obligations), `.54.a` (the corpus memory's refresh runs as ADR 0036 declares
+it: a 24-document behavioral replay), `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction`
 (`FSMGEN-REQUESTS.12`), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
 matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
 (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain). After those:
@@ -103,9 +103,9 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.v`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
 
 ## Changelog

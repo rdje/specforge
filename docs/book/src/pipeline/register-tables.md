@@ -242,6 +242,14 @@ A reserved field the descriptor names (`bReserved`, `wReserved`) is a field like
 in EvidenceIR: carrying `message_field_records` onward is `DOC-INTENT-TAXONOMY.4b`'s.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.i`).
 
+**Width-and-offset packet layouts (`EXTRACTION-REPRESENTATION-GAPS.55.b.ii`).** USB's link and transaction packets
+are written `Width (bits) | Offset (DW:bit) | Description`, the field's name heading its description (*Header
+Sequence Number . The valid values …*). A fifth message-field strategy reads them: the name is the head before the
+first period or colon (a trailing mnemonic outranking it, *Delayed (DL)* -> `DL`), the field keeps the dword's byte
+offset and its dword-relative bit range from the stated start bit and width, value sub-rows are skipped rather than
+the table, and a caption-less fragment continues the layout it starts exactly where. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.ii`).
+
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 
 Every `.10` family above reads a *table*. Some specifications don't put their field layouts in tables at

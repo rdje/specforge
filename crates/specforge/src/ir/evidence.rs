@@ -19927,6 +19927,172 @@ fn byte_location_field_name(description: &str) -> Option<String> {
     Some(head.split_whitespace().collect::<Vec<_>>().join(" "))
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` — the columns of a width-and-offset packet layout (`Width (bits) | Offset
+/// (DW:bit) | Description`, USB's *Link Control Word Format*): a `width`-led column, an `offset`-led column naming its
+/// `dw`, and a `description` column. Its header decides, whatever kind the converter guessed.
+fn width_offset_layout_columns(table: &StructuredTableRecord) -> Option<(usize, usize, usize)> {
+    let first = table.header_rows.first()?;
+    let lower: Vec<String> = effective_row_cells(first)
+        .iter()
+        .map(|c| c.trim().to_ascii_lowercase())
+        .collect();
+    let width = lower.iter().position(|c| c.starts_with("width"))?;
+    let offset = lower
+        .iter()
+        .position(|c| c.starts_with("offset") && c.contains("dw"))?;
+    let description = lower.iter().position(|c| c.contains("description"))?;
+    (width != offset && offset != description && width != description).then_some((
+        width,
+        offset,
+        description,
+    ))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` — a field's name as a width-and-offset layout writes it: the words before
+/// the first period or colon that a space follows (*Header Sequence Number . The valid values …*, *Type. These 5 bits
+/// …*), at most eight, letter-led, with no period inside; a trailing parenthesized mnemonic of two characters or more
+/// names the field instead (*Delayed (DL) . This bit …* -> `DL`, the `.10a` rule). A `Reserved…` row is padding, as in
+/// every message-field family; a cell with no such head (a value sub-row, *Refer to sections …*) names nothing.
+fn width_offset_field_name(description: &str) -> Option<String> {
+    let description = description.trim();
+    if description
+        .get(..8)
+        .is_some_and(|p| p.eq_ignore_ascii_case("reserved"))
+    {
+        return None;
+    }
+    let bytes = description.as_bytes();
+    let separator = (0..bytes.len()).find(|&index| {
+        matches!(bytes[index], b'.' | b':')
+            && bytes
+                .get(index + 1)
+                .is_some_and(|next| next.is_ascii_whitespace())
+    })?;
+    let head = description[..separator].trim_end();
+    if head.ends_with(')')
+        && let Some(open) = head.rfind('(')
+    {
+        let inner = head[open + 1..head.len() - 1].trim();
+        if (2..=40).contains(&inner.chars().count())
+            && inner
+                .chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_alphabetic())
+            && inner.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Some(inner.to_string());
+        }
+    }
+    if head.is_empty()
+        || !head.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        || head.contains('.')
+        || head.split_whitespace().count() > 8
+    {
+        return None;
+    }
+    Some(head.split_whitespace().collect::<Vec<_>>().join(" "))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` — packet fields from width-and-offset layouts. A row states a field's width
+/// in bits and its offset as `DW:bit` (`3 | 3:16 | Header Sequence Number . …`): the record keeps the dword's byte
+/// offset (`3` -> `12`) with the dword-relative bit range from the stated start bit and width (`(18, 16)`), exact
+/// arithmetic on the two stated values. A row without both (a value sub-row) is skipped, not the table. The container
+/// is the caption's label, or a caption the converter left beside the table (`unattached_table_captions`); a table with
+/// neither continues the previous layout when its first field starts where that one's last field ends, within a page.
+fn extract_width_offset_layout_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> {
+    struct Row {
+        width: u32,
+        dword: u32,
+        bit: u32,
+        description: String,
+    }
+    let recovered_captions = unattached_table_captions(source_ir);
+    let mut records: Vec<MessageFieldRecord> = Vec::new();
+    let mut index_by_key: BTreeMap<(String, String), usize> = BTreeMap::new();
+    // the open chain: its container, the page it reached, and the linear bit where its next field must start
+    let mut chain: Option<(String, Option<u32>, u32)> = None;
+    for table in &source_ir.structured_tables {
+        let Some((width_col, offset_col, description_col)) = width_offset_layout_columns(table)
+        else {
+            continue;
+        };
+        let rows: Vec<Row> = table
+            .body_rows
+            .iter()
+            .filter_map(|row| {
+                let cells = effective_row_cells(row);
+                let width = cells
+                    .get(width_col)?
+                    .trim()
+                    .parse::<u32>()
+                    .ok()
+                    .filter(|w| (1..=4096).contains(w))?;
+                let (dword, bit) = cells.get(offset_col)?.trim().split_once(':')?;
+                let description = cells.get(description_col)?.trim().to_string();
+                Some(Row {
+                    width,
+                    dword: dword.trim().parse().ok()?,
+                    bit: bit.trim().parse().ok()?,
+                    description,
+                })
+            })
+            .collect();
+        let Some(first) = rows.first() else {
+            continue;
+        };
+        let page = bit_position_table_page(table);
+        let caption = attached_table_caption(table)
+            .or_else(|| recovered_captions.get(table.table_id.as_str()).copied())
+            .unwrap_or("");
+        let container = match bit_position_container_label(caption) {
+            Some(label) => label,
+            None => match &chain {
+                Some((label, last_page, next_bit))
+                    if *next_bit == first.dword * 32 + first.bit
+                        && matches!((*last_page, page), (Some(a), Some(b)) if b >= a && b - a <= 1) =>
+                {
+                    label.clone()
+                }
+                _ => {
+                    chain = None;
+                    continue;
+                }
+            },
+        };
+        let last = rows.last().expect("rows are non-empty");
+        chain = Some((
+            container.clone(),
+            page,
+            last.dword * 32 + last.bit + last.width,
+        ));
+        for row in &rows {
+            let Some(name) = width_offset_field_name(&row.description) else {
+                continue;
+            };
+            let key = (container.to_ascii_lowercase(), name.to_ascii_uppercase());
+            if let Some(&existing) = index_by_key.get(&key) {
+                let record: &mut MessageFieldRecord = &mut records[existing];
+                if !record.supporting_table_ids.contains(&table.table_id) {
+                    record.supporting_table_ids.push(table.table_id.clone());
+                }
+                continue;
+            }
+            index_by_key.insert(key, records.len());
+            records.push(MessageFieldRecord {
+                field_id: String::new(),
+                name,
+                container: container.clone(),
+                bit_width: Some(row.width),
+                bit_range: Some((row.bit + row.width - 1, row.bit)),
+                byte_offset: Some(row.dword * 4),
+                description: Some(row.description.clone()),
+                supporting_table_ids: vec![table.table_id.clone()],
+            });
+        }
+    }
+    records
+}
+
 /// PDF-VARIANT-DIGESTION.10e — structure fields from byte-location placement tables (the
 /// `Byte Location | Size (Bytes) | Register Description` family). The probe overturned the
 /// recorded `.10a` hypothesis: these are NOT register-at-offset placement maps — every
@@ -20100,6 +20266,20 @@ impl Extractor<MessageFieldRecord> for ByteLocationTableExtractor<'_> {
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
         extract_byte_location_structure_fields(self.source_ir, self.prior_guidance)
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` — the width-and-offset packet layout strategy as a registered
+/// `Extractor`; see [`extract_width_offset_layout_fields`].
+struct WidthOffsetLayoutExtractor<'a> {
+    source_ir: &'a SourceIr,
+}
+impl Extractor<MessageFieldRecord> for WidthOffsetLayoutExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "message_fields.width_offset_layout"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
+        extract_width_offset_layout_fields(self.source_ir)
     }
 }
 
@@ -20717,8 +20897,14 @@ fn message_field_surface(
         prior_guidance,
     };
     let section_header = SectionHeaderMessageFieldExtractor { source_ir };
-    let extractors: [&dyn Extractor<MessageFieldRecord>; 4] =
-        [&extractor, &bit_position, &byte_location, &section_header];
+    let width_offset = WidthOffsetLayoutExtractor { source_ir };
+    let extractors: [&dyn Extractor<MessageFieldRecord>; 5] = [
+        &extractor,
+        &bit_position,
+        &byte_location,
+        &section_header,
+        &width_offset,
+    ];
     let mut run = run_surface("message_fields", &cx, &extractors, |field| {
         (
             field.container.to_ascii_lowercase(),
@@ -45288,6 +45474,152 @@ The control register.
             "captioned visual evidence should carry High automation confidence"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn a_width_offset_layout_names_its_fields_before_the_first_period() {
+        let name = super::width_offset_field_name;
+        assert_eq!(
+            name("Header Sequence Number . The valid values are 0 through 7.").as_deref(),
+            Some("Header Sequence Number")
+        );
+        assert_eq!(
+            name("Type. These 5 bits identify the packet's Type.").as_deref(),
+            Some("Type")
+        );
+        assert_eq!(
+            name("Delayed (DL) . This bit may be set if …").as_deref(),
+            Some("DL")
+        );
+        assert_eq!(
+            name("Local Power Source: This field indicates …").as_deref(),
+            Some("Local Power Source")
+        );
+        assert_eq!(
+            name("Reserved (R) . Reserved for future use."),
+            None,
+            "padding, never a field"
+        );
+        assert_eq!(name("0000b"), None, "a value sub-row names nothing");
+        assert_eq!(
+            name(
+                "This field is used to identify the direction of the link for this packet. It is …"
+            ),
+            None,
+            "prose is no name"
+        );
+        assert_eq!(
+            name(
+                "Refer to sections 10.9.4.4.1 and 10.9.4.4.2 for hub packet deferral processing rules."
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn a_width_offset_layout_reaches_message_field_records() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("packet.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Packets\n")?;
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        let header = ["Width (bits)", "Offset (DW:bit)", "Description"];
+        let table = |table_id: &str, page: &str, caption: Option<&str>, rows: &[[&str; 3]]| {
+            StructuredTableRecord {
+                table_id: table_id.to_string(),
+                asset_id: format!("asset_{table_id}"),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::SignalDescription,
+                header_rows: vec![
+                    header
+                        .iter()
+                        .map(|text| make_table_cell(text, true))
+                        .collect(),
+                ],
+                body_rows: rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|text| make_table_cell(text, false))
+                            .collect()
+                    })
+                    .collect(),
+                row_count: rows.len() as u32,
+                col_count: 3,
+            }
+        };
+        source_ir.structured_tables.push(table(
+            "table_lcw",
+            "page_0238",
+            Some("Table 8-2.  Link Control Word Format"),
+            &[
+                [
+                    "3",
+                    "3:16",
+                    "Header Sequence Number . The valid values are 0 through 7.",
+                ],
+                ["3", "3:19", "Reserved (R) ."],
+                ["", "", "0000b"],
+                ["5", "3:22", "Hub Depth . This field is only valid when …"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_lcw_continued",
+            "page_0239",
+            None,
+            &[[
+                "5",
+                "3:27",
+                "CRC-5 . This field is the CRC used to verify …",
+            ]],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_unrelated",
+            "page_0239",
+            None,
+            &[["4", "0:5", "Subtype . These 4 bits identify the subtype."]],
+        ));
+        let fields = super::extract_width_offset_layout_fields(&source_ir);
+        type Read<'a> = (&'a str, &'a str, Option<u32>, Option<(u32, u32)>);
+        let read: Vec<Read> = fields
+            .iter()
+            .map(|field| {
+                (
+                    field.container.as_str(),
+                    field.name.as_str(),
+                    field.byte_offset,
+                    field.bit_range,
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                (
+                    "Link Control Word Format",
+                    "Header Sequence Number",
+                    Some(12),
+                    Some((18, 16))
+                ),
+                (
+                    "Link Control Word Format",
+                    "Hub Depth",
+                    Some(12),
+                    Some((26, 22))
+                ),
+                (
+                    "Link Control Word Format",
+                    "CRC-5",
+                    Some(12),
+                    Some((31, 27))
+                ),
+            ],
+            "the continuation joins where the layout ends; a caption-less table that does not continue is no field"
+        );
         Ok(())
     }
 

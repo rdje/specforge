@@ -138,6 +138,8 @@
   > how are USB 3.2 timer tables with a Timeout Value column read
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are USB descriptor tables (Offset | Field | Size | Value | Description) extracted (descriptor_layout_columns, EXTRACTION-REPRESENTATION-GAPS.55.b.i)
+- [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
+  > how are USB packet header layouts (Width (bits) | Offset (DW:bit) | Description) extracted
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how are authored examples identity literals and dated book measurements excluded
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -296,5 +298,3 @@
   > how do I census which span a published constraint read its parts from
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I change the reviewed source-to-intent fixture projection
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > how do I check the mdBook for stale behavioural claims

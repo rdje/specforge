@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55BI-DESCRIPTOR-TABLES",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-55BII-WIDTH-OFFSET-LAYOUTS",
    "baseline": {
-    "analyzed_functions": 2811,
-    "decision_sites": 15559,
-    "helper_edges": 19645,
-    "semantic_macros": 1620
+    "analyzed_functions": 2813,
+    "decision_sites": 15568,
+    "helper_edges": 19652,
+    "semantic_macros": 1621
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 9,
-    "helper_edges": 7,
-    "semantic_macros": 1
+    "analyzed_functions": 5,
+    "decision_sites": 35,
+    "helper_edges": 70,
+    "semantic_macros": 3
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.b.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.b.i: a descriptor table (Offset | Field | Size | Value | Description) is a byte layout read into message_field_records (descriptor_layout_columns, byte_layout_size_and_description)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.55.b.ii",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.55.b.ii: a Width (bits) | Offset (DW:bit) | Description packet layout is read into message_field_records (WidthOffsetLayoutExtractor, width_offset_layout_columns, width_offset_field_name)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

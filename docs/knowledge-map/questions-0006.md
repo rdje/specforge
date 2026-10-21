@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > how do I check the mdBook for stale behavioural claims
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > how do I check whether a held-out bundle still rebuilds its document
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -295,5 +297,3 @@
   > how does SpecForge know an agent is software (an English software noun, a glossary row, implemented in software)
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > how does SpecForge know which signals a check signal covers
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how does SpecForge measure source-to-IntentIR stage loss

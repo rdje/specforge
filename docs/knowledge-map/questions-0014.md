@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > what does the pre-commit hook NOT check
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does the residual actionability denominator actually count
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what does traverse_pictures False do to SpecForge ingest
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -244,6 +248,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.54 and .54.a
 - [a-keyword-definition-is-typed-with-the-obligations-it-states](../knowledge/a-keyword-definition-is-typed-with-the-obligations-it-states.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.55.a and .55.b
+- [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.55.b.ii and .55.b.v
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -292,9 +298,3 @@
   > what is SWD's actual intent / protocol (from the spec)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > what is SignalConstraintKind::MustRemainUntil / must_remain_until
-- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
-  > what is SignalConstraintKind::TiedTo / tied_to
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what is SpecForge doing in academic or research terms

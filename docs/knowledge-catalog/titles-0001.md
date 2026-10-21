@@ -40,6 +40,7 @@
 | [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md) | 2026-09-30 | `current` | A timeout table's next state is a typed protocol transition, carried to IntentIR and not lowered |
 | [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md) | 2026-10-20 | `current` | A statement is a timing_constraint only when the timing words come with a stated time, read as whole words… |
 | [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md) | 2026-09-14 | `current` | A prose width cell is refused by a CONJUNCTION (>6 tokens AND a terminator before whitespace) — each bound… |
+| [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md) | 2026-10-21 | `current` | A packet layout written as Width (bits) \| Offset (DW:bit) \| Description is read into message_field_records… |
 | [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | AArch64 External Debug Guide refresh is portable and authority-empty |
 | [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md) | 2026-08-09 | `current` | Active task legacy routes bind canonical IDs to exact source spellings |
 | [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md) | 2026-08-09 | `current` | Active task migration is a byte-safe root-last transaction |
@@ -60,4 +61,3 @@
 | [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md) | 2026-08-14 | `current` | Alignment task evidence is a bounded active root over exact semantic and provenance authorities |
 | [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md) | 2026-09-11 | `current` | A token with one interior lower-case position that wildcards onto two declared names is the document's placeh… |
 | [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md) | 2026-06-04 | `current` | validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs) |
-| [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md) | 2026-10-19 | `current` | A stated absent value may be a label of the signal's own encoding, and a value stated for one class of reques… |

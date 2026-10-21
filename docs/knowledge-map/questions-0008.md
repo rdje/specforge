@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how is IngestTerminatedBySignal different from IngestAbortedForMemory
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > how is PSEL tied to PSELx without reading the trailing x
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
@@ -14,6 +16,8 @@
   > how is a Bit[N] drives HPROT[n] sentence read
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how is a CI-tier doctrine registered without slowing down the pre-commit hook
+- [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
+  > how is a DW:bit offset stored on a message field (byte_offset and bit_range)
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -293,7 +297,3 @@
   > how many corpus refreshes remain after Introducing CoreSight
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Certified Definition
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Discovery

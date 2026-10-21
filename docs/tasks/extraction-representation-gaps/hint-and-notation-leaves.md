@@ -318,13 +318,43 @@ hint gives a signal, and the sentences that define the document's own notation. 
   the header's description column and `bmSublinkSpeedAttr[0]` is not read.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.ii`
-  Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
+  Status: `done` (`2026-10-21`; CODE; split from `.55.b`; checklist below; opened `.55.b.v`)
   Goal: **a layout whose field name opens its description reaches `message_field_records`.** USB 3.2's 32 packet-header
   layouts (`Width (bits) | Offset (DW:bit) | Description`: *Type. These 5 bits identify …*) and its 10 and USB4
   inter-domain's 3 status-field layouts (`Bit | Description`: *Local Power Source: This field …*) reach no field
   record. **Reproduce:** `table_0099` (*Table 8-1 Type Field Description*). Acceptance: read a name from the description's opening
   words only where the cell states one (a word run before a period, colon or dash), its width and offset from their
   columns, refuse a description that opens with prose, and measure every chain.
+  **Found `2026-10-21`: two families, two causes.** The `Width (bits) | Offset (DW:bit) | Description` layouts match no
+  extractor's header. The `Bit | Description` status-word tables do match the two-column bit-position family, but its
+  fused-name grammar recovers no name from *Local Power Source: This field …* and several carry value sub-rows
+  that reject the whole table; that is `.55.b.v`. **Decided for the first family:** a registered extractor,
+  `message_fields.width_offset_layout` (`extract_width_offset_layout_fields`), reads a header with a `width`-led
+  column, an `offset`-led column naming its `dw`, and a description column, whatever kind the converter guessed. A
+  row stating a width and a `DW:bit` offset is a field: `byte_offset` the dword's byte offset (`3` -> `12`), and
+  `bit_range` the dword-relative range from the stated start bit and width (exact arithmetic on two stated values);
+  other rows (value sub-rows) are skipped, not the table. The name (`width_offset_field_name`) is the head before the
+  first period or colon a space follows, at most eight words, letter-led, no inner period, a trailing two-character
+  mnemonic outranking it (`Delayed (DL)` -> `DL`, the `.10a` rule); a *Reserved* row is padding, as in every
+  message-field family. The container is the caption's label, a caption the converter left beside the table, or —
+  for a table with neither — the open layout it continues, bit-exact within a page.
+  **Measured over all 31 chains** (evidence dry-run against `bccb8a5ea`'s): every extraction manifest gains the
+  strategy's entry (zero produced in 30); USB 3.2's `message_field_records` 122 -> 205: 83 packet fields in 25
+  containers (*ACK TP Format* 17, *Data Packet Format* 7, *Port Capability LMP Format* 6, *Link Control Word Format*
+  5, …), from 30 of the 32 tables (`table_0118` states only *Reserved* rows, `table_0131` the residual below). Every chain rebuilt stage by stage, every
+  later stage and `.isf` text byte-identical (`message_field_records` stop at EvidenceIR, `DOC-INTENT-TAXONOMY.4b`);
+  the cascade re-sealed every chain. **Declared residual:** *Isochronous Timestamp Packet*'s data block states a
+  symbolic width (`xx`, offset `4:0 + xx`), so neither it nor the CRC after it is read.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.v`
+  Status: `open` (`2026-10-21`; CODE; found by `.55.b.ii`)
+  Goal: **a status-word table whose field name opens its description reaches a field record.** USB 3.2's 10 (*Table
+  10-10. Hub Status Field, wHubStatus*, `Bit | Description`: *0 | Local Power Source: This field …*) and USB4
+  inter-domain's 3 `Bit | Description` tables match the two-column bit-position family, but its fused-name grammar
+  recovers no name from *Name: description* and value sub-rows (*Value Meaning*, an empty bit cell) reject the whole
+  table. **Reproduce:** `table_0240`. Acceptance: read the *Name:* head the way `.55.b.ii` reads a width-and-offset
+  layout's, skip a value sub-row rather than the table, decide whether a status word's bits are a message field's or
+  a register's (the caption names a field: *wHubStatus*), and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iii`
   Status: `open` (`2026-10-21`; CODE; split from `.55.b`)
@@ -438,4 +468,27 @@ hint gives a signal, and the sentences that define the document's own notation. 
   name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*Descriptor tables join the family*); KM
   `byte-location-structure-field-extraction` amended. No production rule deleted or replaced.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.ii` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — USB 3.2's 32 `Width (bits) | Offset (DW:bit) | Description` tables and the 13 `Bit |
+  Description` tables of USB 3.2 and USB4 inter-domain, each with its kind, rows and the gate that refused it; the
+  description openings counted (82 *name .*, 18 *name:*).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: no message-field extractor read the width
+  and `DW:bit` header. New `WidthOffsetLayoutExtractor`, `width_offset_layout_columns`, `width_offset_field_name`,
+  `extract_width_offset_layout_fields`, registered fifth in `message_field_surface`. RED, the file restored
+  byte-identically after each (7 mutations, each failing a named test): the header, the continuation test, the bit
+  range, the dword's byte offset, a reserved row read as a field, the mnemonic, long prose read as a name.
+- [x] **ADDRESSED (verified)** — evidence dry-run of all 31 chains: every manifest gains the strategy's entry, USB 3.2
+  83 packet fields in 25 containers from 30 of 32 tables; all 31 rebuilt stage by stage, every later stage and `.isf`
+  text byte-identical; `rebuild_stage_cascade.sh --write` re-sealed every chain, content-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `bccb8a5ea`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean (after a test's tuple type was named); `cargo test
+  --workspace --lib --exclude specforge-production-graph` 474 / 171 / 1,893 passed, 0 failed. `flow_census.json` rolled
+  (+5 functions, +35 decision sites, +70 helper edges, +3 macros); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the header's own words, the caption's label and the description's head; no document,
+  packet or field name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*Width-and-offset packet layouts*); KM
+  `a-width-offset-packet-layout-reaches-message-field-records`. No production rule deleted or replaced.
 
