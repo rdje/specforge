@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md) | 2026-09-12 | `current` | A self-test coverage guard lives in the exit code, not the printed ratio — reading the print line got the c… |
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
 | [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
@@ -60,4 +61,3 @@
 | [transaction-channel-membership](../knowledge/transaction-channel-membership.md) | 2026-06-17 | `current` | KG-ISF-TRANSACTIONS.2m — a transaction's signal-set membership is grouped by the document-declared CHANNEL,… |
 | [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md) | 2026-06-17 | `current` | a named transaction's .2c signal-set membership includes its section's DESCENDANT-SUBSECTION statements (dott… |
 | [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md) | 2026-06-17 | `current` | AXI/SWD per-signal phase membership — the recorded "VLM timing-diagram phase columns" candidate is RESOLVED… |
-| [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md) | 2026-08-10 | `current` | Typed transaction-phase names require positive phrase authority |

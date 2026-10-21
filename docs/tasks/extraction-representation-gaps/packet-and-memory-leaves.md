@@ -127,7 +127,7 @@ whole.
   `a-dword-packet-layout-reaches-message-field-records` amended. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii`
-  Status: `open` (`2026-10-21`; CODE; opened by `.55.b.iv.b`)
+  Status: `done` (`2026-10-21`; CODE; opened by `.55.b.iv.b`; checklist below)
   Goal: **a section headed by a declared field's name describes that field.** CHI C2C describes each message field in
   its own section (*B4.2.1.1 Message type, MsgType* … *B4.2.1.5 RsvdZero*), but its field records carry no
   description, and *RsvdZero*'s states that the field's bits are Reserved, with three obligations. **Reproduce:** CHI
@@ -135,6 +135,41 @@ whole.
   whose heading names exactly one declared field (the name alone or after a comma) to that field's records as its
   description. A field whose own description says its bits are Reserved becomes a reserved span carrying the
   description's obligations, with no keyword citation where the document defines none. Measure every chain.
+  **Done `2026-10-21`.** `bind_field_sections` binds after convergence. `section_field_name` reads the heading past
+  its outline number (the name alone, or after a comma), and the section's first statement must speak of a field.
+  That gate was found by the first dry-run: USB's *8.4.2 Set Link Function*, *8.4.3 U2 Inactivity Timeout* and *9.6.5
+  Interface* had bound to same-named fields, but they open on an LMP or a descriptor. Every record of the name gains
+  `description_statement_ids`. A field whose description says, in its frame, that it is Reserved
+  (`describes_reserved_field`) becomes a named reserved span whose `supporting_statement_ids` cite that statement.
+  The obligations stay in the statement: the keyword reader's *and*-split would garble C2C's comma list of agent-modal
+  clauses. Dry-run of the 31 chains: 29 identical. CHI C2C: 28 records under 8 names gain descriptions, and its 9
+  *RsvdZero* records become reserved spans citing `statement_0470`, with no keyword. USB 3.2: 6 fields gain
+  descriptions.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii` (CODE) — DONE `2026-10-21`
+
+- [x] **REPRODUCE / MEASURE** — every section anchor of the field-bearing chains whose heading names a declared
+  field, with its statements' count and first sentence; CHI C2C's *RsvdZero* statement; the obligation reader's
+  output on it.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: no reader joined a field's own section
+  to its records, so C2C's fields carried no description and *RsvdZero*'s reserving sentence reached nothing. New
+  `section_field_name`, `bind_field_sections`, `describes_reserved_field`,
+  `MessageFieldRecord.description_statement_ids`, `ReservedSpanRecord.supporting_statement_ids`, and the description
+  path of `reserved_span_surface`. RED, the file restored byte-identically after each (7 mutations, each failing a
+  named test): no comma form, an unnumbered heading naming a field, any section describing a field, no description
+  frame, a description never reserving, no cited statements, no binding.
+- [x] **ADDRESSED (verified)** — dry-run as above; CHI C2C and USB 3.2 rebuilt stage by stage, every later stage
+  and `.isf` text byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `6b581ea39`'s. `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean (after a test's tuple type was named); `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 171 / 1,905 passed. `flow_census.json` rolled (+3 functions, +42 decision sites,
+  +99 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the document's own outline numbering, its declared field names, the word *field* and
+  its *This field … is Reserved* frame; no document, section or field name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field's own section*); KM card
+  `a-section-headed-by-a-declared-fields-name-describes-that-field` (new) and
+  `a-layouts-reserved-space-is-a-typed-span-citing-the-keyword` amended. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56`
   Status: `done` (`2026-10-21`; DESIGN; found by `.55.b.iv`; opened `.56.a`, `.56.b`)

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md) | 2026-08-10 | `current` | Typed transaction-phase names require positive phrase authority |
 | [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-10-19 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
 | [unattached-table-captions](../knowledge/unattached-table-captions.md) | 2026-09-28 | `current` | Docling files some table captions as page text; the bit-layout reader recovers them page by page |
 | [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md) | 2026-10-19 | `current` | The unread IntentIR behaviors are mostly permissions, and 645 of 813 timing_constraint statements state no ti… |

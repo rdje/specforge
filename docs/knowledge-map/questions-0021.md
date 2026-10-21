@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > why are nested list items flattened
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why are prior candidate fixture names not joined into one long Markdown line
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why are reviewed fixture anchors fragile
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > why are rustup and cargo allowed on the boot volume
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -288,13 +298,3 @@
   > why did adding equivalence_rules re-seal every chain
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > why did adding signal_presence_records to SemanticIR and IntentIR re-seal every chain
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > why did an OpenCAPI functional test become an IntentIR behavior
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
-- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
-  > why did an actor read debugger CDBGPWRUPREQ

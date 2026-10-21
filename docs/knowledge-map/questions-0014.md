@@ -270,6 +270,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a, .55.b.iv.b, .55.b.iv.b.i and .55.b.iv.b.ii
 - [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i
+- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii
 - [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.56 and .56.a
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -296,5 +298,3 @@
   > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry

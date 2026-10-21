@@ -294,6 +294,18 @@ them. USB4 inter-domain loses the 3 bogus fields, and *Error Response* gains 4 v
 Meaning` sub-header, and a bit cell holding two rows (*0 1*). *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iv.b.i`).
 
+**A field's own section (`EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii`).** CHI C2C describes each message field in a
+section of its own (*B4.2.1.1 Message type, MsgType* … *B4.2.1.5 RsvdZero*), and USB its setup fields the same way
+(*9.3.1 bmRequestType*). Such a section now describes the field. Its heading, past the outline number, is the
+declared name alone or a title, a comma and the name. Its first statement must speak of a field (*This field
+identifies …*). Every record of that name gains the section's statements as `description_statement_ids`. A section
+that opens on something else describes that instead: USB's *8.4.2 Set Link Function* is the LMP's section, not its
+field's. A field whose own description reserves it (*This field indicates that the use of the bits is Reserved and a
+Transmitter must set the field value to zero …*) is a reserved span citing that statement, which states the
+obligations. It cites no keyword, since C2C defines none. CHI C2C gains descriptions on 28 records under 8 names, and
+9 *RsvdZero* reserved spans; USB 3.2 gains descriptions on 6 fields. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.55.b.iv.b.ii`).
+
 ### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
 
 Every `.10` family above reads a *table*. Some specifications don't put their field layouts in tables at

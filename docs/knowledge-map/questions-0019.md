@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > where is the declared-signal set that the semantic grounding filter uses built
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > where is the default-flip decision packet / should promote-constraints-llm become the default
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > where is the exact historical SpecForge roadmap after containment
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
@@ -280,6 +288,8 @@
   > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > which header signatures are unrecovered register tables
+- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
+  > which headings name a field (B4.2.1.5 RsvdZero; B4.2.1.1 Message type, MsgType; not an unnumbered heading)
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > which held-out document has an eligible opaque alpha catalog
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -288,13 +298,3 @@
   > which keyword definition does a reserved bit cite (keyword_definition_id)
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
   > which leaf owns a missing piece
-- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
-  > which leaves does a task tree root's Executable Owner Registry declare
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > which leaves have no row in verification-and-chronology.md
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > which legacy declarations come from tables that are not signal tables
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > which limit binds first when adding a fact card
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > which line must a new included census collection surface pin its evidence record to (the first non-blank line of its ALPHABETICALLY FIRST member path - produce_candidates sorts the surface's paths and emits one surface_review candidate from the first, so pinning any other member fails with 'lacks exact evidence')

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > why did an OpenCAPI functional test become an IntentIR behavior
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > why did an actor read debugger CDBGPWRUPREQ
 - [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
   > why did candidate_misses rise on 2026-09-26
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -288,13 +298,3 @@
   > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > why does ACE table_0275 stay flagged after presence capture
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > why does ADIv6 table_0108 produce no signal declarations
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
-- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
-  > why does AHB's HSELx family produce no adapter residual

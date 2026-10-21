@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why does ADIv6 table_0108 produce no signal declarations
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
+- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
+  > why does AHB's HSELx family produce no adapter residual
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > why does AMD IOMMU extract no register fields
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -42,6 +52,8 @@
   > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
+- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
+  > why does CHI C2C's RsvdZero become reserved space without a Reserved keyword definition
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
@@ -286,15 +298,3 @@
   > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why does cargo test -p specforge not run the trajectory snapshot tests
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why does check_chain_currency report 24/24 current when 54 documents are legacy
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why does check_doctrines.sh --fast refuse to run
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > why does check_doctrines.sh skip CHAIN-CURRENCY on CI

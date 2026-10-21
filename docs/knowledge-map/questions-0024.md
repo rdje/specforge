@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why does check_chain_currency report 24/24 current when 54 documents are legacy
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > why does check_doctrines.sh --fast refuse to run
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > why does check_doctrines.sh skip CHAIN-CURRENCY on CI
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > why does check_live_document_size not report records
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
@@ -285,15 +297,3 @@
   > why is 'A device shall not assume that transactions occur at the same location' filed apparatus
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > why is 'Connection Manager assumes the configuration of Asymmetric Link failed' an assumption (of stays in the object)
-- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
-  > why is 'Dotted transistors are optional open-drain outputs' not an option (an adjective)
-- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
-  > why is 'External accesses from a debugger' not software intent (a preposition before the noun)
-- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
-  > why is 'LPIs are always treated as Non-secure Group 1 interrupts' an assumption
-- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
-  > why is 'MASTER and SLAVE interfaces MAY be designed so that they do not support the BLOCK cycles' no longer timing_constraint
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > why is 'The WISHBONE interface logic assumes that a low-skew clock distribution scheme is used' an assumption, not apparatus
-- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
-  > why is 'The block of lines consisting of elsif and its indented statements is optional' not an optional feature

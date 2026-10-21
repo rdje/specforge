@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
+  > why is 'Dotted transistors are optional open-drain outputs' not an option (an adjective)
+- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
+  > why is 'External accesses from a debugger' not software intent (a preposition before the noun)
+- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
+  > why is 'LPIs are always treated as Non-secure Group 1 interrupts' an assumption
+- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
+  > why is 'MASTER and SLAVE interfaces MAY be designed so that they do not support the BLOCK cycles' no longer timing_constraint
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > why is 'The WISHBONE interface logic assumes that a low-skew clock distribution scheme is used' an assumption, not apparatus
+- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
+  > why is 'The block of lines consisting of elsif and its indented statements is optional' not an optional feature
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
   > why is 'This document may include technical inaccuracies' not a permission (about the document)
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
@@ -134,6 +146,8 @@
   > why is TMC's memory interface table not read
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > why is Table C2-2 ERRNPASS ERRSTOP not read as field values
+- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
+  > why is USB's 8.4.2 Set Link Function section not the Set Link Function field's description (its first statement speaks of the LMP)
 - [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
   > why is Valid indicator a valid-like hint for AWVALID even though AXI declares a signal VALID
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -284,17 +298,3 @@
   > why is bReserved a field and also a reserved span (field_id)
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why is bus not a valid parenthetical single-wire head
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why is by excluded from the relation complement markers
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > why is c opcode read as the signal c
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is channel membership metadata-only and not lowered to .isf
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why is chomp not removing the newline in this Perl script
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why is conformal calibration still blocked at CHI scale

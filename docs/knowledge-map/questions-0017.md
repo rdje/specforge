@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the remedy when a research record reaches its per-file line ceiling
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > what is the residual isf_reset_kind_not_stated
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what is the rolling ledger archive protocol
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > what is the sample size of the gate-tier seal probe
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
@@ -289,11 +297,3 @@
   > when should a live-document capacity bound be raised
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > when should message fields join the document class census
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > when should the activate-only ExtractionProfile consume contract be built
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > when was the upstream claim-verification standard last re-read
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where are Docling models stored for SpecForge
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > where are Docling page sidecar paths normalized

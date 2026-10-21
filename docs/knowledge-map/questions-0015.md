@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
+- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
+  > what is MessageFieldRecord.description_statement_ids
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -20,6 +24,8 @@
   > what is REPLAY_PROJECTION_SHA256
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
   > what is RegisterFieldRecord.signal_bindings
+- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
+  > what is ReservedSpanRecord.supporting_statement_ids
 - [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
   > what is ReservedSpanRecord.within_field_id (a reserved bit range inside a field, relative to it)
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
@@ -280,6 +286,8 @@
   > what is scripts/measure_unread_intent_records.py
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > what is scripts/measure_untyped_table_families.py
+- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
+  > what is section_field_name / bind_field_sections / describes_reserved_field
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > what is select_initiator_actor / initiator_perspective_directions
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
@@ -290,11 +298,3 @@
   > what is signal_coreferences / SignalCoreferenceRecord
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > what is signal_families / SignalFamilyRecord
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is signal_presence_records and what does a SignalPresenceRecord hold
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is snap_subject_to_sentence_token and when does it fire
-- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
-  > what is software_intent / SoftwareIntentRecord / SoftwareAgentBasis / SoftwareIntentModality
-- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
-  > what is software_intent_surface / software_subject / glossary_software_name / implemented_in_software_names

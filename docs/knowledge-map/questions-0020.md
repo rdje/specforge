@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
+  > which leaves does a task tree root's Executable Owner Registry declare
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which leaves have no row in verification-and-chronology.md
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > which legacy declarations come from tables that are not signal tables
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > which limit binds first when adding a fact card
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > which line must a new included census collection surface pin its evidence record to (the first non-blank line of its ALPHABETICALLY FIRST member path - produce_candidates sorts the surface's paths and emits one surface_review candidate from the first, so pinning any other member fails with 'lacks exact evidence')
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > which live chains emit an isf file
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -287,13 +297,3 @@
   > why are modal verbs must shall should may not flagged as ambiguous
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
   > why are most IntentIR assumptions not understood
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > why are nested list items flattened
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why are prior candidate fixture names not joined into one long Markdown line
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why are reviewed fixture anchors fragile
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > why are rustup and cargo allowed on the boot volume

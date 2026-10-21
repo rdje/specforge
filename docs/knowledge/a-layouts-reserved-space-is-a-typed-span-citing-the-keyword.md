@@ -40,6 +40,7 @@ fields, in 22 containers. USB4 inter-domain has 5. Both cite *Reserved* (`keywor
 uncited span (*Reserved, SBZ*), in a page-table entry whose fields no family reads. Of USB 3.2's 47 reserved rows in
 field-bearing tables, 8 are value sub-rows, 5 are bits nested inside a field, 1 has a unit-suffixed offset (`0:16b`),
 and 2 are the named `wReserved`. USB4's 3 left over are value sub-rows. `.55.b.iv.b` found the value sub-rows and
-nested bits to be a field's restated sub-table (`.55.b.iv.b.i`), and CHI C2C's `RsvdZero` to be defined in its own
-field section (`.55.b.iv.b.ii`); `0:16b` stays a declared residual. `reserved_spans` stops at EvidenceIR, like `message_field_records`; carrying both onward is
+nested bits to be a field's restated sub-table (`.55.b.iv.b.i`, now read), and CHI C2C's `RsvdZero` to be defined in
+its own field section (`.55.b.iv.b.ii`: its 9 records are now reserved spans citing that statement, with no keyword);
+`0:16b` stays a declared residual. `reserved_spans` stops at EvidenceIR, like `message_field_records`; carrying both onward is
 `DOC-INTENT-TAXONOMY.4b`'s.

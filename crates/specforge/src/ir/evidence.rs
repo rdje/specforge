@@ -644,6 +644,10 @@ pub struct MessageFieldRecord {
     /// its row (*1 | Force_LinkPM_Accept*), each bit range relative to the field's bit 0, as the document states it.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub sub_fields: Vec<MessageSubField>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii` — the statements of the section whose heading names this field
+    /// (*B4.2.1.5 RsvdZero*), in document order: the document's own description of it.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub description_statement_ids: Vec<String>,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — one code value a layout states for a message field, with its meaning.
@@ -701,6 +705,10 @@ pub struct ReservedSpanRecord {
     /// The structured tables that declared the span.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii` — the statements of a field's own description that reserve it, and
+    /// so state what the reserved bits oblige (*a Transmitter must set the field value to zero*).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_statement_ids: Vec<String>,
 }
 
 /// EXTRACTION-QUALITY-GAUGE.FIELD.4 — one typed obligation on a declared MESSAGE FIELD
@@ -2483,6 +2491,13 @@ impl EvidenceIr {
         let software_intent = software_intent_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.55.a — the keywords the document defines.
         let keyword_definitions = keyword_definition_surface(&extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii — a section a declared field's name heads describes that field.
+        bind_field_sections(
+            &mut message_field_records,
+            &extracted_statements,
+            &statement_section_indices(&extracted_statements, &evidence_spans, &section_anchors),
+            &section_anchors,
+        );
         // EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i — a field's reserved code values cite the keyword's definition.
         cite_reserved_values(&mut message_field_records, &keyword_definitions);
         // EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a — the layouts' reserved space, citing the keyword's definition.
@@ -2491,6 +2506,7 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
             &message_field_records,
             &keyword_definitions,
+            &extracted_statements,
         );
 
         // Recover document-stated frame fields through two structural strategies: explicit phase-bound
@@ -18666,6 +18682,7 @@ fn record_reserved_span(
         within_field_id: None,
         keyword_definition_id: None,
         supporting_table_ids: vec![table_id.to_string()],
+        supporting_statement_ids: Vec::new(),
     });
 }
 
@@ -18779,6 +18796,74 @@ fn read_field_sub_table(sub_rows: &[Vec<String>], field: &mut MessageFieldRecord
             None => {}
         }
     }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii` — the declared field a section heading names: past its outline
+/// number, the heading is the field's name alone (*B4.2.1.5 RsvdZero*) or a title, a comma and the name (*B4.2.1.1
+/// Message type, MsgType*). An unnumbered heading names no field.
+fn section_field_name<'a>(title: &'a str, declared: &BTreeSet<&str>) -> Option<&'a str> {
+    let number = outline_number(title)?;
+    let rest = title[title.find(number.as_str())? + number.len()..].trim();
+    let name = rest.rsplit_once(", ").map_or(rest, |(_, name)| name).trim();
+    declared.contains(name).then_some(name)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii` — a section whose heading names a declared field describes it when its
+/// first statement speaks of a field (*This field identifies …*, *The FlitFormat field in …*): every record of that name
+/// gains the section's statements, in document order. A section that opens on something else describes that instead
+/// (*The Set Link Function LMP shall be used …* is the message's section, not its field's).
+fn bind_field_sections(
+    records: &mut [MessageFieldRecord],
+    statements: &[ExtractedStatement],
+    statement_sections: &HashMap<String, usize>,
+    section_anchors: &[SectionAnchor],
+) {
+    let declared: BTreeSet<&str> = records.iter().map(|record| record.name.as_str()).collect();
+    let named: BTreeMap<usize, String> = section_anchors
+        .iter()
+        .enumerate()
+        .filter_map(|(index, anchor)| {
+            section_field_name(&anchor.title, &declared).map(|name| (index, name.to_string()))
+        })
+        .collect();
+    let mut described: BTreeMap<&str, Vec<String>> = BTreeMap::new();
+    for statement in statements {
+        if let Some(name) = statement_sections
+            .get(&statement.statement_id)
+            .and_then(|section| named.get(section))
+        {
+            described
+                .entry(name.as_str())
+                .or_default()
+                .push(statement.statement_id.clone());
+        }
+    }
+    let text_of: HashMap<&str, &str> = statements
+        .iter()
+        .map(|statement| (statement.statement_id.as_str(), statement.text.as_str()))
+        .collect();
+    described.retain(|_, ids| {
+        ids.first()
+            .and_then(|id| text_of.get(id.as_str()))
+            .is_some_and(|text| {
+                text.split(|c: char| !c.is_ascii_alphanumeric())
+                    .any(|word| word.eq_ignore_ascii_case("field"))
+            })
+    });
+    for record in records.iter_mut() {
+        if let Some(ids) = described.get(record.name.as_str()) {
+            record.description_statement_ids = ids.clone();
+        }
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii` — does a field's own description reserve it: a sentence in its frame
+/// (*This field …*) stating that it, or the use of its bits, is Reserved?
+fn describes_reserved_field(text: &str) -> bool {
+    let text = text.trim();
+    let lower = text.to_ascii_lowercase();
+    lower.starts_with("this field ")
+        && (lower.contains(" is reserved") || lower.contains(" are reserved"))
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — a value whose meaning opens with *Reserved* cites the document's
@@ -18906,6 +18991,7 @@ fn extract_container_message_fields(
                 supporting_table_ids: vec![table.table_id.clone()],
                 values: Vec::new(),
                 sub_fields: Vec::new(),
+                description_statement_ids: Vec::new(),
             });
         }
     }
@@ -19943,6 +20029,7 @@ fn extract_bit_position_structure_fields(
                     supporting_table_ids: vec![parsed.table.table_id.clone()],
                     values: Vec::new(),
                     sub_fields: Vec::new(),
+                    description_statement_ids: Vec::new(),
                 });
             }
         }
@@ -20516,6 +20603,7 @@ fn extract_width_offset_layout_fields(
                 supporting_table_ids: vec![table.table_id.clone()],
                 values: Vec::new(),
                 sub_fields: Vec::new(),
+                description_statement_ids: Vec::new(),
             };
             read_field_sub_table(&row.sub_rows, &mut record);
             records.push(record);
@@ -20724,6 +20812,7 @@ fn extract_dword_layout_fields(
                 supporting_table_ids: vec![table.table_id.clone()],
                 values: Vec::new(),
                 sub_fields: Vec::new(),
+                description_statement_ids: Vec::new(),
             };
             read_field_sub_table(&sub_rows, &mut record);
             records.push(record);
@@ -20802,6 +20891,7 @@ fn extract_byte_location_structure_fields(
                     supporting_table_ids: vec![parsed.table.table_id.clone()],
                     values: Vec::new(),
                     sub_fields: Vec::new(),
+                    description_statement_ids: Vec::new(),
                 };
                 read_field_sub_table(&row.sub_rows, &mut record);
                 records.push(record);
@@ -21293,6 +21383,7 @@ fn extract_section_header_message_fields(source_ir: &SourceIr) -> Vec<MessageFie
                 supporting_table_ids: Vec::new(),
                 values: Vec::new(),
                 sub_fields: Vec::new(),
+                description_statement_ids: Vec::new(),
             });
         }
     }
@@ -21596,7 +21687,8 @@ fn message_field_surface(
 /// `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.a` — the reserved space of the document's message containers: each row a
 /// message-field family skips as *Reserved* padding, read with that family's own position reading and in the order of
 /// [`message_field_surface`], then each field record named as reserved (`is_reserved_field_name`), linked by its id,
-/// then each reserved row of a field's own layout (`within_field_id`, `.55.b.iv.b.i`).
+/// or reserved by its own description (`.55.b.iv.b.ii`), then each reserved row of a field's own layout
+/// (`within_field_id`, `.55.b.iv.b.i`).
 /// Every span cites the `keyword_definitions` record of *Reserved* when the document defines that keyword. The field
 /// records are unchanged: padding stays no field.
 fn reserved_span_surface(
@@ -21604,6 +21696,7 @@ fn reserved_span_surface(
     prior_guidance: Option<&EvidencePriorGuidance>,
     message_field_records: &[MessageFieldRecord],
     keyword_definitions: &[KeywordDefinitionRecord],
+    statements: &[ExtractedStatement],
 ) -> Vec<ReservedSpanRecord> {
     let mut spans: Vec<ReservedSpanRecord> = Vec::new();
     extract_container_message_fields(source_ir, prior_guidance, &mut spans);
@@ -21611,10 +21704,25 @@ fn reserved_span_surface(
     extract_byte_location_structure_fields(source_ir, prior_guidance, &mut spans);
     extract_width_offset_layout_fields(source_ir, &mut spans);
     extract_dword_layout_fields(source_ir, &mut spans);
-    for field in message_field_records
+    // `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii` — a field its own description reserves cites the statements that do
+    let text_of: HashMap<&str, &str> = statements
         .iter()
-        .filter(|field| is_reserved_field_name(&field.name))
-    {
+        .map(|statement| (statement.statement_id.as_str(), statement.text.as_str()))
+        .collect();
+    for field in message_field_records {
+        let reserving: Vec<String> = field
+            .description_statement_ids
+            .iter()
+            .filter(|id| {
+                text_of
+                    .get(id.as_str())
+                    .is_some_and(|text| describes_reserved_field(text))
+            })
+            .cloned()
+            .collect();
+        if !is_reserved_field_name(&field.name) && reserving.is_empty() {
+            continue;
+        }
         spans.push(ReservedSpanRecord {
             span_id: String::new(),
             container: field.container.clone(),
@@ -21626,6 +21734,7 @@ fn reserved_span_surface(
             within_field_id: None,
             keyword_definition_id: None,
             supporting_table_ids: field.supporting_table_ids.clone(),
+            supporting_statement_ids: reserving,
         });
     }
     // `EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i` — the bits a field's own layout reserves, relative to that field
@@ -21646,6 +21755,7 @@ fn reserved_span_surface(
                 within_field_id: Some(field.field_id.clone()),
                 keyword_definition_id: None,
                 supporting_table_ids: field.supporting_table_ids.clone(),
+                supporting_statement_ids: Vec::new(),
             });
         }
     }
@@ -46868,6 +46978,7 @@ The control register.
             supporting_table_ids: Vec::new(),
             values: Vec::new(),
             sub_fields: Vec::new(),
+            description_statement_ids: Vec::new(),
         };
         super::read_field_sub_table(
             &[
@@ -47192,7 +47303,7 @@ The control register.
             [("00H", None), ("0BH - FFH", Some("keyword_0005"))],
             "only the reserved value cites the keyword"
         );
-        let spans = super::reserved_span_surface(&source_ir, None, &fields, &[keyword]);
+        let spans = super::reserved_span_surface(&source_ir, None, &fields, &[keyword], &[]);
         type Within<'a> = (Option<&'a str>, Option<(u32, u32)>, Option<u32>);
         let within: Vec<Within> = spans
             .iter()
@@ -47209,6 +47320,130 @@ The control register.
             within,
             [(Some(attributes.field_id.as_str()), Some((31, 2)), Some(30))],
             "the reserved bits are a span within their field, relative to it"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_section_headed_by_a_declared_fields_name_describes_that_field() -> Result<()> {
+        let declared: std::collections::BTreeSet<&str> =
+            ["MsgType", "RsvdZero", "Interface"].into_iter().collect();
+        let name = |title: &'static str| super::section_field_name(title, &declared);
+        assert_eq!(name("B4.2.1.5 RsvdZero"), Some("RsvdZero"));
+        assert_eq!(name("B4.2.1.1 Message type, MsgType"), Some("MsgType"));
+        assert_eq!(name("Message type, MsgType"), None, "an unnumbered heading");
+        assert_eq!(
+            name("B4.2.4 Data message fields"),
+            None,
+            "no declared field"
+        );
+        assert!(super::describes_reserved_field(
+            "This field indicates that the use of the bits is Reserved and a Transmitter must set it to zero."
+        ));
+        assert!(!super::describes_reserved_field(
+            "Bit 7 is reserved for future use."
+        ));
+        let record = |name: &str, container: &str| super::MessageFieldRecord {
+            field_id: format!("message_field_{name}_{container}"),
+            name: name.to_string(),
+            container: container.to_string(),
+            bit_width: None,
+            bit_range: None,
+            byte_offset: None,
+            description: None,
+            supporting_table_ids: vec!["table_0011".to_string()],
+            values: Vec::new(),
+            sub_fields: Vec::new(),
+            description_statement_ids: Vec::new(),
+        };
+        let mut records = vec![
+            record("MsgType", "Request message"),
+            record("MsgType", "Data message"),
+            record("RsvdZero", "Request message"),
+            record("Interface", "Function Wake Device Notification"),
+        ];
+        let statements = statements_of(&[
+            "This field identifies the message type.",
+            "- Request messages can be one of two types.",
+            "This field indicates that the use of the bits is Reserved and a Transmitter must set the field value \
+             to zero, a Receiver must ignore the field.",
+            "Table B4.2 shows the ChunkValid field encodings.",
+            "The interface descriptor describes a specific interface within a configuration.",
+        ]);
+        let anchor = |title: &str| super::SectionAnchor {
+            section_id: title.to_string(),
+            title: title.to_string(),
+            source_path: PathBuf::from("spec.md"),
+            page_start: None,
+            page_end: None,
+            line_start: None,
+            line_end: None,
+        };
+        let anchors = [
+            anchor("B4.2.1.1 Message type, MsgType"),
+            anchor("B4.2.1.5 RsvdZero"),
+            anchor("B4.2.1.6 Chunk valid, ChunkValid"),
+            anchor("9.6.5 Interface"),
+        ];
+        let sections: std::collections::HashMap<String, usize> =
+            [("s0", 0), ("s1", 0), ("s2", 1), ("s3", 2), ("s4", 3)]
+                .into_iter()
+                .map(|(id, section)| (id.to_string(), section))
+                .collect();
+        super::bind_field_sections(&mut records, &statements, &sections, &anchors);
+        let bound: Vec<(&str, Vec<&str>)> = records
+            .iter()
+            .map(|record| {
+                (
+                    record.container.as_str(),
+                    record
+                        .description_statement_ids
+                        .iter()
+                        .map(String::as_str)
+                        .collect(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            bound,
+            [
+                ("Request message", vec!["s0", "s1"]),
+                ("Data message", vec!["s0", "s1"]),
+                ("Request message", vec!["s2"]),
+                ("Function Wake Device Notification", vec![]),
+            ],
+            "every record of the name; a section naming an undeclared field, or opening on no field, binds nothing"
+        );
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("c2c.md");
+        fs::write(&source, "# Messages\n")?;
+        let source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let spans = super::reserved_span_surface(&source_ir, None, &records, &[], &statements);
+        type Read<'a> = (&'a str, Option<&'a str>, Vec<&'a str>, Option<&'a str>);
+        let read: Vec<Read> = spans
+            .iter()
+            .map(|span| {
+                (
+                    span.text.as_str(),
+                    span.field_id.as_deref(),
+                    span.supporting_statement_ids
+                        .iter()
+                        .map(String::as_str)
+                        .collect(),
+                    span.keyword_definition_id.as_deref(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [(
+                "RsvdZero",
+                Some("message_field_RsvdZero_Request message"),
+                vec!["s2"],
+                None
+            )],
+            "a field its own description reserves is reserved space citing that description, with no keyword"
         );
         Ok(())
     }
@@ -47336,7 +47571,7 @@ The control register.
             obligations: Vec::new(),
             supporting_statement_ids: Vec::new(),
         };
-        let spans = super::reserved_span_surface(&source_ir, None, &fields, &[keyword]);
+        let spans = super::reserved_span_surface(&source_ir, None, &fields, &[keyword], &[]);
         type Read<'a> = (
             &'a str,
             &'a str,
@@ -47422,7 +47657,7 @@ The control register.
                 .all(|field| !field.name.starts_with("Reserved")),
             "padding stays no field"
         );
-        let uncited = super::reserved_span_surface(&source_ir, None, &fields, &[]);
+        let uncited = super::reserved_span_surface(&source_ir, None, &fields, &[], &[]);
         assert!(
             uncited
                 .iter()

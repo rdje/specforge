@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why was EXTRACTION-QUALITY-GAUGE.3k.9 not shipped
+- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
+  > why was EXTRACTION-QUALITY-GAUGE.3k.9 parked
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > why was HTRANS must_be_high extracted from a sentence about HSEL
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > why was MAX_TASKS removed from check_task_tree_catalog.pl
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
 - [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)

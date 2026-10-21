@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > when should the activate-only ExtractionProfile consume contract be built
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > when was the upstream claim-verification standard last re-read
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where are Docling models stored for SpecForge
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > where are Docling page sidecar paths normalized
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > where are a parameter's legal values like 8, 16, 1024 or 0..32 stored
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
@@ -289,11 +297,3 @@
   > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > where is the complete live document containment adoption task history
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > where is the declared-signal set that the semantic grounding filter uses built
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > where is the default-flip decision packet / should promote-constraints-llm become the default
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)

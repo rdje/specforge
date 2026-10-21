@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is signal_presence_records and what does a SignalPresenceRecord hold
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is snap_subject_to_sentence_token and when does it fire
+- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
+  > what is software_intent / SoftwareIntentRecord / SoftwareAgentBasis / SoftwareIntentModality
+- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
+  > what is software_intent_surface / software_subject / glossary_software_name / implemented_in_software_names
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what is source_batch in SourceIR
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
@@ -289,11 +297,3 @@
   > what is the register-field eval surface (EvalTask::RegisterField)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > what is the registers.section_header_field strategy
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what is the remedy when a research record reaches its per-file line ceiling
-- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
-  > what is the residual isf_reset_kind_not_stated
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what is the rolling ledger archive protocol
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why is by excluded from the relation complement markers
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why is c opcode read as the signal c
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is channel membership metadata-only and not lowered to .isf
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > why is chomp not removing the newline in this Perl script
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why is conformal calibration still blocked at CHI scale
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
@@ -284,17 +298,3 @@
   > why was AXI's RUN state missing from protocol_states
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > why was EXTRACTION-QUALITY-GAUGE.3k.9 not shipped
-- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
-  > why was EXTRACTION-QUALITY-GAUGE.3k.9 parked
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > why was HTRANS must_be_high extracted from a sentence about HSEL
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > why was MAX_TASKS removed from check_task_tree_catalog.pl
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
