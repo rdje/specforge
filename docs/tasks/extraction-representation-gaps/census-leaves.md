@@ -287,7 +287,8 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   `.isf` can state it; measure AHB and every chain's per-bit tables.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v`
-  Status: `open` (`2026-09-29`; DESIGN; found by `.3.c`)
+  Status: `done` (`2026-10-22`; DESIGN; found by `.3.c`; decision in `layout-and-binding-leaves`; opened `.3.c.v.i`,
+  `.3.c.v.ii`, `.3.c.v.iii`, `.3.c.v.iv`, `.61`)
   Goal: **a requirement matrix keeps both of its keys.** USB 3.2 *Table 10-2* (hub upstream connection x downstream port
   type -> VBUS `On` / `May be off`) and OpenCAPI discovery's DVSEC applicability (capability x AFU configuration x
   function -> `Required` / `Prohibited` / `Allowed`) state a modal requirement per pair of keys, and no carrier holds one.

@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v",
-      "literal" : "`.3.c.v` — a requirement matrix keeps both of its keys.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i",
+      "literal" : "`.3.c.v.i` — a two-way table is a matrix record.",
       "mode" : "eligible",
-      "part_id" : "census-leaves"
+      "part_id" : "layout-and-binding-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -681,7 +681,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -1278,6 +1278,36 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1299,13 +1329,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 50599,
+            "bytes" : 50708,
             "line_bytes" : 283,
-            "lines" : 517
+            "lines" : 518
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "c30c749f81bc0ede8877221585aced3ed035c30c9d3eb1a4cd085c71144410ea",
+         "sha256" : "d813d32d65abb03ffc944e5f54c3170de81459842dc7590a76157659b7255579",
          "state" : "active"
       },
       {
@@ -1437,13 +1467,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
          "metrics" : {
-            "bytes" : 11293,
+            "bytes" : 18473,
             "line_bytes" : 119,
-            "lines" : 129
+            "lines" : 210
          },
          "part_id" : "layout-and-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-         "sha256" : "d358dafff55e0dc1f7697497dac538d8ffec6c7ae611f5f0de3a1a5e1b5e7870",
+         "sha256" : "9d97abfe1bfd3e2976e11778b0107fe291d25e898afe2d2efdfc3a78aadb202c",
          "state" : "active"
       },
       {

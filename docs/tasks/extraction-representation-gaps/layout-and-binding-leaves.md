@@ -9,6 +9,53 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
 
 ## Post-migration records
 
+- **`.3.c.v`'s measurement and decision** (`2026-10-22`; the leaf's record is in `census-leaves`).
+  **Measured `2026-10-22`** (31 chains; `.project-data/tmp/erg-3cv/census2.py`). 51 tables in 13 documents hold two or
+  more key columns of marks or modal words (`Y`, `-`, `X`, `Yes`, `N/A`, `M`, `O`, *Required*, *Prohibited*,
+  *Allowed*, *Recommended*, *Permitted*, *On*, *May be off*). Two readers already take 17: `signal_presence_records`
+  15 presence tables (AXI *B2.2*/*B2.3* 11, APB5 3, AHB 1), and the register reader 2 RISC-V debug access tables. The
+  other 34 fall into these families (the fifteen-families census of `.3.b` counted 135 such tables among the untyped
+  tables of all 78 stored documents; this one reads the 31 current chains' tables by shape):
+  - **Legality matrices: 6.** An operation per row, a mode or state per column, the cell whether it is permitted: AXI
+    *A12.11*/*A12.13* (*Legal tag operations*, opcode x `MTE_Support` x tag operation), *A9.20* (*Permitted accesses*,
+    phase x domain x read/write), TMC *3-52*/*3-53* (*Permitted register writes/reads*, register x
+    `TraceCaptEn`/`TMCReady`/`MODE`, 3 tables).
+  - **Requirement matrices: 5.** A feature per row, a configuration per column, a modal word per cell: I2C *Table 3*
+    (its caption defines `M`, `O` and `n/a`), OpenCAPI *1-5* (*Reset Types*) and its DVSEC applicability table, USB
+    3.2 *10-2* (*VBUS Requirements*), ADIv6 *E2-1* (*Recommended ADI implementations*).
+  - **Version and variant matrices: 6, and one legend.** An item per row, a version, issue or interface class per
+    column: AXI *A15.2* (*DVM message versions*), *B2.4*'s last page, APB5's property-by-issue table, ADIv6 *B2-2* (DP
+    registers by DP version, 2 tables), OpenCAPI *8-2* (version interoperability). AXI *B2.1* (*Key to signals table*)
+    is the legend of the presence matrices: `YM` is mandatory on a manager and optional on a subordinate. The presence
+    records keep each code as written and no reader binds it to the legend.
+  - **Effect matrices: 11.** A parameter, register access or code per row, an event, state or property per column: USB
+    3.2 *9-2* (*Preserved USB Suspend State Parameters*), *9-10* (*Device Parameters and Events*, 2 tables), *7-11*
+    (*Error Types and Recovery*, 3 tables), USB4 CM *7-3* (*TMU Mode Parameters*), the Cortex-A76 guide's register
+    read and write properties (3 tables), ADIv6 *B5-2* (*Activation codes*).
+  - **Not matrices: 5.** AXI's untitled `AWCMO` table is an encoding whose *Enable property* column names the property
+    that enables a member (`Persist_CMO`, `RME_Support`); its members are read, and the property is not: `.61`. AHB
+    *6-1*/*6-2* (active byte lanes) and ADIv6 *C3-2* (command-byte bits) are layouts: `DOC-INTENT-TAXONOMY.4b`, as
+    ADIv6 *C2-4* was routed. OpenCAPI *1-1* (*Changes to product which require re-testing*) is certification process,
+    a non-contract.
+  `.57.a` routed four more with the same two-way shape but other cells: USB 3.2 *7-14* (*Start-up PHY Capability
+  Match*, the negotiated generation per pair), *8-8* (*Port Type Selection Matrix*, a sentence per pair), OpenCAPI
+  *8-1* and *8-3* (version numbers, version compliance).
+  **Decided.**
+  - **One record for a two-way table.** An EvidenceIR `matrix_tables` record per table and its continuations: the row
+    key columns' titles, each data column's key path (its header cells from the top header row down, as written, a
+    spanned title repeated), and per row the key cells and every cell as written. The cell class is recorded: *mark*,
+    *modal*, *value* or *prose*, from the cells alone. A legend the document states is attached as written: a caption
+    that defines its codes (I2C *Table 3*), or a legend table whose code column names the matrix's codes (AXI *B2.1*).
+  - **Precedence.** A table another reader takes keeps that reader: presence matrices, register tables, value
+    combinations (columns titled by signals), signal layouts and channel code tables. The encoding readers take a code
+    column; a matrix has none.
+  - **Dispositions.** Legality matrices constrain which operations a mode permits, so they bear on the executable
+    contract: their lowering is decided apart, from a consumer (`.3.c.v.iv`). Requirement, version and effect matrices
+    describe configuration, variants and software-visible state. They stay typed in IR and are stated as residuals
+    (ADR 0033 §6).
+  - **Legends and presence codes.** A presence record's code (`YM`) gains the legend's meaning per interface side when
+    the document states a legend whose codes cover the presence codes (`.3.c.v.iii`).
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i`
   Status: `done` (`2026-10-22`; CODE; opened by `.3.c.iv.b`; checklist below)
   Goal: **a table naming a signal's bit sub-fields is typed.** **Reproduce:** AHB *3-6*, APB-E `table_0007`, AXI-L
@@ -114,6 +161,40 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   the pin `54ac1c22` and upstream `c51e22712`) against the current pin and upstream, sign it off as an
   `FSMGEN-REQUESTS` leaf and its ledger record, and move F29 to *requested*.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)
+  Goal: **a two-way table is a matrix record.** **Reproduce:** AXI *A12.11*, I2C *Table 3*, USB 3.2 *10-2* and *7-14*
+  reach EvidenceIR as raw rows. Acceptance: the `matrix_tables` surface as `.3.c.v` decided (row keys, column key
+  paths, cells as written, cell class, a caption's or a legend table's codes); precedence for the readers named there;
+  measure the 31 chains, every family of the census accounted for.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)
+  Goal: **a matrix reaches IntentIR, and the adapter names it.** Acceptance: carry `matrix_tables` through SemanticIR
+  to IntentIR; one adapter residual per matrix naming its family's disposition; `.isf` texts unchanged; rebuild what
+  moves.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)
+  Goal: **a presence code reads its legend.** **Reproduce:** AXI's presence records keep `YM`, `YS`, `NS` as written;
+  *B2.1* says `YM` is mandatory on a manager and optional on a subordinate. Acceptance: bind each presence code to the
+  legend the document states for it (by its codes, never by a vocabulary list), per interface side; measure every
+  chain's presence records.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
+  Goal: **a legality matrix's lowering is decided from a consumer.** AXI *A12.11*/*A12.13* say which tag operation an
+  opcode may carry under each `MTE_Support`; *A9.20* which accesses a phase permits; TMC *3-52*/*3-53* which register
+  accesses a state permits. Acceptance: bind row and column keys to the encodings and parameters they name, decide
+  whether an assertion states the matrix faithfully (ADR 0033 §4, `sf-isf-actor-level-assertion`), and open the CODE
+  leaf or record the residual.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.61`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
+  Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives
+  `CleanSharedPersist` the enabling property `Persist_CMO` and `CleanInvalidPoPA` `RME_Support`; the members are read
+  (`Enum AWCMO …`) and the property is not. Acceptance: census encoding tables with such a column, decide the carrier
+  (a member's enabling property, joined to the property's own record), and measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
   Goal: **a signal laid out per message kind is read.** **Reproduce:** AXI-L *A15.20*-*A15.22* and their continuations

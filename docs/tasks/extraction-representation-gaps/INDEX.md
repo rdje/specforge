@@ -58,7 +58,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.37` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` | [Census leaves](census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.v` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.d` | [Clause and register leaves](clause-and-register-leaves.md) |
@@ -68,6 +67,11 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.60` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.61` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 
 ## Complete route catalog
 

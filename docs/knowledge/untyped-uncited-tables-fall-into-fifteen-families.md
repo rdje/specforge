@@ -29,12 +29,13 @@ added rules (register-figure pieces, response and requirement matrices, captions
 in the census record.
 
 The census, whole: 616 tables (53.1%) state nothing the contract lowers (document apparatus, figures read as tables,
-instruction timings and worked examples, line coding and electrical parameters, empty tables, waveform narrations,
-and 56 of the hand-read). 544 (46.9%) are contract content, every one with an owner: `DOC-INTENT-TAXONOMY.4b` 225
-(structure and message layouts), `.3.c.v` 135 (presence, requirement and response matrices), AXI's parameter
-definitions 78 (`KG-ISF-COMPLETENESS.2a.vii.c`), `.3.g.iii` 57 (multi-key encodings and behaviour; `.3.g.iii.b.i` since `2026-10-21`), `.3.b.iii` 43
-(single-key value, timer and constraint tables the ingest left untyped), `.41.e` 5 (a field's bits mapped to a signal's)
-and `.3.c.viii` 1 (TMC's shifted memory table).
+instruction timings and worked examples, line coding and electrical parameters, empty tables, waveform narrations, and
+56 of the hand-read). 544 (46.9%) are contract content, every one with an owner: `DOC-INTENT-TAXONOMY.4b` 225
+(structure and message layouts), `.3.c.v` 135 (presence, requirement and response matrices; since `2026-10-22`
+`.3.c.v.i`, `.3.c.v` having decided their `matrix_tables` record), AXI's parameter definitions 78
+(`KG-ISF-COMPLETENESS.2a.vii.c`), `.3.g.iii` 57 (multi-key encodings and behaviour; `.3.g.iii.b.i` since
+`2026-10-21`), `.3.b.iii` 43 (single-key value, timer and constraint tables the ingest left untyped), `.41.e` 5 (a
+field's bits mapped to a signal's) and `.3.c.viii` 1 (TMC's shifted memory table).
 
 The one loss `.3.b` found, TMC's untyped `Signal | Type | Description` tables, is read since `.3.b.i`
 ([[an-untyped-signal-table-is-read-by-its-direction-cells]]). `.3.b.ii` named one more: AXI's *DVM Complete* table

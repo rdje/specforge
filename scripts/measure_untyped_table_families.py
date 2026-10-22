@@ -178,7 +178,7 @@ def classify(header_rows, body_rows, col_count, signals: set[str], caption: str 
 FAMILIES = {
     "structure_or_message_layout": "DOC-INTENT-TAXONOMY.4b (structure and message field layouts)",
     "parameter_definition": "KG-ISF-COMPLETENESS.2a.vii.c (a parameter's stated values and default)",
-    "presence_or_compliance_matrix": "EXTRACTION-REPRESENTATION-GAPS.3.c.v (requirement, presence and compliance matrices)",
+    "presence_or_compliance_matrix": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i (requirement, presence and compliance matrices; .3.c.v decided the record)",
     "signal_declaration_untyped": "EXTRACTION-REPRESENTATION-GAPS.3.c.viii (a signal table the converter shifted; .3.b.i reads the rest)",
     "register_summary": "read table by table (EXTRACTION-REPRESENTATION-GAPS.3.b.ii; dispositions in the census record)",
     "register_field_table": "read table by table (EXTRACTION-REPRESENTATION-GAPS.3.b.ii; dispositions in the census record)",
@@ -190,7 +190,7 @@ FAMILIES = {
     "software_or_performance": "non-contract: instruction timings, programming and worked examples",
     "figure_fragment": "non-contract: fragments of a figure the converter read as a table",
     "empty": "non-contract: no cell text",
-    "response_or_requirement_matrix": "EXTRACTION-REPRESENTATION-GAPS.3.c.v (a response or requirement per combination of keys)",
+    "response_or_requirement_matrix": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i (a response or requirement per combination of keys; .3.c.v decided the record)",
     "timing_untyped": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii (timers and timeouts in tables the ingest left untyped)",
     "field_signal_mapping": "EXTRACTION-REPRESENTATION-GAPS.41.e (a register field bit mapped to a signal bit, in a table)",
     "encoding_untyped": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii (value and meaning tables the ingest left untyped)",
