@@ -67,8 +67,9 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.60` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.61` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.62` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 
 ## Complete route catalog
 

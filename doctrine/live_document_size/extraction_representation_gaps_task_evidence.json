@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv",
-      "literal" : "`.3.c.v.iv` — a legality matrix's lowering is decided from a consumer.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.62",
+      "literal" : "`.62` — a column title with a footnote mark names its signal.",
       "mode" : "eligible",
       "part_id" : "layout-and-binding-leaves"
    },
@@ -166,13 +166,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
             "metrics" : {
-               "bytes" : 27917,
+               "bytes" : 31670,
                "line_bytes" : 121,
-               "lines" : 315
+               "lines" : 354
             },
             "part_id" : "layout-and-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-            "sha256" : "3dc6059f987551cd8061c4fd9091142f9f51852ce87b52f5dc0c8cb1b1c5a9c0",
+            "sha256" : "e4232e8d47402943f34d2c74218e313da9f981fe8d4d377512f3641f9657ab36",
             "state" : "active"
          },
          {
@@ -1566,12 +1566,24 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.v",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.62",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
@@ -1702,7 +1714,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.v.iv` — a legality matrix's lowering is decided from a consumer.",
+         "`.62` — a column title with a footnote mark names its signal.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1740,8 +1752,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.60`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.61`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.61`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.62`"
       ]
    },
    "migration_metadata" : {

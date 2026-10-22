@@ -287,13 +287,52 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   matrix can be a legend); KM card `a-two-way-table-of-marks-is-a-matrix`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
+  Status: `done` (`2026-10-22`; DESIGN; opened by `.3.c.v`; opened `.3.c.v.v`, `.62`)
   Goal: **a legality matrix's lowering is decided from a consumer.** AXI *A12.11*/*A12.13* say which tag operation an
   opcode may carry under each `MTE_Support`; *A9.20* which accesses a phase permits; TMC *3-52*/*3-53* which register
   accesses a state permits. Acceptance: bind row and column keys to the encodings and parameters they name, decide
   whether an assertion states the matrix faithfully (ADR 0033 §4, `sf-isf-actor-level-assertion`), and open the CODE
   leaf or record the residual.
+  **Measured `2026-10-22`** (the legality matrices `.3.c.v.i` reads, against AXI's IntentIR and `manager.isf`).
+  - **AXI *A12.11*/*A12.13*.** The tag-operation column keys (`Transfer`, `Fetch`, `Update`, `Match`) are members of
+    `ARTAGOP`/`AWTAGOP`, which the `.isf` declares. `MTE_Support = Basic` names a property; the `.isf` has no
+    parameter for it, and properties reach IR as `KG-ISF-COMPLETENESS.2a.vii.c.v`/`.c.vi` decide. The row keys are
+    opcodes (`ReadNoSnoop`, `WriteUnique*`, `Write*CMO`): no enum or combination names them. AXI states their decode,
+    *A7.4 ARSNOOP encodings* (`ARSNOOP | ARDOMAIN 1 | Opcode | Enable`): a value combination of two signals. No reader
+    takes it, because its second title carries a footnote mark (`ARDOMAIN 1`) and so names no declared signal: `.62`.
+    A `*` key names a family of opcodes.
+  - **AXI *A9.20*.** Its rows are the numbered phases of a described sequence, with no signal to bind; it stays typed.
+  - **TMC *3-52*/*3-53*.** Refused by `.3.c.v.i` as field-keyed: a value combination of `TraceCaptEn`, `TMCReady` and
+    `MODE` that the combination reader refuses for its emptied cells (`.3.g.iii.b.i`).
+  **Decided.**
+  - **What a lowering is.** A legality matrix states which tag operation an opcode may carry under a property value.
+    Its faithful `.isf` form is an always-on assertion per actor. Each data column (property value, tag operation) is
+    guarded by that parameter's value and that tag operation's code. Its consequent is the set of opcodes the column
+    marks, each decoded to its signals' codes. A `*` key expands to the opcodes the decode names under it.
+  - **Not lowered yet, by three prerequisites.** (1) The opcode decode: `.62` reads *A7.4* and its write twin as value
+    combinations. (2) The property as a parameter: KG-ISF `.2a.vii.c.v`/`.c.vi`. (3) An always-on assertion outside a
+    transaction: `sf-isf-actor-level-assertion`, accepted by FSMGen and not yet shipped
+    (`EXTRACTION-REPRESENTATION-GAPS.15`). `.3.c.v.v` lowers the matrices once all three hold. Until then each keeps
+    its `isf_protocol_matrix_table_*` residual. No new FSMGen request is needed: the shape is the accepted actor-level
+    assertion, and ADR 0033 §4 holds.
+  - **The other families** (requirement, version, effect) stay typed, as `.3.c.v` decided.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`
+  Status: `open` (`2026-10-22`; CODE, waits for `.62`, `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin with
+  actor-level assertions; opened by `.3.c.v.iv`)
+  Goal: **a legality matrix lowers to an always-on assertion.** Acceptance: once the opcode decode, the property
+  parameter and actor-level assertions exist, lower AXI *A12.11*/*A12.13* as `.3.c.v.iv` decided (column guard: the
+  property value and the tag operation's code; consequent: the marked opcodes, decoded, `*` keys expanded), FSMGen
+  strict-clean, and measure every chain's legality matrices; repoint the adapter's `isf_protocol_matrix_table_*`
+  residual text, which names `.3.c.v.iv`, to the lowering.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.62`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v.iv`)
+  Goal: **a column title with a footnote mark names its signal.** **Reproduce:** AXI *A7.4 ARSNOOP encodings* titles
+  its second key `ARDOMAIN 1` (footnote 1), so `combination_key_name` names no signal, the table has one key, and the
+  opcode decode (`ReadNoSnoop` = `ARSNOOP` 0b0000 with `ARDOMAIN` `NSH, SYS`) reaches no record. Acceptance: strip a
+  footnote mark the document's own footnote defines (or a trailing digit after a declared name) before naming a key;
+  measure every chain's combination, layout and matrix titles; keep every existing record.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives

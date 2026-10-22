@@ -597,9 +597,12 @@ OpenCAPI 3, I2C 2, AHB 1, USB4 CM 1); TMC's three field-keyed tables are refused
 prose (USB 3.2 *7-14*, *8-8*) are not matrices of this kind.
 
 Since `.3.c.v.ii` a matrix crosses SemanticIR and IntentIR unchanged, and the adapter states one
-`isf_protocol_matrix_table_*` residual per matrix: nothing executable names a matrix's keys yet. A legality matrix's
-lowering is decided apart (`.3.c.v.iv`); a requirement, version or effect matrix states configuration that stays typed
-in IR (ADR 0033 §6).
+`isf_protocol_matrix_table_*` residual per matrix: nothing executable names a matrix's keys yet. A legality matrix
+lowers to an always-on assertion per actor, decided by `.3.c.v.iv`: each column guarded by its property value and tag
+operation, the marked opcodes decoded to their signals. It waits for three things: the opcode decode (*A7.4*, whose
+`ARDOMAIN 1` title a footnote mark hides, `.62`), the property as an `.isf` parameter, and FSMGen's actor-level
+assertion (`.3.c.v.v`). A requirement, version or effect matrix states configuration that stays typed in IR (ADR 0033
+§6).
 
 Since `.3.c.v.iii` (`2026-10-22`) a matrix can be a legend. AXI *B2.1 Key to signals table* gives each presence code
 its meaning on a manager and on a subordinate (`YM`: *Mandatory*, *Optional*), and a presence table whose every code
