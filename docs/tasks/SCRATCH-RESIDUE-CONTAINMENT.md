@@ -491,6 +491,9 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   Verification: `every removal path absent; the re-plan is empty on both scripts; every retained root present; chain
   sha256 re-derived 4a05ec3d…, equal`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.17 — the daily sweep: 22.0 GiB of scratch and 2.9 GiB of rustc sessions`
+  **Corrected `2026-10-22`.** No leaf `FSMGEN-REQUESTS.15` exists: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b` first
+  named one for port sub-field layouts and withdrew it the same day (`d0d342c8c`, ADR 0033 §4). The export served that
+  draft and `FSMGEN-REFRESH-INTEGRATE-10`'s strict census of upstream `c51e22712`, and is removed since.
 
 ## Open Questions
 
