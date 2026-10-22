@@ -3,9 +3,10 @@
 - Part ID: `encoding-and-state-leaves`
 - State: `active`
 
-Open ERG leaves continue here, after `packet-and-memory-leaves` reached its rollover (`2026-10-21`): tables keyed by
-several signals' values, code columns that repeat, tables whose every row is a header row, and every later ERG leaf.
-`.3.g.iii.b`, `.3.g.iii.c` and `.57` moved here whole.
+Open ERG leaves continued here, after `packet-and-memory-leaves` reached its rollover (`2026-10-21`): tables keyed by
+several signals' values, code columns that repeat, and tables whose every row is a header row. `.3.g.iii.b`,
+`.3.g.iii.c` and `.57` moved here whole. This part reached its own rollover on `2026-10-22`; later leaves are in
+`layout-and-binding-leaves`, where `.3.c.iv.b.i`, `.3.c.iv.b.ii`, `.3.c.iv.c` and `.60` moved whole.
 
 ## Post-migration records
 
@@ -415,35 +416,6 @@ several signals' values, code columns that repeat, tables whose every row is a h
   Description*) and APB's `PPROT` table (*PPROT[0] | Normal or Privileged | … | LOW indicates normal access …*) reach
   no record. Acceptance: decide the record (bit, name, description, the meaning per level as written), its carrier to
   IntentIR, and how it relates to the signal's own record; measure every chain's row-per-bit tables; open the CODE leaf.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.b`)
-  Goal: **a table naming a signal's bit sub-fields is typed.** **Reproduce:** AHB *3-6*, APB-E `table_0007`, AXI-L
-  *A12.3*-*A12.6* reach EvidenceIR as raw rows only. Acceptance: the `signal_layouts` surface, its shape and level
-  reading as `.3.c.iv.b` decided; every other family of the 23 tables untouched; measure the 31 chains; amend the
-  book's *captured region* sentence.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.b`)
-  Goal: **a signal's sub-field layout reaches IntentIR, and the adapter names it.** Acceptance: carry `signal_layouts`
-  through SemanticIR to IntentIR; an adapter residual per layout, naming any sub-field past its width parameter's
-  default; `.isf` texts unchanged and FSMGen-strict-clean; rebuild what moves. Then re-evaluate ADR 0033 §4 for
-  `docs/gaps/fsmgen-ladder.md` F29: file the drafted request (`.project-data/tmp/req-port-fields/packet`) only if an
-  executable consumer needs the layout.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
-  Goal: **a signal laid out per message kind is read.** **Reproduce:** AXI-L *A15.20*-*A15.22* and their continuations
-  give each `ACADDR` bit a constant or a source field (`VA[56]`) per TLBI/BPI/VICI/PICI message part, and no reader
-  takes them. Acceptance: decide the record (a layout per message kind, with constant and source-field bits), how it
-  joins the message kinds' encodings and `DOC-INTENT-TAXONOMY.4b`'s layouts, and measure every chain.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.60`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
-  Goal: **a register field's sub-field table types the field's sub-fields.** **Reproduce:** ADIv6 *B3-10* lays
-  `IDCODE`'s `DESIGNER` (`bits[11:1]`) out as *Continuation code* `Bits[11:8]` and *Identity code* `Bits[7:1]`, with
-  ARM's values; `RegisterFieldRecord` has no sub-fields. Acceptance: decide the carrier (as `MessageSubField` did for
-  message fields, `.55.b.iv.b.i`), how the register's bit positions map onto the field's, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.59`
   Status: `done` (`2026-10-22`; CODE; found by `.3.g.iii.c`; checklist below)

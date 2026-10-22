@@ -437,6 +437,10 @@ pub struct EvidenceIr {
     /// or a meaning. Empty (serde-skipped) for documents with none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub value_combinations: Vec<ValueCombinationRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i: the tables naming a signal's sub-fields, one layout each. Empty
+    /// (serde-skipped) for documents with none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_layouts: Vec<SignalLayoutRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: state transitions a document states, with what fires each. Empty
     /// (serde-skipped) for documents that state none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -971,6 +975,72 @@ pub struct CombinationValueEncoding {
     pub encoding: StatedValueEncoding,
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a table naming a signal's sub-fields: one column of slices of one
+/// declared signal or collective (AHB *3-6* `HPROT[0]` … `HPROT[6]`, AXI *A12.3* `AxMPAM[9:1]`), a name for each and what
+/// the other columns say of it. One record per table and its continuations; layouts are never merged, since AXI's two
+/// `RME_Support` layouts put `PARTID` at different bits and only their captions say which applies. Every cell is as
+/// written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalLayoutRecord {
+    /// Stable id, e.g. `signal_layout_0002`.
+    pub layout_id: String,
+    /// The signal or collective the slices name, as written (`HPROT`, `AxMPAM`).
+    pub signal: String,
+    /// The table and, in order, each continuation of it.
+    pub table_ids: Vec<String>,
+    /// The table's caption, as written, when it has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+    /// The title of the column whose cells name each sub-field (`Name`, `Protection`, `Field`).
+    pub name_column: String,
+    /// The titles of the other columns, in column order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub other_columns: Vec<String>,
+    /// The sub-fields, one per row, in order.
+    pub sub_fields: Vec<SignalSubField>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — one row of a [`SignalLayoutRecord`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalSubField {
+    /// The table (page fragment) the row sits in.
+    pub table_id: String,
+    /// The slice as written (`[1]`, `[9:1]`).
+    pub bits: String,
+    /// The slice's high bit.
+    pub msb: u32,
+    /// The slice's low bit.
+    pub lsb: u32,
+    /// The name cell, as written (`Privileged`, `Normal or Privileged`, `PARTID`).
+    pub name: String,
+    /// Each other column's cell, as written, in column order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub cells: Vec<String>,
+    /// What a level of a one-bit sub-field means, where a cell states it outside any condition.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub levels: Vec<SubFieldLevel>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — the sentence a cell opens with a level (*When asserted, …*, *LOW
+/// indicates …*), as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SubFieldLevel {
+    /// The level the sentence names.
+    pub level: SignalLevel,
+    /// The sentence, as written.
+    pub meaning: String,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a level as a sub-field's description names it.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum SignalLevel {
+    Asserted,
+    Deasserted,
+    High,
+    Low,
+}
+
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — an EQUIVALENCE RULE the document states: under an optional condition,
 /// one thing is treated as another (*LPIs are always treated as Non-secure Group 1 interrupts*; *If the instruction
 /// being stepped over would normally stall the hart, then instead the instruction is treated as a nop*). Every part
@@ -1436,6 +1506,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("serial_frame_fields", "evidence.protocol_structure"),
     ("protocol_states", "evidence.protocol_structure"),
     ("value_combinations", "evidence.protocol_structure"),
+    ("signal_layouts", "evidence.protocol_structure"),
     ("protocol_transitions", "evidence.protocol_structure"),
     ("protocol_actors", "evidence.protocol_structure"),
     ("protocol_operations", "evidence.protocol_structure"),
@@ -1848,6 +1919,7 @@ impl EvidenceIr {
         insert_field!(serial_frame_fields);
         insert_field!(protocol_states);
         insert_field!(value_combinations);
+        insert_field!(signal_layouts);
         insert_field!(protocol_transitions);
         insert_field!(protocol_actors);
         insert_field!(protocol_operations);
@@ -2529,6 +2601,7 @@ impl EvidenceIr {
             actor_signal_relations,
             convergence_report,
             value_combinations,
+            signal_layouts,
         ) = converge_evidence_extractions(
             source_ir,
             extracted_statements,
@@ -2752,6 +2825,7 @@ impl EvidenceIr {
             message_field_constraints: Vec::new(),
             protocol_states,
             value_combinations,
+            signal_layouts,
             protocol_transitions,
             protocol_actors,
             protocol_operations,
@@ -31427,6 +31501,304 @@ fn value_combination_surface(
     records
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a cell that is one slice of a name, `HPROT[1]` or `AxMPAM[9:1]`: the
+/// name, the slice as written, its high bit and its low bit.
+fn parse_name_slice(cell: &str) -> Option<(&str, &str, u32, u32)> {
+    let cell = cell.trim();
+    let open = cell.find('[')?;
+    let inner = cell.strip_suffix(']')?.get(open + 1..)?;
+    let name = &cell[..open];
+    let is_identifier = name.starts_with(|c: char| c.is_ascii_alphabetic())
+        && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+    let bit = |text: &str| {
+        let text = text.trim();
+        (!text.is_empty() && text.bytes().all(|b| b.is_ascii_digit()))
+            .then(|| text.parse::<u32>().ok())
+            .flatten()
+    };
+    let (msb, lsb) = match inner.split_once(':') {
+        Some((high, low)) => (bit(high)?, bit(low)?),
+        None => (bit(inner)?, bit(inner)?),
+    };
+    (is_identifier && msb >= lsb).then_some((name, &cell[open..], msb, lsb))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — the level a sentence opens with: *When asserted*, *When deasserted*,
+/// a bullet's *Asserted,* or *Deasserted,*, or *LOW indicates* / *HIGH indicates* (the text layer can drop the space,
+/// `LOWindicates`).
+fn sentence_level(sentence: &str) -> Option<SignalLevel> {
+    let sentence = sentence.trim_start();
+    let indicates = |word: &str| {
+        sentence
+            .strip_prefix(word)
+            .is_some_and(|rest| rest.trim_start().starts_with("indicates"))
+    };
+    if sentence.starts_with("When asserted") || sentence.starts_with("Asserted,") {
+        Some(SignalLevel::Asserted)
+    } else if sentence.starts_with("When deasserted") || sentence.starts_with("Deasserted,") {
+        Some(SignalLevel::Deasserted)
+    } else if indicates("LOW") {
+        Some(SignalLevel::Low)
+    } else if indicates("HIGH") {
+        Some(SignalLevel::High)
+    } else {
+        None
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a cell's sentences: its bullets, each cut after a full stop that a
+/// capital follows.
+fn cell_sentences(cell: &str) -> Vec<&str> {
+    let mut sentences = Vec::new();
+    for piece in cell.split('\u{2022}') {
+        let piece = piece.trim();
+        let mut start = 0;
+        let chars: Vec<(usize, char)> = piece.char_indices().collect();
+        for window in chars.windows(3) {
+            if let [(stop, '.'), (_, ' '), (next, capital)] = window
+                && capital.is_uppercase()
+            {
+                sentences.push(piece[start..=*stop].trim());
+                start = *next;
+            }
+        }
+        if start < piece.len() {
+            sentences.push(piece[start..].trim());
+        }
+    }
+    sentences.retain(|sentence| !sentence.is_empty());
+    sentences
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — what each level of a one-bit sub-field means, from every cell that
+/// states it. A cell whose level sentences sit under a condition gives none: AHB `HPROT[2]` reads *If both of
+/// HPROT[4:3] are deasserted, then when this bit is: • Deasserted, …*, and reading the bullets alone would invent an
+/// unconditional meaning.
+fn sub_field_levels<'a>(cells: impl IntoIterator<Item = &'a str>) -> Vec<SubFieldLevel> {
+    let mut levels: Vec<SubFieldLevel> = Vec::new();
+    for cell in cells {
+        let sentences = cell_sentences(cell);
+        let Some(first) = sentences
+            .iter()
+            .position(|sentence| sentence_level(sentence).is_some())
+        else {
+            continue;
+        };
+        if sentences[..first].iter().any(|sentence| {
+            sentence.ends_with(':')
+                || sentence.starts_with("If ")
+                || sentence.starts_with("Unless ")
+        }) {
+            continue;
+        }
+        for sentence in &sentences[first..] {
+            if let Some(level) = sentence_level(sentence) {
+                let entry = SubFieldLevel {
+                    level,
+                    meaning: sentence.to_string(),
+                };
+                if !levels.contains(&entry) {
+                    levels.push(entry);
+                }
+            }
+        }
+    }
+    levels
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — the tables naming a signal's sub-fields, and how many had the shape's
+/// slice column.
+///
+/// The shape, read from the table alone (ADR 0006): exactly one column whose every cell is a slice of one declared
+/// signal or collective, at least two distinct slices that do not overlap, and a name column, the first other column
+/// of distinct short cells that are no number. A second column holding a slice or a binary literal is another family
+/// (a register field's bits mapped onto signal bits, `.41.e`; a layout per message kind, `.3.c.iv.c`). A column of
+/// numbers must restate each slice's width (AXI *A12.3*'s `Width`); bit numbers of something else (ADIv6's
+/// caption-less `HPROT` map: a register bit beside each signal bit) refuse the table. A continuation page joins the
+/// table it continues.
+fn read_signal_layouts(
+    source_ir: &SourceIr,
+    signal_titles: &HashSet<String>,
+) -> (Vec<SignalLayoutRecord>, usize) {
+    struct Shaped {
+        table_ids: Vec<String>,
+        reference: Option<String>,
+        caption: Option<String>,
+        titles: Vec<String>,
+        rows: Vec<(String, Vec<String>)>,
+    }
+    let mut shaped: Vec<Shaped> = Vec::new();
+    for table in &source_ir.structured_tables {
+        let Some(header) = table.header_rows.last() else {
+            continue;
+        };
+        if table.body_rows.is_empty() {
+            continue;
+        }
+        let titles: Vec<String> = header
+            .iter()
+            .map(|cell| cell.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .collect();
+        let reference = caption_table_ref(table.caption_text.as_deref());
+        let head = match &reference {
+            Some((reference, true)) => shaped.iter().rposition(|entry| {
+                entry.reference.as_deref() == Some(reference.as_str()) && entry.titles == titles
+            }),
+            _ => None,
+        };
+        let rows = table.body_rows.iter().map(|row| {
+            (
+                table.table_id.clone(),
+                row.iter()
+                    .map(|cell| cell.text.trim().to_string())
+                    .collect::<Vec<_>>(),
+            )
+        });
+        match head {
+            Some(index) => {
+                shaped[index].table_ids.push(table.table_id.clone());
+                shaped[index].rows.extend(rows);
+            }
+            None => shaped.push(Shaped {
+                table_ids: vec![table.table_id.clone()],
+                reference: reference.map(|(reference, _)| reference),
+                caption: table.caption_text.clone(),
+                titles,
+                rows: rows.collect(),
+            }),
+        }
+    }
+    let is_binary_literal = |cell: &str| {
+        cell.strip_prefix("0b")
+            .is_some_and(|bits| !bits.is_empty() && bits.bytes().all(|b| b == b'0' || b == b'1'))
+    };
+    let mut candidates = 0;
+    let mut records = Vec::new();
+    for entry in shaped {
+        let width = entry.titles.len();
+        if entry.rows.len() < 2 || entry.rows.iter().any(|(_, cells)| cells.len() != width) {
+            continue;
+        }
+        let column = |index: usize| -> Vec<&str> {
+            entry
+                .rows
+                .iter()
+                .map(|(_, cells)| cells[index].as_str())
+                .collect()
+        };
+        let slice_columns: Vec<usize> = (0..width)
+            .filter(|&index| {
+                let slices: Option<Vec<_>> =
+                    column(index).into_iter().map(parse_name_slice).collect();
+                slices.is_some_and(|slices| {
+                    let names: BTreeSet<&str> = slices.iter().map(|(name, ..)| *name).collect();
+                    names.len() == 1 && names.iter().all(|name| signal_titles.contains(*name))
+                })
+            })
+            .collect();
+        let [slice_column] = slice_columns[..] else {
+            continue;
+        };
+        candidates += 1;
+        let slices: Vec<(&str, &str, u32, u32)> = column(slice_column)
+            .into_iter()
+            .filter_map(parse_name_slice)
+            .collect();
+        let mut spans: Vec<(u32, u32)> =
+            slices.iter().map(|(_, _, msb, lsb)| (*lsb, *msb)).collect();
+        spans.sort_unstable();
+        if spans.windows(2).any(|pair| pair[1].0 <= pair[0].1) {
+            continue;
+        }
+        let others: Vec<usize> = (0..width).filter(|&index| index != slice_column).collect();
+        let foreign = others.iter().any(|&index| {
+            let cells = column(index);
+            cells
+                .iter()
+                .any(|cell| parse_name_slice(cell).is_some() || is_binary_literal(cell))
+                || (cells
+                    .iter()
+                    .all(|cell| !cell.is_empty() && cell.bytes().all(|b| b.is_ascii_digit()))
+                    && cells.iter().zip(&slices).any(|(cell, (_, _, msb, lsb))| {
+                        cell.parse::<u32>().ok() != Some(msb - lsb + 1)
+                    }))
+        });
+        if foreign {
+            continue;
+        }
+        let Some(name_column) = others.iter().copied().find(|&index| {
+            let cells = column(index);
+            cells.iter().all(|cell| {
+                !cell.is_empty()
+                    && cell.split_whitespace().count() <= 5
+                    && !cell.bytes().all(|b| b.is_ascii_digit())
+            }) && cells.iter().collect::<BTreeSet<_>>().len() == cells.len()
+        }) else {
+            continue;
+        };
+        let cell_columns: Vec<usize> = others
+            .into_iter()
+            .filter(|&index| index != name_column)
+            .collect();
+        records.push(SignalLayoutRecord {
+            layout_id: format!("signal_layout_{:04}", records.len() + 1),
+            signal: slices[0].0.to_string(),
+            table_ids: entry.table_ids.clone(),
+            caption: entry.caption.clone(),
+            name_column: entry.titles[name_column].clone(),
+            other_columns: cell_columns
+                .iter()
+                .map(|&index| entry.titles[index].clone())
+                .collect(),
+            sub_fields: entry
+                .rows
+                .iter()
+                .zip(&slices)
+                .map(|((table_id, cells), (_, bits, msb, lsb))| SignalSubField {
+                    table_id: table_id.clone(),
+                    bits: bits.to_string(),
+                    msb: *msb,
+                    lsb: *lsb,
+                    name: cells[name_column].clone(),
+                    cells: cell_columns
+                        .iter()
+                        .map(|&index| cells[index].clone())
+                        .collect(),
+                    levels: if msb == lsb {
+                        sub_field_levels(cell_columns.iter().map(|&index| cells[index].as_str()))
+                    } else {
+                        Vec::new()
+                    },
+                })
+                .collect(),
+        });
+    }
+    (records, candidates)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — the layouts the last convergence pass read, recorded as the
+/// `signal_layouts` surface only when a table had the shape's slice column, so a document without one keeps its
+/// manifest unchanged.
+fn signal_layout_surface(
+    (records, candidates): (Vec<SignalLayoutRecord>, usize),
+    manifest: &mut ExtractionManifest,
+) -> Vec<SignalLayoutRecord> {
+    if candidates > 0 {
+        manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
+            surface: "signal_layouts".to_string(),
+            eligible: 1,
+            entries: vec![crate::ir::extractor::ExtractorRunEntry {
+                name: "signal_slice_tables".to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced: candidates,
+                kept: records.len(),
+            }],
+        });
+    }
+    records
+}
+
 /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i — every state a stated transition names is a protocol state.
 ///
 /// A transition names the state it leaves and the states it may enter, and the table it comes from states them as
@@ -32497,6 +32869,7 @@ fn converge_evidence_extractions(
     Vec<ActorSignalRelation>,
     EvidenceConvergenceReport,
     Vec<ValueCombinationRecord>,
+    Vec<SignalLayoutRecord>,
 ) {
     let mut signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
     let mut signal_widths_from_tables =
@@ -32541,6 +32914,7 @@ fn converge_evidence_extractions(
     let mut final_signal_polarity_conflicts = Vec::new();
     let mut final_actor_signal_relations = Vec::new();
     let mut final_value_combinations = (Vec::new(), 0);
+    let mut final_signal_layouts = (Vec::new(), 0);
     let max_passes = source_ir.structured_tables.len().max(1) + 4;
     let mut new_facts_per_pass: Vec<usize> = Vec::new();
     let mut converged = false;
@@ -32629,6 +33003,8 @@ fn converge_evidence_extractions(
         // it as one key's enum; a column whose codes do determine it is still that key's enum (`AxPAS` in A4.7).
         let value_combinations =
             read_value_combinations(source_ir, &signal_titles, &collectives, register_records);
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i — a column of one signal's slices, each named: the signal's layout.
+        let signal_layouts = read_signal_layouts(source_ir, &signal_titles);
         // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i — a channel code table is read by its own reader, so neither
         // other encoding reader takes it.
         let (channel_tables, channel_statements) = read_channel_code_tables(
@@ -32712,6 +33088,7 @@ fn converge_evidence_extractions(
         final_signal_polarity_conflicts = signal_polarity.conflicts;
         final_actor_signal_relations = actor_signal_relations;
         final_value_combinations = value_combinations;
+        final_signal_layouts = signal_layouts;
 
         new_facts_per_pass.push(new_dynamic_statements.len());
         if new_dynamic_statements.is_empty() {
@@ -32738,6 +33115,7 @@ fn converge_evidence_extractions(
         final_actor_signal_relations,
         convergence_report,
         value_combination_surface(final_value_combinations, extraction_manifest),
+        signal_layout_surface(final_signal_layouts, extraction_manifest),
     )
 }
 
@@ -43719,7 +44097,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 49);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 50);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -48992,6 +49370,168 @@ The control register.
         assert_eq!(protection.member_column.as_deref(), Some("Description"));
         assert_eq!(protection.rows[1].values, ["-", "1"]);
         assert_eq!(protection.rows[1].member.as_deref(), Some("Data access"));
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a column of one signal's slices, each named, is the signal's layout;
+    /// a level is read only outside a condition, and a register-bit map, a second slice column and overlapping slices
+    /// are no layout.
+    #[test]
+    fn a_table_naming_a_signals_sub_fields_is_its_layout() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("layouts.md");
+        fs::write(&source, "# Layouts\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, header: &[&str], body: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: Some(format!("Table {id}")),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: (1 + body.len()) as u32,
+            col_count: header.len() as u32,
+            header_rows: rows(&[header]),
+            body_rows: rows(body),
+        };
+        // AHB 3-6: a bit per row; HPROT[2]'s levels sit under a condition.
+        source_ir.structured_tables.push(table(
+            "1",
+            &["Bit", "Name", "Description"],
+            &[
+                &[
+                    "HPROT[1]",
+                    "Privileged",
+                    "When asserted, the access is privileged. When deasserted the access is unprivileged.",
+                ],
+                &[
+                    "HPROT[2]",
+                    "Bufferable",
+                    "If both of HPROT[4:3] are deasserted, then when this bit is: \u{2022} Deasserted, the response \
+                     comes from the end. \u{2022} Asserted, it can come from a buffer.",
+                ],
+            ],
+        ));
+        // APB: the level bullets lost a space in the text layer.
+        source_ir.structured_tables.push(table(
+            "2",
+            &["PPROT", "Protection", "Comments"],
+            &[
+                &["PPROT[0]", "Normal or Privileged", "\u{2022} LOWindicates normal access. \u{2022} HIGH indicates privileged access."],
+                &["PPROT[1]", "Secure or Non-secure", "\u{2022} LOWindicates secure access."],
+            ],
+        ));
+        // AXI A12.3: fields over slices, with a width column.
+        source_ir.structured_tables.push(table(
+            "3",
+            &["Field", "Description", "Width", "Mapping"],
+            &[
+                &["MPAM_NS", "Security indicator", "1", "AxMPAM[0]"],
+                &["PARTID", "Partition identifier", "9", "AxMPAM[9:1]"],
+            ],
+        ));
+        // A register bit beside each signal bit (ADIv6's caption-less map): no layout.
+        source_ir.structured_tables.push(table(
+            "4",
+            &["Bit", "HPROT signal", "Description"],
+            &[
+                &["25", "HPROT[1]", "Privileged"],
+                &["24", "HPROT[0]", "Data"],
+            ],
+        ));
+        // Two signals' bits side by side (a register field mapped onto both): no layout.
+        source_ir.structured_tables.push(table(
+            "5",
+            &["ARPROT signal", "AWPROT signal", "Description"],
+            &[
+                &["ARPROT[2]", "AWPROT[2]", "Instruction"],
+                &["ARPROT[1]", "AWPROT[1]", "Non-secure"],
+            ],
+        ));
+        // Overlapping slices: no layout.
+        source_ir.structured_tables.push(table(
+            "6",
+            &["Field", "Mapping"],
+            &[&["LOW", "AxMPAM[3:0]"], &["MID", "AxMPAM[5:2]"]],
+        ));
+        let titles: std::collections::HashSet<String> =
+            ["HPROT", "PPROT", "AxMPAM", "ARPROT", "AWPROT"]
+                .into_iter()
+                .map(str::to_string)
+                .collect();
+        let (layouts, candidates) = super::read_signal_layouts(&source_ir, &titles);
+        assert_eq!(candidates, 5);
+        assert_eq!(
+            layouts
+                .iter()
+                .map(|layout| (layout.signal.as_str(), layout.name_column.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                ("HPROT", "Name"),
+                ("PPROT", "Protection"),
+                ("AxMPAM", "Field")
+            ]
+        );
+        let hprot = &layouts[0];
+        assert_eq!(hprot.caption.as_deref(), Some("Table 1"));
+        assert_eq!(hprot.other_columns, ["Description"]);
+        assert_eq!(
+            (
+                hprot.sub_fields[0].bits.as_str(),
+                hprot.sub_fields[0].msb,
+                hprot.sub_fields[0].name.as_str()
+            ),
+            ("[1]", 1, "Privileged")
+        );
+        assert_eq!(
+            hprot.sub_fields[0]
+                .levels
+                .iter()
+                .map(|level| (level.level, level.meaning.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                (
+                    super::SignalLevel::Asserted,
+                    "When asserted, the access is privileged."
+                ),
+                (
+                    super::SignalLevel::Deasserted,
+                    "When deasserted the access is unprivileged."
+                ),
+            ]
+        );
+        assert!(hprot.sub_fields[1].levels.is_empty());
+        assert_eq!(
+            layouts[1].sub_fields[0]
+                .levels
+                .iter()
+                .map(|level| level.level)
+                .collect::<Vec<_>>(),
+            [super::SignalLevel::Low, super::SignalLevel::High]
+        );
+        let mpam = &layouts[2];
+        assert_eq!(mpam.other_columns, ["Description", "Width"]);
+        assert_eq!(
+            (
+                mpam.sub_fields[1].bits.as_str(),
+                mpam.sub_fields[1].msb,
+                mpam.sub_fields[1].lsb
+            ),
+            ("[9:1]", 9, 1)
+        );
+        assert!(mpam.sub_fields[1].levels.is_empty());
         Ok(())
     }
 

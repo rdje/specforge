@@ -2,14 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > how is 'LPIs are always treated as Non-secure Group 1 interrupts' read
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > how is 'Lowercase x at the second letter denotes a collective term' read
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > how is 'must remain asserted until X' represented
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > how is 'the missing signals are assumed to be LOW' (signals covered by a check signal) bound now
+- [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
+  > how is AHB Table 3-6 Meaning of the HPROT bits read
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > how is AHB's per-bit HPROT table read (one signal's bits as keys, .3.c.iv.a)
+- [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
+  > how is APB's PPROT table (Normal or Privileged, LOW indicates …) read
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -289,11 +297,3 @@
   > how many captions does ingest discard
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how many captions in the frozen set state a normative constraint
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many captured figure regions does the retained corpus hold
-- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
-  > how many captured tables are typed unknown and uncited
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > how many claim pins are there
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)

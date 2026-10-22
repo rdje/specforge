@@ -46,6 +46,8 @@
   > does a research record with a live writer need a rollover instead of a partition
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > does a sentence naming a signal outrank a class sentence for the same signal
+- [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
+  > does a signal's sub-field layout reach the .isf (FSMGen ladder F29)
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > does a stale tree make the live-document-size gate slower
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -296,5 +298,3 @@
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > does the alpha harness expose transform recipes to production core
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > does the authority empty repair preserve formal and system contract interfaces

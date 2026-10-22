@@ -103,7 +103,8 @@ member without a trace, as it did 22 member statements in four documents. Now a 
 keeps its words behind the enum's name, since an identifier leads with a letter: AXI lowers `(AxSIZE
 (AXSIZE_1_BYTE_PER_TRANSFER 0) … (AXSIZE_128_BYTES_PER_TRANSFER 7))`. A "name" that is only a number is no name. That
 is a quantity column, or a table read by the wrong key, such as APB's `PPROT` bits, AHB's `HPROT` flags and CHI C2C's
-message-credit counts. It mints nothing, and the table stays a captured region.
+message-credit counts. It mints no enum. Since `.3.c.iv.b.i` a table naming a signal's bits is that signal's layout
+instead (see *A signal's bit sub-fields*).
 
 The enums this change *removes* — the 54 still named `TABLE`, `FIGURE` and `CHAPTER` — are all in the
 legacy stratum, so they will disappear as those documents are re-ingested rather than today.
@@ -539,6 +540,32 @@ target is invented, which ADR 0016 forbids. What a combination offers is a guard
 member would resolve to its keys' values. No condition on the current chains needs that, since AXI's rules about a
 physical address space name `AxPAS`'s own encoding, so it is built when a consumer appears. A state a combination keys
 says in its residual which combination states its encoding.
+
+### A signal's bit sub-fields
+
+AHB's *Table 3-6 Meaning of the HPROT bits* gives each bit a row: `HPROT[1]` *Privileged*, *When asserted, this bit
+indicates the transfer is a privileged access*. APB names `PPROT[0]` *Normal or Privileged* (*LOW indicates normal
+access*), and AXI's *Table A12.3* maps *PARTID* onto `AxMPAM[9:1]`. No column is an enum there: each row names a part
+of one signal. Since `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` (`2026-10-22`) such a table is an EvidenceIR
+`signal_layouts` record:
+
+- **Shape.** Exactly one column holds a slice of one declared signal or collective in every cell, with at least two
+  slices that do not overlap. The name column is the first other column of distinct short cells. A second column of
+  slices or binary literals is another table: a register field's bits mapped onto signal bits, or a layout per message
+  kind. A column of numbers must restate each slice's width, so ADIv6's caption-less map (a register bit beside each
+  `HPROT` bit) is refused and counted.
+- **What is kept.** The signal, the caption, and per row the slice with its high and low bit, the name and every
+  other cell as written. Layouts are never merged: AXI's two `RME_Support` layouts put `PARTID` at different bits.
+- **Levels.** For a one-bit sub-field, a sentence opening *When asserted*, *When deasserted*, *LOW indicates* or *HIGH
+  indicates* gives that level its meaning. A cell whose level sentences sit under a condition gives none: AHB
+  `HPROT[2]` reads *If both of HPROT[4:3] are deasserted, then when this bit is: …*.
+- **Manifest.** The `signal_layouts` manifest entry is recorded only for a document with a candidate table, so the
+  others keep their manifests.
+
+On the 31 chains (`2026-10-22`): AHB 1 layout (7 sub-fields, 12 levels), APB5 1 (3 sub-fields, 6 levels), AXI 4
+(`AxMPAM`, 3 fields each); ADIv6's candidate is refused. Nothing crosses SemanticIR yet (`.3.c.iv.b.ii`), and no port
+carries a field: `.isf` port options are a closed set, so a sub-field layout on a port is FSMGen ladder rung F29,
+*anticipated*.
 
 ### Which table an enum was read from
 

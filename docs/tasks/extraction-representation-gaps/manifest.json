@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i",
-      "literal" : "`.3.c.iv.b.i` — a table naming a signal's bit sub-fields is typed.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii",
+      "literal" : "`.3.c.iv.b.ii` — a signal's sub-field layout reaches IntentIR, and the adapter names it.",
       "mode" : "eligible",
-      "part_id" : "encoding-and-state-leaves"
+      "part_id" : "layout-and-binding-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -1251,27 +1251,27 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "encoding-and-state-leaves"
+         "part_id" : "layout-and-binding-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "encoding-and-state-leaves"
+         "part_id" : "layout-and-binding-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "encoding-and-state-leaves"
+         "part_id" : "layout-and-binding-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "encoding-and-state-leaves"
+         "part_id" : "layout-and-binding-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1419,13 +1419,25 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
          "metrics" : {
-            "bytes" : 57495,
+            "bytes" : 55405,
             "line_bytes" : 128,
-            "lines" : 634
+            "lines" : 606
          },
          "part_id" : "encoding-and-state-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-         "sha256" : "a9fa3a34fa47bb4d03604391296a003916da4428826c34c71a50181f53bc4962",
+         "sha256" : "c51144b366c21374903eb57630ac0d82c8b08b2b9977b12de9e848cc1400fb8a",
+         "state" : "active"
+      },
+      {
+         "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
+         "metrics" : {
+            "bytes" : 6716,
+            "line_bytes" : 119,
+            "lines" : 79
+         },
+         "part_id" : "layout-and-binding-leaves",
+         "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
+         "sha256" : "cdd574d9a1134dfc61112171f2e359f958a9643614612fdaf6a695037557ac1c",
          "state" : "active"
       },
       {

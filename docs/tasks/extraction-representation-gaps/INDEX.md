@@ -17,6 +17,7 @@
 - [Hint and notation leaves](../../archive/tasks/extraction-representation-gaps/hint-and-notation-leaves.md) — archived
 - [Packet and memory leaves](packet-and-memory-leaves.md)
 - [Encoding and state leaves](encoding-and-state-leaves.md)
+- [Layout and binding leaves](layout-and-binding-leaves.md)
 - [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) — archived
 - [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) — archived
 - [Environment assumption leaves](../../archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md) — archived
@@ -64,10 +65,9 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a.ii` | [Packet and memory leaves](packet-and-memory-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` | [Encoding and state leaves](encoding-and-state-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` | [Encoding and state leaves](encoding-and-state-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c` | [Encoding and state leaves](encoding-and-state-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.60` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.60` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 
 ## Complete route catalog
 
