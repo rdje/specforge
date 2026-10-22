@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d and .51
 - [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
@@ -296,5 +298,3 @@
   > what is message_fields.dword_layout / extract_dword_layout_fields / dword_layout_field_name / parse_dword_span / continues_dword_layout
 - [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
   > what is message_fields.width_offset_layout / extract_width_offset_layout_fields / width_offset_field_name
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > what is name_and_size_registers_from_layout

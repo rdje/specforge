@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > why is a conditional rule with an unread condition listed instead of emitted
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -295,5 +297,3 @@
   > why is the latest reviewed population replay not published
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > why is the metavariable test run after the identifier test
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual

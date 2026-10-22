@@ -318,8 +318,8 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   - **The other families** (requirement, version, effect) stay typed, as `.3.c.v` decided.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`
-  Status: `open` (`2026-10-22`; CODE, waits for `.63`, `.64`, `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin
-  with actor-level assertions; opened by `.3.c.v.iv`; `.62` done)
+  Status: `open` (`2026-10-22`; CODE, waits for `.64`, `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin with
+  actor-level assertions; opened by `.3.c.v.iv`; `.62` and `.63` done)
   Goal: **a legality matrix lowers to an always-on assertion.** Acceptance: once the opcode decode, the property
   parameter and actor-level assertions exist, lower AXI *A12.11*/*A12.13* as `.3.c.v.iv` decided (column guard: the
   property value and the tag operation's code; consequent: the marked opcodes, decoded, `*` keys expanded), FSMGen
@@ -380,12 +380,52 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   matrices' prerequisites); KM card `a-jointly-keyed-table-is-a-value-combination`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.63`
-  Status: `open` (`2026-10-22`; CODE; opened by `.62`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.62`; checklist below)
   Goal: **a key value of labels a note defines carries their codes.** **Reproduce:** AXI *A7.3*/*A7.4* key each
   opcode by a domain list (`NSH, SYS`) whose labels footnote 1 defines (*NSH is Non-shareable (0b00), SH is
   Shareable (0b01 or 0b10), SYS is System (0b11)*); `bind_combination_value_encodings` joins nothing, so the decode
   has no domain codes. Acceptance: read a note that defines a title's labels with their codes, bind each label of a
   list to its codes, and measure every chain's combinations.
+  **Done `2026-10-22`.**
+  - **The note.** A key whose title carries a mark keeps the note it refers to (`CombinationKey.note`): the one text
+    that `footnote` elements with that mark print beside the table's fragments (`footnote_texts_by_page`). Two
+    different notes with the mark give none.
+  - **Definitions.** `note_label_definitions` reads a note that is wholly a list, split at commas outside
+    parentheses, of `<label> is <name>` items, each optionally closed by its codes in parentheses. A label is one
+    word with a letter, and the codes are code literals. A note stating anything else defines nothing.
+  - **Binding.** A value that no encoding names directly may list defined labels. `defined_labels_encoding`
+    resolves each label by its name through the key's encodings, as a label value is. All the labels must sit in one
+    table, and a code the note prints must equal the code that table gives. The value then carries every label's
+    codes, in order. The note's codes are a check, not the source: the encoding table stays the provenance.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI's joined values go from 34 to 69: all 35 domain values
+    of *A7.3* (22) and *A7.4* (13), each resolved through *A8.5* `AxDOMAIN encodings` (`table_0111`). `NSH, SYS` is
+    `0b00`, `0b11`, and `NSH, SH, SYS` all four codes. No `-` value joins. No EvidenceIR field is new
+    (`CombinationKey.note` is a nested field), so the ruleset hash is unchanged.
+  - **Rebuilt.** AXI rebuilt stage by stage: only `value_combinations` moved in SemanticIR and IntentIR; its 111
+    residuals and `manager.isf` are unchanged, and `check_chain_currency.sh` confirms the ruleset did not move.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.63` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — `.62`'s two decodes, whose 35 domain values joined nothing, and every chain's
+  combination keys (only AXI's two carry a mark).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: a key kept no note, and
+  `bind_combination_value_encodings` joined only a value that is one label of the encoding, never a list of the
+  note's abbreviations. RED 5/5, the file restored byte-identically: a key recording no note, a note of any mark
+  taken as the key's, an undefined label skipped, a printed code not checked, any sentence read as a definition;
+  each fails `a_key_title_with_a_footnote_mark_names_its_signal` or
+  `a_key_value_of_labels_a_note_defines_carries_their_codes`.
+- [x] **ADDRESSED (verified)** — AXI's 35 joined domain values above, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `1b9fb1905`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,928 passed. `flow_census.json` rolled (+3 functions, +26 decision
+  sites, +44 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a note's grammar (`<label> is <name> ( codes )`) and the document's own encoding;
+  no label, signal or document name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (joined values 69; a note's labels); KM card
+  `a-jointly-keyed-table-is-a-value-combination`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.64`
   Status: `open` (`2026-10-22`; CODE; opened by `.62`)
   Goal: **a matrix cell's note narrows it.** **Reproduce:** AXI *A12.13* marks `WriteNoSnoop`'s Standard `Match` `Y

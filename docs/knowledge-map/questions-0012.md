@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > may a closed classifier role carry a qualifier (yes — e125aac7 admitted one balanced parenthesized qualifier for register carriers; WIRE-BASED-100.10 admits a generic interface noun as a whole word for the signal role)
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > may a diagnostic re-derive a neutralized source classification
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
@@ -295,5 +297,3 @@
   > what boundary does a signal-declaration census need beyond table_kind signal_description
 - [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
   > what bounds a task tree's leaf routes after ADR 0046
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what bounds the number of leaves a migrated task tree may declare

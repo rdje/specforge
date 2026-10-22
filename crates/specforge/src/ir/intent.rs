@@ -3886,6 +3886,7 @@ mod tests {
                 title: "PPROT[1]".to_string(),
                 name: "PPROT".to_string(),
                 bits: Some("[1]".to_string()),
+                note: None,
             }],
             member_column: Some("Physical address space".to_string()),
             meaning_columns: Vec::new(),

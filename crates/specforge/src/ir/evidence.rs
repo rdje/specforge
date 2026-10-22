@@ -965,6 +965,10 @@ pub struct CombinationKey {
     /// The bit or slice the title selects, as written (`[1]`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bits: Option<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.63 — the note the title's footnote mark refers to, as printed after the mark (AXI
+    /// `ARDOMAIN 1`: `NSH is Non-shareable ( 0b00 ), …`), when the pages beside the table and its fragments print one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub note: Option<String>,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — one row of a [`ValueCombinationRecord`].
@@ -982,7 +986,8 @@ pub struct CombinationRow {
     pub meanings: Vec<String>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii — the keys whose cell is a label of that key's encoding
     /// (`AxMMUSECSID` `Non-secure`), with the encoding table and the code of each row carrying the label. A code, a
-    /// don't-care mark or a label no encoding states has none.
+    /// don't-care mark or a label no encoding states has none. Since `.63` a cell listing labels the key's note
+    /// defines (`NSH, SYS`) carries the codes of every label, in order.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub value_encodings: Vec<CombinationValueEncoding>,
 }
@@ -19815,6 +19820,44 @@ fn footnote_marks_by_page(source_ir: &SourceIr) -> HashMap<u32, BTreeSet<char>> 
     marks
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.63 — each page's footnotes by mark: a `footnote` element that opens with a note
+/// number or a lowercase letter and then a space or a period, and the text after it (`1 NSH is Non-shareable ( 0b00
+/// ), …` is note `1`), keyed by page number.
+fn footnote_texts_by_page(source_ir: &SourceIr) -> HashMap<u32, Vec<(String, String)>> {
+    let mut notes: HashMap<u32, Vec<(String, String)>> = HashMap::new();
+    for element in &source_ir.content_elements {
+        if element.kind != crate::ir::source::ContentElementKind::Footnote {
+            continue;
+        }
+        let Some(page) = element
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+        else {
+            continue;
+        };
+        let text = element.text.trim_start();
+        let digits = text.chars().take_while(char::is_ascii_digit).count();
+        let mark_len = match text.chars().next() {
+            _ if digits > 0 => digits,
+            Some(letter) if letter.is_ascii_lowercase() => 1,
+            _ => continue,
+        };
+        let (mark, rest) = text.split_at(mark_len);
+        if !rest.starts_with([' ', '.']) {
+            continue;
+        }
+        let body = rest.trim_start_matches('.').trim();
+        if !body.is_empty() {
+            notes
+                .entry(page)
+                .or_default()
+                .push((mark.to_string(), body.to_string()));
+        }
+    }
+    notes
+}
+
 /// EXTRACTION-GAP-FIX.10 — the footnote letters that can mark a cell of `table`: those of the notes on
 /// its own page and on either neighbour, because a table carried over a page break is several fragments
 /// and its notes sit on one of their pages. GIC-600's register summary marks `GICD_ISENABLERn j` on one
@@ -31249,6 +31292,7 @@ fn combination_key_columns(
                     title: title.clone(),
                     name,
                     bits,
+                    note: None,
                 },
             ))
         })
@@ -31297,6 +31341,7 @@ fn read_value_combinations(
         reference: Option<String>,
         titles: Vec<String>,
         keys: Vec<(usize, CombinationKey)>,
+        marks: BTreeSet<String>,
         rows: Vec<(String, Vec<String>)>,
         refused: bool,
     }
@@ -31377,6 +31422,7 @@ fn read_value_combinations(
                     reference: caption.map(|(reference, _)| reference),
                     titles,
                     keys,
+                    marks,
                     rows: Vec::new(),
                     refused: false,
                 });
@@ -31418,11 +31464,49 @@ fn read_value_combinations(
     };
     shaped.retain(|entry| entry.rows.len() >= 2 && bits_are_no_code(entry));
     let candidates = shaped.len();
+    // EXTRACTION-REPRESENTATION-GAPS.63 — the note a key title's mark refers to: the one text that footnotes with
+    // that mark print on the pages beside the table's fragments.
+    let notes_by_page = footnote_texts_by_page(source_ir);
+    let page_of: HashMap<&str, u32> = source_ir
+        .structured_tables
+        .iter()
+        .filter_map(|table| Some((table.table_id.as_str(), bit_position_table_page(table)?)))
+        .collect();
+    let key_note = |entry: &Shaped, key: &CombinationKey| -> Option<String> {
+        let marks: BTreeSet<&str> = entry.marks.iter().map(String::as_str).collect();
+        let stripped = without_note_number(&key.title, &marks);
+        let mark = key.title.get(stripped.len()..)?.trim();
+        if mark.is_empty() {
+            return None;
+        }
+        let texts: BTreeSet<&str> = entry
+            .table_ids
+            .iter()
+            .filter_map(|table_id| page_of.get(table_id.as_str()))
+            .flat_map(|&page| [page.saturating_sub(1), page, page + 1])
+            .filter_map(|page| notes_by_page.get(&page))
+            .flatten()
+            .filter(|(note_mark, _)| note_mark == mark)
+            .map(|(_, text)| text.as_str())
+            .collect();
+        match texts.into_iter().collect::<Vec<_>>().as_slice() {
+            [text] => Some(text.to_string()),
+            _ => None,
+        }
+    };
     let records = shaped
         .into_iter()
         .filter(|entry| !entry.refused)
         .enumerate()
-        .map(|(index, entry)| {
+        .map(|(index, mut entry)| {
+            let notes: Vec<Option<String>> = entry
+                .keys
+                .iter()
+                .map(|(_, key)| key_note(&entry, key))
+                .collect();
+            for ((_, key), note) in entry.keys.iter_mut().zip(notes) {
+                key.note = note;
+            }
             let key_columns: BTreeSet<usize> =
                 entry.keys.iter().map(|(column, _)| *column).collect();
             let others: Vec<usize> = (0..entry.titles.len())
@@ -31483,6 +31567,11 @@ fn read_value_combinations(
 /// collective it belongs to, and, for a key that is itself a collective (`AxCACHE`), by each member's enum. A value
 /// that is a code literal, or holds no letter (`0`, `-`), is no label. A label two rows share keeps both codes. Bound
 /// after the convergent loop, whose `Enum` statements name the encoding tables.
+///
+/// EXTRACTION-REPRESENTATION-GAPS.63 — a value no encoding names may list labels the key's note defines
+/// ([`note_label_definitions`]): AXI *A7.4*'s `NSH, SYS` under `ARDOMAIN 1`, whose note says *NSH is Non-shareable (
+/// 0b00 )*. Each label resolves by the name the note gives it, all in one encoding table, and a code the note prints
+/// must be the code the encoding gives; the value then carries every label's codes, in order.
 fn bind_combination_value_encodings(
     combinations: &mut [ValueCombinationRecord],
     statements: &[ExtractedStatement],
@@ -31510,6 +31599,21 @@ fn bind_combination_value_encodings(
                     .collect()
             })
             .collect();
+        let definitions: Vec<Vec<NoteLabel>> = combination
+            .keys
+            .iter()
+            .map(|key| {
+                key.note
+                    .as_deref()
+                    .and_then(note_label_definitions)
+                    .unwrap_or_default()
+            })
+            .collect();
+        let resolve = |key_index: usize, label: &str| {
+            names[key_index]
+                .iter()
+                .find_map(|name| encodings.resolve(name, label))
+        };
         for row in &mut combination.rows {
             row.value_encodings = row
                 .values
@@ -31520,9 +31624,11 @@ fn bind_combination_value_encodings(
                         && !looks_like_encoding_literal(value)
                 })
                 .filter_map(|(key_index, value)| {
-                    let encoding = names[key_index]
-                        .iter()
-                        .find_map(|name| encodings.resolve(name, value))?;
+                    let encoding = resolve(key_index, value).or_else(|| {
+                        defined_labels_encoding(value, &definitions[key_index], |label| {
+                            resolve(key_index, label)
+                        })
+                    })?;
                     Some(CombinationValueEncoding {
                         key_index,
                         encoding,
@@ -31531,6 +31637,118 @@ fn bind_combination_value_encodings(
                 .collect();
         }
     }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.63` — one label a note defines: `SH is Shareable ( 0b01 or 0b10 )` defines `SH` as
+/// the name `Shareable`, with the codes the note prints, as written.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct NoteLabel {
+    label: String,
+    name: String,
+    codes: Vec<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.63` — the labels a note defines, when the whole note is a list of definitions: items
+/// split at commas outside parentheses, each `<label> is <name>`, optionally closed by the codes in parentheses
+/// (separated by *or* or commas, each a code literal). A label is one word holding a letter. A note that states
+/// anything else defines nothing.
+fn note_label_definitions(note: &str) -> Option<Vec<NoteLabel>> {
+    let mut items: Vec<String> = vec![String::new()];
+    let mut depth = 0usize;
+    for c in note.trim().trim_end_matches('.').chars() {
+        match c {
+            '(' => depth += 1,
+            ')' => depth = depth.saturating_sub(1),
+            ',' if depth == 0 => {
+                items.push(String::new());
+                continue;
+            }
+            _ => {}
+        }
+        items.last_mut()?.push(c);
+    }
+    items
+        .iter()
+        .map(|item| {
+            let item = item.trim();
+            let item = item.strip_prefix("and ").unwrap_or(item).trim();
+            let (label, rest) = item.split_once(" is ")?;
+            let label = label.trim();
+            if label.is_empty()
+                || label.contains(char::is_whitespace)
+                || !label.chars().any(|c| c.is_ascii_alphabetic())
+            {
+                return None;
+            }
+            let rest = rest.trim();
+            let (name, codes) = match rest
+                .strip_suffix(')')
+                .and_then(|inner| inner.rsplit_once('('))
+            {
+                Some((name, inner)) => {
+                    let codes: Vec<String> = inner
+                        .split([','])
+                        .flat_map(|part| part.split(" or "))
+                        .map(str::trim)
+                        .filter(|code| !code.is_empty())
+                        .map(str::to_string)
+                        .collect();
+                    if codes.is_empty()
+                        || !codes.iter().all(|code| looks_like_encoding_literal(code))
+                    {
+                        return None;
+                    }
+                    (name.trim(), codes)
+                }
+                None => (rest, Vec::new()),
+            };
+            (!name.is_empty()).then(|| NoteLabel {
+                label: label.to_string(),
+                name: name.to_string(),
+                codes,
+            })
+        })
+        .collect()
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.63` — the encoding of a value listing labels `definitions` define (`NSH, SYS`): each
+/// label's name resolved by `resolve`, every one in the same encoding table, and every code the note prints for a
+/// label the code that table gives it. The codes follow the labels' order; `None` when any label is undefined or
+/// unresolved, the tables differ, or the note and the table disagree.
+fn defined_labels_encoding(
+    value: &str,
+    definitions: &[NoteLabel],
+    resolve: impl Fn(&str) -> Option<StatedValueEncoding>,
+) -> Option<StatedValueEncoding> {
+    if definitions.is_empty() {
+        return None;
+    }
+    let compact = |code: &str| code.split_whitespace().collect::<String>();
+    let mut table_id: Option<String> = None;
+    let mut codes: Vec<String> = Vec::new();
+    for label in value.split(',').map(str::trim) {
+        let definition = definitions
+            .iter()
+            .find(|definition| definition.label == label)?;
+        let encoding = resolve(&definition.name)?;
+        if table_id.get_or_insert_with(|| encoding.table_id.clone()) != &encoding.table_id {
+            return None;
+        }
+        let stated: BTreeSet<String> = definition.codes.iter().map(|code| compact(code)).collect();
+        let given: BTreeSet<String> = encoding.codes.iter().map(|code| compact(code)).collect();
+        if !stated.is_empty() && stated != given {
+            return None;
+        }
+        for code in encoding.codes {
+            if !codes.contains(&code) {
+                codes.push(code);
+            }
+        }
+    }
+    Some(StatedValueEncoding {
+        table_id: table_id?,
+        codes,
+    })
 }
 
 /// `.3.g.iii.b.i` — the states a value combination keys: every member of a combination whose member column's title ends
@@ -49743,11 +49961,13 @@ The control register.
                     title: "PNSE".to_string(),
                     name: "PNSE".to_string(),
                     bits: None,
+                    note: None,
                 },
                 super::CombinationKey {
                     title: "PPROT[1]".to_string(),
                     name: "PPROT".to_string(),
                     bits: Some("[1]".to_string()),
+                    note: None,
                 },
             ]
         );
@@ -49996,19 +50216,23 @@ The control register.
                 &["0b0001", "SH", "ReadShared", "Read."],
             ],
         ));
-        source_ir
-            .content_elements
-            .push(crate::ir::source::ContentElementRecord {
-                element_id: "fn_1".to_string(),
-                kind: crate::ir::source::ContentElementKind::Footnote,
-                text: "1 NSH is Non-shareable ( 0b00 ), SH is Shareable ( 0b01 or 0b10 )."
-                    .to_string(),
-                heading_level: None,
-                page_id: Some("page_0128".to_string()),
-                source_ref: None,
-                source_batch: None,
-                reading_order: 1,
-            });
+        let footnote = |id: &str, text: &str| crate::ir::source::ContentElementRecord {
+            element_id: id.to_string(),
+            kind: crate::ir::source::ContentElementKind::Footnote,
+            text: text.to_string(),
+            heading_level: None,
+            page_id: Some("page_0128".to_string()),
+            source_ref: None,
+            source_batch: None,
+            reading_order: 1,
+        };
+        source_ir.content_elements.extend([
+            footnote(
+                "fn_1",
+                "1 NSH is Non-shareable ( 0b00 ), SH is Shareable ( 0b01 or 0b10 ).",
+            ),
+            footnote("fn_3", "3 Another table's note."),
+        ]);
         let titles: std::collections::HashSet<String> = ["ARSNOOP", "ARDOMAIN"]
             .into_iter()
             .map(str::to_string)
@@ -50028,6 +50252,18 @@ The control register.
             [("ARSNOOP", "ARSNOOP"), ("ARDOMAIN 1", "ARDOMAIN")]
         );
         assert_eq!(snoop.member_column.as_deref(), Some("Opcode"));
+        // EXTRACTION-REPRESENTATION-GAPS.63 — the marked key carries the note its mark refers to.
+        assert_eq!(
+            snoop
+                .keys
+                .iter()
+                .map(|key| key.note.as_deref())
+                .collect::<Vec<_>>(),
+            [
+                None,
+                Some("NSH is Non-shareable ( 0b00 ), SH is Shareable ( 0b01 or 0b10 ).")
+            ]
+        );
         assert_eq!(snoop.rows[0].values, ["0b0000", "NSH, SYS"]);
         assert_eq!(snoop.rows[0].member.as_deref(), Some("ReadNoSnoop"));
         Ok(())
@@ -67376,6 +67612,7 @@ mod labeled_absent_value_tests {
                     title: name.to_string(),
                     name: name.to_string(),
                     bits: None,
+                    note: None,
                 })
                 .collect(),
             member_column: None,
@@ -67410,6 +67647,102 @@ mod labeled_absent_value_tests {
         assert!(
             rows[2].value_encodings.is_empty(),
             "a label the encoding does not carry"
+        );
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.63` — a key value listing labels the key's note defines carries every label's
+    /// codes in order; a label the note does not define, or one whose printed code the encoding contradicts, joins
+    /// nothing, and a note that is no list of definitions defines nothing.
+    #[test]
+    fn a_key_value_of_labels_a_note_defines_carries_their_codes() {
+        let statements = with_encoding("AxDOMAIN", &[]);
+        let collectives = vec![CollectiveSignalNameRecord {
+            collective_id: "collective_0001".to_string(),
+            collective_name: "AxDOMAIN".to_string(),
+            member_names: vec!["ARDOMAIN".to_string(), "AWDOMAIN".to_string()],
+            supporting_statement_ids: Vec::new(),
+        }];
+        let row = |value: &str| super::CombinationRow {
+            table_id: "table_snoop".to_string(),
+            values: vec!["0b0000".to_string(), value.to_string()],
+            member: None,
+            meanings: Vec::new(),
+            value_encodings: Vec::new(),
+        };
+        let combination = |note: &str| super::ValueCombinationRecord {
+            combination_id: "value_combination_0001".to_string(),
+            table_ids: vec!["table_snoop".to_string()],
+            keys: vec![
+                super::CombinationKey {
+                    title: "ARSNOOP".to_string(),
+                    name: "ARSNOOP".to_string(),
+                    bits: None,
+                    note: None,
+                },
+                super::CombinationKey {
+                    title: "ARDOMAIN 1".to_string(),
+                    name: "ARDOMAIN".to_string(),
+                    bits: None,
+                    note: Some(note.to_string()),
+                },
+            ],
+            member_column: None,
+            meaning_columns: Vec::new(),
+            rows: vec![row("NSH, SYS"), row("SH"), row("NSH, XSH"), row("-")],
+        };
+        let mut combinations = vec![
+            combination(
+                "NSH is Non-shareable ( 0b00 ), SH is Shareable ( 0b01 or 0b10 ), SYS is System ( 0b11 ).",
+            ),
+            combination("NSH is Non-shareable ( 0b01 ), SH is Shareable, and SYS is System."),
+        ];
+        super::bind_combination_value_encodings(
+            &mut combinations,
+            &statements,
+            &[domain_encoding("AxDOMAIN")],
+            &collectives,
+        );
+        let joined =
+            |combination: &super::ValueCombinationRecord| -> Vec<Vec<(usize, Vec<String>)>> {
+                combination
+                    .rows
+                    .iter()
+                    .map(|row| {
+                        row.value_encodings
+                            .iter()
+                            .map(|joined| (joined.key_index, joined.encoding.codes.clone()))
+                            .collect()
+                    })
+                    .collect()
+            };
+        let codes = |codes: &[&str]| {
+            codes
+                .iter()
+                .map(|code| code.to_string())
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            joined(&combinations[0]),
+            [
+                vec![(1, codes(&["0b00", "0b11"]))],
+                vec![(1, codes(&["0b01", "0b10"]))],
+                Vec::new(),
+                Vec::new(),
+            ]
+        );
+        assert_eq!(
+            joined(&combinations[1]),
+            [
+                Vec::new(),
+                vec![(1, codes(&["0b01", "0b10"]))],
+                Vec::new(),
+                Vec::new()
+            ],
+            "the note prints 0b01 for NSH, which the encoding gives Shareable"
+        );
+        assert_eq!(
+            super::note_label_definitions("Partial tag updates are not supported."),
+            None
         );
     }
 

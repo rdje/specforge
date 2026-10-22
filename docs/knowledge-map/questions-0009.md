@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > how many book claims describe behaviour the code no longer has
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how many bracketed placeholder name cells exist corpus-wide
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -296,5 +298,3 @@
   > how many tables in the frozen set are mixed real and phantom
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how many task trees have an unowned named frontier
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > how many times has the identity-without-attribute question been answered

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > what does resolve_indexed_signal_family do
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > what does row_idx do in synthesize_encoding_declarations_for_enum
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
@@ -296,5 +298,3 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b
 - [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c and .3.d.iii.e
-- [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d and .51

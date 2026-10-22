@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
+  > how is 'CMO transactions are assumed to be Non-shareable' read
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
   > how is 'If the aborted transaction is a write then the IO bridge may discard the write' read
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
@@ -295,5 +297,3 @@
   > how many arrow-form direction cells exist corpus-wide
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
   > how many bit cells are in signal_description tables corpus-wide
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > how many book claims describe behaviour the code no longer has

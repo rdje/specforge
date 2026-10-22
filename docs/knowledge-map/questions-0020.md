@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -295,5 +297,3 @@
   > which validate metrics/finding surface channel membership
 - [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
   > which words does the timing arm of classify_statement match (cycle, cycles, at least; cycle, ns, ps, time, edge as substrings)
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > which words mark a swallowed word as a verb (has does was, complementizer that)

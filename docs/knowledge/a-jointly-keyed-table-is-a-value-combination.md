@@ -19,10 +19,11 @@ answers:
   - "how is a key title with a footnote mark read (AXI A7.4 ARDOMAIN 1, .62)"
   - "are AXI A7.3 AWSNOOP and A7.4 ARSNOOP encodings value combinations (the opcode decode)"
   - "why may RESERVED repeat in a combination's member column"
+  - "how does a domain list NSH, SYS reach AxDOMAIN's codes (CombinationKey.note, note_label_definitions, .63)"
 date: 2026-10-22
 status: current
 tags: [evidence-ir, encodings, value-combinations, protocol-states, multi-key-tables, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (ValueCombinationRecord; read_value_combinations; combination_key_columns; combination_key_name; without_note_number; note_numbers_by_page; is_combination_member_name; merge_combination_states; value_combination_surface; scan_encoding_tables_by_signal_anchor's combination_tables skip; bind_combination_value_encodings); crates/specforge/src/ir/semantic.rs and intent.rs (value_combinations carried); crates/specforge/src/ir/adapters.rs (the value_combination residual); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.g.iii.b, .3.g.iii.b.i)
+evidence: crates/specforge/src/ir/evidence.rs (ValueCombinationRecord; read_value_combinations; combination_key_columns; combination_key_name; without_note_number; note_numbers_by_page; footnote_texts_by_page; note_label_definitions; defined_labels_encoding; is_combination_member_name; merge_combination_states; value_combination_surface; scan_encoding_tables_by_signal_anchor's combination_tables skip; bind_combination_value_encodings); crates/specforge/src/ir/semantic.rs and intent.rs (value_combinations carried); crates/specforge/src/ir/adapters.rs (the value_combination residual); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.g.iii.b, .3.g.iii.b.i)
 reverify: "cargo test --offline -p specforge-core --lib a_jointly_keyed_table_is_a_value_combination"
 ---
 
@@ -64,7 +65,7 @@ byte-identical.
 (`semantic.carried_evidence`, `intent.carried_semantics`). After the convergent loop,
 `bind_combination_value_encodings` joins each key value that is a label of its key's encoding to that encoding's
 codes (`CombinationRow.value_encodings`), the way a stated absent value is joined. It tries the key's own enum, then
-its collectives, then, for a collective key, its members' enums. AXI has 34 joined values (`AxMMUSECSID`
+its collectives, then, for a collective key, its members' enums. AXI had 34 joined values (`AxMMUSECSID`
 `Non-secure` -> `0b00`; `AxDOMAIN` `Shareable` -> `0b01`, `0b10`; `AxPAS` `Non-secure` -> `0b001` since `.3.g.iii.b.iv`
 matches a member written with its abbreviation, `Non-secure (NS)`). Lists of alternatives and classes of codes join
 nothing. The ISF adapter states one `isf_protocol_value_combination_*`
@@ -84,4 +85,11 @@ fragment its caption names, uses it (note numbers and footnote letters). A table
 *A7.3*'s note 1 is two pages after its head. A reserved row names no member, so `RESERVED` may repeat in the member
 column. Measured on 31 chains: 30 identical; AXI 7 -> 9 records, *A7.3* (25 rows, 3 fragments) and *A7.4* (19 rows,
 2), member `Opcode`; 15 residuals across 4 documents. Records are renumbered by table order (*A15.26* is
-`value_combination_0009`). The domain labels `NSH`/`SH`/`SYS` are footnote 1's and join no encoding yet (`.63`).
+`value_combination_0009`).
+
+**A note's labels (`.63`, `2026-10-22`).** A marked key keeps its note (`CombinationKey.note`): the one text
+footnotes with that mark print beside the table's fragments (`footnote_texts_by_page`). `note_label_definitions`
+reads a note that is wholly `<label> is <name> [( codes )]` items, and `defined_labels_encoding` joins a value
+listing such labels (`NSH, SYS`): each label resolved by its name, all in one table, a printed code equal to the
+table's. AXI's joined values go from 34 to 69: all 35 domain values of *A7.3*/*A7.4* (`NSH, SYS` -> `0b00`, `0b11`
+in `table_0111`); the other 30 chains are identical.

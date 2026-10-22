@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is the ingest disk pre-flight check
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -295,5 +297,3 @@
   > what turned on the total probe at semantic and intent
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)

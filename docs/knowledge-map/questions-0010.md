@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > how many times has the identity-without-attribute question been answered
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
@@ -295,5 +297,3 @@
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is canonical recovery complete in the current reviewed population

@@ -92,6 +92,8 @@
   > how does a coordinated predicate find its subject ('X shall not be used ... and may be treated as Y')
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does a deliberate normalized-bundle reclamation get authorized
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > how does a domain list NSH, SYS reach AxDOMAIN's codes (CombinationKey.note, note_label_definitions, .63)
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > how does a future SpecForge session retrieve and re-run a current claim
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -296,5 +298,3 @@
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
-- [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
-  > how is 'CMO transactions are assumed to be Non-shareable' read

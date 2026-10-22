@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did LTI unexplained tables go UP from 5 to 6
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > why did NVM must_be_low come from low level format
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -295,5 +297,3 @@
   > why do AxPROT[1] and AxNSE not mint an enum from A4.7 (they key the space only jointly)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > why do CCIX-class docs extract hundreds of register fields now
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > why do CORPUS-COVERAGE's 52 of 57 refreshes and ADR 0048's 27 of 78 loadable documents disagree (they count different things: a refresh makes a document's source repository-local and rebuilds it with the binary of the day, which is provenance; loadability is whether the persisted artifact is at the current schema with a verified proof ledger)

@@ -2944,6 +2944,7 @@ mod tests {
                     title: name.to_string(),
                     name: name.to_string(),
                     bits: None,
+                    note: None,
                 })
                 .collect(),
             member_column: Some("State".to_string()),

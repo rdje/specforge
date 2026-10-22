@@ -532,12 +532,17 @@ With the false statements gone, AXI's `manager.isf` gains `(BTAGMATCH (NONE 0) (
 from *Table A12.14*, FSMGen strict-clean.
 
 Since `.3.g.iii.b.ii` the record crosses SemanticIR and IntentIR unchanged. A key value that is a label of its key's
-encoding carries that encoding's codes (`AxMMUSECSID` `Non-secure` is `0b00`), as a stated absent value does: 34
-values in AXI. A member written with its abbreviation carries its name as a label (`Non-secure` is `Non-secure (NS)`,
-since `.3.g.iii.b.iv`), while a list of alternatives (`Stall, NoStall, PRI`) and a class of codes (`Cacheable`) join
-nothing. The ISF adapter states each record as one `isf_protocol_value_combination_*` residual saying why it stays: 15
-across 4 documents on `2026-10-22`, AXI's opcode decodes *A7.3* and *A7.4* among them since `.62`. Their domain lists
-(`NSH, SYS`) are labels footnote 1 defines, which no encoding names yet (`.63`).
+encoding carries that encoding's codes (`AxMMUSECSID` `Non-secure` is `0b00`), as a stated absent value does: 69
+values in AXI on `2026-10-22`. A member written with its abbreviation carries its name as a label (`Non-secure` is
+`Non-secure (NS)`, since `.3.g.iii.b.iv`), while a list of alternatives (`Stall, NoStall, PRI`) and a class of codes
+(`Cacheable`) join nothing. The ISF adapter states each record as one `isf_protocol_value_combination_*` residual
+saying why it stays: 15 across 4 documents on `2026-10-22`, AXI's opcode decodes *A7.3* and *A7.4* among them since
+`.62`.
+
+Since `.63` a key whose title carries a footnote mark keeps that note's text, and a note that is a list of definitions
+(*NSH is Non-shareable ( 0b00 ), SH is Shareable ( 0b01 or 0b10 ), SYS is System ( 0b11 )*) lets a value list its
+labels. Each label resolves by the name the note gives it, all in one encoding, and a code the note prints must be
+the code that encoding gives. *A7.3*'s `NSH, SYS` under `AWDOMAIN 1` is `AxDOMAIN`'s `0b00` and `0b11`: 35 of the 69.
 
 The table itself is not lowered (`.3.g.iii.b.iii`). On `2026-10-22` an FSMGen strict probe accepted APB's decode as an
 enum for the member column and one guarded rule per row writing actor storage, with 0 diagnostics. But every `.isf`

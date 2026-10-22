@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.63",
-      "literal" : "`.63` — a key value of labels a note defines carries their codes.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.64",
+      "literal" : "`.64` — a matrix cell's note narrows it.",
       "mode" : "eligible",
       "part_id" : "layout-and-binding-leaves"
    },
@@ -166,13 +166,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
             "metrics" : {
-               "bytes" : 37166,
+               "bytes" : 40626,
                "line_bytes" : 121,
-               "lines" : 414
+               "lines" : 454
             },
             "part_id" : "layout-and-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-            "sha256" : "d8623420dc6e22be04d6d16411f1991efa9668c524b3be18b3c24d427c9d2ec0",
+            "sha256" : "d1857c00de34c54b5f980a87cd85e207f70dd52191ecf9dfd1a506c97ea9298d",
             "state" : "active"
          },
          {
@@ -1590,7 +1590,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.63",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
       },
@@ -1726,7 +1726,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.63` — a key value of labels a note defines carries their codes.",
+         "`.64` — a matrix cell's note narrows it.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1766,7 +1766,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.61`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.63`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.64`"
       ]
    },
