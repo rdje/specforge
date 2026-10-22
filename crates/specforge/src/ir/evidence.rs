@@ -17760,6 +17760,23 @@ fn literal_direction_cell_value(text: &str) -> Option<&'static str> {
         .map(|(_, sense)| *sense)
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.c.viii — the direction a converter fused into a cell: a name written in capitals,
+/// at most a footnote letter, then a whole direction word (ADIv6 *B3-2* `TDO Output`, TMC's `MEMADDR a Output`). The
+/// abbreviations stay unread here as everywhere (`SIGNAL-DECLARATION-ROW-DROP.2j`), so *C3-1*'s `RTCK In` gives none.
+fn fused_direction_word(text: &str) -> Option<&'static str> {
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let (&head, &last) = (words.first()?, words.last()?);
+    let footnote = |word: &str| word.len() == 1 && word.bytes().all(|b| b.is_ascii_lowercase());
+    if !(2..=3).contains(&words.len())
+        || !is_hardware_signal_token(head)
+        || head.chars().any(|c| c.is_ascii_lowercase())
+        || (words.len() == 3 && !footnote(words[1]))
+    {
+        return None;
+    }
+    literal_direction_cell_value(last)
+}
+
 /// The single column of ONE row whose whole cell is a literal direction word.
 ///
 /// `SIGNAL-DECLARATION-ROW-DROP.2h.2` — the row-level twin of `literal_direction_column`, which asks
@@ -18081,6 +18098,15 @@ fn synthesize_signal_declarations(
                 } else {
                     None
                 }
+            })
+            .or_else(|| {
+                // EXTRACTION-REPRESENTATION-GAPS.3.c.viii — a direction cell left empty while a cell of the row ends in
+                // a direction word after a name: the converter fused them. A row whose direction cell holds anything
+                // else is shifted, and its fused cell is no reading (ADIv6 *C3-1*'s `TDI Out` beside `Test Data In`).
+                explicit_dir_col
+                    .and_then(|col| row.get(col))
+                    .filter(|cell| cell.text.trim().is_empty())
+                    .and_then(|_| row.iter().find_map(|cell| fused_direction_word(&cell.text)))
             })
             .or_else(|| {
                 source_col.and_then(|col| row.get(col)).and_then(|cell| {
@@ -55739,6 +55765,123 @@ mod signal_declaration_row_drop_2e {
 }
 
 #[cfg(test)]
+mod extraction_representation_gaps_3c_viii {
+    //! `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` — a converter can fuse a row's direction into a name cell and leave
+    //! the direction cell empty (ADIv6 *B3-2* `TDO Output`). Only then is the trailing direction word the row's; a row
+    //! whose direction cell holds a description is shifted and keeps no fused reading. Identities alpha-renamed.
+    use super::*;
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord};
+
+    fn row(cells: &[&str]) -> Vec<StructuredTableCellRecord> {
+        cells
+            .iter()
+            .map(|text| StructuredTableCellRecord {
+                text: text.to_string(),
+                row_span: 1,
+                col_span: 1,
+                is_header: false,
+            })
+            .collect()
+    }
+
+    fn table(id: &str, header: &[&str], body: &[&[&str]]) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: Some("debug port signal connections".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(header)],
+            body_rows: body.iter().map(|cells| row(cells)).collect(),
+            row_count: body.len() as u32,
+            col_count: header.len() as u32,
+        }
+    }
+
+    fn declared(table: &StructuredTableRecord) -> Vec<String> {
+        let mut counter = 0usize;
+        let mut provenance = Vec::new();
+        let mut accounting = Vec::new();
+        synthesize_signal_declarations(
+            table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut provenance,
+            &mut accounting,
+        )
+        .into_iter()
+        .map(|statement| statement.text)
+        .collect()
+    }
+
+    #[test]
+    fn a_direction_word_fused_after_a_name_is_read() {
+        assert_eq!(fused_direction_word("QDO Output"), Some("output"));
+        assert_eq!(fused_direction_word("QEMADDR a Output"), Some("output"));
+        assert_eq!(
+            fused_direction_word("QTCK In"),
+            None,
+            "an abbreviation stays unread (`SIGNAL-DECLARATION-ROW-DROP.2j`)"
+        );
+        assert_eq!(
+            fused_direction_word("Data Output"),
+            None,
+            "no name in capitals"
+        );
+        assert_eq!(fused_direction_word("Debug Data Out"), None, "a phrase");
+        assert_eq!(fused_direction_word("QDO"), None);
+    }
+
+    #[test]
+    fn an_empty_direction_cell_takes_the_direction_fused_into_the_row() {
+        let connections = table(
+            "table_connections",
+            &[
+                "Port signal name",
+                "Equivalent signal name",
+                "Direction",
+                "Required?",
+                "Description",
+            ],
+            &[
+                &["ZDBGQDI", "QDI", "Input", "Yes", "Debug Data In"],
+                &["ZDBGQDO", "QDO Output", "", "Yes", "Debug Data Out"],
+                &["ZDBGQRSTn", "QRST Input", "", "Optional", "Debug reset"],
+            ],
+        );
+        let statements = declared(&connections);
+        assert!(
+            statements.contains(&"Signal ZDBGQDO is output.".to_string()),
+            "{statements:?}"
+        );
+        assert!(
+            statements.contains(&"Signal ZDBGQRSTn is input.".to_string()),
+            "{statements:?}"
+        );
+        // A shifted row: the direction cell holds a description, so its fused `Output` is no reading.
+        let shifted = table(
+            "table_port",
+            &["Signal", "Direction", "Description"],
+            &[
+                &["QDI Output", "Test Data In", "Standard signal"],
+                &["QCK", "Output", "Test clock"],
+            ],
+        );
+        let statements = declared(&shifted);
+        assert!(
+            !statements
+                .iter()
+                .any(|text| text.starts_with("Signal QDI is")),
+            "{statements:?}"
+        );
+    }
+}
+
+#[cfg(test)]
 mod extraction_gap_fix_5b {
     //! `EXTRACTION-GAP-FIX.5b` — the signal-keyed obligation row, wired.
     //!
@@ -56839,26 +56982,27 @@ mod signal_declaration_row_drop_2h_2 {
                 "Signal ZETA_QREQ_N is input.",
                 "Signal ZETA_QACCEPT_N is output.",
                 "Signal ZETA_QDENY is output.",
+                // EXTRACTION-REPRESENTATION-GAPS.3.c.viii — two fused rows whose direction cell is empty
+                "Signal OMEGA_QREQ_N is input.",
+                "Signal OMEGA_QACCEPT_N is output.",
                 // the two aligned rows, untouched
                 "Signal OMEGA_QDENY is output.",
                 "Signal OMEGA_QACTIVE is output.",
             ]
         );
         // The three rows that state no whole-cell direction contribute no opinion and keep the
-        // table's own columns, so they stay exactly as lossy as they were: their name and their
-        // direction are FUSED in one cell, which is a splitting failure and not a layout one.
-        assert_eq!(account.declarations_emitted, 5);
+        // table's own columns: their name and their direction are FUSED in one cell, a splitting
+        // failure and not a layout one. Since `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` the two whose
+        // direction cell is empty are split; `ZETA_QACTIVE Output` sits beside a description and stays
+        // dropped.
+        assert_eq!(account.declarations_emitted, 7);
         assert_eq!(
             account
                 .dropped_rows
                 .iter()
                 .map(|dropped| dropped.name_cell.as_str())
                 .collect::<Vec<_>>(),
-            vec![
-                "ZETA_QACTIVE Output",
-                "OMEGA_QREQ_N Input",
-                "OMEGA_QACCEPT_N Output"
-            ]
+            vec!["ZETA_QACTIVE Output"]
         );
     }
 

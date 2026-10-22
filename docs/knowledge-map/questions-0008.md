@@ -66,6 +66,8 @@
   > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is a completed oversized task tree contained without losing evidence
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how is a direction fused into a name cell read (TDO Output; fused_direction_word, .3.c.viii)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -295,5 +297,3 @@
   > how many alignment task owners and routes survive migration
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > how many arrow-form direction cells exist corpus-wide
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > how many bit cells are in signal_description tables corpus-wide

@@ -574,6 +574,15 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   sentence (*Port 2 is the downstream port*); `.3.c.v` set such cross-tabs aside as no matrix of marks (*7-14* too).
   Acceptance: census cross-tabs of prose or values, decide the record (keys and a statement per cell) and measure
   every chain.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.viii`)
+  Goal: **a table whose columns the converter swapped is read or refused as such.** **Reproduce:** CoreSight TMC
+  *Table 2-1 Memory interface signals* puts each description under *Signal* and each name under *Description*
+  (`Chip enable, active LOW. | MEMCEN`), its first and last rows garbled (`CLK input clock for the design | The`);
+  ADIv6 *Table B2-7* puts each register bit under *Signal* and each wire under *Programmers' model*, its last row
+  rotated. Acceptance: census tables whose header-named name column holds no names while another column holds only
+  names, decide whether the pairs are read (TMC's rows state no direction or width; *B2-7* is a wire-to-register-bit
+  map like `.41.e`'s), and measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives

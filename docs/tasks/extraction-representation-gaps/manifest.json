@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.viii",
-      "literal" : "`.3.c.viii` — a signal table the converter shifted is read or refused as such.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.ii",
+      "literal" : "`.3.f.ii` — a single-condition timing table keeps its condition.",
       "mode" : "eligible",
       "part_id" : "census-leaves"
    },
@@ -699,7 +699,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.viii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -1362,6 +1362,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1383,13 +1389,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 52002,
+            "bytes" : 55308,
             "line_bytes" : 283,
-            "lines" : 530
+            "lines" : 567
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "51bbd267f01f98b973a66fb15272297a51681bc20d2c584551ef53d9ea87e473",
+         "sha256" : "7e5362ece46682a1a8e7b771037c957f9a90e91801638aa9a505d008ca3ea956",
          "state" : "active"
       },
       {
@@ -1521,13 +1527,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
          "metrics" : {
-            "bytes" : 53052,
+            "bytes" : 53897,
             "line_bytes" : 121,
-            "lines" : 595
+            "lines" : 604
          },
          "part_id" : "layout-and-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-         "sha256" : "ac6aa0aacbcc7d3c4cae6f1561c8a23b054e05cd6b386c8cc810e6b72ba76227",
+         "sha256" : "dc3e6033ba79623c16f39367b31d4c215c34651b2241efbcf75855b6698d2644",
          "state" : "active"
       },
       {

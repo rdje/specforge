@@ -2,6 +2,7 @@
 id: direction-column-drift
 title: Nine signal tables put their direction in a different column on different rows — eight of them under the rule vocabulary — and the defect is not only dropped rows: TMC table_0074 emitted six declarations of which one was minted from a description cell and three contradicted the table
 answers:
+  - "how is a direction fused into a name cell read (TDO Output; fused_direction_word, .3.c.viii)"
   - "which signal tables have per-row column drift"
   - "how many tables does a whole-table column offset fail to serve"
   - "why can a name-shape heuristic not find a drifted table"
@@ -17,7 +18,7 @@ answers:
   - "what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2"
   - "how do I re-derive the direction column drift census"
   - "is rows minus declarations a loss count"
-date: 2026-09-20
+date: 2026-10-22
 status: current
 tags: [signal-declaration-row-drop, evidence-ir, table-extraction, census, adjudication, ingest]
 evidence: scripts/measure_direction_column_drift.py; docs/research/direction-column-drift-census.md; docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.2j, .2j.1, .2h.2)
@@ -81,6 +82,13 @@ corpus-wide and kept. The nine split by whether the identifier reached its row a
 - **four do not carry their name at all** — `TCK`, `TMS`, `TRST*` and `SRSTCONNECTED` sit inside
   row-spanning Notes cells shared with their neighbours, and rejoining them needs positional evidence
   from the page.
+
+**Since `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` (`2026-10-22`)** a fused cell with a whole direction
+word is read when the row's direction cell is empty (`fused_direction_word`): ADIv6 `table_0041`
+(*B3-2*) declares `DBGTDO` output and `DBGTRSTn` input from `TDO Output` and `TRST Input`. `RTCK In`
+is an abbreviation and stays unread (`.2j`). `TDI Out`, `TDO In`, `PORTCONNECTED In` and
+`PORTENABLED In` sit beside a description, so their rows are shifted and stay refused: the JTAG-AP's
+`TDI`/`TDO` never override the DP's.
 
 ## Routing
 

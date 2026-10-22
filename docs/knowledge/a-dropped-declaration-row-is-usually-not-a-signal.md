@@ -22,7 +22,7 @@ answers:
   - "is the SIGQUAL column a width"
   - "does SpecForge read a width written as N bit or N bits"
   - "how many times has the identity-without-attribute question been answered"
-date: 2026-09-15
+date: 2026-10-22
 status: current
 tags: [evidence-ir, declarations, recall, precision, adr-0006, census-method, signal-declaration-row-drop]
 evidence: scripts/measure_dropped_row_offerings.py; crates/specforge/src/ir/evidence.rs (synthesize_signal_declarations, DeclarationRowDropReason); crates/specforge/src/ir/semantic.rs (read_explicit_signal_declaration); docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.1, .1d, .1e, .4b, .4d, .4e); docs/tasks/SIGNAL-CATALOG-CAPTURE-GAP.md (.6)
@@ -48,7 +48,7 @@ artifacts and is a **different population**; never sum them.
 | --- | ---: | --- | --- |
 | ADIv6 `table_0058` | 5 | pin equivalence — `SWDIOTMS \| SWDIO \| TMS` | **real** |
 | ADIv6 `table_0039` | 3 | `signal \| programmers' model`, rotated — `CDBGPWRUPREQ` … | **real** |
-| ADIv6 `table_0041` | 2 | `DBGTDO`, `DBGTRSTn` | **real** |
+| ADIv6 `table_0041` | 2 | `DBGTDO`, `DBGTRSTn` (declared since `.3.c.viii`, `2026-10-22`: the direction was fused into the next cell) | **real** |
 | AXI `table_0199` | 10 | a PAS encoding — `Secure`, `Root`, `Realm`, `SA` | phantom |
 | ADIv6 `table_0108` | 10 | a garbled body — name cells are `Out`, `TDI Out`, `TDO In` | phantom |
 | AHB `table_0014` | 8 | the HBURST encoding — `SINGLE`, `INCR`, `WRAP4` | phantom |

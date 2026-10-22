@@ -408,6 +408,13 @@ ids) are unchanged. The real signals of both
 tables are still undeclared, which is the converter's damage and is tracked separately.
 (Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.e.i`, with the shifted tables in `.3.c.viii`.)
 
+Since `.3.c.viii` (`2026-10-22`) a cell that is a name in capitals and a whole direction word (`TDO Output`) gives
+its row's direction when the row's direction cell is empty, the one place the converter's fusion is unambiguous.
+ADIv6 gains `DBGTDO` output and `DBGTRSTn` input from *B3-2*. *C3-1*'s `TDI Out` and `TDO In` sit beside
+descriptions (`Test Data In`), so their rows are shifted and stay refused, and the JTAG-AP's ports never override
+the DP's same-named inputs; its `RTCK In` is an abbreviation, which no reader takes. TMC's swapped *2-1* and ADIv6's
+swapped *B2-7* wait for `.3.c.viii.a`.
+
 ### An obligation stated as a table row
 
 Most of what a specification says about a signal, it says in a sentence, and SpecForge reads

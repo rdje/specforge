@@ -234,7 +234,7 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`
-  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.c.ii`)
+  Status: `done` (`2026-10-22`; MEASUREMENT then CODE; found by `.3.c.ii`; checklist below; opened `.3.c.viii.a`)
   Goal: **a signal table the converter shifted is read or refused as such.** ADIv6 *Table C3-1 JTAG Access Port JTAG port
   signals* (`Signal | Direction | Description | Notes`) arrives with names fused to their direction (`TDI Out`, `TDO In`,
   `RTCK In`, `PORTCONNECTED In`), names missing (`Out | Test Clock | …`, with `TCK TMS` in the Notes column) and the
@@ -257,6 +257,43 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   model`) puts `Bit[28] of the CTRL/STAT register` under *Signal* and `CDBGPWRUPREQ` under *Programmers' model*, and
   rotates its last row (`CSYSPWRUPACK register | Bit[31] of the CTRL/STAT`), so no reader binds the four wires to
   their bits.
+  **Done `2026-10-22`.**
+  - **Census.** Over the 31 chains, 9 cells in 4 signal tables (2 documents) end in a direction word after a name:
+    in 5 the row's direction cell is empty (ADIv6 *B3-2* `TDO Output`, `TRST Input`; *C3-1* `RTCK In`; TMC's appendix
+    `MEMADDR a Output`, `MEMD b Input`), in 4 it holds a description (*C3-1* `TDI Out` beside `Test Data In`, `TDO In`,
+    `PORTCONNECTED In`, `PORTENABLED In`): those rows are shifted.
+  - **Read.** `fused_direction_word` reads a cell that is a name in capitals, at most a footnote letter, and a whole
+    direction word. `synthesize_signal_declarations` takes it only when the row's direction cell is empty. ADIv6
+    gains `DBGTDO` output and `DBGTRSTn` input (*B3-2*); the other 30 chains are identical. SDC-600's Q-Channel rows
+    pinned by `SIGNAL-DECLARATION-ROW-DROP.2h.2` as a splitting failure (`OMEGA_QREQ_N Input` beside an empty cell)
+    are read too, and that test now expects them.
+  - **Refused as such.** *C3-1*'s shifted rows keep no fused reading, so the JTAG-AP's `TDI`/`TDO` never override the
+    DP's same-named signals; its `RTCK In` writes the abbreviation `.2j` refuses everywhere. TMC's appendix table
+    stays untyped (`.3.b.i`: its directions are the RAM's). The two swapped-column tables, TMC *2-1* and ADIv6
+    *B2-7*, go to `.3.c.viii.a`.
+  - **Rebuilt.** ADIv6 rebuilt stage by stage: its interfaces gain `DBGTDO` and `DBGTRSTn`, its blocked `.isf`
+    preview gains `(input DBGTRSTn (width 1))`, and its 35 residuals are unchanged.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — the census above (`.project-data/tmp/erg-3cviii/census.py`): 9 fused cells in 4
+  tables, 5 beside an empty direction cell, 4 beside a description.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `synthesize_signal_declarations` read a
+  direction only from a cell that is or contains one, never the word the converter fused after a name. RED 4/4, the
+  file restored byte-identically: no fused reading, a filled direction cell keeping its fused reading, an
+  abbreviation taken as a direction, a lowercase head taken as a name; each fails a test of
+  `extraction_representation_gaps_3c_viii` or `signal_declaration_row_drop_2h_2`.
+- [x] **ADDRESSED (verified)** — ADIv6's two declarations, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `5326d8a95`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,932 passed; `.2h.2`'s Q-Channel test expects its two split rows.
+  `flow_census.json` rolled (+1 function, +6 decision sites, +6 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a cell's shape and the row's own empty direction cell; the abbreviations stay
+  refused as `.2j` decided.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md`; KM cards `direction-column-drift` and
+  `a-dropped-declaration-row-is-usually-not-a-signal`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`
   Status: `done` (`2026-09-29`; CODE; found by `.3.c`; checklist below)
