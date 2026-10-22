@@ -390,6 +390,16 @@ bit columns are concatenated into its code, so `HSIZE` is published again (see *
 several signal-titled columns* below). The `enum_code_collision_holdout_gold` fixture now collides on a single
 `TSIZE` column, so it still holds the rule.
 
+One shape does share codes for real. AXI *Table A4.4* gives each memory type an `ARCACHE` and an `AWCACHE` code, and
+on reads `0b1010` is both Write-Through No-Allocate and Write-Allocate, because a read cannot carry the write-allocate
+hint. Since `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` such a table has its own reader. Its signal-titled code
+columns name members of one collective, one key written per channel, and each channel becomes that signal's enum with
+every member and its own code. The reader ends the channel with *Enum ARCACHE shares a code between members.* That
+sentence, citing its table, is the only thing that exempts an enum from the collision rule. A bracketed code, which
+the document calls *permitted but not preferred*, is kept as *Enum ARCACHE WRITE_THROUGH_READ_ALLOCATE also takes 6.*
+and not emitted. On `2026-10-22` AXI's `ARCACHE` grew from 6 members to 12, `AWCACHE` from none to 12, and FSMGen
+strict accepts both.
+
 (Tracking: `KG-ISF-COMPLETENESS.5.xiv` for the measurement and `.5.xiv.a` for the rule.)
 
 ### The member's name comes from the column the document names it in
@@ -477,7 +487,7 @@ A column title names a signal when it is a declared signal or a collective name 
 - **Member names** come from the first column that is no signal and no code and whose names are distinct.
 - **Other cases.** A table whose every row the converter put in its header is read from its second row on. A column
   that only jointly keys its member, or repeats codes, is left alone here: the next section reads the first, and
-  `.3.g.iii.c.i` owns the second: such a column is an aliasing encoding, its members sharing codes (`.3.g.iii.c`).
+  the second is read by `.3.g.iii.c.i` as an aliasing encoding whose members share codes (see the collision rule above).
 
 AXI now lowers `(AxPAS (SECURE 0) (NON_SECURE__NS 1) (ROOT 2) (REALM 3) (SYSTEM_AGENT__SA 4) (NON_SECURE_PROTECTED__NSP
 5))`. AHB lowers `(HSIZE (BYTE 0) (HALFWORD 1) (WORD 2) (DOUBLEWORD 3) (HSIZE_4_WORD_LINE 4) (HSIZE_8_WORD_LINE 5))`,

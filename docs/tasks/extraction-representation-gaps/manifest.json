@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i",
-      "literal" : "`.3.g.iii.c.i` — a channel's code column giving every member a code is that signal's aliasing enum.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.57",
+      "literal" : "`.57` — a table whose every row the converter put in its header has one header row.",
       "mode" : "eligible",
       "part_id" : "encoding-and-state-leaves"
    },
@@ -1227,7 +1227,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
       }
@@ -1377,13 +1377,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
          "metrics" : {
-            "bytes" : 34253,
+            "bytes" : 37560,
             "line_bytes" : 123,
-            "lines" : 379
+            "lines" : 414
          },
          "part_id" : "encoding-and-state-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-         "sha256" : "86d10a9f9f9472e005534ecbea628c530fa19d19baba8ae475ddd92134ab880f",
+         "sha256" : "2f35575302b05de4c3e22e5e87806d96dcfa44de0bcd02861623c55bbdba63ff",
          "state" : "active"
       },
       {

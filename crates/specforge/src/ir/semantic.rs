@@ -4675,6 +4675,22 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
         })
         .collect::<Vec<_>>();
 
+    // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i — the enums whose table reader states that a code is shared between
+    // members (a channel of AXI *A4.4*), the only ones exempt from the collision rule below. The sentence must cite its
+    // table: one a document happens to write is not the reader's.
+    let shared_code_enums: BTreeSet<String> = context
+        .statements
+        .iter()
+        .filter(|statement| !statement.supporting_table_ids.is_empty())
+        .filter_map(|statement| {
+            statement
+                .text
+                .strip_prefix("Enum ")?
+                .strip_suffix(" shares a code between members.")
+                .filter(|name| !name.contains(char::is_whitespace))
+                .map(str::to_string)
+        })
+        .collect();
     records.extend(enum_accumulators.into_values().filter_map(|entry| {
         let mut members = entry
             .members
@@ -4721,14 +4737,16 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
         // comparison. An enum's member count is small (the corpus maximum is 20), so the quadratic
         // scan is not worth trading a public derive for. Measured over the persisted corpus: 9
         // replayable enums collide, 68 members become 20, and four of the nine empty entirely.
+        let shares_codes = shared_code_enums.contains(&entry.enum_name);
         let collides: Vec<bool> = members
             .iter()
             .map(|member| {
-                members
-                    .iter()
-                    .filter(|other| other.value == member.value)
-                    .count()
-                    > 1
+                !shares_codes
+                    && members
+                        .iter()
+                        .filter(|other| other.value == member.value)
+                        .count()
+                        > 1
             })
             .collect();
         let mut index = 0usize;
@@ -16194,6 +16212,60 @@ mod tests {
             members,
             vec!["IDLE"],
             "FAST and SLOW both claim code 0, so both are withdrawn; IDLE is untouched"
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` — members sharing a code are kept where the table reader states the
+    /// sharing, and only there: the same sentence without a table exempts nothing.
+    #[test]
+    fn members_sharing_a_code_are_kept_where_the_table_reader_states_it() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("shared_code_enum.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Symbols\nSignal CLK is input width 1.\n\nEnum TMODE FAST = 0.\n\nEnum TMODE SLOW = 0.\n\nEnum TMODE IDLE = 1.\n\nEnum TSIZE BYTE = 0.\n\nEnum TSIZE HALFWORD = 0.\n\nEnum TSIZE shares a code between members.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir
+            .extracted_statements
+            .push(crate::ir::evidence::ExtractedStatement {
+                statement_id: "statement_9001".to_string(),
+                class: crate::ir::evidence::StatementClass::SourceFact,
+                modality: crate::ir::evidence::EvidenceModality::Text,
+                text: "Enum TMODE shares a code between members.".to_string(),
+                evidence_span_ids: Vec::new(),
+                related_visual_evidence_ids: Vec::new(),
+                supporting_table_ids: vec!["table_0001".to_string()],
+            });
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let members = |name: &str| -> Vec<String> {
+            semantic_ir
+                .symbol_definitions
+                .iter()
+                .filter(|definition| definition.symbol_name == name)
+                .flat_map(|definition| definition.members.iter())
+                .map(|member| member.member_name.clone())
+                .collect()
+        };
+        assert_eq!(members("TMODE"), ["FAST", "SLOW", "IDLE"]);
+        assert!(
+            members("TSIZE").is_empty(),
+            "a sentence with no table is not the reader's, so TSIZE still collides"
         );
         Ok(())
     }

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [a-channel-code-column-is-an-aliasing-enum](../knowledge/a-channel-code-column-is-an-aliasing-enum.md) | 2026-10-22 | `current` | A code table whose signal-titled columns name one collective's members gives each channel its whole enum, mem… |
 | [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md) | 2026-09-29 | `current` | The converter writes < > & \| as &lt; &gt; &amp; &#124;, and a clause splitter must not end a clause at the r… |
 | [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md) | 2026-09-15 | `current` | A cheap structural rule over-fires until someone reads WHAT it selects — a count cannot tell a port sense f… |
 | [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md) | 2026-10-20 | `current` | A check-coverage table is a typed relation (check signal to covered signals), and it resolves the class sente… |
@@ -60,4 +61,3 @@
 | [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md) | 2026-06-23 | `current` | The dense-prose agent explosion (eMMC 153 actors) is a relation-subject extraction-precision problem (148/153… |
 | [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md) | 2026-06-16 | `current` | The .1a structural agent-identity gate rejects relation subjects whose first content token is a universal fun… |
 | [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md) | 2026-06-17 | `current` | The .1b.ii named-interface consolidation folds an "X interface" relation subject onto the bare agent "X" (Sub… |
-| [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md) | 2026-06-17 | `current` | The .1b.iv Class-C PURE-INFERRED phantom drop removes a generic role-term actor (agent/controller/producer/… |

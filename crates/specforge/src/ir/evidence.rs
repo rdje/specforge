@@ -9274,6 +9274,164 @@ fn synthesize_signal_column_encodings(
     statements
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` — a channel's code (`0b1110`) and the permitted alternative the
+/// document writes after it in brackets (`0b1110 ( 0b0110 )`, *Values in brackets are permitted but not preferred*).
+fn channel_code_and_alternative(text: &str) -> Option<(u32, Option<u32>)> {
+    let text = text.trim();
+    match text.split_once('(') {
+        Some((code, rest)) => {
+            let alternative = rest.trim().strip_suffix(')')?;
+            Some((
+                parse_encoding_value_literal(code.trim())?,
+                Some(parse_encoding_value_literal(alternative.trim())?),
+            ))
+        }
+        None => Some((parse_encoding_value_literal(text)?, None)),
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` — the channel code tables: an encoding table whose two or more
+/// signal-titled code columns name members of one collective (AXI *A4.4*, `ARCACHE[3:0] | AWCACHE[3:0] | Memory type`),
+/// one key written per channel, with a member column of distinct names and a code in every channel cell. Each channel
+/// is that signal's enum, every member kept with its own code although two may share one: on reads `0b1010` is both
+/// Write-Through No-Allocate and Write-Allocate, since a read cannot carry the write-allocate hint. Such a channel's
+/// statements end with `Enum SIGNAL shares a code between members.`, the only mark that exempts an enum from
+/// SemanticIR's collision rule, because a collision anywhere else is a misread. A bracketed permitted alternative is
+/// stated `Enum SIGNAL MEMBER also takes CODE.`, kept in EvidenceIR and not emitted, since an `.isf` member has one
+/// value. Neither sentence defines a symbol. Returns the tables read, which the other encoding readers then skip.
+fn read_channel_code_tables(
+    source_ir: &SourceIr,
+    signal_titles: &HashSet<String>,
+    collectives: &[CollectiveSignalNameRecord],
+    statement_counter: &mut usize,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> (BTreeSet<String>, Vec<ExtractedStatement>) {
+    // a whole-signal title: the signal, or a slice of it (`ARCACHE[3:0]`), never one bit
+    let titled = |title: &str| -> Option<String> {
+        let title = title.trim();
+        let base = match title.split_once('[') {
+            Some((base, rest)) => {
+                rest.strip_suffix(']')?.split_once(':')?;
+                base.trim()
+            }
+            None => title,
+        };
+        signal_titles.contains(base).then(|| base.to_string())
+    };
+    let mut tables = BTreeSet::new();
+    let mut statements = Vec::new();
+    for table in &source_ir.structured_tables {
+        if !matches!(
+            effective_table_kind(table, prior_guidance),
+            TableKind::Encoding
+        ) {
+            continue;
+        }
+        let Some(header) = table.header_rows.first() else {
+            continue;
+        };
+        let rows: &[Vec<crate::ir::source::StructuredTableCellRecord>] =
+            if table.body_rows.is_empty() && table.header_rows.len() > 1 {
+                &table.header_rows[1..]
+            } else {
+                &table.body_rows
+            };
+        let columns: Vec<Option<String>> = header.iter().map(|cell| titled(&cell.text)).collect();
+        let channels: Vec<(usize, &String)> = columns
+            .iter()
+            .enumerate()
+            .filter_map(|(col, signal)| signal.as_ref().map(|signal| (col, signal)))
+            .collect();
+        let distinct: BTreeSet<&String> = channels.iter().map(|(_, signal)| *signal).collect();
+        if channels.len() < 2 || distinct.len() != channels.len() {
+            continue;
+        }
+        let one_collective = collectives.iter().any(|collective| {
+            distinct.iter().all(|signal| {
+                collective
+                    .member_names
+                    .iter()
+                    .any(|member| member == *signal)
+            })
+        });
+        if !one_collective {
+            continue;
+        }
+        let cell = |row: &[crate::ir::source::StructuredTableCellRecord], col: usize| -> String {
+            row.get(col)
+                .map_or(String::new(), |cell| cell.text.trim().to_string())
+        };
+        let Some(name_col) = (0..columns.len()).find(|&col| {
+            columns[col].is_none() && {
+                let names: Vec<String> = rows.iter().map(|row| cell(row, col)).collect();
+                let unique: BTreeSet<&String> = names.iter().collect();
+                names.len() >= 2
+                    && unique.len() == names.len()
+                    && names.iter().all(|name| is_combination_member_name(name))
+            }
+        }) else {
+            continue;
+        };
+        // a member's name, its code and its bracketed alternative
+        type ChannelMember = (String, u32, Option<u32>);
+        let mut per_channel: Vec<(&String, Vec<ChannelMember>)> = Vec::new();
+        let mut complete = true;
+        for (col, signal) in &channels {
+            let mut members = Vec::new();
+            for row in rows {
+                let (Some(name), Some((code, alternative))) = (
+                    encoding_member_identifier(&cell(row, name_col), signal),
+                    channel_code_and_alternative(&cell(row, *col)),
+                ) else {
+                    complete = false;
+                    break;
+                };
+                members.push((name, code, alternative));
+            }
+            per_channel.push((*signal, members));
+        }
+        let names_distinct = per_channel.iter().all(|(_, members)| {
+            members
+                .iter()
+                .map(|(name, ..)| name)
+                .collect::<BTreeSet<_>>()
+                .len()
+                == members.len()
+        });
+        if !complete || !names_distinct {
+            continue;
+        }
+        tables.insert(table.table_id.clone());
+        let mut state = |text: String| {
+            *statement_counter += 1;
+            statements.push(ExtractedStatement {
+                statement_id: format!("statement_{statement_counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text,
+                evidence_span_ids: vec![],
+                supporting_table_ids: vec![table.table_id.clone()],
+                related_visual_evidence_ids: vec![],
+            });
+        };
+        for (signal, members) in per_channel {
+            for (name, code, _) in &members {
+                state(format!("Enum {signal} {name} = {code}."));
+            }
+            for (name, _, alternative) in &members {
+                if let Some(alternative) = alternative {
+                    state(format!("Enum {signal} {name} also takes {alternative}."));
+                }
+            }
+            let codes: BTreeSet<u32> = members.iter().map(|(_, code, _)| *code).collect();
+            if codes.len() < members.len() {
+                state(format!("Enum {signal} shares a code between members."));
+            }
+        }
+    }
+    (tables, statements)
+}
+
 fn collect_subject_signal_tokens_with_discovered_values(
     text: &str,
     discovered_values: &HashSet<String>,
@@ -32434,10 +32592,20 @@ fn converge_evidence_extractions(
         // it as one key's enum; a column whose codes do determine it is still that key's enum (`AxPAS` in A4.7).
         let value_combinations =
             read_value_combinations(source_ir, &signal_titles, &collectives, register_records);
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i — a channel code table is read by its own reader, so neither
+        // other encoding reader takes it.
+        let (channel_tables, channel_statements) = read_channel_code_tables(
+            source_ir,
+            &signal_titles,
+            &collectives,
+            statement_counter,
+            prior_guidance,
+        );
         let combination_tables: BTreeSet<String> = value_combinations
             .0
             .iter()
             .flat_map(|record| record.table_ids.iter().cloned())
+            .chain(channel_tables.iter().cloned())
             .collect();
         let mut candidate_statements = scan_encoding_tables_by_signal_anchor(
             source_ir,
@@ -32464,7 +32632,16 @@ fn converge_evidence_extractions(
                 )
             })
             .flatten()
+            .chain(channel_statements.iter().filter_map(|statement| {
+                let name = statement
+                    .text
+                    .strip_prefix("Enum ")?
+                    .split_whitespace()
+                    .next()?;
+                Some((statement.supporting_table_ids[0].clone(), name.to_string()))
+            }))
             .collect();
+        candidate_statements.extend(channel_statements);
         candidate_statements.extend(synthesize_signal_column_encodings(
             source_ir,
             &signal_titles,
@@ -48699,6 +48876,101 @@ The control register.
         assert_eq!(
             (entry.name.as_str(), entry.produced, entry.kept),
             ("value_combination_states", 4, 3)
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` — a channel code table gives each channel its whole enum: shared
+    /// codes kept and marked, a bracketed alternative stated beside its member; other shapes are not read.
+    #[test]
+    fn a_channel_code_table_gives_each_channel_its_whole_enum() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("channels.md");
+        fs::write(&source, "# Channels\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, header: &[&str], body: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Encoding,
+            row_count: (1 + body.len()) as u32,
+            col_count: header.len() as u32,
+            header_rows: rows(&[header]),
+            body_rows: rows(body),
+        };
+        // AXI A4.4: one key written per channel.
+        source_ir.structured_tables.push(table(
+            "table_cache",
+            &["ARCACHE[3:0]", "AWCACHE[3:0]", "Memory type"],
+            &[
+                &["0b0000", "0b0000", "Device Non-bufferable"],
+                &["0b1010", "0b0110", "Write-Through No-Allocate"],
+                &["0b1110 ( 0b0110 )", "0b0110", "Write-Through Read-Allocate"],
+                &[
+                    "0b1010",
+                    "0b1110 ( 0b1010 )",
+                    "Write-Through Write-Allocate",
+                ],
+            ],
+        ));
+        // Two signals of no one collective: a joint key, not channels.
+        source_ir.structured_tables.push(table(
+            "table_space",
+            &["PNSE", "PPROT", "Space"],
+            &[&["0", "0", "Secure"], &["0", "1", "Non-secure"]],
+        ));
+        let titles: std::collections::HashSet<String> = ["ARCACHE", "AWCACHE", "PNSE", "PPROT"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        let collectives = vec![super::CollectiveSignalNameRecord {
+            collective_id: "collective_0001".to_string(),
+            collective_name: "AxCACHE".to_string(),
+            member_names: vec!["ARCACHE".to_string(), "AWCACHE".to_string()],
+            supporting_statement_ids: Vec::new(),
+        }];
+        let mut counter = 0;
+        let (tables, statements) =
+            super::read_channel_code_tables(&source_ir, &titles, &collectives, &mut counter, None);
+        assert_eq!(tables.into_iter().collect::<Vec<_>>(), ["table_cache"]);
+        assert_eq!(
+            statements
+                .iter()
+                .map(|s| s.text.as_str())
+                .collect::<Vec<_>>(),
+            [
+                "Enum ARCACHE DEVICE_NON_BUFFERABLE = 0.",
+                "Enum ARCACHE WRITE_THROUGH_NO_ALLOCATE = 10.",
+                "Enum ARCACHE WRITE_THROUGH_READ_ALLOCATE = 14.",
+                "Enum ARCACHE WRITE_THROUGH_WRITE_ALLOCATE = 10.",
+                "Enum ARCACHE WRITE_THROUGH_READ_ALLOCATE also takes 6.",
+                "Enum ARCACHE shares a code between members.",
+                "Enum AWCACHE DEVICE_NON_BUFFERABLE = 0.",
+                "Enum AWCACHE WRITE_THROUGH_NO_ALLOCATE = 6.",
+                "Enum AWCACHE WRITE_THROUGH_READ_ALLOCATE = 6.",
+                "Enum AWCACHE WRITE_THROUGH_WRITE_ALLOCATE = 14.",
+                "Enum AWCACHE WRITE_THROUGH_WRITE_ALLOCATE also takes 10.",
+                "Enum AWCACHE shares a code between members.",
+            ]
+        );
+        assert!(
+            statements
+                .iter()
+                .all(|s| s.supporting_table_ids == ["table_cache"])
         );
         Ok(())
     }

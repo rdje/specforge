@@ -362,12 +362,47 @@ several signals' values, code columns that repeat, tables whose every row is a h
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (the type's width). No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i`
-  Status: `open` (`2026-10-22`; CODE; split from `.3.g.iii.c`)
+  Status: `done` (`2026-10-22`; CODE; split from `.3.g.iii.c`; checklist below)
   Goal: **a channel's code column that gives every member a code is that signal's aliasing enum, and a bracketed code
   is the member's permitted alternative.** **Reproduce:** AXI *A4.4*: `ARCACHE` keeps 6 of 12 members, `AWCACHE` none,
   and the bracketed rows parse no code. Acceptance: implement `.3.g.iii.c`'s decisions. The reader and its carrier
   must mark the aliasing enum so SemanticIR's collision rule exempts it alone. Measure AXI and every chain, then
   rebuild and FSMGen strict.
+  **Done `2026-10-22`.**
+  - **Reader.** `read_channel_code_tables` runs in each convergence pass after the collectives. It reads an encoding
+    table whose two or more signal-titled code columns (a signal or a slice of it, never one bit) name members of
+    one collective, with a member column of distinct names (`is_combination_member_name`) and a code in every channel
+    cell (`channel_code_and_alternative`).
+  - **Statements.** Each channel gets `Enum SIGNAL MEMBER = CODE.` per row with the preferred code, then `Enum SIGNAL
+    MEMBER also takes CODE.` for a bracketed alternative. If its codes repeat, `Enum SIGNAL shares a code between
+    members.` follows. The single-column scan and `.3.g.iii.a`'s column reader skip the table.
+  - **Exemption.** SemanticIR exempts from `.5.xiv.a`'s collision rule exactly the enums named by a marking sentence
+    that cites a table; the same words in prose exempt nothing.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI adds 20 statements, the 10 earlier `ARCACHE`
+    statements unchanged: `ARCACHE`'s two bracketed members, `AWCACHE`'s 12, 4 alternatives and 2 marks. After a
+    stage-by-stage rebuild, `manager.isf` carries `ARCACHE` with 12 members (it had 6) and `AWCACHE` with 12, both
+    typed 4 bits. FSMGen strict reports 0 diagnostics and no stderr. AXI's symbol count goes from 46 to 47.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — A4.4's statements per reader before and after; AXI's `ARCACHE`/`AWCACHE` in
+  SemanticIR and `manager.isf`; every chain's EvidenceIR.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: no reader took a channel code table
+  whole, and the bracketed cells parsed no code; `crates/specforge/src/ir/semantic.rs` `build_symbol_definitions`
+  dropped every shared code. New `read_channel_code_tables`, `channel_code_and_alternative` and `shared_code_enums`.
+  RED 5/5, each file restored byte-identically: signals of no one collective read as channels, no shared-code mark,
+  the bracketed alternative dropped, the mark exempting nothing, a mark with no table exempting.
+- [x] **ADDRESSED (verified)** — AXI rebuilt stage by stage; FSMGen strict clean.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `5e0650255`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean once the channel member tuple got a `type` alias.
+  `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,919 passed. `flow_census.json`
+  rolled (+2 functions, +23 decision sites, +26 helper edges, +2 semantic macros); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the document's own collectives, column-title shape and bracket notation; no
+  document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (the collision rule's one exemption); KM card
+  `a-channel-code-column-is-an-aliasing-enum` (new) and `a-signal-titled-code-column-determining-its-member-is-an-enum`
+  amended. No production rule deleted or replaced: `.5.xiv.a` keeps its default.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.57`
   Status: `open` (`2026-10-21`; DESIGN; found by `.3.g.iii`)

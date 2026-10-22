@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md) | 2026-06-17 | `current` | The .1b.iv Class-C PURE-INFERRED phantom drop removes a generic role-term actor (agent/controller/producer/… |
 | [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md) | 2026-06-16 | `current` | The KG agent surface has 3 structural defect classes (junk / fragment / zero-evidence); the "disconnected rea… |
 | [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md) | 2026-06-16 | `current` | The .1b.i consolidation strips a TRAILING universal verb/discourse-adverb off a relation-subject ("Subordinat… |
 | [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md) | 2026-06-23 | `current` | The .1c.i consolidation extends the .1b.i trailing strip to a closed class of trailing PREPOSITIONS + AUXILIA… |
@@ -60,4 +61,3 @@
 | [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |
 | [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `superseded` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |
 | [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md) | 2026-06-23 | `current` | Cat-4 RISC-V CSR bit-position recovery (DOC-INTENT-TAXONOMY.4d.i) — NOT deterministically recoverable from… |
-| [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
