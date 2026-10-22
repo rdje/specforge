@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a",
-      "literal" : "`.3.c.iv.a` — a table with a column per bit of one signal is a value combination.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b",
+      "literal" : "`.3.c.iv.b` — a signal's bit described as a named sub-field is typed.",
       "mode" : "eligible",
       "part_id" : "encoding-and-state-leaves"
    },
@@ -154,13 +154,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
             "metrics" : {
-               "bytes" : 46143,
+               "bytes" : 48894,
                "line_bytes" : 128,
-               "lines" : 509
+               "lines" : 540
             },
             "part_id" : "encoding-and-state-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-            "sha256" : "241ec962541903a3f00423ec7102a9826a44d8107f97962bf65ec87e88ef53de",
+            "sha256" : "a8ff7c10791d372861006a6da71e5e66782b3e045ee3ef979d66b707d0d4a566",
             "state" : "active"
          },
          {
@@ -1494,7 +1494,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
       },
@@ -1630,7 +1630,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.iv.a` — a table with a column per bit of one signal is a value combination.",
+         "`.3.c.iv.b` — a signal's bit described as a named sub-field is typed.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1667,7 +1667,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b`"
       ]
    },

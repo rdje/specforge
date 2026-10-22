@@ -30985,7 +30985,8 @@ fn protocol_transition_surface(
 /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` — the declared name a column title names, with the bit or slice it
 /// selects: a signal or a collective (`PNSE`, `PPROT[1]`, `ARBAR[0]`, `AxCACHE`), a register's field (`CSW.ERRSTOP`,
 /// where the register or the field is declared), or a field a register declares, written in capitals (`TYPE`). A
-/// leading *Value of* is the title's wording, not the name.
+/// leading *Value of* is the title's wording, not the name. EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a — a signal's bit
+/// may carry its own name after the slice (`HPROT[3] Modifiable`, `HPROT[0] Data/Opcode`).
 fn combination_key_name(
     title: &str,
     signal_titles: &HashSet<String>,
@@ -30994,9 +30995,9 @@ fn combination_key_name(
 ) -> Option<(String, Option<String>)> {
     let title = title.trim();
     let title = title.strip_prefix("Value of ").unwrap_or(title).trim();
-    let (base, bits) = match title.find('[') {
-        Some(open) if title.ends_with(']') => {
-            let inner = &title[open + 1..title.len() - 1];
+    let (base, bits, bit_name) = match (title.find('['), title.find(']')) {
+        (Some(open), Some(close)) if open < close => {
+            let inner = &title[open + 1..close];
             let parts: Vec<&str> = inner.split(':').collect();
             if parts.len() > 2
                 || parts
@@ -31005,10 +31006,15 @@ fn combination_key_name(
             {
                 return None;
             }
-            (&title[..open], Some(title[open..].to_string()))
+            let rest = title[close + 1..].trim();
+            (&title[..open], Some(title[open..=close].to_string()), rest)
         }
-        _ => (title, None),
+        (None, None) => (title, None, ""),
+        _ => return None,
     };
+    if !bit_name.is_empty() && !bit_name.starts_with(|c: char| c.is_ascii_alphabetic()) {
+        return None;
+    }
     let is_identifier = |s: &str| {
         s.starts_with(|c: char| c.is_ascii_alphabetic())
             && s.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
@@ -31016,7 +31022,7 @@ fn combination_key_name(
     if is_identifier(base) && signal_titles.contains(base) {
         return Some((base.to_string(), bits));
     }
-    if bits.is_some() {
+    if bits.is_some() || !bit_name.is_empty() {
         return None;
     }
     if let Some((register, field)) = base.split_once('.') {
@@ -31076,7 +31082,18 @@ fn combination_key_columns(
         })
         .collect();
     let names: BTreeSet<&str> = keys.iter().map(|(_, key)| key.name.as_str()).collect();
-    if names.len() < 2 || keys.len() == titles.len() {
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a — or two or more distinct bits of one signal (AHB `HPROT[3]` …
+    // `HPROT[0]`); the reader keeps such a table only when a bit cell is no plain bit.
+    let one_signal_bits = names.len() == 1
+        && keys.len() >= 2
+        && keys.iter().all(|(_, key)| key.bits.is_some())
+        && keys
+            .iter()
+            .map(|(_, key)| key.bits.as_deref())
+            .collect::<BTreeSet<_>>()
+            .len()
+            == keys.len();
+    if (names.len() < 2 && !one_signal_bits) || keys.len() == titles.len() {
         return None;
     }
     let one_collective = collectives.iter().any(|collective| {
@@ -31180,7 +31197,23 @@ fn read_value_combinations(
             entry.rows.push((table.table_id.clone(), cells));
         }
     }
-    shaped.retain(|entry| entry.rows.len() >= 2);
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a — a table keyed by one signal's bits is a value combination only when one
+    // of its bit cells is no plain bit (`-`, `0 or 1`, a footnoted `0 a`). Bit cells that are all `0` or `1`
+    // concatenate into the signal's code, which `.3.g.iii.a` reads as its enum (AHB `HSIZE`).
+    let bits_are_no_code = |entry: &Shaped| {
+        let names: BTreeSet<&str> = entry
+            .keys
+            .iter()
+            .map(|(_, key)| key.name.as_str())
+            .collect();
+        names.len() > 1
+            || entry.rows.iter().any(|(_, cells)| {
+                entry.keys.iter().any(|(column, _)| {
+                    !matches!(cells.get(*column).map(String::as_str), Some("0" | "1"))
+                })
+            })
+    };
+    shaped.retain(|entry| entry.rows.len() >= 2 && bits_are_no_code(entry));
     let candidates = shaped.len();
     let records = shaped
         .into_iter()
@@ -48881,6 +48914,84 @@ The control register.
             (entry.name.as_str(), entry.produced, entry.kept),
             ("value_combination_states", 4, 3)
         );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a` — a column per bit of one signal, with marks, is a value combination;
+    /// all-binary bit columns stay the signal's concatenated code.
+    #[test]
+    fn a_column_per_bit_with_marks_is_a_value_combination() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("bits.md");
+        fs::write(&source, "# Bits\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, header: &[&str], body: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: (1 + body.len()) as u32,
+            col_count: header.len() as u32,
+            header_rows: rows(&[header]),
+            body_rows: rows(body),
+        };
+        // AHB 3-5: one bit per row, the others marked.
+        source_ir.structured_tables.push(table(
+            "table_protection",
+            &["HPROT[1] Privileged", "HPROT[0] Data/Opcode", "Description"],
+            &[
+                &["-", "0", "Opcode fetch"],
+                &["-", "1", "Data access"],
+                &["0", "-", "User access"],
+                &["1", "-", "Privileged access"],
+            ],
+        ));
+        // AHB 3-2: all-binary bit columns are HSIZE's code, read by `.3.g.iii.a`.
+        source_ir.structured_tables.push(table(
+            "table_size",
+            &["HSIZE[1]", "HSIZE[0]", "Description"],
+            &[
+                &["0", "0", "Byte"],
+                &["0", "1", "Halfword"],
+                &["1", "0", "Word"],
+            ],
+        ));
+        let titles: std::collections::HashSet<String> =
+            ["HPROT", "HSIZE"].into_iter().map(str::to_string).collect();
+        let (combinations, candidates) =
+            super::read_value_combinations(&source_ir, &titles, &[], &[]);
+        assert_eq!(candidates, 1);
+        assert_eq!(combinations.len(), 1);
+        let protection = &combinations[0];
+        assert_eq!(protection.table_ids, ["table_protection"]);
+        assert_eq!(
+            protection
+                .keys
+                .iter()
+                .map(|key| (key.title.as_str(), key.name.as_str(), key.bits.as_deref()))
+                .collect::<Vec<_>>(),
+            [
+                ("HPROT[1] Privileged", "HPROT", Some("[1]")),
+                ("HPROT[0] Data/Opcode", "HPROT", Some("[0]")),
+            ]
+        );
+        assert_eq!(protection.member_column.as_deref(), Some("Description"));
+        assert_eq!(protection.rows[1].values, ["-", "1"]);
+        assert_eq!(protection.rows[1].member.as_deref(), Some("Data access"));
         Ok(())
     }
 

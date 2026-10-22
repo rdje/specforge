@@ -466,7 +466,7 @@ AHB now lowers `(HBURST (SINGLE 0) (INCR 1) (WRAP4 2) (INCR4 3) (WRAP8 4) (INCR8
 FSMGen's strict check accepts. Across every stored document the rule reaches only this table and one permitted-combinations
 table in an older AXI revision, which the last condition refuses; AHB's *Table 3-5 Protection signal encoding*
 gives each `HPROT` bit its own column, so it is a set of flags rather than one enum, and no enum is read from
-it; reading it as a value combination keyed by the bits is `.3.c.iv.a`'s.
+it; since `.3.c.iv.a` it is a value combination keyed by the bits (see *A row keyed by several signals together*).
 
 (Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.h`.)
 
@@ -508,6 +508,9 @@ Such a table is now an EvidenceIR `value_combinations` record (`EXTRACTION-REPRE
 
 - **Keys.** Two or more columns are titled by different declared names: a signal, a bit or slice of one, a
   collective, a register's field (`CSW.ERRSTOP`), or a field a register declares, written in capitals (`TYPE`).
+  Distinct bits of one signal count too, when a bit cell is no plain bit (`.3.c.iv.a`): AHB *Table 3-5*'s `HPROT[3]
+  Modifiable` … `HPROT[0] Data/Opcode`, each row one bit's value and meaning, and *Table 3-7*'s memory types. A title
+  may name its bit after the slice. Bits that are all `0` or `1` stay the signal's concatenated code (`HSIZE`).
   Every column is titled and none only by a number. Columns that all name members of one collective (A4.4's
   `ARCACHE | AWCACHE`) are one key written per channel, read as each channel's aliasing enum (`.3.g.iii.c.i`).
 - **Member and meanings.** The member column is the first other column whose cells are distinct names. The rest are

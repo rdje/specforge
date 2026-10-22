@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what does the PUBLISHED-ASSERTIONS doctrine prove
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -296,5 +298,3 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv, .55.b.iv.a, .55.b.iv.b, .55.b.iv.b.i and .55.b.iv.b.ii
 - [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.i
-- [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii

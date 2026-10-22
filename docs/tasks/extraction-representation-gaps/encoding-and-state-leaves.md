@@ -370,12 +370,43 @@ several signals' values, code columns that repeat, tables whose every row is a h
   already names `.57.a`. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a`
-  Status: `open` (`2026-10-22`; CODE; split from `.3.c.iv`)
+  Status: `done` (`2026-10-22`; CODE; split from `.3.c.iv`; checklist below)
   Goal: **a table with a column per bit of one signal is a value combination.** **Reproduce:** AHB *3-5*
   (`HPROT[3] Modifiable` … with `-` marks) and *3-7* (`HPROT[6:2]` with `0 or 1`) reach no record. Acceptance: widen
   `combination_key_columns` to distinct bits of one signal when a bit column holds a mark or an alternative, and read a
   title's bit name after the slice; keep `.3.g.iii.a`'s concatenated codes untouched; measure AHB and every chain;
   rebuild what moves.
+  **Done `2026-10-22`.**
+  - **Titles.** `combination_key_name` reads a signal title that names its bit after the slice (`HPROT[3]
+    Modifiable`); a register field or a bare field with trailing words is still no key.
+  - **One signal's bits.** `combination_key_columns` accepts two or more distinct bits of one signal.
+    `read_value_combinations` keeps such a table only when a bit cell is no plain `0` or `1`.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AHB gains *3-5* (4 bit keys, member column *Description*,
+    8 rows) and *3-7* (5 bit keys, member column *Memory Type*, 8 rows). It also loses 6 false `Enum HPROT`
+    statements: the single-column scan had read *3-7*'s `HPROT[6]` column as `HPROT`'s code (`WRITE_BACK__SHAREABLE =
+    1` …), and the precedence now leaves the table alone. SemanticIR had dropped all 6 over their repeated codes.
+  - **Rebuilt.** AHB was rebuilt stage by stage. The two records reach IntentIR, the adapter's residuals go from 39
+    to 41, and every `.isf` text is byte-identical.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — the 31 chains' tables with two or more bit columns of one signal (AHB *3-2*, *3-5*,
+  *3-7*; ADIv6's layout grids) and the statements each reader emits for them.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `combination_key_columns` needed two
+  different names and `combination_key_name` refused a title naming its bit, so a per-bit table reached no reader but
+  the single-column scan, which misread *3-7*. RED 3/3, the file restored byte-identically: a bit name after the slice
+  refused, one signal's bits no keys, all-binary bits read as a combination — each fails
+  `a_column_per_bit_with_marks_is_a_value_combination`.
+- [x] **ADDRESSED (verified)** — AHB rebuilt stage by stage; `.isf` texts byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `fbbbcdcab`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,921 passed. `flow_census.json` rolled (+6 decision sites, owner this
+  leaf).
+- [x] **GENERICITY (ADR 0006)** — title shape (a slice and the bit's name), cell shape (a plain bit or not); no
+  document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (the keys bullet and the *Table 3-5* note); KM card
+  `a-jointly-keyed-table-is-a-value-combination` amended. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b`
   Status: `open` (`2026-10-22`; DESIGN; split from `.3.c.iv`)

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-57-A-ROW-LABEL-LIFTING",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-IV-A-PER-BIT-COMBINATIONS",
    "baseline": {
     "analyzed_functions": 2856,
-    "decision_sites": 15867,
+    "decision_sites": 15869,
     "helper_edges": 20371,
     "semantic_macros": 1640
    },
    "delta": {
     "analyzed_functions": 0,
-    "decision_sites": 2,
+    "decision_sites": 6,
     "helper_edges": 0,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.57.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.57.a: a header row whose flagged cells are a leading run of row labels over data is data (is_row_header_data_row)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a: a table with a column per bit of one signal is a value combination (combination_key_name reads a bit name after the slice; combination_key_columns accepts one signal's bits; read_value_combinations keeps such a table only when a bit cell is no plain 0 or 1)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
+  > why does a sharded task-evidence contract declare no max_leaf_routes
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > why does a signal-description table pass find no tables in a persisted document
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -295,5 +297,3 @@
   > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
 - [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
   > why does the gap owner check find a closed leaf under docs/archive/tasks (task_evidence_declares)
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > why does the gate refuse when generated/source_ir is missing
