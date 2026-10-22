@@ -38,16 +38,17 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c.iv` — a per-bit encoding is read bit by bit.
+`.3.c.iv.a` — a table with a column per bit of one signal is a value combination.
 
-Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`), `.3.c.v`
-(requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii`
-and `.3.f.iii` (single-label and unnamed grouped timing tables), `.54.a.ii` (the corpus memory's refresh: an
-equivalent store re-pinned with the 24-document behavioral re-qualification), `.44` (Symbol-font glyphs, a re-seal of
-every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`,
-`.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a legacy register-map
-document's re-ingest. Closed leaves are read from the route catalog's lifecycles, not restated here; the list this
-paragraph carried until `2026-10-19` is in the `register-binding-leaves` part.
+Then, in order: `.3.c.iv.b` (a signal's bit sub-field), `.46.c` waits for a FSMGen pin carrying
+`sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed
+tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped
+timing tables), `.54.a.ii` (the corpus memory's refresh: an equivalent store re-pinned with the 24-document behavioral
+re-qualification), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once
+`KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
+`.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a legacy register-map document's re-ingest. Closed leaves are read
+from the route catalog's lifecycles, not restated here; the list this paragraph carried until `2026-10-19` is in the
+`register-binding-leaves` part.
 
 Every new leaf and dated entry goes to the `encoding-and-state-leaves` part, since `packet-and-memory-leaves` reached
 its rollover on `2026-10-21`. Since `2026-10-21` (`.56.a`) a part whose every leaf is closed is archived, byte-exact,
@@ -72,7 +73,8 @@ primary detail-routing authority.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`

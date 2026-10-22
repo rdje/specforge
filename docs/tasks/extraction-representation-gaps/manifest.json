@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv",
-      "literal" : "`.3.c.iv` — a per-bit encoding is read bit by bit.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a",
+      "literal" : "`.3.c.iv.a` — a table with a column per bit of one signal is a value combination.",
       "mode" : "eligible",
-      "part_id" : "census-leaves"
+      "part_id" : "encoding-and-state-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -675,7 +675,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -1236,6 +1236,18 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1257,13 +1269,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 50532,
+            "bytes" : 50599,
             "line_bytes" : 283,
             "lines" : 517
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "6a36a35b3dacf2dae73c9d8e125c370c6a377b806722efaf93287f5b7d6e68ea",
+         "sha256" : "c30c749f81bc0ede8877221585aced3ed035c30c9d3eb1a4cd085c71144410ea",
          "state" : "active"
       },
       {
@@ -1383,13 +1395,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
          "metrics" : {
-            "bytes" : 43087,
+            "bytes" : 46143,
             "line_bytes" : 128,
-            "lines" : 474
+            "lines" : 509
          },
          "part_id" : "encoding-and-state-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-         "sha256" : "fd18da28474ffacd2f6aa6eb3b83749f08fb0bed21807f6d512fb9d89e80c8f4",
+         "sha256" : "241ec962541903a3f00423ec7102a9826a44d8107f97962bf65ec87e88ef53de",
          "state" : "active"
       },
       {

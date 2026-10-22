@@ -369,6 +369,21 @@ several signals' values, code columns that repeat, tables whose every row is a h
 - [x] **LOCKSTEP** — no book page states the old rule; KM card `a-signal-titled-code-column-determining-its-member-is-an-enum`
   already names `.57.a`. No production rule deleted or replaced.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a`
+  Status: `open` (`2026-10-22`; CODE; split from `.3.c.iv`)
+  Goal: **a table with a column per bit of one signal is a value combination.** **Reproduce:** AHB *3-5*
+  (`HPROT[3] Modifiable` … with `-` marks) and *3-7* (`HPROT[6:2]` with `0 or 1`) reach no record. Acceptance: widen
+  `combination_key_columns` to distinct bits of one signal when a bit column holds a mark or an alternative, and read a
+  title's bit name after the slice; keep `.3.g.iii.a`'s concatenated codes untouched; measure AHB and every chain;
+  rebuild what moves.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b`
+  Status: `open` (`2026-10-22`; DESIGN; split from `.3.c.iv`)
+  Goal: **a signal's bit described as a named sub-field is typed.** **Reproduce:** AHB *3-6* (*Bit | Name |
+  Description*) and APB's `PPROT` table (*PPROT[0] | Normal or Privileged | … | LOW indicates normal access …*) reach
+  no record. Acceptance: decide the record (bit, name, description, the meaning per level as written), its carrier to
+  IntentIR, and how it relates to the signal's own record; measure every chain's row-per-bit tables; open the CODE leaf.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.59`
   Status: `done` (`2026-10-22`; CODE; found by `.3.g.iii.c`; checklist below)
   Goal: **an `.isf` enum type is as wide as its largest code.** **Reproduce:** AXI's `manager.isf` declares `(type
@@ -472,3 +487,23 @@ several signals' values, code columns that repeat, tables whose every row is a h
     lost (*TRANSMITTER* or *RECEIVER*, *MTE_Support = Basic*). `.57.a` measures how many lifted tables keep more than
     one header row and routes each to the leaf owning its family's reader.
 
+- **`.3.c.iv`'s measurement and decision** (`2026-10-22`; the leaf's record is in `census-leaves`).
+  **Measured `2026-10-22`** (31 chains). Per-bit tables take two shapes.
+  - **A column per bit.** AHB *3-5* gives `HPROT[3] Modifiable` … `HPROT[0] Data/Opcode` a column each. Each row sets
+    one bit, marks the others `-` and names the meaning (`HPROT[0]` `1`: *Data access*). AHB *3-7* keys a memory
+    type by `HPROT[6:2]`, with `0 or 1` alternatives. AHB *3-2* is not this shape: its bit columns are all `0`/`1`,
+    and `.3.g.iii.a` already reads them as `HSIZE`'s concatenated code. ADIv6's `TDI`/`TDO` grids are layouts.
+  - **A row per bit.** AHB *3-6* (*Bit | Name | Description*, 7 bits) and APB's `PPROT` table (3 bits, each with a
+    *LOW indicates … HIGH indicates …* comment) describe each bit as a named sub-field of its signal.
+
+  Neither reaches a record today. `.3.g.iii.b.i`'s reader needs two different names, and SemanticIR's collision rule
+  drops a per-bit enum whose values repeat across bits.
+  **Decided.**
+  - **A column per bit is a value combination.** Its keys are distinct bits of one signal, and a title may name the
+    bit after its slice (`HPROT[3] Modifiable`; the title is kept as written). The reader takes it only when a bit
+    column holds a don't-care mark or an alternative, so the code does not concatenate and `.3.g.iii.a`'s determining
+    reading is not doubled. Carriage to IntentIR and the ISF residual follow from `.3.g.iii.b.ii`. Nothing is lowered:
+    a per-bit meaning has no consumer, and `.3.g.iii.b.iii`'s reasons hold. CODE: `.3.c.iv.a`.
+  - **A row per bit is a signal's bit sub-field.** It has a name, a bit, a description and, where stated, a meaning
+    per level. No record holds one: `message_field_records` are packet fields, and register fields belong to
+    registers. Choosing that carrier is `.3.c.iv.b`'s.

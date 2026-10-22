@@ -58,7 +58,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.37` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` | [Census leaves](census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | [Census leaves](census-leaves.md) |
@@ -66,11 +65,14 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a.ii` | [Packet and memory leaves](packet-and-memory-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 
 ## Complete route catalog
 
 - [Route catalog part 0001](routes-0001.md)
 - [Route catalog part 0002](routes-0002.md)
+- [Route catalog part 0003](routes-0003.md)
 
 ## Exact provenance
 

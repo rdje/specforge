@@ -465,7 +465,8 @@ either.
 AHB now lowers `(HBURST (SINGLE 0) (INCR 1) (WRAP4 2) (INCR4 3) (WRAP8 4) (INCR8 5) (WRAP16 6) (INCR16 7))`, which
 FSMGen's strict check accepts. Across every stored document the rule reaches only this table and one permitted-combinations
 table in an older AXI revision, which the last condition refuses; AHB's *Table 3-5 Protection signal encoding*
-gives each `HPROT` bit its own column, so it is a set of flags rather than one enum, and stays unread.
+gives each `HPROT` bit its own column, so it is a set of flags rather than one enum, and no enum is read from
+it; reading it as a value combination keyed by the bits is `.3.c.iv.a`'s.
 
 (Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.h`.)
 

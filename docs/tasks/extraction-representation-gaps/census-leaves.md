@@ -279,7 +279,7 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii — a register field's value table fills the field's values`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv`
-  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `.3.c`)
+  Status: `done` (`2026-10-22`; DESIGN; found by `.3.c`; decision in `encoding-and-state-leaves`; opened `.3.c.iv.a`, `.3.c.iv.b`)
   Goal: **a per-bit encoding is read bit by bit.** AHB *Table 3-5* gives `HPROT` one column per bit (`HPROT[3]
   Modifiable` … `HPROT[0] Data/Opcode`), each row one bit's value and meaning (`HPROT[0]` 0 *Opcode fetch*, 1 *Data
   access*); one enum cannot hold it, since every value repeats across bits (`KG-ISF-COMPLETENESS.5.xiv.a` drops colliding
