@@ -51,7 +51,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.16` | [Condition lowering](condition-lowering.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.17.a` | [Representation leaves](representation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.18` | [Representation leaves](representation-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.19` | [Representation leaves](representation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.20` | [Representation leaves](representation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.21` | [Representation leaves](representation-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.36.a` | [Recent leaves](recent-leaves.md) |

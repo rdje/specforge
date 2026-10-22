@@ -518,6 +518,17 @@ several signals' values, code columns that repeat, tables whose every row is a h
     lost (*TRANSMITTER* or *RECEIVER*, *MTE_Support = Basic*). `.57.a` measures how many lifted tables keep more than
     one header row and routes each to the leaf owning its family's reader.
 
+- **`.19` closes** (`2026-10-22`; the leaf's record is in `representation-leaves`).
+  FSMGen answered on `2026-09-26`: an interface-port clause it does not recognise is a validation defect, to be
+  refused through its shared parser. The packet recorded the answer then, but the leaf stayed open. **Verified
+  `2026-10-22`** on a read-only export of upstream `c51e22712` (known-good-checked first: AHB's `manager.isf` checks
+  with no diagnostic and no stderr on both installations). `(output HPROT (width HPROT_WIDTH) (frobnicate 7))` is
+  refused with *interface port 'HPROT' has unsupported 'frobnicate' option*, and so is a `(fields …)` clause on a
+  port. The pin `54ac1c22` still accepts both with no diagnostic, and its semantic JSON equals the clause-free port's.
+  The fix reaches SPECFORGE with `FSMGEN-REFRESH-INTEGRATE-10`, whose acceptance now re-checks the probe and whose
+  `.1` now owns the ledger record. SPECFORGE still emits only `(width …)` on a port: none of the 19 written `.isf`
+  files or the 31 live `source_text`s draws that refusal from the tip.
+
 - **`.3.c.iv`'s measurement and decision** (`2026-10-22`; the leaf's record is in `census-leaves`).
   **Measured `2026-10-22`** (31 chains). Per-bit tables take two shapes.
   - **A column per bit.** AHB *3-5* gives `HPROT[3] Modifiable` … `HPROT[0] Data/Opcode` a column each. Each row sets

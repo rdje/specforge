@@ -61,7 +61,7 @@ Status on `2026-09-26`. Side: **S** SpecForge, **F** FSMGen (the owner is the Sp
 | F5 | F | all | adapter | requested (forwarded) | `EXTRACTION-REPRESENTATION-GAPS.6` |
 | F6 | F | all | adapter | requested (forwarded) | `EXTRACTION-REPRESENTATION-GAPS.5` |
 | F7 | F | wire protocol | adapter | requested (forwarded) | `EXTRACTION-REPRESENTATION-GAPS.4` |
-| F8 | F | all | adapter | question (forwarded) | `EXTRACTION-REPRESENTATION-GAPS.19` |
+| F8 | F | all | adapter | fixed upstream | `FSMGEN-REFRESH-INTEGRATE-10.1` |
 | F11 | F | all | adapter | requested (acknowledged) | `FSMGEN-REQUESTS.2` |
 | F12 | F | wire protocol | adapter | requested (forwarded) | `EXTRACTION-REPRESENTATION-GAPS.15` |
 | F13 | F | wire protocol | adapter | requested (forwarded) | `EXTRACTION-REPRESENTATION-GAPS.16` |

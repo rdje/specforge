@@ -56,6 +56,9 @@ Audit the published-contract delta as cycle 9 did, and integrate only what that 
 - The typed-storage reset defect `FSMGEN-REQUESTS.13` found on the old pin is gone: with `PAS` a declared 2-bit type,
   `(storage (var pas (type PAS) (reset 0)))` checks with no stderr and `(reset 7)` is refused as not fitting 2 bits,
   as upstream `23eed7627` already does (added `2026-10-22`).
+- An interface-port clause FSMGen does not recognise is refused: `(output P (width 3) (bogus-clause xyz))` fails
+  `--strict --check` naming the option, as upstream `c51e22712` already does (`EXTRACTION-REPRESENTATION-GAPS.19`,
+  added `2026-10-22`).
 - Every declared pin copy (feedback channel, derived-state authority, Knowledge Map, mdBook, live docs) agrees
   with the gitlink.
 - Full CI passes; committed through `COMMIT.md`.
@@ -66,7 +69,8 @@ Audit the published-contract delta as cycle 9 did, and integrate only what that 
   close. Children: `.1`.
 - ID: `FSMGEN-REFRESH-INTEGRATE-10.1` · Status: `open` (`2026-09-25`) · Goal: fetch and audit the exact
   upstream range, bump the gitlink, run the strict canaries, the emitted-`.isf` census and every open request
-  bundle on both pins, reconcile pin copies, close `.21` and `FSMGEN-REQUESTS.2`.
+  bundle on both pins, reconcile pin copies, close `.21` and `FSMGEN-REQUESTS.2`. Since `2026-10-22` it also owns the
+  ledger record `strict-unknown-port-clause`, answered under the closed `EXTRACTION-REPRESENTATION-GAPS.19`.
 
 ## Current Frontier
 

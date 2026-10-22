@@ -28,7 +28,7 @@ SpecForge side that feeds it, so each names both.
 | F5 | A generated block stays generic in its widths | one `.isf` for every width the document allows | **requested** (forwarded) | [`sf-isf-generic-port-widths`](../upstream/fsmgen/sf-isf-generic-port-widths/README.md) | `EXTRACTION-REPRESENTATION-GAPS.6` |
 | F6 | A parameter's legal values and recommended range | tables of legal widths and property values | **requested** (forwarded) | [`sf-isf-parameter-value-set`](../upstream/fsmgen/sf-isf-parameter-value-set/README.md) | `EXTRACTION-REPRESENTATION-GAPS.5` |
 | F7 | An optional port: absent by default, present by a parameter, tied off when absent | *If present, …* (14 of AXI's 25 listed obligations), tie-offs, and the value a stated-absent signal takes on its presence record (`.3.d.ii.a`) | **requested** (forwarded) | [`sf-isf-optional-signal`](../upstream/fsmgen/sf-isf-optional-signal/README.md) | `EXTRACTION-REPRESENTATION-GAPS.4` |
-| F8 | Strict mode refuses an interface clause it does not know | a strict pass must prove each clause was understood | **question** (forwarded) | [`sf-isf-strict-unknown-port-clause`](../upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | `EXTRACTION-REPRESENTATION-GAPS.19` |
+| F8 | Strict mode refuses an interface clause it does not know | a strict pass must prove each clause was understood | **fixed upstream** (`c51e22712`, unpublished; answered as a defect) | [`sf-isf-strict-unknown-port-clause`](../upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | `FSMGEN-REFRESH-INTEGRATE-10.1` |
 | F9 | One select per target (`PSELx` per Completer) | per-target families | **supported** through composition (13a, 14h, 14i) | — | `EXTRACTION-REPRESENTATION-GAPS.14` |
 
 ## B. Obligations on levels
@@ -87,3 +87,6 @@ guard addendum likewise), 9 requested (3 acknowledged, 6 forwarded), 1 question 
 properties beyond *eventually*; F23, structured records), with F26's multi-bit clock crossings anticipated too. The
 requested rungs gate the most today: F7 alone holds 14 of AXI's 25 listed obligations. The anticipated rungs wait on
 SpecForge first: each needs a typed, source-grounded IntentIR value before a request can reproduce it.
+
+Since `2026-10-22` F8 is fixed upstream too: FSMGen answered the question as a defect, and `c51e22712` refuses an
+unknown port clause. That leaves no open question.

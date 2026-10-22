@@ -79,13 +79,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — polarity, windows, families and fronted conditions",
             "metrics" : {
-               "bytes" : 40908,
+               "bytes" : 41319,
                "line_bytes" : 174,
-               "lines" : 431
+               "lines" : 439
             },
             "part_id" : "representation-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/representation-leaves.md",
-            "sha256" : "ee8b60eb62b851451d54dde52dc818846ed9e504c53970ff4fcc539ee4bcfced",
+            "sha256" : "4792023b3352f6bf1ddaa962a84f154c1ed264b313a94f000ded39db7b36786c",
             "state" : "legacy"
          },
          {
@@ -154,13 +154,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
             "metrics" : {
-               "bytes" : 48894,
+               "bytes" : 49971,
                "line_bytes" : 128,
-               "lines" : 540
+               "lines" : 551
             },
             "part_id" : "encoding-and-state-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-            "sha256" : "a8ff7c10791d372861006a6da71e5e66782b3e045ee3ef979d66b707d0d4a566",
+            "sha256" : "9fcc2fcd24297f313ff277eecfc0b9a68de7bca6557b1afd61f73a05a6816d4b",
             "state" : "active"
          },
          {
@@ -628,7 +628,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.19",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "legacy",
          "part_id" : "representation-leaves",
          "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.19"
@@ -1658,7 +1658,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.16`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.17.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.18`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.19`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.20`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.21`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.36.a`",

@@ -429,3 +429,11 @@
   precision.
 
 <!-- extraction-representation-gaps-task-source-region:representation-leaves:end -->
+
+## Post-migration records
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.19`
+  Status: `done` (`2026-10-22`; QUESTION; supersedes the sealed record above; closing record in
+  `encoding-and-state-leaves`)
+  Goal: unchanged. FSMGen answered on `2026-09-26` that an unrecognised port clause is a validation defect, and
+  upstream `c51e22712` refuses one; the ledger record now belongs to `FSMGEN-REFRESH-INTEGRATE-10.1`.

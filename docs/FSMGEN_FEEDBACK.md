@@ -133,7 +133,7 @@ Asks for `(known SIG)` → `!$isunknown(SIG)` in the verification property langu
 - Direction: `SpecForge → FSMGen`
 - Kind: `question`
 - Status: `accepted`
-- Owner: `EXTRACTION-REPRESENTATION-GAPS.19`
+- Owner: `FSMGEN-REFRESH-INTEGRATE-10.1`
 - Evidence: `docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md`
 
 Forwarded `2026-09-25`; answered `2026-09-26`: silent acceptance is **not** intended support, and FSMGen will reject
@@ -141,7 +141,9 @@ unknown and unimplemented port options through its shared parser (FSMGen `SEMANT
 SPECFORGE emits only `(width …)` on ports, a documented option. `(output AWPROT (width 3) (bogus-clause xyz))` and
 `(… (present PROT_Present))` pass `--strict --check` with no diagnostic, and each generated module equals the one
 without the clause (pin `54ac1c22`, upstream `354844fe1`). Book 10 and 13k do not say whether an unrecognised port
-clause is an error. Since ADR 0054 the question is a packet like any request.
+clause is an error. Since ADR 0054 the question is a packet like any request. Fixed in FSMGen's development line,
+not yet published: upstream `c51e22712` refuses an unknown port option (verified `2026-10-22`); lands with
+`FSMGEN-REFRESH-INTEGRATE-10`.
 
 ### transaction-phase-groups — checked phase-group metadata on a transaction
 

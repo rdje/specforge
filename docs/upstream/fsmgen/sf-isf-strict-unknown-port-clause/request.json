@@ -7,7 +7,7 @@
   },
   "id": "sf-isf-strict-unknown-port-clause",
   "kind": "question",
-  "owner": "EXTRACTION-REPRESENTATION-GAPS.19",
+  "owner": "FSMGEN-REFRESH-INTEGRATE-10.1",
   "resolution": null,
   "schema_version": 1,
   "signed_off": "2026-09-25",
@@ -28,6 +28,11 @@
     {
       "fsmgen_revision": "354844fe1019d2db1e413dd54f8c4a5ae9eb398b",
       "result": "reproduced by commands.sh: the same",
+      "role": "upstream"
+    },
+    {
+      "fsmgen_revision": "c51e22712d12a06eeefc4f6adca6a9fcd7dd7c36",
+      "result": "fixed upstream, not published: (output HPROT (width HPROT_WIDTH) (frobnicate 7)) and a (fields ...) port clause are refused, 'interface port 'HPROT' has unsupported ... option'; the pin still accepts both (verified 2026-10-22 on a read-only export)",
       "role": "upstream"
     }
   ]
