@@ -318,21 +318,81 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   - **The other families** (requirement, version, effect) stay typed, as `.3.c.v` decided.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`
-  Status: `open` (`2026-10-22`; CODE, waits for `.62`, `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin with
-  actor-level assertions; opened by `.3.c.v.iv`)
+  Status: `open` (`2026-10-22`; CODE, waits for `.63`, `.64`, `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin
+  with actor-level assertions; opened by `.3.c.v.iv`; `.62` done)
   Goal: **a legality matrix lowers to an always-on assertion.** Acceptance: once the opcode decode, the property
   parameter and actor-level assertions exist, lower AXI *A12.11*/*A12.13* as `.3.c.v.iv` decided (column guard: the
   property value and the tag operation's code; consequent: the marked opcodes, decoded, `*` keys expanded), FSMGen
   strict-clean, and measure every chain's legality matrices; repoint the adapter's `isf_protocol_matrix_table_*`
-  residual text, which names `.3.c.v.iv`, to the lowering.
+  residual text, which names `.3.c.v.iv`, to the lowering. Since `.62` the decode is a record whose domain values
+  are labels (`.63` binds them), and a marked cell may carry a note that narrows it (`Y 2`: *Not Exclusive write*,
+  `.64`); the lowering states both.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.62`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v.iv`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.v.iv`; opened `.63`, `.64`; checklist below)
   Goal: **a column title with a footnote mark names its signal.** **Reproduce:** AXI *A7.4 ARSNOOP encodings* titles
   its second key `ARDOMAIN 1` (footnote 1), so `combination_key_name` names no signal, the table has one key, and the
   opcode decode (`ReadNoSnoop` = `ARSNOOP` 0b0000 with `ARDOMAIN` `NSH, SYS`) reaches no record. Acceptance: strip a
   footnote mark the document's own footnote defines (or a trailing digit after a declared name) before naming a key;
   measure every chain's combination, layout and matrix titles; keep every existing record.
+  **Done `2026-10-22`.**
+  - **Census.** Of every chain's header cells, 54 in 5 documents end in a mark that a footnote on the table's page or
+    a neighbour opens with (ADIv6 19 letters; AXI 14, OpenCAPI 8, USB 3.2 7, USB4 CM 6 digits). Only AXI's
+    `AWDOMAIN 1` and `ARDOMAIN 1` (*A7.3*, *A7.4*) put the mark after a declared name. AXI's other ten sit in matrix
+    titles and cells (*A12.13* `Update 1`, `Y 2`, `Y 3`; *A8.8* `Must hit 2`), where the note narrows the cell:
+    `.64`. No layout title carries one; OpenCAPI's `Lane 4` and USB's `Port 1` name no declared signal.
+  - **Key names.** `combination_key_name` first drops a trailing mark (`without_note_number`) the table's notes use:
+    the note numbers `note_numbers_by_page` reads and the footnote letters `footnote_marks_by_page` reads, on the
+    table's page or beside it, or beside any fragment its caption names. A table carried over pages prints its notes
+    after its last fragment: *A7.3*'s note 1 is two pages after its head. Without such a note a trailing word stays
+    in the title, so `ARDOMAIN 2` names nothing. The key keeps its title as printed.
+  - **Member.** A reserved row (`RESERVED`, `is_reserved_field_name`) names no member, so it may repeat in the
+    member column; *A7.3*'s three and *A7.4*'s six would otherwise leave the opcodes as a meaning.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI's `value_combinations` go from 7 to 9: *A7.3* (25 rows
+    over `table_0102`-`table_0104`) and *A7.4* (19 rows over `table_0105`-`table_0106`), keyed by the snoop code and
+    the domain, the member `Opcode`. The seven earlier records are kept, renumbered by table order, so *A15.26*'s
+    four states cite `value_combination_0009`. No domain value joins an encoding: `NSH`, `SH`, `SYS` are footnote
+    1's labels, not `AxDOMAIN`'s members (`.63`). AXI's `.isf` `ARSNOOP`/`AWSNOOP` members come from *A9.4*/*A9.11*
+    and are unchanged.
+  - **Rebuilt.** AXI rebuilt stage by stage: `value_combinations` and `protocol_states` moved in SemanticIR and
+    IntentIR, the adapter states 111 residuals (109 before, the two new combinations), and `manager.isf` is
+    byte-identical. No EvidenceIR field is new, so the ruleset hash is unchanged and no cascade was needed.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.62` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — the census above: every chain's header cells ending in a mark a nearby footnote
+  opens with (`.project-data/tmp/erg-62/census.py`), and AXI *A7.3*/*A7.4* read as no combination before.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `combination_key_name` compared the
+  whole title (`ARDOMAIN 1`) with the declared names, and the member column had to be distinct in every row, which
+  repeated `RESERVED` rows defeat. RED 4/4, the file restored byte-identically: a key title keeping its mark, a
+  reserved row required to name a distinct member, a fragment taking only its own pages' marks, a mark stripped with
+  no note printing it; each fails `a_key_title_with_a_footnote_mark_names_its_signal`.
+- [x] **ADDRESSED (verified)** — AXI's two decodes above, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `9c48f1974`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,927 passed. `flow_census.json` rolled (+6 decision sites, +6 helper
+  edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a mark is stripped only when the document prints its note; no document, table or
+  signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (keys, member, residual count, *A7.3*/*A7.4*, the legality
+  matrices' prerequisites); KM card `a-jointly-keyed-table-is-a-value-combination`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.63`
+  Status: `open` (`2026-10-22`; CODE; opened by `.62`)
+  Goal: **a key value of labels a note defines carries their codes.** **Reproduce:** AXI *A7.3*/*A7.4* key each
+  opcode by a domain list (`NSH, SYS`) whose labels footnote 1 defines (*NSH is Non-shareable (0b00), SH is
+  Shareable (0b01 or 0b10), SYS is System (0b11)*); `bind_combination_value_encodings` joins nothing, so the decode
+  has no domain codes. Acceptance: read a note that defines a title's labels with their codes, bind each label of a
+  list to its codes, and measure every chain's combinations.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.64`
+  Status: `open` (`2026-10-22`; CODE; opened by `.62`)
+  Goal: **a matrix cell's note narrows it.** **Reproduce:** AXI *A12.13* marks `WriteNoSnoop`'s Standard `Match` `Y
+  2` (*Not Exclusive write*) and `Write*CMO`'s Transfer `Y 3` (*Domain must be Non-shareable*), and titles a column
+  `Update 1` (*Partial tag updates are not supported*); the matrix keeps `Y 2` as written and the note is read by
+  no record. Acceptance: bind a matrix cell's or column title's mark to its note's text, kept on the matrix, and
+  measure every chain's matrices.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives

@@ -282,6 +282,8 @@
   > a numeric field must be a number everywhere
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are APB tables 0016 0017 0018 a real catalog miss
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > are AXI A7.3 AWSNOOP and A7.4 ARSNOOP encodings value combinations (the opcode decode)
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > are GICv2 GICv3 and GICv4 CPU-family rows timing constraints (no)
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -296,5 +298,3 @@
   > are SourceIR EvidenceIR SemanticIR and IntentIR pointers repository relative
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > are any SpecForge requests to FSMGen currently open
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > are any outer current claim census keys incomplete after CLAIM-VERIFICATION-ADOPTION.3b

@@ -16,10 +16,13 @@ answers:
   - "what is CombinationRow.value_encodings / CombinationValueEncoding / bind_combination_value_encodings"
   - "can .isf state a decode of a value combination (FSMGen strict probe: an enum plus one guarded rule per row writing actor storage, 0 diagnostics)"
   - "why is a value combination not lowered to .isf (clocked-only assignments, invented storage target; .3.g.iii.b.iii)"
+  - "how is a key title with a footnote mark read (AXI A7.4 ARDOMAIN 1, .62)"
+  - "are AXI A7.3 AWSNOOP and A7.4 ARSNOOP encodings value combinations (the opcode decode)"
+  - "why may RESERVED repeat in a combination's member column"
 date: 2026-10-22
 status: current
 tags: [evidence-ir, encodings, value-combinations, protocol-states, multi-key-tables, extraction-representation-gaps]
-evidence: crates/specforge/src/ir/evidence.rs (ValueCombinationRecord; read_value_combinations; combination_key_columns; combination_key_name; is_combination_member_name; merge_combination_states; value_combination_surface; scan_encoding_tables_by_signal_anchor's combination_tables skip; bind_combination_value_encodings); crates/specforge/src/ir/semantic.rs and intent.rs (value_combinations carried); crates/specforge/src/ir/adapters.rs (the value_combination residual); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.g.iii.b, .3.g.iii.b.i)
+evidence: crates/specforge/src/ir/evidence.rs (ValueCombinationRecord; read_value_combinations; combination_key_columns; combination_key_name; without_note_number; note_numbers_by_page; is_combination_member_name; merge_combination_states; value_combination_surface; scan_encoding_tables_by_signal_anchor's combination_tables skip; bind_combination_value_encodings); crates/specforge/src/ir/semantic.rs and intent.rs (value_combinations carried); crates/specforge/src/ir/adapters.rs (the value_combination residual); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.g.iii.b, .3.g.iii.b.i)
 reverify: "cargo test --offline -p specforge-core --lib a_jointly_keyed_table_is_a_value_combination"
 ---
 
@@ -74,3 +77,11 @@ register, a one-cycle lag and an invented storage target (ADR 0016). A combinati
 (a condition naming a member resolves to its keys' values), built when a condition needs it; none does on the
 current chains. Since `.3.g.iii.b.iv` each combination residual says so, and a state a combination keys names
 that combination as the statement of its encoding instead of listing the encoding as missing.
+
+**A footnote-marked key (`.62`, `2026-10-22`).** AXI *A7.3*/*A7.4* title their domain key `AWDOMAIN 1`/`ARDOMAIN 1`.
+`combination_key_name` now drops a trailing mark (`without_note_number`) when a note beside the table, or beside a
+fragment its caption names, uses it (note numbers and footnote letters). A table's notes follow its last fragment:
+*A7.3*'s note 1 is two pages after its head. A reserved row names no member, so `RESERVED` may repeat in the member
+column. Measured on 31 chains: 30 identical; AXI 7 -> 9 records, *A7.3* (25 rows, 3 fragments) and *A7.4* (19 rows,
+2), member `Opcode`; 15 residuals across 4 documents. Records are renumbered by table order (*A15.26* is
+`value_combination_0009`). The domain labels `NSH`/`SH`/`SYS` are footnote 1's and join no encoding yet (`.63`).

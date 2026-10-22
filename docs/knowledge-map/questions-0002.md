@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > are any outer current claim census keys incomplete after CLAIM-VERIFICATION-ADOPTION.3b
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > are behavior or temporal rules silently dropped to the .isf on the broader 78-doc corpus
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -296,5 +298,3 @@
   > can the reviewed dataset source_region predicates be edited
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > can the signal-table name-column override be reused for enums
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > can the subject snap fabricate or rewrite a signal name

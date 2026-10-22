@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why is the no-x-allowed window tightened to exclude commas
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > why is the portable max_bytes cap in check_claim_verification.pl 262144
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -30,6 +34,8 @@
   > why is there no fields-without-positions completeness gap
 - [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
   > why is there no tinv_sc invariant for Wishbone RST_I must be asserted for at least one complete clock cycle
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > why may RESERVED repeat in a combination's member column
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > why must I adjudicate a census selection instead of trusting its count (three measured instances: a suffix rule read a naming template as a catalogue, an enumerated-width rule selected a bus-mode matrix, and a literal-direction rule admitted 18 rows on O meaning Optional)
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)

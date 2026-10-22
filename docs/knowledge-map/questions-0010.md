@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
+- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
+  > how many timing_constraint statements are there on the 31 chains (279 since 2026-10-20)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -293,7 +297,3 @@
   > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > is canonical recovery complete in the current reviewed population
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > is captured_region_residuals an exact IntentIR carry
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > is collect_known_signal_names UTF-8 safe

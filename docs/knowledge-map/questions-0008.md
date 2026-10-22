@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > how is 'If the aborted transaction is a write then the IO bridge may discard the write' read
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
   > how is 'It is optional for a Subordinate component to support Atomic transactions' read
 - [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
@@ -80,6 +82,8 @@
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > how is a key title with a footnote mark read (AXI A7.4 ARDOMAIN 1, .62)
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > how is a label like 'Non-shareable' resolved to a code (through the table the document's Enum statements for the signal or its collective name cite)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -293,7 +297,3 @@
   > how many bit cells are in signal_description tables corpus-wide
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how many book claims describe behaviour the code no longer has
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > how many bracketed placeholder name cells exist corpus-wide
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > how many caption bindings does the corpus lose on re-ingest

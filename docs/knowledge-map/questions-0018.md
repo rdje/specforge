@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > what value does an isf rule drive when the spec states none
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > what warns before the knowledge map refuses on facts or question keys
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what was the HBM2 canonical promotion pilot result
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -293,7 +297,3 @@
   > where does the uppercase spelling in a declaration come from
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > where is FigureRegion stored in EvidenceIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
-- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
-  > where is a minimum duration such as for at least one clock cycle kept

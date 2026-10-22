@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > does a constraint keep its list lead-in
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > does a count over generated/evidence_ir measure current extractor behaviour
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -296,5 +298,3 @@
   > does the administrative classifier name OpenCAPI or a vendor
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > does the alpha harness expose transform recipes to production core

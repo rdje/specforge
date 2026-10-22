@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > does the alpha harness expose transform recipes to production core
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
@@ -296,5 +298,3 @@
   > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how do Continued from previous page fragments find their home
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how do I add a new enforced doctrine / doctrine check

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > how many bracketed placeholder name cells exist corpus-wide
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > how many caption bindings does the corpus lose on re-ingest
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > how many captions does R3 newly admit
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > how many task trees have an unowned named frontier
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > how many times has the identity-without-attribute question been answered
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
-- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
-  > how many timing_constraint statements are there on the 31 chains (279 since 2026-10-20)

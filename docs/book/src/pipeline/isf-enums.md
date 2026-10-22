@@ -442,6 +442,8 @@ Tables A7.3 and A7.4 are withdrawn as two-key tables, and three encodings appear
 entirely: `RRESP` (`OKAY` … `OKAYDIRTY`, 8 codes), `ARTAGOP` and `AWTAGOP` (4 each). The other 26
 documents are byte-identical. In the 51 stored documents built by older versions, the same rule would
 re-point 25 table readings and withdraw 7; those will change as the documents are re-ingested.
+Since `.62` (`2026-10-22`) A7.3 and A7.4 are value combinations keyed by the snoop code and the domain together (see
+*A row keyed by several signals together*).
 
 (Tracking: `KG-ISF-COMPLETENESS.5.xiii` for the measurement and `.5.xiii.a` for the rule.)
 
@@ -514,8 +516,11 @@ Such a table is now an EvidenceIR `value_combinations` record (`EXTRACTION-REPRE
   may name its bit after the slice. Bits that are all `0` or `1` stay the signal's concatenated code (`HSIZE`).
   Every column is titled and none only by a number. Columns that all name members of one collective (A4.4's
   `ARCACHE | AWCACHE`) are one key written per channel, read as each channel's aliasing enum (`.3.g.iii.c.i`).
-- **Member and meanings.** The member column is the first other column whose cells are distinct names. The rest are
-  meaning columns. Every cell is kept as written (`-`, `0b01 0b10`, `Non-secure`).
+  Since `.62` (`2026-10-22`) a title's trailing footnote mark is no part of its name when a note beside the table,
+  or beside a fragment its caption names, uses it: AXI *A7.4*'s `ARDOMAIN 1` names `ARDOMAIN`.
+- **Member and meanings.** The member column is the first other column whose cells are distinct names; a reserved
+  row (`RESERVED`) names no member and may repeat. The rest are meaning columns. Every cell is kept as written (`-`,
+  `0b01 0b10`, `Non-secure`).
 - **Continuations and refusals.** A continuation page joins the table it continues. A table with an empty key cell
   is refused and counted in the `value_combinations` manifest, because the converter records no span to fill it from.
 - **Precedence.** The single-column reader leaves such a table alone. A column whose codes do determine the member is
@@ -530,8 +535,9 @@ Since `.3.g.iii.b.ii` the record crosses SemanticIR and IntentIR unchanged. A ke
 encoding carries that encoding's codes (`AxMMUSECSID` `Non-secure` is `0b00`), as a stated absent value does: 34
 values in AXI. A member written with its abbreviation carries its name as a label (`Non-secure` is `Non-secure (NS)`,
 since `.3.g.iii.b.iv`), while a list of alternatives (`Stall, NoStall, PRI`) and a class of codes (`Cacheable`) join
-nothing. The ISF adapter states each record as one `isf_protocol_value_combination_*` residual saying why it stays: 13
-across 4 documents on `2026-10-22`.
+nothing. The ISF adapter states each record as one `isf_protocol_value_combination_*` residual saying why it stays: 15
+across 4 documents on `2026-10-22`, AXI's opcode decodes *A7.3* and *A7.4* among them since `.62`. Their domain lists
+(`NSH, SYS`) are labels footnote 1 defines, which no encoding names yet (`.63`).
 
 The table itself is not lowered (`.3.g.iii.b.iii`). On `2026-10-22` an FSMGen strict probe accepted APB's decode as an
 enum for the member column and one guarded rule per row writing actor storage, with 0 diagnostics. But every `.isf`
@@ -599,9 +605,10 @@ prose (USB 3.2 *7-14*, *8-8*) are not matrices of this kind.
 Since `.3.c.v.ii` a matrix crosses SemanticIR and IntentIR unchanged, and the adapter states one
 `isf_protocol_matrix_table_*` residual per matrix: nothing executable names a matrix's keys yet. A legality matrix
 lowers to an always-on assertion per actor, decided by `.3.c.v.iv`: each column guarded by its property value and tag
-operation, the marked opcodes decoded to their signals. It waits for three things: the opcode decode (*A7.4*, whose
-`ARDOMAIN 1` title a footnote mark hides, `.62`), the property as an `.isf` parameter, and FSMGen's actor-level
-assertion (`.3.c.v.v`). A requirement, version or effect matrix states configuration that stays typed in IR (ADR 0033
+operation, the marked opcodes decoded to their signals. It waits for three things: the opcode decode (*A7.4*, a
+value combination since `.62`, whose domain labels `.63` binds), the property as an `.isf` parameter, and FSMGen's
+actor-level assertion (`.3.c.v.v`). A marked cell's note narrows it (*A12.13* `Y 2`: *Not Exclusive write*), which
+`.64` reads. A requirement, version or effect matrix states configuration that stays typed in IR (ADR 0033
 §6).
 
 Since `.3.c.v.iii` (`2026-10-22`) a matrix can be a legend. AXI *B2.1 Key to signals table* gives each presence code

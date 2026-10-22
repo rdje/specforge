@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.62",
-      "literal" : "`.62` — a column title with a footnote mark names its signal.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.63",
+      "literal" : "`.63` — a key value of labels a note defines carries their codes.",
       "mode" : "eligible",
       "part_id" : "layout-and-binding-leaves"
    },
@@ -1317,6 +1317,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.62",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.63",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.64",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
@@ -1479,13 +1491,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
          "metrics" : {
-            "bytes" : 31670,
+            "bytes" : 37166,
             "line_bytes" : 121,
-            "lines" : 354
+            "lines" : 414
          },
          "part_id" : "layout-and-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-         "sha256" : "e4232e8d47402943f34d2c74218e313da9f981fe8d4d377512f3641f9657ab36",
+         "sha256" : "d8623420dc6e22be04d6d16411f1991efa9668c524b3be18b3c24d427c9d2ec0",
          "state" : "active"
       },
       {

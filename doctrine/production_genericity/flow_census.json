@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-V-III-PRESENCE-LEGENDS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-62-FOOTNOTED-KEY-TITLES",
    "baseline": {
-    "analyzed_functions": 2869,
-    "decision_sites": 16013,
-    "helper_edges": 20592,
+    "analyzed_functions": 2870,
+    "decision_sites": 16049,
+    "helper_edges": 20626,
     "semantic_macros": 1645
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 36,
-    "helper_edges": 34,
+    "analyzed_functions": 0,
+    "decision_sites": 6,
+    "helper_edges": 6,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii: a presence code reads the legend the document states for it (bind_presence_legends)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.62",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.62: a combination key title's trailing footnote mark is no part of its name when a note beside the table or a fragment its caption names uses it, and a reserved row names no member."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

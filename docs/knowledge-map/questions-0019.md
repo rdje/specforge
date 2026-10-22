@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > where is a minimum duration such as for at least one clock cycle kept
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > where is a register summary's Reset column kept (RegisterRecord.reset_value)
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
@@ -294,7 +298,3 @@
   > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > which doctrine checks the persisted proof seal on every commit

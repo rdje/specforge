@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > what does row_idx do in synthesize_encoding_declarations_for_enum
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > what does row_stratum_unjudged_documents falling to zero actually mean
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -294,7 +298,3 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c and .3.d.iii.e
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.d and .51
-- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a
-- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b and .3.g.iii.b.i

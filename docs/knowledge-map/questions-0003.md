@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > can the subject snap fabricate or rewrite a signal name
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > can the three wire-based golds be rebuilt through the evidence stage
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -296,5 +298,3 @@
   > does a collective name's sentence have to name declared signals (no, the sentence declares them)
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > does a conditional rule's consequent end at its sentence (yes, since .39.a)
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > does a constraint keep its list lead-in

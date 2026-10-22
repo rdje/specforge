@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > how does SpecForge determine what a chip-spec PDF is about / its purpose category
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > how does SpecForge distinguish a timing table category from a scalar min typ max layout
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -296,5 +298,3 @@
   > how good is prose signal capture / .3a quality
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > how is 'CMO transactions are assumed to be Non-shareable' read
-- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
-  > how is 'If the aborted transaction is a write then the IO bridge may discard the write' read

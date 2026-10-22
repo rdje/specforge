@@ -31155,14 +31155,17 @@ fn protocol_transition_surface(
 /// where the register or the field is declared), or a field a register declares, written in capitals (`TYPE`). A
 /// leading *Value of* is the title's wording, not the name. EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a — a signal's bit
 /// may carry its own name after the slice (`HPROT[3] Modifiable`, `HPROT[0] Data/Opcode`).
+/// EXTRACTION-REPRESENTATION-GAPS.62 — a trailing footnote mark one of `marks` is not part of the name (AXI
+/// `ARDOMAIN 1`); [`without_note_number`] removes it.
 fn combination_key_name(
     title: &str,
     signal_titles: &HashSet<String>,
     register_names: &HashSet<&str>,
     field_names: &HashSet<&str>,
+    marks: &BTreeSet<&str>,
 ) -> Option<(String, Option<String>)> {
-    let title = title.trim();
-    let title = title.strip_prefix("Value of ").unwrap_or(title).trim();
+    let title = without_note_number(title.trim(), marks);
+    let title = title.strip_prefix("Value of ").unwrap_or(&title).trim();
     let (base, bits, bit_name) = match (title.find('['), title.find(']')) {
         (Some(open), Some(close)) if open < close => {
             let inner = &title[open + 1..close];
@@ -31226,6 +31229,7 @@ fn combination_key_columns(
     collectives: &[CollectiveSignalNameRecord],
     register_names: &HashSet<&str>,
     field_names: &HashSet<&str>,
+    marks: &BTreeSet<&str>,
 ) -> Option<Vec<(usize, CombinationKey)>> {
     if titles
         .iter()
@@ -31238,7 +31242,7 @@ fn combination_key_columns(
         .enumerate()
         .filter_map(|(column, title)| {
             let (name, bits) =
-                combination_key_name(title, signal_titles, register_names, field_names)?;
+                combination_key_name(title, signal_titles, register_names, field_names, marks)?;
             Some((
                 column,
                 CombinationKey {
@@ -31278,7 +31282,8 @@ fn combination_key_columns(
 /// A table of the shape titles its key columns as [`combination_key_columns`] requires, and it and its continuations
 /// hold two or more body rows. A continuation (`Table A15.26 Continued from previous page`) joins the nearest preceding
 /// table of the shape that its caption names, when both have the same header. The member column is the first other
-/// column whose cells are distinct names ([`is_combination_member_name`]). A table with an empty key cell or a row of
+/// column whose cells are distinct names ([`is_combination_member_name`]); a reserved row (`RESERVED`) names no member,
+/// so it may repeat (`EXTRACTION-REPRESENTATION-GAPS.62`, AXI *A7.4*). A table with an empty key cell or a row of
 /// another width is refused, because the converter records no span and the cell above would be a guess. A table
 /// whose rows sit in its header is `.57`'s.
 fn read_value_combinations(
@@ -31303,6 +31308,31 @@ fn read_value_combinations(
         .iter()
         .flat_map(|record| record.fields.iter().map(|field| field.field_name.as_str()))
         .collect();
+    // EXTRACTION-REPRESENTATION-GAPS.62 — the marks a key title may carry: the note numbers and the footnote letters
+    // printed on the table's page or beside it, or beside any fragment its caption names, since a table carried over
+    // pages prints its notes after its last fragment (AXI *A7.3*'s note 1 is two pages after its head).
+    let notes = note_numbers_by_page(source_ir);
+    let letters_by_page = footnote_marks_by_page(source_ir);
+    let table_marks = |table: &StructuredTableRecord| -> BTreeSet<String> {
+        printed_note_marks(&notes, table)
+            .into_iter()
+            .map(str::to_string)
+            .chain(
+                table_footnote_marks(&letters_by_page, table)
+                    .iter()
+                    .map(char::to_string),
+            )
+            .collect()
+    };
+    let mut marks_by_reference: HashMap<String, BTreeSet<String>> = HashMap::new();
+    for table in &source_ir.structured_tables {
+        if let Some((reference, _)) = caption_table_ref(table.caption_text.as_deref()) {
+            marks_by_reference
+                .entry(reference)
+                .or_default()
+                .extend(table_marks(table));
+        }
+    }
     let mut shaped: Vec<Shaped> = Vec::new();
     for table in &source_ir.structured_tables {
         let Some(header) = table.header_rows.last() else {
@@ -31328,12 +31358,17 @@ fn read_value_combinations(
                 index
             }
             None => {
+                let marks = match &caption {
+                    Some((reference, _)) => marks_by_reference[reference].clone(),
+                    None => table_marks(table),
+                };
                 let Some(keys) = combination_key_columns(
                     &titles,
                     signal_titles,
                     collectives,
                     &register_names,
                     &field_names,
+                    &marks.iter().map(String::as_str).collect(),
                 ) else {
                     continue;
                 };
@@ -31399,8 +31434,12 @@ fn read_value_combinations(
                     .iter()
                     .map(|(_, cells)| cells[column].as_str())
                     .collect();
+                let named: Vec<&&str> = cells
+                    .iter()
+                    .filter(|cell| !is_reserved_field_name(cell))
+                    .collect();
                 cells.iter().all(|cell| is_combination_member_name(cell))
-                    && cells.iter().collect::<BTreeSet<_>>().len() == cells.len()
+                    && named.iter().collect::<BTreeSet<_>>().len() == named.len()
             });
             let meanings: Vec<usize> = others
                 .into_iter()
@@ -49878,6 +49917,119 @@ The control register.
         assert_eq!(protection.member_column.as_deref(), Some("Description"));
         assert_eq!(protection.rows[1].values, ["-", "1"]);
         assert_eq!(protection.rows[1].member.as_deref(), Some("Data access"));
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.62` — a key title's trailing footnote mark is no part of its name when a page
+    /// beside the table or beside a fragment its caption names prints that note, and a reserved row names no member;
+    /// without the note the title names nothing.
+    #[test]
+    fn a_key_title_with_a_footnote_mark_names_its_signal() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("snoop.md");
+        fs::write(&source, "# Snoop\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, page: &str, caption: &str, header: &[&str], body: &[&[&str]]| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: Some(page.to_string()),
+                caption_text: (!caption.is_empty()).then(|| caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                row_count: (1 + body.len()) as u32,
+                col_count: header.len() as u32,
+                header_rows: rows(&[header]),
+                body_rows: rows(body),
+            }
+        };
+        // AXI A7.4 in two fragments: note 1 is printed beside the continuation only.
+        let header = ["ARSNOOP", "ARDOMAIN 1", "Opcode", "Description"];
+        source_ir.structured_tables.push(table(
+            "table_snoop",
+            "page_0126",
+            "Table A7.4: ARSNOOP encodings",
+            &header,
+            &[
+                &[
+                    "0b0000",
+                    "NSH, SYS",
+                    "ReadNoSnoop",
+                    "Read from a Non-shareable location.",
+                ],
+                &[
+                    "0b0000",
+                    "SH",
+                    "ReadOnce",
+                    "Read from a Shareable location.",
+                ],
+                &["0b0011", "-", "RESERVED", "-"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_snoop_continued",
+            "page_0127",
+            "Table A7.4 Continued from previous page",
+            &header,
+            &[&["0b0110", "-", "RESERVED", "-"]],
+        ));
+        // The same title far from any note 2: `ARDOMAIN 2` names nothing.
+        source_ir.structured_tables.push(table(
+            "table_unnoted",
+            "page_0010",
+            "",
+            &["ARSNOOP", "ARDOMAIN 2", "Opcode", "Description"],
+            &[
+                &["0b0000", "NSH", "ReadNoSnoop", "Read."],
+                &["0b0001", "SH", "ReadShared", "Read."],
+            ],
+        ));
+        source_ir
+            .content_elements
+            .push(crate::ir::source::ContentElementRecord {
+                element_id: "fn_1".to_string(),
+                kind: crate::ir::source::ContentElementKind::Footnote,
+                text: "1 NSH is Non-shareable ( 0b00 ), SH is Shareable ( 0b01 or 0b10 )."
+                    .to_string(),
+                heading_level: None,
+                page_id: Some("page_0128".to_string()),
+                source_ref: None,
+                source_batch: None,
+                reading_order: 1,
+            });
+        let titles: std::collections::HashSet<String> = ["ARSNOOP", "ARDOMAIN"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        let (combinations, candidates) =
+            super::read_value_combinations(&source_ir, &titles, &[], &[]);
+        assert_eq!(candidates, 1);
+        assert_eq!(combinations.len(), 1);
+        let snoop = &combinations[0];
+        assert_eq!(snoop.table_ids, ["table_snoop", "table_snoop_continued"]);
+        assert_eq!(
+            snoop
+                .keys
+                .iter()
+                .map(|key| (key.title.as_str(), key.name.as_str()))
+                .collect::<Vec<_>>(),
+            [("ARSNOOP", "ARSNOOP"), ("ARDOMAIN 1", "ARDOMAIN")]
+        );
+        assert_eq!(snoop.member_column.as_deref(), Some("Opcode"));
+        assert_eq!(snoop.rows[0].values, ["0b0000", "NSH, SYS"]);
+        assert_eq!(snoop.rows[0].member.as_deref(), Some("ReadNoSnoop"));
         Ok(())
     }
 

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b and .3.g.iii.b.i
 - [a-channel-code-column-is-an-aliasing-enum](../knowledge/a-channel-code-column-is-an-aliasing-enum.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c and .3.g.iii.c.i
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
@@ -294,7 +298,3 @@
   > what is message_fields.width_offset_layout / extract_width_offset_layout_fields / width_offset_field_name
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is name_and_size_registers_from_layout
-- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
-  > what is object_head / OBJECT_ENDS (why is 'a host assumes the initial … sequence number and burst size' a take-on)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > what is obligation_subject / ObligationSubject

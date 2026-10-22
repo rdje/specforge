@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
+  > what is object_head / OBJECT_ENDS (why is 'a host assumes the initial … sequence number and burst size' a take-on)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > what is obligation_subject / ObligationSubject
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > what is one-way grounding from EvidenceIR to ISF
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -293,7 +297,3 @@
   > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is the ingest disk pre-flight check
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
