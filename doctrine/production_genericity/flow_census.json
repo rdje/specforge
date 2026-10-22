@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-64-MATRIX-CELL-NOTES",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-VI-A-CARRIED-TABLE-CITATIONS",
    "baseline": {
-    "analyzed_functions": 2873,
-    "decision_sites": 16081,
-    "helper_edges": 20676,
+    "analyzed_functions": 2875,
+    "decision_sites": 16095,
+    "helper_edges": 20744,
     "semantic_macros": 1645
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 14,
-    "helper_edges": 68,
+    "analyzed_functions": 0,
+    "decision_sites": 118,
+    "helper_edges": 30,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.64",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.64: a matrix cell's or data-column title's trailing mark cites the one note printed beside the matrix (trailing_note_marks, bind_matrix_notes)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a: cited_table_ids gathers every carried SemanticIR record that names its tables (value combinations, layouts, matrices, presence and check-signal rows, protocol states and transitions, channel memberships, encoding tables)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -134,3 +134,10 @@ in `table_ids` or `supporting_table_ids` but which `cited_table_ids` does not ga
 `.3.c.viii` 2, none 10) or gain new ones: AHB's one-column presence key *A-1* (`.66`), AXI *A6.5*'s rule operand list
 (`.67`) and USB 3.2 *8-8*'s cross-tab of prose (`.68`). The table-by-table route is in
 `docs/research/category-family-census.md`.
+
+**Gathered (`.3.c.vi.a`, `2026-10-22`).** `cited_table_ids` also reads `value_combinations`, `signal_layouts`,
+`matrix_tables` (`table_ids`), `signal_presence_records` and `check_signal_records` (`table_id`, with a stated
+absent value's tables and encoding), `protocol_states`, `protocol_transitions` (`supporting_table_ids`),
+`signal_channel_memberships` (`table_ids`) and each label value's encoding table. Its test serializes the artifact
+and walks all three provenance keys, so a carried table field the gatherer misses fails it. Rebuilt: the 82 false
+residuals leave (AXI 188 -> 140 table regions); adapters and every `.isf` unchanged.

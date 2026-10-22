@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a",
-      "literal" : "`.3.c.vi.a` — a table a carried record reads is cited.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.66",
+      "literal" : "`.66` — a one-column code key is a legend.",
       "mode" : "eligible",
       "part_id" : "layout-and-binding-leaves"
    },
@@ -1341,7 +1341,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
       },
@@ -1521,13 +1521,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
          "metrics" : {
-            "bytes" : 47324,
+            "bytes" : 50095,
             "line_bytes" : 121,
-            "lines" : 530
+            "lines" : 562
          },
          "part_id" : "layout-and-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-         "sha256" : "08729a3d07c6131501c3791d9cf0358d8a826528d79ad44975ac459eb689d4f5",
+         "sha256" : "d132b2be1cb898dce65d3060fcfa146765f8c2dbb8061fd4686aa0eb05988dcd",
          "state" : "active"
       },
       {

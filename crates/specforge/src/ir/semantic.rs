@@ -1155,8 +1155,9 @@ impl SemanticIr {
     /// the ones that produced the document's registers and timing — and a residual for one of those
     /// would duplicate a key the same stage promotes, which the residual contract forbids.
     ///
-    /// The collections below are every `SemanticIr` surface that declares `supporting_table_ids`,
-    /// derived from the field declarations rather than from what a table is believed to reach.
+    /// The collections below are every `SemanticIr` surface whose records name a table they were
+    /// read from (`supporting_table_ids`, `table_ids` or `table_id`), derived from the field
+    /// declarations rather than from what a table is believed to reach.
     /// `MessageFieldRecord` and `SignalSemanticHintRecord` declare it too but are `EvidenceIR`-only
     /// and never appear here. Over-inclusion is the safe direction: an extra surface can only
     /// *remove* a residual, while a missed one emits a residual for a region a promoted record
@@ -1196,6 +1197,54 @@ impl SemanticIr {
         }
         for symbol in &self.symbol_definitions {
             cited.extend(borrow(&symbol.supporting_table_ids));
+        }
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a — the carried EvidenceIR records added since, which name their
+        // tables as `table_ids` or `table_id`: a value combination, layout or matrix and its continuations, a presence
+        // or check-signal row's table, the tables a state, transition or channel membership cites, and the encoding
+        // table a label value or a stated absent value resolves through.
+        for record in &self.value_combinations {
+            cited.extend(borrow(&record.table_ids));
+            for row in &record.rows {
+                cited.extend(
+                    row.value_encodings
+                        .iter()
+                        .map(|joined| joined.encoding.table_id.as_str()),
+                );
+            }
+        }
+        for record in &self.signal_layouts {
+            cited.extend(borrow(&record.table_ids));
+        }
+        for record in &self.matrix_tables {
+            cited.extend(borrow(&record.table_ids));
+        }
+        for record in &self.signal_presence_records {
+            cited.insert(record.table_id.as_str());
+            for value in record
+                .absent_value
+                .iter()
+                .chain(&record.qualified_absent_values)
+            {
+                cited.extend(borrow(&value.supporting_table_ids));
+                cited.extend(
+                    value
+                        .encoding
+                        .iter()
+                        .map(|encoding| encoding.table_id.as_str()),
+                );
+            }
+        }
+        for record in &self.check_signal_records {
+            cited.insert(record.table_id.as_str());
+        }
+        for record in &self.protocol_states {
+            cited.extend(borrow(&record.supporting_table_ids));
+        }
+        for record in &self.protocol_transitions {
+            cited.extend(borrow(&record.supporting_table_ids));
+        }
+        for record in &self.signal_channel_memberships {
+            cited.extend(borrow(&record.table_ids));
         }
         cited
     }
@@ -15087,6 +15136,14 @@ mod tests {
         semantic_ir.signal_semantic_conflicts.clear();
         semantic_ir.interfaces.clear();
         semantic_ir.symbol_definitions.clear();
+        semantic_ir.value_combinations.clear();
+        semantic_ir.signal_layouts.clear();
+        semantic_ir.matrix_tables.clear();
+        semantic_ir.signal_presence_records.clear();
+        semantic_ir.check_signal_records.clear();
+        semantic_ir.protocol_states.clear();
+        semantic_ir.protocol_transitions.clear();
+        semantic_ir.signal_channel_memberships.clear();
 
         semantic_ir
             .register_records
@@ -15206,7 +15263,48 @@ mod tests {
                 automation_confidence: AutomationConfidence::High,
             });
 
-        let expected: BTreeSet<String> = (1000..=1007).map(|n| format!("table_{n}")).collect();
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a — the carried records that name a table as `table_ids` or `table_id`,
+        // including the encoding table a label value or an absent value resolves through.
+        semantic_ir.value_combinations = serde_json::from_value(serde_json::json!([{
+            "combination_id": "value_combination_0001", "table_ids": ["table_1008"],
+            "keys": [{"title": "IDT", "name": "IDT"}],
+            "rows": [{"table_id": "table_1008", "values": ["Shareable"],
+                      "value_encodings": [{"key_index": 0,
+                                           "encoding": {"table_id": "table_1009", "codes": ["0b01"]}}]}]
+        }]))?;
+        semantic_ir.signal_layouts = serde_json::from_value(serde_json::json!([{
+            "layout_id": "signal_layout_0001", "signal": "AxMPAM", "table_ids": ["table_1010"],
+            "name_column": "Field", "other_columns": [], "sub_fields": []
+        }]))?;
+        semantic_ir.matrix_tables = serde_json::from_value(serde_json::json!([{
+            "matrix_id": "matrix_table_0001", "table_ids": ["table_1011"], "row_key_titles": ["Opcode"],
+            "column_keys": [["Transfer"]], "rows": [], "cell_class": "mark"
+        }]))?;
+        semantic_ir.signal_presence_records = serde_json::from_value(serde_json::json!([{
+            "presence_id": "presence_0000", "signal_name": "BRESP", "variant_presence": [],
+            "table_id": "table_1012",
+            "absent_value": {"value": "OKAY", "supporting_statement_ids": [],
+                             "supporting_table_ids": ["table_1013"],
+                             "encoding": {"table_id": "table_1014", "codes": ["0b000"]}}
+        }]))?;
+        semantic_ir.check_signal_records = serde_json::from_value(serde_json::json!([{
+            "check_id": "check_table_1015_000", "check_signal": "AWVALIDCHK", "covered_signals": ["AWVALID"],
+            "table_id": "table_1015"
+        }]))?;
+        semantic_ir.protocol_states = serde_json::from_value(serde_json::json!([{
+            "state_id": "combination_state_0001", "state_name": "Disabled", "supporting_statement_ids": [],
+            "supporting_table_ids": ["table_1016"]
+        }]))?;
+        semantic_ir.protocol_transitions = serde_json::from_value(serde_json::json!([{
+            "transition_id": "protocol_transition_0001", "source_state": "A", "target_states": ["B"],
+            "trigger": {"kind": "timer_expiry", "timer_name": "tA", "timing_constraint_ids": []},
+            "supporting_table_ids": ["table_1017"]
+        }]))?;
+        semantic_ir.signal_channel_memberships = serde_json::from_value(serde_json::json!([{
+            "signal_name": "ACADDR", "channel_role": "snoop request", "table_ids": ["table_1018"]
+        }]))?;
+
+        let expected: BTreeSet<String> = (1000..=1018).map(|n| format!("table_{n}")).collect();
         let gathered: BTreeSet<String> = semantic_ir
             .cited_table_ids()
             .into_iter()
@@ -15217,11 +15315,13 @@ mod tests {
             "one declared table-provenance surface did not reach the coverage gatherer"
         );
 
+        // Every table id the artifact serializes, under any of the three provenance keys, outside the proof and the
+        // residuals themselves, which cite a table for the opposite reason.
         fn walk(value: &serde_json::Value, found: &mut BTreeSet<String>) {
             match value {
                 serde_json::Value::Object(map) => {
                     for (key, child) in map {
-                        if key == "supporting_table_ids" {
+                        if key == "supporting_table_ids" || key == "table_ids" {
                             if let Some(items) = child.as_array() {
                                 found.extend(
                                     items
@@ -15230,6 +15330,8 @@ mod tests {
                                         .map(str::to_string),
                                 );
                             }
+                        } else if key == "table_id" {
+                            found.extend(child.as_str().map(str::to_string));
                         } else {
                             walk(child, found);
                         }
@@ -15240,7 +15342,19 @@ mod tests {
             }
         }
         let mut serialized = BTreeSet::new();
-        walk(&serde_json::to_value(&semantic_ir)?, &mut serialized);
+        let mut artifact = serde_json::to_value(&semantic_ir)?;
+        if let Some(fields) = artifact.as_object_mut() {
+            for field in [
+                "proof_context",
+                "proof_ledger",
+                "captured_region_residuals",
+                "residual_decisions",
+                "validation_reports",
+            ] {
+                fields.remove(field);
+            }
+        }
+        walk(&artifact, &mut serialized);
         assert_eq!(
             gathered, serialized,
             "the typed gatherer and the artifact's own serialized table provenance disagree"

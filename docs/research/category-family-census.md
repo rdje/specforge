@@ -153,7 +153,7 @@ the 31 current chains 1,219 table regions are listed (2,698 captured regions in 
 
 | what the table is | tables | owner |
 | --- | ---: | --- |
-| carried by a SemanticIR surface the accounting does not gather (`value_combinations`: AXI *A7.3*, *A7.4*, *A13.14*, AHB *3-5*; `signal_presence_records`: AXI *A13.3*, *B2.2*, *B2.3*; `matrix_tables`: AXI *B2.1*, OpenCAPI DVSEC applicability, USB 3.2 *10-2*) | 10 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`; with the untyped ones, 82 false residuals |
+| carried by a SemanticIR surface the accounting does not gather (`value_combinations`: AXI *A7.3*, *A7.4*, *A13.14*, AHB *3-5*; `signal_presence_records`: AXI *A13.3*, *B2.2*, *B2.3*; `matrix_tables`: AXI *B2.1*, OpenCAPI DVSEC applicability, USB 3.2 *10-2*) | 10 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`; with the untyped ones, 82 false residuals, gone since (`2026-10-22`) |
 | encodings of a structure or message field (IOMMU 11: `iohgatp`/`iosatp`/`pdtp`/`msiptp.MODE`, command opcodes, `CAUSE`, `TTYP`; AXI DVM fixed fields 6; CHI C2C 7; ADIv6 TMS packets 3; USB4 packet types 3) | 30 | `DOC-INTENT-TAXONOMY.4b`, as `.3.c` routed them |
 | USB 3.2 descriptor, setup-data, LMP and status-word layouts and request codes (23 read into EvidenceIR-only `message_field_records`, 6 of them with `reserved_spans` too; a captionless descriptor continuation; 3 ordered sets; the status words *10-13*-*10-15*; the request codes *9-8*, *10-12*, *10-18*) | 33 | `DOC-INTENT-TAXONOMY.4b` (the message-field carrier to IntentIR) |
 | interface and class property tables (AXI *A12.16*, *A12.18*, *A12.20*, *A12.21*, *A14.2*, *A15.24*; CHI C2C *B10.6*) | 7 | `KG-ISF-COMPLETENESS.2a.vii.c` |

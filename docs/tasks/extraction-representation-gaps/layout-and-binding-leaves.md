@@ -480,7 +480,7 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   lost (the conversion or SourceIR's list reading), keep it so the note is read as note 1-3, never bind by position
   alone, and measure every chain's numbered notes.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.vi`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.vi`; checklist below)
   Goal: **a table a carried record reads is cited.** **Reproduce:** `SemanticIr::cited_table_ids` gathers register,
   timing, polarity, interface-signal and symbol records only, though its comment says *every SemanticIr surface that
   declares supporting_table_ids*. Tables SemanticIR carries in `value_combinations`, `matrix_tables`,
@@ -488,6 +488,38 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   82 of the 1,219 table residuals (10 typed), AXI 48 of them. Acceptance: gather every carried surface that names its
   tables (`table_ids` or `supporting_table_ids`), with a test that fails when a carried table field is not gathered,
   and measure every chain's residuals.
+  **Done `2026-10-22`.**
+  - **Gathered.** `SemanticIr::cited_table_ids` now also reads `value_combinations`, `signal_layouts` and
+    `matrix_tables` (`table_ids`), `signal_presence_records` and `check_signal_records` (`table_id`, with a stated
+    absent value's `supporting_table_ids` and encoding table), `protocol_states` and `protocol_transitions`
+    (`supporting_table_ids`), `signal_channel_memberships` (`table_ids`), and each label value's encoding table. The
+    comment now names all three keys.
+  - **Guarded.** `cited_table_ids_gathers_every_declared_table_provenance_surface` fills one record per surface and
+    compares the gatherer with a walk of the serialized artifact under all three keys, outside the proof and the
+    residuals. It walked `supporting_table_ids` only, which is how the newer surfaces were missed.
+  - **Rebuilt.** The 11 chains with false residuals rebuilt stage by stage: only `captured_region_residuals` moved in
+    SemanticIR and IntentIR, 903 -> 821 table regions (IOMMU 2, AXI 48, APB 6, AHB 3, ADIv6 7, OpenCAPI DLL 1,
+    discovery 2, Cortex-A76 3, I2C 2, USB4 CM 1, USB 3.2 7); the corpus lists 1,137. EvidenceIR, adapters and every
+    `.isf` are unchanged.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — `.3.c.vi`'s census: 82 table residuals whose table a carried SemanticIR record names.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` `cited_table_ids` read only the surfaces
+  that declare `supporting_table_ids`, and its test walked that key alone. RED 4/4, the file restored
+  byte-identically: a value combination's tables, a label value's encoding table, a presence row's table and a
+  matrix's tables each left ungathered; each fails `cited_table_ids_gathers_every_declared_table_provenance_surface`.
+- [x] **ADDRESSED (verified)** — the 82 residuals leave the 11 rebuilt chains, exactly the census.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `97fe0976a`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,929 passed. `flow_census.json` rolled (+118 decision sites, +30 helper
+  edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — field declarations, no table, document or surface vocabulary beyond the IR's own.
+- [x] **LOCKSTEP** — book `pipeline/semanticir.md` (what a table region is cited by); KM card
+  `captured-region-residual-carrier`; `docs/research/category-family-census.md`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.66`
   Status: `open` (`2026-10-22`; CODE; opened by `.3.c.vi`)
   Goal: **a one-column code key is a legend.** **Reproduce:** AHB *Table A-1 Key for Table A-2 and Table A-3* (`Code |

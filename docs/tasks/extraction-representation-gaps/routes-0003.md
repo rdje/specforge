@@ -25,7 +25,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.63` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.64` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.65` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.66` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.67` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.68` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
