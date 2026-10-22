@@ -7,7 +7,7 @@ does not restate. Each item's detail lives in its owning leaf or request packet.
 - [SpecForge's items](specforge.md): what SpecForge must still read, type, carry or lower, by document category
   and pipeline stage (S1–S25).
 - [FSMGen's ladder](fsmgen-ladder.md): every `.isf` capability SpecForge needs, in the order a specification needs
-  them, each marked supported, fixed upstream, requested, anticipated or a question (F1–F28). The table below
+  them, each marked supported, fixed upstream, requested, anticipated or a question (F1–F29). The table below
   keeps only the rungs FSMGen does not yet provide.
 - Neighbours, not copies: the book's [gap ledger](../book/src/reference/representation-gaps.md) explains the gaps
   to a reader; [`docs/FSMGEN_FEEDBACK.md`](../FSMGEN_FEEDBACK.md) and
@@ -70,6 +70,7 @@ Status on `2026-09-26`. Side: **S** SpecForge, **F** FSMGen (the owner is the Sp
 | F23 | F | register IP, wire protocol | adapter | anticipated | `DOC-INTENT-TAXONOMY.4b` |
 | F26 | F | platform | adapter | anticipated (multi-bit crossings) | `EXTRACTION-REPRESENTATION-GAPS.3` |
 | F28 | F | tooling | — | requested (acknowledged) | `FSMGEN-REQUESTS.3` |
+| F29 | F | wire protocol | adapter | anticipated | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` |
 
 <!-- gap_catalog_owners:end -->
 

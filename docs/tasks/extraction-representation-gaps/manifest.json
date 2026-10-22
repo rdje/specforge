@@ -1419,13 +1419,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
          "metrics" : {
-            "bytes" : 56823,
+            "bytes" : 57495,
             "line_bytes" : 128,
-            "lines" : 627
+            "lines" : 634
          },
          "part_id" : "encoding-and-state-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-         "sha256" : "33d26f68e8272e1f508fa1c80a5002bb1096a4acaee3d757f36d7a64de22a602",
+         "sha256" : "a9fa3a34fa47bb4d03604391296a003916da4428826c34c71a50181f53bc4962",
          "state" : "active"
       },
       {

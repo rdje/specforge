@@ -30,6 +30,7 @@ SpecForge side that feeds it, so each names both.
 | F7 | An optional port: absent by default, present by a parameter, tied off when absent | *If present, …* (14 of AXI's 25 listed obligations), tie-offs, and the value a stated-absent signal takes on its presence record (`.3.d.ii.a`) | **requested** (forwarded) | [`sf-isf-optional-signal`](../upstream/fsmgen/sf-isf-optional-signal/README.md) | `EXTRACTION-REPRESENTATION-GAPS.4` |
 | F8 | Strict mode refuses an interface clause it does not know | a strict pass must prove each clause was understood | **fixed upstream** (`c51e22712`, unpublished; answered as a defect) | [`sf-isf-strict-unknown-port-clause`](../upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | `FSMGEN-REFRESH-INTEGRATE-10.1` |
 | F9 | One select per target (`PSELx` per Completer) | per-target families | **supported** through composition (13a, 14h, 14i) | — | `EXTRACTION-REPRESENTATION-GAPS.14` |
+| F29 | A named sub-field layout on a port (`HPROT[1]` *Privileged*; `AxMPAM[9:1]` *PARTID*), over a parameter-sized width or chosen by a parameter | AHB *3-6*, APB `PPROT`, AXI *A12.3*-*A12.6* | **anticipated**: port options are a closed set; `(fields …)` is storage-only and a packed record has a fixed width (13a, 13j, ISF spec 02 §5.1.1) | — (bundle drafted, `2026-10-22`) | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` |
 
 ## B. Obligations on levels
 
@@ -89,4 +90,6 @@ requested rungs gate the most today: F7 alone holds 14 of AXI's 25 listed obliga
 SpecForge first: each needs a typed, source-grounded IntentIR value before a request can reproduce it.
 
 Since `2026-10-22` F8 is fixed upstream too: FSMGen answered the question as a defect, and `c51e22712` refuses an
-unknown port clause. That leaves no open question.
+unknown port clause. That leaves no open question. F29, a named sub-field layout on a port, joins as
+*anticipated*: ADR 0033 §4 files its request only once the layouts are in IntentIR and an executable consumer needs
+them (`EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii`).

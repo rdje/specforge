@@ -427,7 +427,9 @@ several signals' values, code columns that repeat, tables whose every row is a h
   Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.b`)
   Goal: **a signal's sub-field layout reaches IntentIR, and the adapter names it.** Acceptance: carry `signal_layouts`
   through SemanticIR to IntentIR; an adapter residual per layout, naming any sub-field past its width parameter's
-  default; `.isf` texts unchanged and FSMGen-strict-clean; rebuild what moves.
+  default; `.isf` texts unchanged and FSMGen-strict-clean; rebuild what moves. Then re-evaluate ADR 0033 §4 for
+  `docs/gaps/fsmgen-ladder.md` F29: file the drafted request (`.project-data/tmp/req-port-fields/packet`) only if an
+  executable consumer needs the layout.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
@@ -589,7 +591,12 @@ several signals' values, code columns that repeat, tables whose every row is a h
     `reset`/`default`; FSMGen book 13a at `c51e22712`). `(fields …)` exists on scalar storage only (02 §5.1.1), and a
     packed record type names sub-fields by declaration order at a fixed width, on input ports only (outputs:
     `sf-isf-aggregate-interface-ports`). `HPROT`'s layout reaches past a parameter's default and `AxMPAM`'s is chosen
-    by a parameter, so neither form holds them: `FSMGEN-REQUESTS.15` asks for a sub-field layout on an interface port.
+    by a parameter, so neither form holds them. **Corrected `2026-10-22`:** this first named a request,
+    `FSMGEN-REQUESTS.15`; ADR 0033 §4 files one only for a semantic already in IntentIR that executable intent needs,
+    and a sub-field name changes no HDL (§6 keeps non-executable knowledge typed in IR). So no request is filed:
+    `docs/gaps/fsmgen-ladder.md` F29 is *anticipated*, and `.3.c.iv.b.ii` re-evaluates it once the layouts are in
+    IntentIR. The bundle drafted then, reproduced on the pin and on upstream `c51e22712`, is kept at
+    `.project-data/tmp/req-port-fields/packet`.
   - **Lockstep for the CODE leaves.** Book `pipeline/isf-enums.md` says a `PPROT` or `HPROT` table read by the wrong
     key *mints nothing, and the table stays a captured region*; `.3.c.iv.b.i` makes that false for the sub-field
     tables and amends it.
