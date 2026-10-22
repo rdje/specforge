@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > what is one-way grounding from EvidenceIR to ISF
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > what is operating_condition on a timing constraint
 - [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
@@ -295,5 +297,3 @@
   > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > what is the inter-annotator agreement of the eval gold

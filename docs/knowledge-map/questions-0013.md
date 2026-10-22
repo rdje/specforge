@@ -199,6 +199,8 @@
   > what does a green hosted CI run actually prove
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > what does a newly retained document owe the frozen behavioral population
+- [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
+  > what does a presence code like YM mean (bind_presence_legends, .3.c.v.iii)
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > what does a producer change actually cost (not a window — the rebuild is 0.5s per document for evidence and 0.8s for semantic, so 24 of the 27 rebuild in about a minute; the cost is the three that cannot be rebuilt at all)
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
@@ -295,5 +297,3 @@
   > what does row_idx do in synthesize_encoding_declarations_for_enum
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > what does row_stratum_unjudged_documents falling to zero actually mean
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)

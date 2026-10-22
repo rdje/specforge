@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > why does the batch size depend on total RAM instead of free memory
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > why does the caption repair census have a third stratum
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -296,5 +298,3 @@
   > why is a conditional rule with an unread condition listed instead of emitted
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why is a constraint subject CLK when the document says CLK_I
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why is a content score not enough to pick the member name column

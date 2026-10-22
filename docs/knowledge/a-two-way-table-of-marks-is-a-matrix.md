@@ -2,6 +2,7 @@
 id: a-two-way-table-of-marks-is-a-matrix
 title: A two-way table whose cells are marks or modal words is a matrix (matrix_tables), unless another reader holds it
 answers:
+  - "what does a presence code like YM mean (bind_presence_legends, .3.c.v.iii)"
   - "what is the isf_protocol_matrix_table residual (.3.c.v.ii)"
   - "what is matrix_tables / MatrixTableRecord / read_matrix_tables (.3.c.v.i)"
   - "how is AXI Table A12.11 Legal tag operations read"
@@ -45,3 +46,9 @@ rows below it are data. The `matrix_tables` manifest entry is recorded only when
 the adapter states one `isf_protocol_matrix_table_*` residual per matrix, citing its tables: no rule,
 guard or drive names a matrix's keys. A legality matrix's lowering is `.3.c.v.iv`'s to decide; a
 requirement, version or effect matrix states configuration the `.isf` does not carry (ADR 0033 §6).
+
+**A legend binds presence codes (`.3.c.v.iii`, `2026-10-22`).** `bind_presence_legends` reads a matrix
+with one label column and modal cells as a legend. A presence table binds to it when every code the
+table uses is a row key of exactly one such legend. Each `VariantPresenceEntry` then gains `legend`
+(column, meaning) and the record `legend_matrix_id`. AXI: 297 of 306 presence rows bind to *B2.1*;
+*A13.3* uses `C`, which *B2.1* does not define.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-channel-code-column-is-an-aliasing-enum](../knowledge/a-channel-code-column-is-an-aliasing-enum.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c and .3.g.iii.c.i
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.41.c
 - [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
@@ -296,5 +298,3 @@
   > what is object_head / OBJECT_ENDS (why is 'a host assumes the initial … sequence number and burst size' a take-on)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > what is obligation_subject / ObligationSubject
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > what is one-way grounding from EvidenceIR to ISF

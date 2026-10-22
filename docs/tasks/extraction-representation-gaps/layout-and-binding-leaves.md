@@ -251,11 +251,40 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   `a-two-way-table-of-marks-is-a-matrix`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.v`; checklist below)
   Goal: **a presence code reads its legend.** **Reproduce:** AXI's presence records keep `YM`, `YS`, `NS` as written;
   *B2.1* says `YM` is mandatory on a manager and optional on a subordinate. Acceptance: bind each presence code to the
   legend the document states for it (by its codes, never by a vocabulary list), per interface side; measure every
   chain's presence records.
+  **Done `2026-10-22`.**
+  - **Binding.** `bind_presence_legends` runs after `read_matrix_tables`. A legend is a matrix with one label column,
+    modal cells and distinct row keys. A presence table binds to the one legend whose row keys include every code the
+    table uses; with none or two, nothing binds. Each `VariantPresenceEntry` gains `legend` (`PresenceLegendMeaning`:
+    the legend column's title and the row's cell, as written), and the `SignalPresenceRecord` `legend_matrix_id`.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI's 297 *B2.2*/*B2.3* presence rows (11 tables) bind to
+    *B2.1*; *A13.3*'s 9 use `C`, which *B2.1* does not define, and stay as written. APB5's and AHB's codes (`C`, `OC`,
+    `OO`) have no legend matrix. No EvidenceIR field is new, so the ruleset hash is unchanged.
+  - **Rebuilt.** AXI rebuilt stage by stage: only `signal_presence_records` moved in SemanticIR and IntentIR; its 109
+      residuals and `.isf` text are unchanged. No cascade was needed: the ruleset hash did not move, and the other 30
+      chains are current.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — the codes each chain's presence tables use, and the legend matrices `.3.c.v.i` reads.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: presence records kept each code as
+  written, and nothing joined them to the legend the document states. RED 3/3, the file restored byte-identically: a
+  table binding when any code is a legend key, the first of two covering legends binding, no legend cells attached;
+  each fails `a_presence_code_reads_its_legend`..
+- [x] **ADDRESSED (verified)** — AXI's 297 bound rows above, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `4a5052ced`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,926 passed. `flow_census.json` rolled (+1 function, +36 decision sites,
+  +34 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a legend is found by its shape and its codes, never by a code vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/semanticir.md` (the carried presence fields) and `pipeline/isf-enums.md` (a
+  matrix can be a legend); KM card `a-two-way-table-of-marks-is-a-matrix`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)

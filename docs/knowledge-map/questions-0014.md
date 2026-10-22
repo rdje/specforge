@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does scripts/check_chain_currency.sh check
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
@@ -296,5 +298,3 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b and .3.g.iii.b.i
-- [a-channel-code-column-is-an-aliasing-enum](../knowledge/a-channel-code-column-is-an-aliasing-enum.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c and .3.g.iii.c.i

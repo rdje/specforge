@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where is a register summary's Reset column kept (RegisterRecord.reset_value)
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
   > where is a tie-off's configuration (the signal's own absence on the driver, its presence condition)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -296,5 +298,3 @@
   > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > which doctrine checks the persisted proof seal on every commit
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)

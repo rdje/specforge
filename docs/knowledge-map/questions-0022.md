@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > why did OpenCAPI email review become an IntentIR behavior
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -295,5 +297,3 @@
   > why do Docling source tests fail when TMPDIR is inside the repository
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > why do FPs appear in eval that the current code does not produce
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > why do GIC-600's Distributor and Redistributor arrow rows produce no direction (a taxonomy gap that .2d answered NO - the six names are product blocks, and the tables are headed Interblock / Interdomain / Interchip signals)

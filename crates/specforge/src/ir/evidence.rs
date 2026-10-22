@@ -771,6 +771,20 @@ pub struct VariantPresenceEntry {
     /// The literal 1–2-uppercase-letter presence code stated for this variant. A `-` cell states
     /// no code and yields no entry.
     pub code: String,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii — what the document's legend says the code means, per column of the
+    /// legend (AXI *B2.1*: `YM` is *Mandatory* for `Manager interfaces` and *Optional* for `Subordinate interfaces`).
+    /// Empty when no legend covers the matrix's codes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub legend: Vec<PresenceLegendMeaning>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii` — one column of a legend row, as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+pub struct PresenceLegendMeaning {
+    /// The legend column's title (`Manager interfaces`).
+    pub column: String,
+    /// The legend's cell for the code (`Mandatory`).
+    pub meaning: String,
 }
 
 /// PDF-VARIANT-DIGESTION.12b — one row of a SIGNAL-PRESENCE MATRIX: a table whose first header
@@ -810,6 +824,10 @@ pub struct SignalPresenceRecord {
     /// other request.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub qualified_absent_values: Vec<StatedAbsentValue>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii — the legend matrix every code of this row's table is a key of
+    /// (AXI *B2.1 Key to signals table*); `None` when no legend, or more than one, covers them.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub legend_matrix_id: Option<String>,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the value a document states a signal takes when it is
@@ -2709,6 +2727,8 @@ impl EvidenceIr {
             ),
             &mut extraction_manifest,
         );
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii — a presence code reads the legend the document states for it.
+        bind_presence_legends(&mut signal_presence_records, &matrix_tables);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
         let equivalence_rules = equivalence_rule_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
@@ -30512,6 +30532,7 @@ pub fn capture_signal_presence_rows(
                         variant_presence.push(VariantPresenceEntry {
                             variant_label: label.clone(),
                             code: code.to_string(),
+                            legend: Vec::new(),
                         });
                     }
                 } else {
@@ -30524,6 +30545,7 @@ pub fn capture_signal_presence_rows(
                 variant_presence.push(VariantPresenceEntry {
                     variant_label: label_at(col),
                     code: text.to_string(),
+                    legend: Vec::new(),
                 });
             } else {
                 // Fused/empty/garbled cell under a single-label column: attribution cannot be
@@ -30540,6 +30562,7 @@ pub fn capture_signal_presence_rows(
             table_id: table.table_id.clone(),
             absent_value: None,
             qualified_absent_values: Vec::new(),
+            legend_matrix_id: None,
         });
     }
 
@@ -32184,6 +32207,82 @@ fn read_matrix_tables(
         references.push((reference.map(|(reference, _)| reference), titles));
     }
     (records, candidates)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii` — each presence code, read against the legend the document states for it.
+///
+/// A legend is a matrix with one label column and modal cells (AXI *B2.1*: `Code | Manager interfaces | Subordinate
+/// interfaces`, `YM | Mandatory | Optional`). A presence table binds to it when every code the table uses is one of
+/// the legend's row keys, and to no legend when two qualify or none does: AXI *A13.3* uses `C`, which *B2.1* does not
+/// define, so its codes stay as written. Each bound code gains the legend row's cells by column, as written.
+fn bind_presence_legends(records: &mut [SignalPresenceRecord], matrices: &[MatrixTableRecord]) {
+    let legends: Vec<(&MatrixTableRecord, BTreeMap<&str, &MatrixRow>)> = matrices
+        .iter()
+        .filter(|matrix| {
+            matrix.row_key_titles.len() == 1 && matrix.cell_class == MatrixCellClass::Modal
+        })
+        .map(|matrix| {
+            let rows: BTreeMap<&str, &MatrixRow> = matrix
+                .rows
+                .iter()
+                .filter_map(|row| row.keys.first().map(|key| (key.as_str(), row)))
+                .collect();
+            (matrix, rows)
+        })
+        .filter(|(matrix, rows)| rows.len() == matrix.rows.len())
+        .collect();
+    if legends.is_empty() {
+        return;
+    }
+    let mut codes_by_table: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for record in records.iter() {
+        codes_by_table
+            .entry(record.table_id.clone())
+            .or_default()
+            .extend(
+                record
+                    .variant_presence
+                    .iter()
+                    .map(|entry| entry.code.clone()),
+            );
+    }
+    let binding: BTreeMap<String, usize> = codes_by_table
+        .iter()
+        .filter_map(|(table, codes)| {
+            let covering: Vec<usize> = legends
+                .iter()
+                .enumerate()
+                .filter(|(_, (_, rows))| {
+                    !codes.is_empty() && codes.iter().all(|code| rows.contains_key(code.as_str()))
+                })
+                .map(|(index, _)| index)
+                .collect();
+            match covering[..] {
+                [index] => Some((table.clone(), index)),
+                _ => None,
+            }
+        })
+        .collect();
+    for record in records.iter_mut() {
+        let Some(&index) = binding.get(&record.table_id) else {
+            continue;
+        };
+        let (matrix, rows) = &legends[index];
+        record.legend_matrix_id = Some(matrix.matrix_id.clone());
+        for entry in &mut record.variant_presence {
+            if let Some(row) = rows.get(entry.code.as_str()) {
+                entry.legend = matrix
+                    .column_keys
+                    .iter()
+                    .zip(&row.cells)
+                    .map(|(keys, cell)| PresenceLegendMeaning {
+                        column: keys.last().cloned().unwrap_or_default(),
+                        meaning: cell.clone(),
+                    })
+                    .collect();
+            }
+        }
+    }
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — the matrices read, recorded as the `matrix_tables` surface only when a
@@ -49782,6 +49881,84 @@ The control register.
         Ok(())
     }
 
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii` — a presence table whose every code is a legend's key reads the
+    /// legend per column; a table using a code the legend does not define keeps its codes as written.
+    #[test]
+    fn a_presence_code_reads_its_legend() {
+        let row = |code: &str, manager: &str, subordinate: &str| super::MatrixRow {
+            table_id: "table_key".to_string(),
+            keys: vec![code.to_string()],
+            cells: vec![manager.to_string(), subordinate.to_string()],
+        };
+        let legend = super::MatrixTableRecord {
+            matrix_id: "matrix_table_0007".to_string(),
+            table_ids: vec!["table_key".to_string()],
+            caption: Some("Table B2.1: Key to signals table".to_string()),
+            row_key_titles: vec!["Code".to_string()],
+            column_keys: vec![
+                vec!["Manager interfaces".to_string()],
+                vec!["Subordinate interfaces".to_string()],
+            ],
+            rows: vec![
+                row("Y", "Mandatory", "Mandatory"),
+                row("YM", "Mandatory", "Optional"),
+                row("N", "Not present", "Not present"),
+            ],
+            cell_class: super::MatrixCellClass::Modal,
+            legend: Vec::new(),
+        };
+        let presence = |id: &str, table: &str, codes: &[&str]| super::SignalPresenceRecord {
+            presence_id: id.to_string(),
+            signal_name: format!("S{id}"),
+            presence_condition: None,
+            variant_presence: codes
+                .iter()
+                .map(|code| super::VariantPresenceEntry {
+                    variant_label: "AXI5".to_string(),
+                    code: code.to_string(),
+                    legend: Vec::new(),
+                })
+                .collect(),
+            table_id: table.to_string(),
+            absent_value: None,
+            qualified_absent_values: Vec::new(),
+            legend_matrix_id: None,
+        };
+        let mut records = vec![
+            presence("0", "table_summary", &["Y", "YM"]),
+            presence("1", "table_summary", &["N"]),
+            presence("2", "table_versions", &["Y", "C"]),
+        ];
+        super::bind_presence_legends(&mut records, std::slice::from_ref(&legend));
+        assert_eq!(
+            records[0].legend_matrix_id.as_deref(),
+            Some("matrix_table_0007")
+        );
+        assert_eq!(
+            records[0].variant_presence[1]
+                .legend
+                .iter()
+                .map(|meaning| (meaning.column.as_str(), meaning.meaning.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                ("Manager interfaces", "Mandatory"),
+                ("Subordinate interfaces", "Optional")
+            ]
+        );
+        assert_eq!(
+            records[1].variant_presence[0].legend[0].meaning,
+            "Not present"
+        );
+        assert!(records[2].legend_matrix_id.is_none());
+        assert!(records[2].variant_presence[0].legend.is_empty());
+        // Two legends covering the same codes: neither is the table's.
+        let mut twice = vec![presence("3", "table_summary", &["Y"])];
+        let mut other = legend.clone();
+        other.matrix_id = "matrix_table_0008".to_string();
+        super::bind_presence_legends(&mut twice, &[legend, other]);
+        assert!(twice[0].legend_matrix_id.is_none());
+    }
+
     /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a two-way table of marks or modal words is a matrix with its keys,
     /// cells and caption legend; a slice-titled table, a code-keyed encoding and a field-keyed table are refused.
     #[test]
@@ -66693,10 +66870,12 @@ mod stated_absent_value_tests {
             variant_presence: vec![VariantPresenceEntry {
                 variant_label: "V1".to_string(),
                 code: "O".to_string(),
+                legend: Vec::new(),
             }],
             table_id: "table_presence".to_string(),
             absent_value: None,
             qualified_absent_values: Vec::new(),
+            legend_matrix_id: None,
         }
     }
 
@@ -66945,10 +67124,12 @@ mod labeled_absent_value_tests {
             variant_presence: vec![VariantPresenceEntry {
                 variant_label: "V1".to_string(),
                 code: "O".to_string(),
+                legend: Vec::new(),
             }],
             table_id: "table_presence".to_string(),
             absent_value: None,
             qualified_absent_values: Vec::new(),
+            legend_matrix_id: None,
         }
     }
 
@@ -67607,10 +67788,12 @@ mod check_coverage_tests {
             variant_presence: vec![VariantPresenceEntry {
                 variant_label: "V1".to_string(),
                 code: "O".to_string(),
+                legend: Vec::new(),
             }],
             table_id: "table_presence".to_string(),
             absent_value: None,
             qualified_absent_values: Vec::new(),
+            legend_matrix_id: None,
         }
     }
 
@@ -67876,10 +68059,12 @@ mod collective_signal_name_tests {
             variant_presence: vec![VariantPresenceEntry {
                 variant_label: "V1".to_string(),
                 code: "O".to_string(),
+                legend: Vec::new(),
             }],
             table_id: "table_presence".to_string(),
             absent_value: None,
             qualified_absent_values: Vec::new(),
+            legend_matrix_id: None,
         }
     }
 

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii",
-      "literal" : "`.3.c.v.iii` — a presence code reads its legend.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv",
+      "literal" : "`.3.c.v.iv` — a legality matrix's lowering is decided from a consumer.",
       "mode" : "eligible",
       "part_id" : "layout-and-binding-leaves"
    },
@@ -1293,7 +1293,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
       },
@@ -1467,13 +1467,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
          "metrics" : {
-            "bytes" : 25306,
+            "bytes" : 27917,
             "line_bytes" : 121,
-            "lines" : 286
+            "lines" : 315
          },
          "part_id" : "layout-and-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-         "sha256" : "a6b5376834f852fa6d8d7379cc10090ea980409b9ca2f20f099eb0d165e25281",
+         "sha256" : "3dc6059f987551cd8061c4fd9091142f9f51852ce87b52f5dc0c8cb1b1c5a9c0",
          "state" : "active"
       },
       {

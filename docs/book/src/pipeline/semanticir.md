@@ -601,7 +601,9 @@ Six evidence-grounded protocol collections, and the signal-presence records, cro
 - `interface_edge_timings`
 - `signal_presence_records` — which signals exist per variant, under what condition, and the value an absent one
   takes (`absent_value`, with the statement that states it; `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a`), and the
-  values it takes for one class of requests only (`qualified_absent_values`; `.3.d.ii.b.iii.a`)
+  values it takes for one class of requests only (`qualified_absent_values`; `.3.d.ii.b.iii.a`), and what each
+  presence code means per column of the legend the document states for it (`legend`, `legend_matrix_id`; AXI's
+  *B2.1*, `.3.c.v.iii`)
 - `check_signal_records` — each check (parity) signal and the signals it covers, with its width, granularity and
   enable cells verbatim (`EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a.i`)
 - `collective_signal_names` — each collective name the document defines (`AxSIZE`) and the signals it stands for

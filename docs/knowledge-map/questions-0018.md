@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what was the HBM2 canonical promotion pilot result
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what was the must_be_value recall gap and how was it closed
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -295,5 +297,3 @@
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
 - [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
   > where is a minimum duration such as for at least one clock cycle kept
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is a register summary's Reset column kept (RegisterRecord.reset_value)

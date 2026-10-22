@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > what is the inter-annotator agreement of the eval gold
 - [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
   > what is the isf_protocol_matrix_table residual (.3.c.v.ii)
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -295,5 +297,3 @@
   > what value does an isf rule drive when the spec states none
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
   > what warns before the knowledge map refuses on facts or question keys
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what was the HBM2 canonical promotion pilot result
