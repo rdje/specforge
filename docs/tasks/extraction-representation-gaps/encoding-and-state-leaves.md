@@ -253,13 +253,46 @@ several signals' values, code columns that repeat, tables whose every row is a h
   - CODE: `.3.g.iii.b.iv` (the two residual texts and the abbreviation match).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.g.iii.b.iii`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.g.iii.b.iii`; checklist below)
   Goal: **a value combination's residual says why it stays, a state a combination keys says its encoding is
   stated, and a label matches a member written with a parenthesized abbreviation.** **Reproduce:** the 13
   `isf_protocol_value_combination_*` residuals ask for a decode; AXI's four `combination_state_*` residuals list
   "encoding" as missing; `AxPAS` `Non-secure` joins nothing against `Non-secure (NS)`. Acceptance: implement
   `.3.g.iii.b.iii`'s three decisions; measure the residual texts, the joined labels and the stated absent values
   on every chain; rebuild the chains that move.
+  **Done `2026-10-22`.**
+  - **Abbreviation.** `label_encoding` also compares a cell's name before a closing parenthesized one-word
+    abbreviation (`name_before_abbreviation`: *Non-secure (NS)* -> `non-secure`; *N/A (not legal for CMOs)* is a
+    remark, not an abbreviation).
+  - **State residual.** A protocol state with `supporting_combination_ids` drops "encoding" from what its residual
+    lists as missing and names the combination that states it.
+  - **Combination residual.** It now says it stays for want of a consumer, and that `.isf` has no combinational
+    assignment that states the table without an invented storage target.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI joins 3 more label values, `AxPAS` `Non-secure` ->
+    `0b001` in A13.10 and A13.11, so 34 in all. Stated absent values are unchanged on every chain.
+  - **Rebuilt.** AXI, APB, ADIv6 and RISC-V IOMMU were rebuilt stage by stage. AXI's value encodings move through
+    IntentIR, and the 13 combination residuals and AXI's 4 keyed-state residuals change text. Every `.isf` text is
+    byte-identical.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — the residual texts of the 13 combinations and the 4 keyed states; the 17 unjoined
+  label values by cause; the stated absent values of every chain before and after.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/adapters.rs` listed "encoding" as missing for every
+  state and asked a combination for a decode that `.3.g.iii.b.iii` decided not to build; `crates/specforge/src/ir/
+  evidence.rs` `label_encoding` compared whole cells only. New `name_before_abbreviation`. RED 4/4, each file
+  restored byte-identically: a remark read as an abbreviation, the abbreviation form never compared, a keyed state
+  still listing its encoding as missing, the combination residual still asking for a decode.
+- [x] **ADDRESSED (verified)** — 4 chains rebuilt stage by stage; `.isf` texts byte-identical.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `b365fc43a`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,916 passed. `flow_census.json` rolled (+1 function, +7 decision sites,
+  +5 helper edges, +1 semantic macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — cell shape (a closing parenthesized single word) and the record's own fields; no
+  document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md`; KM card `a-jointly-keyed-table-is-a-value-combination` amended.
+  No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`
   Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)

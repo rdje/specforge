@@ -510,18 +510,19 @@ With the false statements gone, AXI's `manager.isf` gains `(BTAGMATCH (NONE 0) (
 from *Table A12.14*, FSMGen strict-clean.
 
 Since `.3.g.iii.b.ii` the record crosses SemanticIR and IntentIR unchanged. A key value that is a label of its key's
-encoding carries that encoding's codes (`AxMMUSECSID` `Non-secure` is `0b00`), as a stated absent value does: 31
-values in AXI. A list of alternatives (`Stall, NoStall, PRI`), a class of codes (`Cacheable`) and a label written
-without its member's abbreviation (`Non-secure` for `Non-secure (NS)`) join nothing. The ISF adapter states each
-record as one `isf_protocol_value_combination_*` residual naming the decode it lacks: 13 across 4 documents on
-`2026-10-22`.
+encoding carries that encoding's codes (`AxMMUSECSID` `Non-secure` is `0b00`), as a stated absent value does: 34
+values in AXI. A member written with its abbreviation carries its name as a label (`Non-secure` is `Non-secure (NS)`,
+since `.3.g.iii.b.iv`), while a list of alternatives (`Stall, NoStall, PRI`) and a class of codes (`Cacheable`) join
+nothing. The ISF adapter states each record as one `isf_protocol_value_combination_*` residual saying why it stays: 13
+across 4 documents on `2026-10-22`.
 
 The table itself is not lowered (`.3.g.iii.b.iii`). On `2026-10-22` an FSMGen strict probe accepted APB's decode as an
 enum for the member column and one guarded rule per row writing actor storage, with 0 diagnostics. But every `.isf`
 assignment is clocked, so that form adds a register and a one-cycle lag the document does not state, and its storage
 target is invented, which ADR 0016 forbids. What a combination offers is a guard vocabulary: a condition naming a
 member would resolve to its keys' values. No condition on the current chains needs that, since AXI's rules about a
-physical address space name `AxPAS`'s own encoding, so it is built when a consumer appears.
+physical address space name `AxPAS`'s own encoding, so it is built when a consumer appears. A state a combination keys
+says in its residual which combination states its encoding.
 
 ### Which table an enum was read from
 

@@ -22554,7 +22554,9 @@ impl<'a> AbsentValueEncodings<'a> {
 }
 
 /// The codes an encoding table gives a label: the value cell, as written, of every row that carries the label
-/// as another cell, compared without case or spacing.
+/// as another cell, compared without case or spacing. EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv — a cell that writes
+/// the member's name and then its parenthesized abbreviation carries that name too: *Non-secure (NS)* is the label
+/// *Non-secure*.
 fn label_encoding(
     table: &StructuredTableRecord,
     enum_name: &str,
@@ -22565,9 +22567,11 @@ fn label_encoding(
         .body_rows
         .iter()
         .filter(|row| {
-            row.iter()
-                .enumerate()
-                .any(|(col, cell)| col != value_col && normalized_words(&cell.text) == wanted)
+            row.iter().enumerate().any(|(col, cell)| {
+                col != value_col
+                    && (normalized_words(&cell.text) == wanted
+                        || name_before_abbreviation(&cell.text).is_some_and(|name| name == wanted))
+            })
         })
         .filter_map(|row| row.get(value_col).map(|cell| cell.text.trim().to_string()))
         .filter(|code| !code.is_empty())
@@ -22576,6 +22580,22 @@ fn label_encoding(
         table_id: table.table_id.clone(),
         codes,
     })
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv` — the name a cell writes before a closing parenthesized abbreviation,
+/// in [`normalized_words`] form: `Non-secure (NS)` -> `non-secure`, `System Agent (SA)` -> `system agent`. The
+/// parentheses must close the cell and hold one word, so a parenthesized remark (*N/A (not legal for CMOs)*) is no
+/// abbreviation.
+fn name_before_abbreviation(text: &str) -> Option<String> {
+    let text = text.trim();
+    let inner = text.strip_suffix(')')?;
+    let open = inner.rfind('(')?;
+    let abbreviation = inner[open + 1..].trim();
+    if abbreviation.is_empty() || abbreviation.contains(char::is_whitespace) {
+        return None;
+    }
+    let name = normalized_words(&inner[..open]);
+    (!name.is_empty()).then_some(name)
 }
 
 /// `.3.d.ii.b.iii.a` — the statement that introduces the list `statements[index]` is a bullet of, when that
@@ -65435,6 +65455,36 @@ mod labeled_absent_value_tests {
                 .map(String::as_str)
                 .collect(),
         )
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv` — a member written with its parenthesized abbreviation carries its
+    /// name as a label; a parenthesized remark is no abbreviation.
+    #[test]
+    fn a_member_written_with_its_abbreviation_is_its_label() {
+        assert_eq!(
+            super::name_before_abbreviation("Non-secure (NS)").as_deref(),
+            Some("non-secure")
+        );
+        assert_eq!(
+            super::name_before_abbreviation("System Agent (SA)").as_deref(),
+            Some("system agent")
+        );
+        assert_eq!(
+            super::name_before_abbreviation("N/A (not legal for CMOs)"),
+            None
+        );
+        assert_eq!(super::name_before_abbreviation("Secure"), None);
+        let mut table = domain_encoding("XPAS");
+        table.body_rows[0][1] = cell("Secure (S)", false);
+        table.body_rows[1][1] = cell("Non-secure (NS)", false);
+        table.body_rows[2][1] = cell("Non-secure Protected (NSP)", false);
+        let encoding = super::label_encoding(&table, "XPAS", "non-secure").expect("a code");
+        assert_eq!(
+            encoding.codes,
+            ["0b01"],
+            "the abbreviation names one member only"
+        );
+        assert!(super::label_encoding(&table, "XPAS", "realm").is_none());
     }
 
     /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` — a combination's label value joins its key's encoding; a code, a

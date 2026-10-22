@@ -58,9 +58,10 @@ byte-identical.
 (`semantic.carried_evidence`, `intent.carried_semantics`). After the convergent loop,
 `bind_combination_value_encodings` joins each key value that is a label of its key's encoding to that encoding's
 codes (`CombinationRow.value_encodings`), the way a stated absent value is joined. It tries the key's own enum, then
-its collectives, then, for a collective key, its members' enums. AXI has 31 joined values (`AxMMUSECSID`
-`Non-secure` -> `0b00`; `AxDOMAIN` `Shareable` -> `0b01`, `0b10`). Lists of alternatives, classes of codes and
-`Non-secure` against `Non-secure (NS)` join nothing. The ISF adapter states one `isf_protocol_value_combination_*`
+its collectives, then, for a collective key, its members' enums. AXI has 34 joined values (`AxMMUSECSID`
+`Non-secure` -> `0b00`; `AxDOMAIN` `Shareable` -> `0b01`, `0b10`; `AxPAS` `Non-secure` -> `0b001` since `.3.g.iii.b.iv`
+matches a member written with its abbreviation, `Non-secure (NS)`). Lists of alternatives and classes of codes join
+nothing. The ISF adapter states one `isf_protocol_value_combination_*`
 residual per record: 13 across AXI 7, ADIv6 3, RISC-V IOMMU 2 and APB 1. Every `.isf` text is unchanged. An FSMGen
 strict probe lowered APB's decode as an enum for the member column plus one rule per row guarded by the keys' values,
 writing actor storage, with 0 diagnostics.
@@ -68,5 +69,5 @@ writing actor storage, with 0 diagnostics.
 **Not lowered (`.3.g.iii.b.iii`, `2026-10-22`).** Every `.isf` assignment is clocked, so a decode in storage adds a
 register, a one-cycle lag and an invented storage target (ADR 0016). A combination is a guard vocabulary instead
 (a condition naming a member resolves to its keys' values), built when a condition needs it; none does on the
-current chains. `.3.g.iii.b.iv` makes the residuals say so and lets a label match a member written with a
-parenthesized abbreviation.
+current chains. Since `.3.g.iii.b.iv` each combination residual says so, and a state a combination keys names
+that combination as the statement of its encoding instead of listing the encoding as missing.

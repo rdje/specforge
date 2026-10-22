@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv",
-      "literal" : "`.3.g.iii.b.iv` — a value combination's residual says why it stays; a keyed state's says its encoding is stated.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c",
+      "literal" : "`.3.g.iii.c` — a code column that maps several members to one code is carried as what it is.",
       "mode" : "eligible",
       "part_id" : "encoding-and-state-leaves"
    },
@@ -1215,7 +1215,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
       }
@@ -1365,13 +1365,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
          "metrics" : {
-            "bytes" : 25302,
+            "bytes" : 28189,
             "line_bytes" : 123,
-            "lines" : 279
+            "lines" : 312
          },
          "part_id" : "encoding-and-state-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-         "sha256" : "ce201b5703255ead11277ffa0ddfec8669bd19bc1c0e16f2d604ad397e50d70d",
+         "sha256" : "02e73c28c2b6a90badee43ab3d7a22b0690da3aaefae78fabef3e57204c0ae13",
          "state" : "active"
       },
       {

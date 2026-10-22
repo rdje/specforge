@@ -1388,13 +1388,23 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
         ));
     }
     for record in &intent_ir.protocol_states {
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv — a state a value combination keys has its encoding stated.
+        let missing = if record.supporting_combination_ids.is_empty() {
+            "typed transitions, guards, initial-state identity, encoding, and bound action operands"
+                .to_string()
+        } else {
+            format!(
+                "typed transitions, guards, initial-state identity, and bound action operands; its encoding by signal values is stated by {}",
+                record.supporting_combination_ids.join(", ")
+            )
+        };
         residuals.push(protocol_residual_packet(
             "state",
             "protocol state",
             &record.state_id,
             &record.supporting_statement_ids,
             &record.supporting_table_ids,
-            "typed transitions, guards, initial-state identity, encoding, and bound action operands",
+            &missing,
         ));
     }
     // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — `.isf` has no timer whose expiry is a condition
@@ -1409,8 +1419,9 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "an executable trigger (a timer whose expiry is a condition), an encoding for its states, and, when several next states are listed, the condition choosing one",
         ));
     }
-    // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii — a row keyed by several signals' or fields' values. `.isf` can state a
-    // decode (`switch` and `select` over guards), but no lowering joins each key's width and encoding to a member type.
+    // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii / .iv — a row keyed by several signals' or fields' values. It is not
+    // lowered itself (every `.isf` assignment is clocked, so a decode needs an invented storage target, ADR 0016); a
+    // condition naming one of its members would resolve to its keys' values, and none does yet (`.3.g.iii.b.iii`).
     for record in &intent_ir.value_combinations {
         residuals.push(protocol_residual_packet(
             "value_combination",
@@ -1418,7 +1429,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             &record.combination_id,
             &[],
             &record.table_ids,
-            "a decode over its keys: each key's declared width and, for a label value, its encoding's code; a member type for the members it names; and a guard per row",
+            "a consumer: no condition names one of its members, and `.isf` has no combinational assignment that states the table without an invented storage target (ADR 0016)",
         ));
     }
     for record in &intent_ir.interface_edge_timings {
@@ -2703,6 +2714,16 @@ mod tests {
                 value_encodings: Vec::new(),
             }],
         }];
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv — the state the combination keys says its encoding is stated.
+        intent_ir.protocol_states = vec![ProtocolStateRecord {
+            state_id: "combination_state_0001".to_string(),
+            machine_name: None,
+            state_name: "Connect".to_string(),
+            action: None,
+            supporting_statement_ids: Vec::new(),
+            supporting_table_ids: vec!["table_0239".to_string()],
+            supporting_combination_ids: vec!["value_combination_0001".to_string()],
+        }];
         intent_ir.write_to_disk()?;
         let artifact = AdapterArtifact::build(
             &intent_ir.artifact_layout.intent_ir_path,
@@ -2725,11 +2746,30 @@ mod tests {
             packets[0].packet_id,
             "isf_protocol_value_combination_value_combination_0001"
         );
-        assert!(packets[0].why_unresolved.contains("a decode over its keys"));
+        assert!(
+            packets[0]
+                .why_unresolved
+                .contains("no condition names one of its members")
+        );
         assert!(
             packets[0]
                 .why_unresolved
                 .contains("supporting tables: table_0239, table_0240")
+        );
+        let state = artifact
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "isf_protocol_state_combination_state_0001")
+            .expect("the keyed state's residual");
+        assert!(
+            state
+                .why_unresolved
+                .contains("its encoding by signal values is stated by value_combination_0001")
+        );
+        assert!(
+            !state
+                .why_unresolved
+                .contains("initial-state identity, encoding,")
         );
         Ok(())
     }
