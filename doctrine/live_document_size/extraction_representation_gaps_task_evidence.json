@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi",
-      "literal" : "`.3.c.vi` — today's typed tables no record cites are routed.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a",
+      "literal" : "`.3.c.vi.a` — a table a carried record reads is cited.",
       "mode" : "eligible",
-      "part_id" : "census-leaves"
+      "part_id" : "layout-and-binding-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -28,13 +28,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
             "metrics" : {
-               "bytes" : 50708,
+               "bytes" : 52002,
                "line_bytes" : 283,
-               "lines" : 518
+               "lines" : 530
             },
             "part_id" : "census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-            "sha256" : "d813d32d65abb03ffc944e5f54c3170de81459842dc7590a76157659b7255579",
+            "sha256" : "51bbd267f01f98b973a66fb15272297a51681bc20d2c584551ef53d9ea87e473",
             "state" : "active"
          },
          {
@@ -166,13 +166,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
             "metrics" : {
-               "bytes" : 44567,
+               "bytes" : 47324,
                "line_bytes" : 121,
-               "lines" : 500
+               "lines" : 530
             },
             "part_id" : "layout-and-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-            "sha256" : "670bb76b15e4c0feb43f0186dc5bc5a5202930e3af9e19106d1cb11ecfdf7e03",
+            "sha256" : "08729a3d07c6131501c3791d9cf0358d8a826528d79ad44975ac459eb689d4f5",
             "state" : "active"
          },
          {
@@ -954,7 +954,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -1605,6 +1605,30 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.66",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
       }
    ],
    "limits" : {
@@ -1732,13 +1756,12 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.vi` — today's typed tables no record cites are routed.",
+         "`.3.c.vi.a` — a table a carried record reads is cited.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`",
@@ -1772,7 +1795,11 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.61`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.65`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.65`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.66`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.67`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.68`"
       ]
    },
    "migration_metadata" : {

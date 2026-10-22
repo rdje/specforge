@@ -457,7 +457,10 @@ An encoding table's member reaches `SemanticIR` as a synthesized `Enum AxBURST I
 span, so the statement itself carries the table in `supporting_table_ids`, and the symbol cites every table its
 *published* members came from: a member dropped for a colliding value no longer vouches for its table. Asking a table region
 in the visual vocabulary would answer "unexplained" for every table a document has, so the two are kept
-separate: the question is always "did a record that could have cited this region actually cite it?".
+separate: the question is always "did a record that could have cited this region actually cite it?". The carried
+records added since (value combinations, matrices, signal layouts, presence records, protocol states) are not
+gathered yet, so on `2026-10-22` 82 of the 1,219 table residuals name a table SemanticIR does carry
+(`EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`).
 
 **A caption is not the figure.** `EvidenceIR` may relate a statement to a visual region because the statement
 *is* that region's caption. Counting those links would explain regions whose content reached nothing: over the

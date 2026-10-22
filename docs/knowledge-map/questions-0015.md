@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b
 - [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c and .3.d.iii.e
 - [an-optional-feature-is-a-typed-record](../knowledge/an-optional-feature-is-a-typed-record.md)
@@ -296,5 +298,3 @@
   > what is max_records times max_record_bytes supposed to equal
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is max_unverified_routes
-- [a-dword-packet-layout-reaches-message-field-records](../knowledge/a-dword-packet-layout-reaches-message-field-records.md)
-  > what is message_fields.dword_layout / extract_dword_layout_fields / dword_layout_field_name / parse_dword_span / continues_dword_layout

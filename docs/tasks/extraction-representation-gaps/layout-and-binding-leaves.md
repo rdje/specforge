@@ -479,6 +479,36 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   should consider a START byte.*) with no number, so no mark reaches its note. Acceptance: find where the number is
   lost (the conversion or SourceIR's list reading), keep it so the note is read as note 1-3, never bind by position
   alone, and measure every chain's numbered notes.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.vi`)
+  Goal: **a table a carried record reads is cited.** **Reproduce:** `SemanticIr::cited_table_ids` gathers register,
+  timing, polarity, interface-signal and symbol records only, though its comment says *every SemanticIr surface that
+  declares supporting_table_ids*. Tables SemanticIR carries in `value_combinations`, `matrix_tables`,
+  `signal_layouts`, `signal_presence_records` and `protocol_states` stay `no_canonical_carrier_for_captured_region`:
+  82 of the 1,219 table residuals (10 typed), AXI 48 of them. Acceptance: gather every carried surface that names its
+  tables (`table_ids` or `supporting_table_ids`), with a test that fails when a carried table field is not gathered,
+  and measure every chain's residuals.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.66`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.vi`)
+  Goal: **a one-column code key is a legend.** **Reproduce:** AHB *Table A-1 Key for Table A-2 and Table A-3* (`Code |
+  Meaning`: `Y` *Mandatory for inputs and outputs*, `N`, `O`, `C`, `OC`) defines every code AHB's 80 presence rows
+  use, but it has one data column, so `read_matrix_tables` does not take it and `bind_presence_legends` finds no
+  legend; `.3.c.v.iii` recorded AHB's codes as having none. Acceptance: read a code key whose codes cover a presence
+  table's (by codes, never by a vocabulary), bind it as `.3.c.v.iii` binds *B2.1*, and measure every chain.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.67`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
+  Goal: **a table listing the signals a rule names is the rule's operands.** **Reproduce:** AXI *Table A6.5 Signals
+  that should be the same in an exclusive sequence* lists 25 signals (`AxID`, `AxADDR`, … `AxMMUSSIDV`) in a grid of
+  five columns; the rule (an exclusive read and its write *should* carry equal values) is in the caption and prose,
+  and `.3.c` disposed of the table as navigation. Acceptance: census tables whose cells are all declared names under
+  a caption stating a rule, decide the carrier (the rule's operand set) and measure every chain.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.68`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
+  Goal: **a cross-tab whose cells are prose is read.** **Reproduce:** USB 3.2 *Table 8-8 Port Type Selection Matrix*
+  answers, per pair of port capabilities (`Upstream Only`, `Downstream Only`, `Both`), which port is downstream in a
+  sentence (*Port 2 is the downstream port*); `.3.c.v` set such cross-tabs aside as no matrix of marks (*7-14* too).
+  Acceptance: census cross-tabs of prose or values, decide the record (keys and a statement per cell) and measure
+  every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives

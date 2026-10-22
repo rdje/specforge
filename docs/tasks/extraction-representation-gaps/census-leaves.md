@@ -253,6 +253,10 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   direction into a neighbouring cell (`DBGTDI | TDI | Input Yes`, `DBGTDO | TDO Output | |`, `DBGTRSTn | TRST Input |
   |`), so `DBGTDO` and `DBGTRSTn` get no declaration from it. `DBGTDO`'s output direction, and `nSRSTOUT`'s from Table
   C3-1, came only from junk relations that `.1g` removes.
+  **Also (`.3.c.vi`, `2026-10-22`):** ADIv6 *Table B2-7 Debug Port programmers' model* (`Signal | Programmers'
+  model`) puts `Bit[28] of the CTRL/STAT register` under *Signal* and `CDBGPWRUPREQ` under *Programmers' model*, and
+  rotates its last row (`CSYSPWRUPACK register | Bit[31] of the CTRL/STAT`), so no reader binds the four wires to
+  their bits.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`
   Status: `done` (`2026-09-29`; CODE; found by `.3.c`; checklist below)
@@ -296,12 +300,20 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   configuration), and measure.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`
-  Status: `open` (`2026-09-29`; MEASUREMENT; found by `.3.c`)
+  Status: `done` (`2026-10-22`; MEASUREMENT; found by `.3.c`; opened `.3.c.vi.a`, `.66`, `.67`, `.68`)
   Goal: **today's typed tables no record cites are routed.** `.3.c` closed the 134 of `2026-09-26`. On `2026-09-29` the
   chains list 130 typed tables no record cites, and not all are the same tables: AXI *A12.20 Loopback signal width
   properties* and *A12.21 User signal properties* (parameter tables) are among them, and AXI's presence summaries
   *B2.2*/*B2.3*, which `.3.g` lifted into body rows, still reach no record. Re-derive the population table by table and
   route every table `.3.c` did not.
+  **Done `2026-10-22`.** The 31 chains list 1,219 table regions no SemanticIR record cites, 100 of them typed; each
+  is routed in the record (`docs/research/category-family-census.md`, *re-derived*). **10 are false:** SemanticIR
+  carries them in `value_combinations`, `signal_presence_records` or `matrix_tables`, which
+  `SemanticIr::cited_table_ids` does not gather (82 with the untyped ones): `.3.c.vi.a`. **83 keep `.3.c`'s owners:**
+  `DOC-INTENT-TAXONOMY.4b` 63 (field encodings; USB layouts, 23 of them already EvidenceIR `message_field_records`),
+  `KG-ISF-COMPLETENESS.2a.vii.c` 7 (with *A12.20*/*A12.21*), `.3.f.iii` 5, `.3.c.viii` 2 (TMC *2-1*, ADIv6 *B2-7*), and
+  10 with no owner. **New:** AHB *A-1*, a one-column key of every code AHB's presence rows use (`.66`); AXI *A6.5*,
+  a rule's signal list `.3.c` took for navigation (`.67`); USB 3.2 *8-8*, a cross-tab of prose (`.68`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
   Status: `done` (`2026-09-29`; CODE; continued and closed in this part; checklist below)

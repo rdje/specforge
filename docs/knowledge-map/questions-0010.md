@@ -10,6 +10,8 @@
   > how many timing_constraint statements are there on the 31 chains (279 since 2026-10-20)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many typed tables no record cites today, and who owns each (.3.c.vi)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > how many unknown-kind tables does the corpus carry
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
@@ -295,5 +297,3 @@
   > is avoiding a new EVIDENCE_RULE_FIELDS entry enough to keep persisted proofs valid
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap

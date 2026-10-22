@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what turned on the total probe at semantic and intent
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -295,5 +297,3 @@
   > where does the reserved space of a packet layout go (Reserved (R) . at 3:19)
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > where does the specforge chipdoc host library symlink currently resolve
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > where does the until release go (the temporal rule's exceptions, not the condition)

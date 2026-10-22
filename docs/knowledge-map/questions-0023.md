@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
+  > why do AxPROT[1] and AxNSE not mint an enum from A4.7 (they key the space only jointly)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > why do CCIX-class docs extract hundreds of register fields now
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -76,6 +78,8 @@
   > why do source derived ids need field aware alpha normalization
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > why do statements contain &gt; and &lt;
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why do tables read as value combinations, matrices or presence summaries still have captured-region residuals (.3.c.vi, .3.c.vi.a)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > why do the CCIX specs extract almost no register fields
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -293,7 +297,3 @@
   > why does a dynamic constraint record need no modal
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why does a field repeat on value sub-rows (row-spanning cells)
-- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
-  > why does a learned table kind not re-type a bit layout (is_recognized_layout_header)
-- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
-  > why does a list condition with two values drop its first members

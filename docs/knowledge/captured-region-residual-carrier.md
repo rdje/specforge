@@ -12,6 +12,8 @@ answers:
   - "why are table regions no longer excluded from captured-region residuals"
   - "how is a captured table region proven covered or uncovered"
   - "what is cited_table_ids"
+  - "why do tables read as value combinations, matrices or presence summaries still have captured-region residuals (.3.c.vi, .3.c.vi.a)"
+  - "how many typed tables no record cites today, and who owns each (.3.c.vi)"
   - "which SemanticIR fields carry supporting_table_ids"
   - "why was an encoding table whose enum reaches IntentIR listed as uncarried"
   - "does a symbol definition cite the table it was read from"
@@ -24,7 +26,7 @@ answers:
   - "which claim family owns captured_region_residuals"
   - "is captured_region_residuals an exact IntentIR carry"
   - "how many captured figure regions does the retained corpus hold"
-date: 2026-08-30
+date: 2026-10-22
 status: current
 tags: [spec-to-intent-alignment, residual, semantic-ir, intent-ir, visual-evidence, proof-rules, genericity]
 evidence: crates/specforge/src/ir/source.rs (CapturedRegionResidualRecord); crates/specforge/src/ir/semantic.rs (unexplained_captured_regions, captured_region_is_explained, captured_region_evidence_ids, cited_provenance_ids, cited_table_ids); crates/specforge/src/ir/waveform.rs (figure_region_provenance_id); doctrine/production_genericity/claim_family_inventory.tsv; doctrine/spec_to_intent/residual_actionability_contract.json; docs/tasks/spec-to-intent-alignment/residual-actionability.md (.8c); docs/tasks/spec-to-intent-alignment/region-kind-generalisation.md (.9b)
@@ -124,3 +126,11 @@ way (USB 3.2 21, AXI 11). Since `.3.b.iii.e` (the same day) a Markdown-row state
 row, and `unexplained_captured_regions` counts a table cited when a canonical record cites such a statement: 43 tables
 on 11 chains left the residuals (USB 3.2 21, AXI 9, CHI C2C 3).
 
+**Re-derived `2026-10-22` (`EXTRACTION-REPRESENTATION-GAPS.3.c.vi`).** The 31 chains list 2,698 captured regions,
+1,219 of them tables, 100 typed (130 on `2026-09-29`). **82 are false** (10 typed): their table is carried in
+`value_combinations`, `matrix_tables`, `signal_layouts`, `signal_presence_records` or `protocol_states`, which name it
+in `table_ids` or `supporting_table_ids` but which `cited_table_ids` does not gather (AXI 48): `.3.c.vi.a`. The other
+90 typed tables keep `.3.c`'s owners (`DOC-INTENT-TAXONOMY.4b` 63, `KG-ISF-COMPLETENESS.2a.vii.c` 7, `.3.f.iii` 5,
+`.3.c.viii` 2, none 10) or gain new ones: AHB's one-column presence key *A-1* (`.66`), AXI *A6.5*'s rule operand list
+(`.67`) and USB 3.2 *8-8*'s cross-tab of prose (`.68`). The table-by-table route is in
+`docs/research/category-family-census.md`.

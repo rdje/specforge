@@ -143,6 +143,27 @@ Read table by table against the extractor for their kind. Where a row says *unre
 | unread: AXI credited-channel signals and legal MMU combinations, ADIv6 programmers'-model mapping, USB hub port timers and power states, OpenCAPI DVSEC applicability | 6 | `.3.c` |
 | RISC-V IOMMU `table_0077`, one row whose field is named `0` | 1 | none: the bit-layout-grid filter drops it, before and after `EXTRACTION-GAP-FIX.6` |
 
+## Typed tables no record cites, re-derived (`.3.c.vi`, `2026-10-22`)
+
+Reproduce: the `table_region` entries of each chain's SemanticIR `captured_region_residuals`, joined to the table's
+SourceIR `table_kind`, and each table looked up in every SemanticIR and EvidenceIR field that names a table id. On
+the 31 current chains 1,219 table regions are listed (2,698 captured regions in all), 100 of them typed (66
+`encoding`, 26 `signal_description`, 5 `timing_parameter`, 2 `feature_matrix`, 1 `register_map`; 130 on
+`2026-09-29`). Every one of the 100 is routed:
+
+| what the table is | tables | owner |
+| --- | ---: | --- |
+| carried by a SemanticIR surface the accounting does not gather (`value_combinations`: AXI *A7.3*, *A7.4*, *A13.14*, AHB *3-5*; `signal_presence_records`: AXI *A13.3*, *B2.2*, *B2.3*; `matrix_tables`: AXI *B2.1*, OpenCAPI DVSEC applicability, USB 3.2 *10-2*) | 10 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`; with the untyped ones, 82 false residuals |
+| encodings of a structure or message field (IOMMU 11: `iohgatp`/`iosatp`/`pdtp`/`msiptp.MODE`, command opcodes, `CAUSE`, `TTYP`; AXI DVM fixed fields 6; CHI C2C 7; ADIv6 TMS packets 3; USB4 packet types 3) | 30 | `DOC-INTENT-TAXONOMY.4b`, as `.3.c` routed them |
+| USB 3.2 descriptor, setup-data, LMP and status-word layouts and request codes (23 read into EvidenceIR-only `message_field_records`, 6 of them with `reserved_spans` too; a captionless descriptor continuation; 3 ordered sets; the status words *10-13*-*10-15*; the request codes *9-8*, *10-12*, *10-18*) | 33 | `DOC-INTENT-TAXONOMY.4b` (the message-field carrier to IntentIR) |
+| interface and class property tables (AXI *A12.16*, *A12.18*, *A12.20*, *A12.21*, *A14.2*, *A15.24*; CHI C2C *B10.6*) | 7 | `KG-ISF-COMPLETENESS.2a.vii.c` |
+| grouped timing tables whose rows sit under two header rows (USB 3.2 *6-20*, *6-31*, *6-33*, both `tBurst` tables) | 5 | `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` |
+| converter-shifted tables (TMC *2-1 Memory interface signals*: names in the Description column; ADIv6 *B2-7*: columns swapped, one row rotated) | 2 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` |
+| a one-column code key (AHB *A-1 Key for Table A-2 and Table A-3*: `Y`, `N`, `O`, `C`, `OC`, every code AHB's 80 presence rows use) | 1 | `EXTRACTION-REPRESENTATION-GAPS.66` |
+| a list of the signals a rule names (AXI *A6.5 Signals that should be the same in an exclusive sequence*), which `.3.c` took for navigation | 1 | `EXTRACTION-REPRESENTATION-GAPS.67` |
+| a cross-tab whose cells are prose (USB 3.2 *8-8 Port Type Selection Matrix*) | 1 | `EXTRACTION-REPRESENTATION-GAPS.68` |
+| no owner, as `.3.c` decided: connector pinouts (RISC-V Debug MIPI ×2, ADIv6 SWJ-DP), the grid-filtered IOMMU `table_0077`, USB's compliance pattern (every row refused), and five encodings naming their quantity (RISC-V Debug privilege mode, USB *9-14*, *10-16*, *10-17* and its continuation) | 10 | none |
+
 ## The untyped tables no record cites (`.3.b`, `.3.b.ii`)
 
 Measured `2026-09-29` with `python3 scripts/measure_untyped_table_families.py` (read-only; `--samples N` prints N

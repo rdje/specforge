@@ -628,7 +628,9 @@ Since `.3.c.v.iii` (`2026-10-22`) a matrix can be a legend. AXI *B2.1 Key to sig
 its meaning on a manager and on a subordinate (`YM`: *Mandatory*, *Optional*), and a presence table whose every code
 is one of a legend's keys reads that legend: each code gains its meanings by column, and the record names the legend.
 On the 31 chains AXI's 297 *B2.2*/*B2.3* presence rows bind to *B2.1*; *A13.3*'s 9 use `C`, which *B2.1* does not
-define, and keep their codes as written. APB5's and AHB's presence codes (`C`, `OC`, `OO`) have no legend matrix.
+define, and keep their codes as written. APB5's presence codes (`C`, `OC`, `OO`) have no legend. AHB's five (`Y`, `N`,
+`O`, `C`, `OC`) are all defined by *Table A-1*, a one-column key the matrix reader does not take, so they stay as
+written until `.66` (`2026-10-22`).
 
 ### Which table an enum was read from
 
