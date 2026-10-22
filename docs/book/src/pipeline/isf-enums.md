@@ -564,7 +564,7 @@ of one signal. Since `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` (`2026-10-22`) 
   slices that do not overlap. The name column is the first other column of distinct short cells. A second column of
   slices or binary literals is another table: a register field's bits mapped onto signal bits, or a layout per message
   kind (AXI *A15.20*-*A15.22*: per `ACADDR` bit, `0b0` or `VA[56]` for each TLBI, BPI, VICI and PICI message part,
-  which `.3.c.iv.c` decided is its own record, `message_signal_layouts`, still to be read). A column of numbers must
+  which `.3.c.iv.c` decided is its own record, `message_signal_layouts`, below). A column of numbers must
   restate each slice's width, so ADIv6's caption-less map (a register bit beside each `HPROT` bit) is refused and
   counted.
 - **What is kept.** The signal, the caption, and per row the slice with its high and low bit, the name and every
@@ -583,6 +583,18 @@ are a closed set, so a sub-field layout on a port is FSMGen ladder rung F29, *an
 request, because nothing executable names a sub-field. The adapter states one `isf_protocol_signal_layout_*` residual
 per layout and lists every sub-field reaching past its port's elaborated width: AHB's `Lookup [4]`, `Allocate [5]` and
 `Shareable [6]` lie past `HPROT_WIDTH`'s default 4.
+
+### A signal laid out per message kind
+
+AXI *A15.20*-*A15.22* lay the snoop address out once per DVM message part: per `ACADDR` bit (then `ACVMIDEXT`), a
+column per message (`TLBI 1st of 2-part`, `BPI by VA 2nd part`) gives a constant (`0b0`), a constant for the field it
+fixes (`0b0 (DVMType[2])`), a field's slice (`VA[56]`, `ASID[4]`) or a one-bit field (`VMIDV`). Since
+`EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` (`2026-10-22`) such a table is an EvidenceIR `message_signal_layouts`
+record: one per table and its continuations, the message titles as written, and per row the signal slice and one
+source per message. Every body row must start with a declared signal's slice and every other cell take one of those
+forms, empty or `-` included, with at least one field slice; that is the shape the sub-field reader refuses. AXI's
+three tables are read, 56 rows each; no other chain has the shape. The message kinds join the fixed-field tables
+*A15.7*-*A15.16*, which `DOC-INTENT-TAXONOMY.4b` owns, and the record reaches IntentIR with `.3.c.iv.c.ii`.
 
 ### A table of marks per pair of keys
 

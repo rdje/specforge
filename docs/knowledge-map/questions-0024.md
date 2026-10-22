@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why does a conditional rule have no consequent signal
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > why does a constraint have no condition although its sentence states one
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
@@ -296,5 +298,3 @@
   > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > why does the EvidenceIR book chapter keep breaching its size ceiling

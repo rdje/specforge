@@ -16,6 +16,8 @@
   > what is message_fields.dword_layout / extract_dword_layout_fields / dword_layout_field_name / parse_dword_span / continues_dword_layout
 - [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
   > what is message_fields.width_offset_layout / extract_width_offset_layout_fields / width_offset_field_name
+- [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
+  > what is message_signal_layouts / MessageSignalLayoutRecord / MessageBitSource (.3.c.iv.c.i)
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is name_and_size_registers_from_layout
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
@@ -295,5 +297,3 @@
   > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > what is the first SpecForge trajectory snapshot
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume

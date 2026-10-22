@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > where does the isf reset polarity come from
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -296,5 +298,3 @@
   > which corpus stages are measurable without re-ingesting a document
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which crate owns the source-to-intent vertical evaluator tests
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts are stable and which ones move

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > why does the EvidenceIR book chapter keep breaching its size ceiling
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why does the Introducing CoreSight guide emit no ISF
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
@@ -296,5 +298,3 @@
   > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
 - [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
   > why is WSTRB or RCHUNKSTRB not valid-like (indicates which byte lanes, a choice)
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Wishbone memory output data (DO) not a port

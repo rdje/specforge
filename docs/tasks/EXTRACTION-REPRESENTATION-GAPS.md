@@ -38,17 +38,16 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c.iv.c.i` — a table giving a signal's bits per message kind is EvidenceIR's `message_signal_layouts`.
+`.3.c.iv.c.ii` — a per-message layout reaches IntentIR, and the adapter names it.
 
-Then, in order: `.3.c.iv.c.ii` (the adapter names a per-message layout), `.56.c` (archive
-`layout-and-binding-leaves`), `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction`
-(`FSMGEN-REQUESTS.12`), `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property
-parameter (`KG-ISF-COMPLETENESS.2a.vii.c.vi`) and an FSMGen pin with actor-level assertions, `.60` (a register field's
-sub-fields), `.61` (an encoding member's enabling property), `.65` (a note printed as a numbered list), `.67` (a
-rule's signal-list table), `.68` (a cross-tab of prose), `.3.c.viii.a` (a table whose columns the converter swapped),
-`.54.a.ii` (the corpus memory's refresh: an equivalent store re-pinned with the 24-document behavioral
-re-qualification), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once
-`KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
+Then, in order: `.56.c` (archive `layout-and-binding-leaves`), `.46.c` waits for a FSMGen pin carrying
+`sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`), `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field,
+`.3.c.v.v` waits for a property parameter (`KG-ISF-COMPLETENESS.2a.vii.c.vi`) and an FSMGen pin with actor-level
+assertions, `.60` (a register field's sub-fields), `.61` (an encoding member's enabling property), `.65` (a note
+printed as a numbered list), `.67` (a rule's signal-list table), `.68` (a cross-tab of prose), `.3.c.viii.a` (a table
+whose columns the converter swapped), `.54.a.ii` (the corpus memory's refresh: an equivalent store re-pinned with the
+24-document behavioral re-qualification), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i`
+once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
 `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a legacy register-map document's re-ingest. Closed leaves are read
 from the route catalog's lifecycles, not restated here; the list this paragraph carried until `2026-10-19` is in the
 `register-binding-leaves` part.
@@ -110,7 +109,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.68`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56.c`
 

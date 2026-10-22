@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
 - [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
@@ -295,5 +297,3 @@
   > why is the dynamic path's subject search still statement-scoped
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why is the fact-card catalog about to run out of capacity

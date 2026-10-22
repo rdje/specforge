@@ -12,10 +12,11 @@ answers:
   - "does a signal's sub-field layout reach the .isf (FSMGen ladder F29)"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b and .3.c.iv.b.i"
   - "how is a signal laid out per message kind read (AXI A15.20-A15.22, message_signal_layouts, .3.c.iv.c)"
+  - "what is message_signal_layouts / MessageSignalLayoutRecord / MessageBitSource (.3.c.iv.c.i)"
 date: 2026-10-22
 status: current
 tags: [evidence-ir, signals, sub-fields, layouts, encodings, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (read_signal_layouts; parse_name_slice; sub_field_levels; sentence_level; signal_layout_surface); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.c.iv.b); docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.iv.b.i); docs/gaps/fsmgen-ladder.md (F29)
+evidence: crates/specforge/src/ir/evidence.rs (read_message_signal_layouts; read_signal_layouts; parse_name_slice; sub_field_levels; sentence_level; signal_layout_surface); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.c.iv.b); docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.iv.b.i); docs/gaps/fsmgen-ladder.md (F29)
 reverify: "cargo test --offline -p specforge-core --lib a_table_naming_a_signals_sub_fields_is_its_layout"
 ---
 
@@ -54,6 +55,12 @@ ladder rung F29 stays *anticipated*.
 **A layout per message kind (`.3.c.iv.c`, decided `2026-10-22`).** AXI *A15.20*-*A15.22* and their continuations
 give each `ACADDR` (then `ACVMIDEXT`) bit a constant (`0b0`) or a source field's slice (`VA[56]`, `ASID[4]`) per
 message part: the shape `signal_layouts` refuses. It becomes its own EvidenceIR surface, `message_signal_layouts`
-(one record per table and continuations; per row the slice and one source per message, as written), read by
-`.3.c.iv.c.i` and carried with an adapter residual by `.3.c.iv.c.ii`. The message kinds join the fixed-field tables
-*A15.7*-*A15.16* that `DOC-INTENT-TAXONOMY.4b` owns; no other chain has the shape.
+(one record per table and continuations; per row the slice and one source per message, as written), carried with
+an adapter residual by `.3.c.iv.c.ii`. The message kinds join the fixed-field tables *A15.7*-*A15.16* that
+`DOC-INTENT-TAXONOMY.4b` owns; no other chain has the shape.
+
+**Read (`.3.c.iv.c.i`, `2026-10-22`).** `read_message_signal_layouts` (`MessageSignalLayoutRecord`,
+`MessageSignalBit`, `MessageBitSource`: `constant` with the field it fixes when the cell names one, `field` sliced or
+named alone, `unstated`) runs in each convergence pass. AXI's three tables are read with their continuations, 56
+rows each (52 `ACADDR`, 4 `ACVMIDEXT`); a cell of prose or a slice of no declared signal refuses a table. The new
+field moved the EvidenceIR ruleset hash, so every chain was re-sealed.

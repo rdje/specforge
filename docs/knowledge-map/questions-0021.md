@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > which tree owns the empty-catalog grounding filter defect
 - [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
   > which tree owns the normalized-markdown escape truncation
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
@@ -295,5 +297,3 @@
   > why did EXTRACTION-QUALITY-GAUGE.3k.12 ship no rule
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'

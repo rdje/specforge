@@ -441,6 +441,10 @@ pub struct EvidenceIr {
     /// (serde-skipped) for documents with none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_layouts: Vec<SignalLayoutRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i: the tables giving signal bits per message kind, one record each.
+    /// Empty (serde-skipped) for documents with none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub message_signal_layouts: Vec<MessageSignalLayoutRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.i: the two-way tables whose cells are marks or modal words. Empty
     /// (serde-skipped) for documents with none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -1062,6 +1066,66 @@ pub struct SubFieldLevel {
     pub meaning: String,
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` — a table giving signal bits per message kind (AXI *A15.20 Field mappings
+/// for TLB Invalidate messages*): a row per signal slice (`ACADDR[47]`), a column per message part (`TLBI 1st of
+/// 2-part`), and each cell the bit's source in that message. One record per table and its continuations; every cell
+/// as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MessageSignalLayoutRecord {
+    /// Stable id, e.g. `message_signal_layout_0002`.
+    pub layout_id: String,
+    /// The table and, in order, each continuation of it.
+    pub table_ids: Vec<String>,
+    /// The table's caption, as written, when it has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+    /// The message columns' titles, as written, in column order.
+    pub messages: Vec<String>,
+    /// The rows, in order.
+    pub bits: Vec<MessageSignalBit>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` — one row of a [`MessageSignalLayoutRecord`]: a slice of a declared
+/// signal and its source in each message, in column order.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MessageSignalBit {
+    /// The table (page fragment) the row sits in.
+    pub table_id: String,
+    /// The signal the slice names (`ACADDR`).
+    pub signal: String,
+    /// The slice, as written (`[47]`).
+    pub bits: String,
+    pub msb: u32,
+    pub lsb: u32,
+    /// The bit's source in each message column, in order.
+    pub sources: Vec<MessageBitSource>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` — what a message gives one signal slice: a constant (`0b0`), with the
+/// field it fixes when the cell names one (`0b0 (DVMType[2])`); a field the message carries, sliced (`VA[56]`) or a
+/// one-bit field named alone (`VMIDV`); or nothing stated (an empty or `-` cell).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum MessageBitSource {
+    Constant {
+        code: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        field: Option<String>,
+    },
+    Field {
+        name: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        bits: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        msb: Option<u32>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        lsb: Option<u32>,
+    },
+    Unstated {
+        text: String,
+    },
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a two-way table: a row per item (*Opcode*, *Feature*, *Parameter*), a
 /// column per mode, configuration, version or event, and each cell a mark (`Y`, `-`, `X`, `M`, `O`, `N/A`) or a modal
 /// word (*Required*, *Permitted*, *Compatible*, *May be off*) for that pair. One record per table and its
@@ -1617,6 +1681,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_states", "evidence.protocol_structure"),
     ("value_combinations", "evidence.protocol_structure"),
     ("signal_layouts", "evidence.protocol_structure"),
+    ("message_signal_layouts", "evidence.protocol_structure"),
     ("matrix_tables", "evidence.protocol_structure"),
     ("protocol_transitions", "evidence.protocol_structure"),
     ("protocol_actors", "evidence.protocol_structure"),
@@ -2031,6 +2096,7 @@ impl EvidenceIr {
         insert_field!(protocol_states);
         insert_field!(value_combinations);
         insert_field!(signal_layouts);
+        insert_field!(message_signal_layouts);
         insert_field!(matrix_tables);
         insert_field!(protocol_transitions);
         insert_field!(protocol_actors);
@@ -2714,6 +2780,7 @@ impl EvidenceIr {
             convergence_report,
             value_combinations,
             signal_layouts,
+            message_signal_layouts,
         ) = converge_evidence_extractions(
             source_ir,
             extracted_statements,
@@ -2958,6 +3025,7 @@ impl EvidenceIr {
             protocol_states,
             value_combinations,
             signal_layouts,
+            message_signal_layouts,
             matrix_tables,
             protocol_transitions,
             protocol_actors,
@@ -32277,6 +32345,184 @@ fn signal_layout_surface(
     records
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` — the tables giving signal bits per message kind, and how many tables of
+/// that shape there were.
+///
+/// A table of the shape heads its first column with anything and two or more columns with a message part's title.
+/// Every body row's first cell is a slice of a declared signal (`ACADDR[47]`, `ACVMIDEXT[3]`), and every other cell
+/// a code literal (`0b0`), a constant naming the field it fixes (`0b0 (DVMType[2])`), a field's slice (`VA[56]`) or
+/// name (`VMIDV`), empty or `-`; at least one cell is a field's slice. That is the shape `read_signal_layouts` refuses, so the two never take one table. A continuation joins the
+/// nearest preceding table of the shape its caption names, with the same header. A row of another width, or a cell
+/// holding anything else, refuses the table.
+fn read_message_signal_layouts(
+    source_ir: &SourceIr,
+    signal_titles: &HashSet<String>,
+) -> (Vec<MessageSignalLayoutRecord>, usize) {
+    struct Shaped {
+        table_ids: Vec<String>,
+        reference: Option<String>,
+        caption: Option<String>,
+        titles: Vec<String>,
+        bits: Vec<MessageSignalBit>,
+        refused: bool,
+    }
+    let source_of = |cell: &str| -> Option<MessageBitSource> {
+        let cell = cell.trim();
+        if cell.is_empty() || cell == "-" {
+            return Some(MessageBitSource::Unstated {
+                text: cell.to_string(),
+            });
+        }
+        if is_matrix_code_literal(cell) {
+            return Some(MessageBitSource::Constant {
+                code: cell.to_string(),
+                field: None,
+            });
+        }
+        // A constant for the field it fixes: `0b0 (DVMType[2])`, `0b1 (Addr)`.
+        if let Some((code, field)) = cell
+            .strip_suffix(')')
+            .and_then(|inner| inner.split_once(" ("))
+            .filter(|(code, field)| {
+                is_matrix_code_literal(code)
+                    && (parse_name_slice(field).is_some() || is_hardware_signal_token(field))
+            })
+        {
+            return Some(MessageBitSource::Constant {
+                code: code.trim().to_string(),
+                field: Some(field.to_string()),
+            });
+        }
+        if let Some((name, bits, msb, lsb)) = parse_name_slice(cell) {
+            return Some(MessageBitSource::Field {
+                name: name.to_string(),
+                bits: Some(bits.to_string()),
+                msb: Some(msb),
+                lsb: Some(lsb),
+            });
+        }
+        // A one-bit field named alone (`VMIDV`, `Completion`).
+        is_hardware_signal_token(cell).then(|| MessageBitSource::Field {
+            name: cell.to_string(),
+            bits: None,
+            msb: None,
+            lsb: None,
+        })
+    };
+    let mut shaped: Vec<Shaped> = Vec::new();
+    for table in &source_ir.structured_tables {
+        let Some(header) = table.header_rows.last() else {
+            continue;
+        };
+        if table.body_rows.is_empty() || header.len() < 3 {
+            continue;
+        }
+        let titles: Vec<String> = header
+            .iter()
+            .map(|cell| cell.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .collect();
+        if titles[1..].iter().any(String::is_empty) {
+            continue;
+        }
+        let mut bits: Vec<MessageSignalBit> = Vec::new();
+        let mut fits = true;
+        for row in &table.body_rows {
+            let cells: Vec<&str> = row.iter().map(|cell| cell.text.trim()).collect();
+            let Some((signal, slice, msb, lsb)) =
+                cells.first().and_then(|cell| parse_name_slice(cell))
+            else {
+                fits = false;
+                break;
+            };
+            if !signal_titles.contains(signal) || cells.len() != titles.len() {
+                fits = false;
+                break;
+            }
+            let Some(sources) = cells[1..]
+                .iter()
+                .map(|cell| source_of(cell))
+                .collect::<Option<Vec<_>>>()
+            else {
+                fits = false;
+                break;
+            };
+            bits.push(MessageSignalBit {
+                table_id: table.table_id.clone(),
+                signal: signal.to_string(),
+                bits: slice.to_string(),
+                msb,
+                lsb,
+                sources,
+            });
+        }
+        let has_field = bits.iter().any(|bit| {
+            bit.sources
+                .iter()
+                .any(|source| matches!(source, MessageBitSource::Field { bits: Some(_), .. }))
+        });
+        let reference = caption_table_ref(table.caption_text.as_deref());
+        let head = match &reference {
+            Some((reference, true)) => shaped.iter().rposition(|entry| {
+                entry.reference.as_deref() == Some(reference.as_str()) && entry.titles == titles
+            }),
+            _ => None,
+        };
+        match head {
+            Some(index) => {
+                let entry = &mut shaped[index];
+                entry.table_ids.push(table.table_id.clone());
+                entry.refused |= !fits;
+                entry.bits.extend(bits);
+            }
+            None if fits && has_field => shaped.push(Shaped {
+                table_ids: vec![table.table_id.clone()],
+                reference: reference.map(|(reference, _)| reference),
+                caption: table.caption_text.clone(),
+                titles,
+                bits,
+                refused: false,
+            }),
+            None => {}
+        }
+    }
+    let candidates = shaped.len();
+    let records = shaped
+        .into_iter()
+        .filter(|entry| !entry.refused)
+        .enumerate()
+        .map(|(index, entry)| MessageSignalLayoutRecord {
+            layout_id: format!("message_signal_layout_{:04}", index + 1),
+            table_ids: entry.table_ids,
+            caption: entry.caption,
+            messages: entry.titles[1..].to_vec(),
+            bits: entry.bits,
+        })
+        .collect();
+    (records, candidates)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` — the per-message layouts the last convergence pass read, recorded as the
+/// `message_signal_layouts` surface only when a table had the shape, so a document without one keeps its manifest.
+fn message_signal_layout_surface(
+    (records, candidates): (Vec<MessageSignalLayoutRecord>, usize),
+    manifest: &mut ExtractionManifest,
+) -> Vec<MessageSignalLayoutRecord> {
+    if candidates > 0 {
+        manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
+            surface: "message_signal_layouts".to_string(),
+            eligible: 1,
+            entries: vec![crate::ir::extractor::ExtractorRunEntry {
+                name: "message_slice_tables".to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced: candidates,
+                kept: records.len(),
+            }],
+        });
+    }
+    records
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — what a matrix cell is: a mark (`Y`, `-`, `X`, `M`, `O`, `N/A`, a check
 /// mark), a modal word, or a cell that opens with one (*Compatible. Tie AWAKEUP LOW*), once a footnote mark (`O [2]`,
 /// `Y 2`, `On*`) is dropped. These are closed grammatical classes, not a document's vocabulary (ADR 0006).
@@ -33953,6 +34199,7 @@ fn converge_evidence_extractions(
     EvidenceConvergenceReport,
     Vec<ValueCombinationRecord>,
     Vec<SignalLayoutRecord>,
+    Vec<MessageSignalLayoutRecord>,
 ) {
     let mut signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
     let mut signal_widths_from_tables =
@@ -33998,6 +34245,7 @@ fn converge_evidence_extractions(
     let mut final_actor_signal_relations = Vec::new();
     let mut final_value_combinations = (Vec::new(), 0);
     let mut final_signal_layouts = (Vec::new(), 0);
+    let mut final_message_signal_layouts = (Vec::new(), 0);
     let max_passes = source_ir.structured_tables.len().max(1) + 4;
     let mut new_facts_per_pass: Vec<usize> = Vec::new();
     let mut converged = false;
@@ -34088,6 +34336,8 @@ fn converge_evidence_extractions(
             read_value_combinations(source_ir, &signal_titles, &collectives, register_records);
         // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i — a column of one signal's slices, each named: the signal's layout.
         let signal_layouts = read_signal_layouts(source_ir, &signal_titles);
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i — a column of signal slices beside a column per message kind.
+        let message_signal_layouts = read_message_signal_layouts(source_ir, &signal_titles);
         // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i — a channel code table is read by its own reader, so neither
         // other encoding reader takes it.
         let (channel_tables, channel_statements) = read_channel_code_tables(
@@ -34172,6 +34422,7 @@ fn converge_evidence_extractions(
         final_actor_signal_relations = actor_signal_relations;
         final_value_combinations = value_combinations;
         final_signal_layouts = signal_layouts;
+        final_message_signal_layouts = message_signal_layouts;
 
         new_facts_per_pass.push(new_dynamic_statements.len());
         if new_dynamic_statements.is_empty() {
@@ -34199,6 +34450,7 @@ fn converge_evidence_extractions(
         convergence_report,
         value_combination_surface(final_value_combinations, extraction_manifest),
         signal_layout_surface(final_signal_layouts, extraction_manifest),
+        message_signal_layout_surface(final_message_signal_layouts, extraction_manifest),
     )
 }
 
@@ -45180,7 +45432,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 51);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 52);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -51143,6 +51395,137 @@ The control register.
         );
         assert_eq!(matrices[1].cell_class, super::MatrixCellClass::Modal);
         assert!(matrices[1].legend.is_empty());
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` — a column of signal slices beside a column per message part is a
+    /// per-message layout, its continuation joined; a cell holding prose, or a slice of no declared signal, refuses it.
+    #[test]
+    fn a_table_giving_signal_bits_per_message_is_a_message_signal_layout() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("messages.md");
+        fs::write(&source, "# Messages\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table =
+            |id: &str, caption: &str, header: &[&str], body: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                row_count: (1 + body.len()) as u32,
+                col_count: header.len() as u32,
+                header_rows: rows(&[header]),
+                body_rows: rows(body),
+            };
+        let header = ["Signal", "QINV 1-part", "QINV 2nd part"];
+        source_ir.structured_tables.push(table(
+            "table_head",
+            "Table Z15.20: Field mappings for invalidate messages",
+            &header,
+            &[
+                &["ZCADDR[47]", "0b0", "VA[52]"],
+                &["ZCADDR[46]", "0b0", "VA[51]"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_continued",
+            "Table Z15.20 Continued from previous page",
+            &header,
+            &[
+                &["ZCADDR[15]", "0b0 (DVMType[2])", "-"],
+                &["ZCVMIDEXT[0]", "VMIDV", "VMID[8]"],
+            ],
+        ));
+        // A cell holding prose refuses its table.
+        source_ir.structured_tables.push(table(
+            "table_prose",
+            "Table Z15.30: Notes per message",
+            &header,
+            &[
+                &["ZCADDR[47]", "0b0", "see text"],
+                &["ZCADDR[46]", "VA[51]", "0b0"],
+            ],
+        ));
+        // A slice of no declared signal refuses its table.
+        source_ir.structured_tables.push(table(
+            "table_undeclared",
+            "Table Z15.31: Other mappings",
+            &header,
+            &[&["QQADDR[1]", "0b0", "VA[1]"]],
+        ));
+        let titles: std::collections::HashSet<String> = ["ZCADDR", "ZCVMIDEXT"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        let (layouts, candidates) = super::read_message_signal_layouts(&source_ir, &titles);
+        assert_eq!(candidates, 1);
+        assert_eq!(layouts.len(), 1);
+        let layout = &layouts[0];
+        assert_eq!(layout.table_ids, ["table_head", "table_continued"]);
+        assert_eq!(layout.messages, ["QINV 1-part", "QINV 2nd part"]);
+        assert_eq!(
+            layout
+                .bits
+                .iter()
+                .map(|bit| (bit.signal.as_str(), bit.bits.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                ("ZCADDR", "[47]"),
+                ("ZCADDR", "[46]"),
+                ("ZCADDR", "[15]"),
+                ("ZCVMIDEXT", "[0]")
+            ]
+        );
+        assert_eq!(
+            layout.bits[0].sources,
+            [
+                super::MessageBitSource::Constant {
+                    code: "0b0".to_string(),
+                    field: None
+                },
+                super::MessageBitSource::Field {
+                    name: "VA".to_string(),
+                    bits: Some("[52]".to_string()),
+                    msb: Some(52),
+                    lsb: Some(52)
+                },
+            ]
+        );
+        assert_eq!(
+            layout.bits[2].sources,
+            [
+                super::MessageBitSource::Constant {
+                    code: "0b0".to_string(),
+                    field: Some("DVMType[2]".to_string())
+                },
+                super::MessageBitSource::Unstated {
+                    text: "-".to_string()
+                },
+            ]
+        );
+        assert_eq!(
+            layout.bits[3].sources[0],
+            super::MessageBitSource::Field {
+                name: "VMIDV".to_string(),
+                bits: None,
+                msb: None,
+                lsb: None
+            }
+        );
         Ok(())
     }
 

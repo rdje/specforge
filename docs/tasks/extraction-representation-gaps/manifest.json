@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i",
-      "literal" : "`.3.c.iv.c.i` — a table giving a signal's bits per message kind is EvidenceIR's `message_signal_layouts`.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii",
+      "literal" : "`.3.c.iv.c.ii` — a per-message layout reaches IntentIR, and the adapter names it.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -1371,7 +1371,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1557,13 +1557,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 9813,
+            "bytes" : 13196,
             "line_bytes" : 119,
-            "lines" : 111
+            "lines" : 149
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "9ced96e3e41ad74170cdbc8dbae8c107f154c1f3a1f3990b0331dd9fdbe66858",
+         "sha256" : "613d379b187e223c4e273d7bf7c29f9c238caf49b829aef800fa614eefbf408f",
          "state" : "active"
       },
       {

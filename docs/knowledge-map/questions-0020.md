@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which current claim census counts are stable and which ones move
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts may be published and which must be read from the report
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > which declaration producers need the normalized markdown bundle
@@ -295,5 +297,3 @@
   > which to_ascii_uppercase calls in the evidence stage emit a name
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > which topology contains the active corpus coverage task
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > which tree owns the empty-catalog grounding filter defect

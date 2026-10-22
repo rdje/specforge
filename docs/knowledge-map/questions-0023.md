@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
+  > why do 645 of 813 timing_constraint statements carry no time expression
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -295,5 +297,3 @@
   > innocence; measured, disabling the exclusion makes the corpus census report 0 names across 0 documents)
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > why does a check table headed Name (AXI Table A16.4) still read
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > why does a conditional rule have no consequent signal

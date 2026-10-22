@@ -88,11 +88,49 @@ here whole.
   - **Not lowered.** Like `signal_layouts`: carried to IntentIR typed, one adapter residual per layout, since an `.isf`
     port takes no per-message bit mapping (FSMGen ladder F29, anticipated).
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.c`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.iv.c`; checklist below)
   Goal: **a table giving a signal's bits per message kind is EvidenceIR's `message_signal_layouts`.** Acceptance: read
   the record `.3.c.iv.c` decided (a first column of declared signals' slices, two or more message columns, every other
   cell a literal, a slice or empty; continuations joined by caption), keep every cell as written, register the field
   (rule fields, inventories), re-seal what the ruleset hash moves, and measure every chain.
+  **Done `2026-10-22`.**
+  - **Record.** EvidenceIR `message_signal_layouts` (`MessageSignalLayoutRecord`: the tables, caption and message
+    titles; `MessageSignalBit` per row: the signal, its slice, and one `MessageBitSource` per message). A source is a
+    `constant` (`0b0`), with the field it fixes when the cell names one (`0b0 (DVMType[2])`, `0b1 (Addr)`); a `field`,
+    sliced (`VA[56]`) or a one-bit field named alone (`VMIDV`, `Completion`); or `unstated` (empty, `-`).
+  - **Reader.** `read_message_signal_layouts` runs in each convergence pass beside `read_signal_layouts`. Every body
+    row starts with a declared signal's slice and every other cell takes one of those forms, at least one a field
+    slice; a continuation joins by caption and header. Any other cell, or a slice of no declared signal, refuses the
+    table. The manifest entry is recorded only for a document with a candidate.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI's three records each hold 56 rows (52 `ACADDR`, 4
+    `ACVMIDEXT`) across a head and its continuation; the continuations' `0b0 (DVMType[2])` and `VMIDV` cells were the
+    forms the first reading refused.
+  - **Re-sealed.** The new field moved the EvidenceIR ruleset hash. AXI rebuilt stage by stage: only EvidenceIR moved
+    (`message_signal_layouts` and its manifest entry); 111 residuals and `manager.isf` unchanged.
+    `rebuild_stage_cascade.sh --write` then re-sealed all 31 chains, content-identical at every stage.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — `.3.c.iv.c`'s census and a per-cell reading of the continuations (18 non-fitting
+  forms, all a constant naming its field or a one-bit field's name).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` had no reader for a table keyed by signal
+  slices with a column per message; `read_signal_layouts` refuses it by design. RED 4/4, the file restored
+  byte-identically: a continuation not joined, prose taken as a field, an undeclared signal read, a constant naming
+  its field refused; each fails `a_table_giving_signal_bits_per_message_is_a_message_signal_layout`.
+- [x] **ADDRESSED (verified)** — AXI's three records above, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current after the cascade. WIRE-BASED-100: all 11 seed
+  reports byte-identical to `0c0a4533f`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo
+  clippy --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,935 passed; the proof test counts 52 EvidenceIR rule fields and the
+  inventory 212 rules (`message_signal_layouts` in both production-genericity inventories). `flow_census.json` rolled
+  (+2 functions, +19 decision sites, +54 helper edges, +2 macros) and its boundary moved for the new producer (rule
+  roots 136, grammar declassifiers 77).
+- [x] **GENERICITY (ADR 0006)** — cell shapes (literal, slice, identifier) and the document's own declared signals;
+  no message or field vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A signal laid out per message kind*); KM card
+  `a-table-naming-a-signals-bits-is-its-layout`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii`
   Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.c`)
   Goal: **a per-message layout reaches IntentIR, and the adapter names it.** Acceptance: carry
