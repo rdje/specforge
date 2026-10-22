@@ -16,7 +16,7 @@ answers:
 date: 2026-10-22
 status: current
 tags: [evidence-ir, signals, sub-fields, layouts, encodings, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (read_message_signal_layouts; read_signal_layouts; parse_name_slice; sub_field_levels; sentence_level; signal_layout_surface); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.c.iv.b); docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.iv.b.i); docs/gaps/fsmgen-ladder.md (F29)
+evidence: crates/specforge/src/ir/evidence.rs (read_message_signal_layouts; read_signal_layouts; parse_name_slice; sub_field_levels; sentence_level; signal_layout_surface); docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md (.3.c.iv.b); docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.iv.b.i); docs/gaps/fsmgen-ladder.md (F29)
 reverify: "cargo test --offline -p specforge-core --lib a_table_naming_a_signals_sub_fields_is_its_layout"
 ---
 

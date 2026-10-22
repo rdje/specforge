@@ -16,7 +16,7 @@ answers:
 date: 2026-10-22
 status: current
 tags: [evidence-ir, tables, matrices, requirements, legality, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (read_matrix_tables; matrix_cell_kind; is_matrix_code_literal; matrix_caption_legend; matrix_table_surface; trailing_note_marks; bind_matrix_notes); docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.v, .3.c.v.i)
+evidence: crates/specforge/src/ir/evidence.rs (read_matrix_tables; matrix_cell_kind; is_matrix_code_literal; matrix_caption_legend; matrix_table_surface; trailing_note_marks; bind_matrix_notes); docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.v, .3.c.v.i)
 reverify: "cargo test --offline -p specforge-core --lib a_two_way_table_of_marks_is_a_matrix"
 ---
 

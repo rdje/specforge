@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.c",
-      "literal" : "`.56.c` — `layout-and-binding-leaves`, every leaf closed, is archived.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60",
+      "literal" : "`.60` — a register field's sub-field table types the field's sub-fields.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -164,6 +164,8 @@
             "state" : "active"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
+            "git_blob" : "159bb866e53b37551cf33ee227e16eee83936238",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
             "metrics" : {
                "bytes" : 50947,
@@ -171,20 +173,21 @@
                "lines" : 573
             },
             "part_id" : "layout-and-binding-leaves",
-            "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
+            "sealed_commit" : "e3d023d43b89b082c00be9458a06583fb2a5cd2e",
             "sha256" : "3c339d34af62f703097071ad0d1b54eda1b208178d7ab2b0d3a3bc5099ffd285",
-            "state" : "active"
+            "state" : "archived"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
-               "bytes" : 17381,
+               "bytes" : 18007,
                "line_bytes" : 119,
-               "lines" : 196
+               "lines" : 202
             },
             "part_id" : "table-reading-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-            "sha256" : "f6136a35f12c2c7c2ee6c7e5a33c5e0b4572ec53b30219f9f1f0d56fef03f740",
+            "sha256" : "cb7c0c8dbc2084ac16f0d131a7edfc7f5e2acc36410d1a01ced99bc1703e3122",
             "state" : "active"
          },
          {
@@ -1662,7 +1665,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1798,7 +1801,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.56.c` — `layout-and-binding-leaves`, every leaf closed, is archived.",
+         "`.60` — a register field's sub-field table types the field's sub-fields.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1837,7 +1840,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.67`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.68`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.56.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`"
       ]
    },

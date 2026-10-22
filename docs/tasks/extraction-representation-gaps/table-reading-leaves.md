@@ -184,10 +184,16 @@ here whole.
   `a-table-naming-a-signals-bits-is-its-layout`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56.c`
-  Status: `open` (`2026-10-22`; DOC; opened by `.3.c.iv.c`'s part rollover)
+  Status: `done` (`2026-10-22`; DOC; opened by `.3.c.iv.c`'s part rollover)
   Goal: **`layout-and-binding-leaves`, every leaf closed, is archived.** Its open leaves moved whole to
   `table-reading-leaves` on `2026-10-22`. Acceptance: archive it byte-exact as `.56.a` did (sealed at the rollover
   commit, registry and census entries, repointed card evidence paths), and measure the live totals.
+  **Done `2026-10-22`.** Moved copy -> verify -> use -> delete to
+  `docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md`, sealed at `e3d023d43` (the rollover
+  commit, its last write; blob `159bb866e`, sha256 `3c339d34…` at the seal, the copy and the live file alike). Both
+  contracts mark it `archived` with `archived_from`, `sealed_commit` and `git_blob`; `erg_task_evidence_parts` drops
+  it (11 targets) and `erg_task_evidence_archived_parts` takes it (9 files; per-file bounds unchanged, totals 9x). Two
+  KM cards' evidence paths repointed. Its leaves stay routed to it, every one closed.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.60`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
   Goal: **a register field's sub-field table types the field's sub-fields.** **Reproduce:** ADIv6 *B3-10* lays
