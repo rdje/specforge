@@ -475,7 +475,7 @@ A column title names a signal when it is a declared signal or a collective name 
 - **Member names** come from the first column that is no signal and no code and whose names are distinct.
 - **Other cases.** A table whose every row the converter put in its header is read from its second row on. A column
   that only jointly keys its member, or repeats codes, is left alone here: the next section reads the first, and
-  `.3.g.iii.c` owns the second.
+  `.3.g.iii.c.i` owns the second: such a column is an aliasing encoding, its members sharing codes (`.3.g.iii.c`).
 
 AXI now lowers `(AxPAS (SECURE 0) (NON_SECURE__NS 1) (ROOT 2) (REALM 3) (SYSTEM_AGENT__SA 4) (NON_SECURE_PROTECTED__NSP
 5))`. AHB lowers `(HSIZE (BYTE 0) (HALFWORD 1) (WORD 2) (DOUBLEWORD 3) (HSIZE_4_WORD_LINE 4) (HSIZE_8_WORD_LINE 5))`,
@@ -496,7 +496,7 @@ Such a table is now an EvidenceIR `value_combinations` record (`EXTRACTION-REPRE
 - **Keys.** Two or more columns are titled by different declared names: a signal, a bit or slice of one, a
   collective, a register's field (`CSW.ERRSTOP`), or a field a register declares, written in capitals (`TYPE`).
   Every column is titled and none only by a number. Columns that all name members of one collective (A4.4's
-  `ARCACHE | AWCACHE`) are one key written per channel and are left to `.3.g.iii.c`.
+  `ARCACHE | AWCACHE`) are one key written per channel, read as each channel's aliasing enum (`.3.g.iii.c.i`).
 - **Member and meanings.** The member column is the first other column whose cells are distinct names. The rest are
   meaning columns. Every cell is kept as written (`-`, `0b01 0b10`, `Non-secure`).
 - **Continuations and refusals.** A continuation page joins the table it continues. A table with an empty key cell

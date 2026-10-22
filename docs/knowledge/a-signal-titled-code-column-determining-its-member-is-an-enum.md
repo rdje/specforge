@@ -42,7 +42,7 @@ the evidence convergence loop after the signal-anchor scan, on tables the conver
 
 Left alone: joint keys (`AxPROT[1]` + `AxNSE`) are read as a value combination since `.3.g.iii.b.i`
 ([[a-jointly-keyed-table-is-a-value-combination]]), repeating codes (A4.4's `ARCACHE`/`AWCACHE`)
-`.3.g.iii.c`'s, and untyped mapping tables are not read.
+`.3.g.iii.c.i`'s (an aliasing encoding), and untyped mapping tables are not read.
 
 **Measured `2026-10-21` (31 chains):** 29 identical. AXI gains `AxPAS` (6 members), and AHB's `HSIZE` statements now
 carry the concatenated codes, so `HSIZE` reaches SemanticIR and the `.isf`. Each `manager.isf` gains the type and the

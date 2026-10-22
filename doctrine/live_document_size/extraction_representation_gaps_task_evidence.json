@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c",
-      "literal" : "`.3.g.iii.c` — a code column that maps several members to one code is carried as what it is.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.59",
+      "literal" : "`.59` — an `.isf` enum type is as wide as its largest code.",
       "mode" : "eligible",
       "part_id" : "encoding-and-state-leaves"
    },
@@ -154,13 +154,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
             "metrics" : {
-               "bytes" : 28189,
+               "bytes" : 32233,
                "line_bytes" : 123,
-               "lines" : 312
+               "lines" : 356
             },
             "part_id" : "encoding-and-state-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-            "sha256" : "02e73c28c2b6a90badee43ab3d7a22b0690da3aaefae78fabef3e57204c0ae13",
+            "sha256" : "88f42750fcf00a8d4436e25461f402ce15b23be3058f609fe65b91a06b3bcab9",
             "state" : "active"
          },
          {
@@ -1434,7 +1434,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
       },
@@ -1471,6 +1471,18 @@
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv",
          "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.59",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i",
+         "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
       }
@@ -1600,7 +1612,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.g.iii.c` — a code column that maps several members to one code is carried as what it is.",
+         "`.59` — an `.isf` enum type is as wide as its largest code.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1638,8 +1650,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.57`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.59`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i`"
       ]
    },
    "migration_metadata" : {

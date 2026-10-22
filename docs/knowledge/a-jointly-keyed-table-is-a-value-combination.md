@@ -34,7 +34,7 @@ convergence pass and makes one `value_combinations` record per table:
 - **Keys** (`combination_key_columns`): two or more columns titled by different declared names. A name is a signal, a
   bit or slice of one, a collective, a register's field (`CSW.ERRSTOP`), or a field a register declares, written in
   capitals (`TYPE`); a leading *Value of* is dropped. Every column is titled and none only by a number. Keys that are
-  all members of one collective (A4.4's `ARCACHE | AWCACHE`) are one key per channel, left to `.3.g.iii.c`.
+  all members of one collective (A4.4's `ARCACHE | AWCACHE`) are one key per channel, left to `.3.g.iii.c.i`.
 - **Member and meanings:** the member column is the first other column whose cells are distinct names (no full stop,
   no bullet, more than a number). The other columns are meanings. Every cell is kept as written.
 - **Continuations** join the table their caption names when the headers match (A15.26 spans `table_0239` and

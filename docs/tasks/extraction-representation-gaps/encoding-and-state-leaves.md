@@ -295,12 +295,56 @@ several signals' values, code columns that repeat, tables whose every row is a h
   No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c`
-  Status: `open` (`2026-10-21`; DESIGN; split from `.3.g.iii`)
+  Status: `done` (`2026-10-22`; DESIGN; split from `.3.g.iii`; opened `.3.g.iii.c.i`, `.59`)
   Goal: **a code column that maps several members to one code is carried as what it is.** **Reproduce:** AXI *A4.4*:
   `ARCACHE` `0b1010` is Write-Through No-Allocate and Write-Allocate on reads; today's `ARCACHE` enum keeps 6 of 12
   rows and `AWCACHE` none. Acceptance: decide whether a repeating column is an aliasing encoding (code -> members) or
   stays a residual. Decide whether today's 6-member enum is kept, re-read or withdrawn, and how the parenthesized
   alternates (*0b1110 ( 0b0110 )*) read. Measure AXI and the wire golds.
+  **Measured `2026-10-22`.** A4.4 (`table_0058`) gives each of 12 memory types an `ARCACHE` and an `AWCACHE` code.
+  Per column a member has one preferred code, but each column repeats four codes. On reads `0b1010` is both
+  Write-Through No-Allocate and Write-Allocate, because a read cannot carry the write-allocate hint. On writes `0b0110`
+  is both Write-Through No-Allocate and Read-Allocate.
+  The document states the rest: *Values in brackets are permitted but not preferred. Values that are not shown in the
+  table are reserved* (`statement_1272`). Today EvidenceIR has 10 `Enum ARCACHE` statements; the two bracketed rows
+  parse no code. SemanticIR then drops both members of each repeated code (`KG-ISF-COMPLETENESS.5.xiv.a`: *no encoding
+  assigns one code to two members*), so `manager.isf` keeps 6 members and `AWCACHE` has none. The rule's premise is
+  false here. Its default still holds for the misreads it was written against (9 enums, 68 members to 20, all wrong
+  columns or one-bit reads). FSMGen strict accepts an enum with two members on one value (probe on the pin). No
+  kg-bench gold or seed reads `ARCACHE`'s members; the two AXI fixtures that name it are sideband-stability golds.
+  **Found:** the `.isf` enum type's width comes from the member count, not the largest code
+  (`isf_ir.rs`: `members.len().next_power_of_two()`). 5 of the 22 enums in the 31 chains' emitted `.isf` overflow
+  their type, all in AXI: `AWATOP` 4 bits for 49, `AxDOMAIN` 1 for 3, `AWSNOOP` 2 for 11, `ARSNOOP` 2 for 13, `ARCACHE`
+  3 for 15. FSMGen's contract makes an enum's values and its co-declared type alias distinct roles, so it rightly
+  accepts this; the defect is SPECFORGE's. `.59` owns it.
+  **Decided.**
+  - **An aliasing encoding.** A channel's code column that gives every member a code, where two members may share
+    one, is that signal's aliasing enum: member -> preferred code, kept whole, with shared codes. It is minted only by
+    an explicit reader for the A4.4 shape: an encoding table whose signal-titled code columns name members of one
+    collective (one key per channel, the shape `.3.g.iii.b.i` routed here), with distinct member names. The collision
+    rule stays the default for every other reader, and the aliasing enum is exempt only because its reader says so.
+  - **Brackets.** The unbracketed code is the member's code. The bracketed one is a permitted alternative
+    (`statement_1272`), carried with the member in EvidenceIR and not emitted. An `.isf` member has one value, and a
+    second name for it would be invented.
+  - **Today's enum** is re-read, not withdrawn. `ARCACHE` keeps its 6 members unchanged and gains the other 6;
+    `AWCACHE` gains its 12.
+  - **Order.** `.59` (an enum type as wide as its largest code) lands first, because the re-read `ARCACHE` codes reach
+    15. Then `.3.g.iii.c.i`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.59`
+  Status: `open` (`2026-10-22`; CODE; found by `.3.g.iii.c`)
+  Goal: **an `.isf` enum type is as wide as its largest code.** **Reproduce:** AXI's `manager.isf` declares `(type
+  AWATOP (bits 4))` for members up to 49, and `AxDOMAIN` 1 bit for 3, `AWSNOOP` 2 for 11, `ARSNOOP` 2 for 13, `ARCACHE`
+  3 for 15; `isf_ir.rs` sizes the type from the member count. Acceptance: size each enum type from its largest member
+  code (at least 1 bit); measure every chain's `.isf` and FSMGen strict; no member changes.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i`
+  Status: `open` (`2026-10-22`; CODE; split from `.3.g.iii.c`)
+  Goal: **a channel's code column that gives every member a code is that signal's aliasing enum, and a bracketed code
+  is the member's permitted alternative.** **Reproduce:** AXI *A4.4*: `ARCACHE` keeps 6 of 12 members, `AWCACHE` none,
+  and the bracketed rows parse no code. Acceptance: implement `.3.g.iii.c`'s decisions. The reader and its carrier
+  must mark the aliasing enum so SemanticIR's collision rule exempts it alone. Measure AXI and every chain, then
+  rebuild and FSMGen strict.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.57`
   Status: `open` (`2026-10-21`; DESIGN; found by `.3.g.iii`)
