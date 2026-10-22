@@ -1,8 +1,10 @@
 # ISF Enums: Which Codes Reach The Adapter
 
 The `.isf` adapter lowers a recovered enumeration to a backing `(type NAME (bits k))` and an `(enums …)`
-family; how it renders them is in [ISF Adapter](isf-adapter.md). This chapter covers the question a
-reader of an emitted `.isf` asks next: which table codes qualify as an enum, how each member gets its
+family; how it renders them is in [ISF Adapter](isf-adapter.md). The type is as wide as the largest member code
+(`EXTRACTION-REPRESENTATION-GAPS.59`). It used to be sized from the member count, which left AXI's `AWATOP` 4 bits
+wide for code 49 and `ARCACHE` 3 bits for 15; FSMGen checks an enum's values against nothing, so the width has to be
+right where it is written. This chapter covers the question a reader of an emitted `.isf` asks next: which table codes qualify as an enum, how each member gets its
 name, and where its value comes from, including what happens when the document never states one.
 
 ### Only *named* enums reach the `.isf` — no "Table N" junk

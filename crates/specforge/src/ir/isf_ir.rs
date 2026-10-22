@@ -968,23 +968,23 @@ impl IsfIr {
             .iter()
             .filter(|s| matches!(s.kind, SymbolDefinitionKind::Enum))
         {
-            let bits = s.members.len().max(1).next_power_of_two().trailing_zeros();
+            let members: Vec<(String, String)> = s
+                .members
+                .iter()
+                .map(|m| {
+                    (
+                        m.member_name.clone(),
+                        render_isf_control_expression(&m.value),
+                    )
+                })
+                .collect();
             types.push(IsfTypeDef {
                 name: s.symbol_name.clone(),
-                bits: if bits < 1 { 1 } else { bits },
+                bits: enum_type_bits(&members),
             });
             enums.push(IsfEnum {
                 type_name: s.symbol_name.clone(),
-                members: s
-                    .members
-                    .iter()
-                    .map(|m| {
-                        (
-                            m.member_name.clone(),
-                            render_isf_control_expression(&m.value),
-                        )
-                    })
-                    .collect(),
+                members,
             });
         }
 
@@ -2176,6 +2176,46 @@ fn is_safe_isf_scalar_value(value: &str) -> bool {
 /// passes, so a currently-clean enum stays byte-identical. Universal token grammar, no name list (ADR 0006).
 fn isf_enum_value_is_emittable_literal(value: &str) -> bool {
     !(value.len() >= 4 && value.bytes().all(|b| b == b'0' || b == b'1'))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.59` — the width of an enum's co-declared type: wide enough for its largest member
+/// code (at least 1 bit). Sizing it from the member count left AXI's `AWATOP` 4 bits wide for code 49 and `ARCACHE` 3
+/// bits for 15. FSMGen gives an enum's values and its type alias distinct roles and checks neither against the other,
+/// so the width must be right where it is written. A member whose value is no integer literal leaves the count-based
+/// width, the only bound left to state.
+fn enum_type_bits(members: &[(String, String)]) -> u32 {
+    let by_count = members
+        .len()
+        .max(1)
+        .next_power_of_two()
+        .trailing_zeros()
+        .max(1);
+    let codes: Option<Vec<u128>> = members
+        .iter()
+        .map(|(_, value)| {
+            let value = value.trim();
+            if let Some(hex) = value
+                .strip_prefix("0x")
+                .or_else(|| value.strip_prefix("0X"))
+            {
+                u128::from_str_radix(hex, 16).ok()
+            } else if let Some(binary) = value
+                .strip_prefix("0b")
+                .or_else(|| value.strip_prefix("0B"))
+            {
+                u128::from_str_radix(binary, 2).ok()
+            } else {
+                value.parse::<u128>().ok()
+            }
+        })
+        .collect();
+    match codes {
+        Some(codes) if !codes.is_empty() => {
+            let largest = codes.into_iter().max().unwrap_or(0);
+            (u128::BITS - largest.leading_zeros()).max(1)
+        }
+        _ => by_count,
+    }
 }
 
 /// An enum is EMITTABLE iff it is non-empty AND every member value is a whitespace-free scalar that
@@ -8099,6 +8139,49 @@ mod tests {
         assert!(out.contains("(mode (IDLE 0) (BUSY 1))"), "{out}");
         assert!(!out.contains("SKIP"), "{out}");
         assert!(!out.contains("(bad"), "{out}");
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.59` — an enum type is as wide as its largest code, not its member count.
+    #[test]
+    fn an_enum_type_is_as_wide_as_its_largest_code() {
+        let members = |values: &[&str]| -> Vec<(String, String)> {
+            values
+                .iter()
+                .enumerate()
+                .map(|(i, v)| (format!("M{i}"), v.to_string()))
+                .collect()
+        };
+        assert_eq!(
+            super::enum_type_bits(&members(&["48", "49", "1", "2"])),
+            6,
+            "AWATOP's 49"
+        );
+        assert_eq!(
+            super::enum_type_bits(&members(&["0", "1", "2", "3", "14", "15"])),
+            4,
+            "ARCACHE's 15"
+        );
+        assert_eq!(
+            super::enum_type_bits(&members(&["0", "3"])),
+            2,
+            "AxDOMAIN's 3, two members"
+        );
+        assert_eq!(
+            super::enum_type_bits(&members(&["0", "1", "2", "3", "4", "5", "6", "7"])),
+            3,
+            "a dense code set keeps its width"
+        );
+        assert_eq!(
+            super::enum_type_bits(&members(&["0"])),
+            1,
+            "at least one bit"
+        );
+        assert_eq!(super::enum_type_bits(&members(&["0x1F", "0b11"])), 5);
+        assert_eq!(
+            super::enum_type_bits(&members(&["0", "WIDTH", "2"])),
+            2,
+            "a non-literal value leaves the count-based width"
+        );
     }
 
     #[test]

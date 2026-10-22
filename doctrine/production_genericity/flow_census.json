@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-G-III-B-IV-RESIDUAL-TEXTS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-59-ENUM-TYPE-WIDTH",
    "baseline": {
-    "analyzed_functions": 2852,
-    "decision_sites": 15836,
-    "helper_edges": 20335,
-    "semantic_macros": 1637
+    "analyzed_functions": 2853,
+    "decision_sites": 15843,
+    "helper_edges": 20340,
+    "semantic_macros": 1638
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 7,
+    "decision_sites": 1,
     "helper_edges": 5,
-    "semantic_macros": 1
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv: a label matches a member written with its parenthesized abbreviation (name_before_abbreviation); a keyed state's residual names the combination stating its encoding; a combination's residual says why it stays."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.59",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.59: an .isf enum type is as wide as its largest member code (enum_type_bits), not its member count."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -332,11 +332,34 @@ several signals' values, code columns that repeat, tables whose every row is a h
     15. Then `.3.g.iii.c.i`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.59`
-  Status: `open` (`2026-10-22`; CODE; found by `.3.g.iii.c`)
+  Status: `done` (`2026-10-22`; CODE; found by `.3.g.iii.c`; checklist below)
   Goal: **an `.isf` enum type is as wide as its largest code.** **Reproduce:** AXI's `manager.isf` declares `(type
   AWATOP (bits 4))` for members up to 49, and `AxDOMAIN` 1 bit for 3, `AWSNOOP` 2 for 11, `ARSNOOP` 2 for 13, `ARCACHE`
   3 for 15; `isf_ir.rs` sizes the type from the member count. Acceptance: size each enum type from its largest member
   code (at least 1 bit); measure every chain's `.isf` and FSMGen strict; no member changes.
+  **Done `2026-10-22`.** `enum_type_bits` sizes the co-declared type from the largest integer member code: decimal,
+  `0x` or `0b`, at least 1 bit. An enum with a non-literal member keeps the count-based width. With distinct codes
+  the largest one needs at least as many bits as the count, so a type only widens. AXI's `manager.isf` was rebuilt:
+  `AWATOP` 4 -> 6, `AxDOMAIN` 1 -> 2, `AWSNOOP` 2 -> 4, `ARSNOOP` 2 -> 4, `ARCACHE` 3 -> 4. Its members are unchanged,
+  and FSMGen strict passes with 0 diagnostics and no stderr. The other four emitted `.isf` files are unchanged.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.59` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — every enum of the 31 chains' 5 emitted `.isf` files against its type: 22 enums, 5
+  overflowing, all AXI's.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/isf_ir.rs` sized the type
+  `members.len().next_power_of_two()`, a count, so a sparse code set (`AWATOP` 48, 49) outgrew it, and FSMGen's
+  contract checks enum values against no type. New `enum_type_bits`. RED 2/2, the file restored byte-identically:
+  the width from the member count, no one-bit floor.
+- [x] **ADDRESSED (verified)** — AXI rebuilt stage by stage; only its `manager.isf` type lines move; FSMGen strict
+  clean.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `6096ebd16`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,917 passed. `flow_census.json` rolled (+1 function, +1 decision site,
+  +5 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the members' own codes; no enum, document or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (the type's width). No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i`
   Status: `open` (`2026-10-22`; CODE; split from `.3.g.iii.c`)
