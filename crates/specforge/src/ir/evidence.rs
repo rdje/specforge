@@ -828,6 +828,10 @@ pub struct SignalPresenceRecord {
     /// (AXI *B2.1 Key to signals table*); `None` when no legend, or more than one, covers them.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub legend_matrix_id: Option<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.66 — the two-column key table the codes are read against, when the legend is
+    /// no matrix (AHB *Table A-1 Key for Table A-2 and Table A-3*, `Code | Meaning`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub legend_table_id: Option<String>,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a — the value a document states a signal takes when it is
@@ -2762,7 +2766,11 @@ impl EvidenceIr {
         // EXTRACTION-REPRESENTATION-GAPS.64 — a matrix cell's or column title's mark cites the note printed beside it.
         bind_matrix_notes(&mut matrix_tables, source_ir);
         // EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii — a presence code reads the legend the document states for it.
-        bind_presence_legends(&mut signal_presence_records, &matrix_tables);
+        bind_presence_legends(
+            &mut signal_presence_records,
+            &matrix_tables,
+            &source_ir.structured_tables,
+        );
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
         let equivalence_rules = equivalence_rule_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
@@ -30635,6 +30643,7 @@ pub fn capture_signal_presence_rows(
             absent_value: None,
             qualified_absent_values: Vec::new(),
             legend_matrix_id: None,
+            legend_table_id: None,
         });
     }
 
@@ -32611,22 +32620,99 @@ fn bind_matrix_notes(matrices: &mut [MatrixTableRecord], source_ir: &SourceIr) {
 /// interfaces`, `YM | Mandatory | Optional`). A presence table binds to it when every code the table uses is one of
 /// the legend's row keys, and to no legend when two qualify or none does: AXI *A13.3* uses `C`, which *B2.1* does not
 /// define, so its codes stay as written. Each bound code gains the legend row's cells by column, as written.
-fn bind_presence_legends(records: &mut [SignalPresenceRecord], matrices: &[MatrixTableRecord]) {
-    let legends: Vec<(&MatrixTableRecord, BTreeMap<&str, &MatrixRow>)> = matrices
+///
+/// `EXTRACTION-REPRESENTATION-GAPS.66` — a two-column key table is a legend too, though no matrix holds it: AHB
+/// *Table A-1* (`Code | Meaning`, `OC` *Optional conditional, …*). Its first column's cells must be distinct and every
+/// row filled; it competes with the matrices on the same terms, by the codes it covers, never by its title.
+fn bind_presence_legends(
+    records: &mut [SignalPresenceRecord],
+    matrices: &[MatrixTableRecord],
+    structured_tables: &[StructuredTableRecord],
+) {
+    struct Legend<'a> {
+        matrix_id: Option<&'a str>,
+        table_id: Option<&'a str>,
+        columns: Vec<String>,
+        rows: BTreeMap<&'a str, &'a [String]>,
+    }
+    let mut legends: Vec<Legend<'_>> = matrices
         .iter()
         .filter(|matrix| {
             matrix.row_key_titles.len() == 1 && matrix.cell_class == MatrixCellClass::Modal
         })
-        .map(|matrix| {
-            let rows: BTreeMap<&str, &MatrixRow> = matrix
+        .filter_map(|matrix| {
+            let rows: BTreeMap<&str, &[String]> = matrix
                 .rows
                 .iter()
-                .filter_map(|row| row.keys.first().map(|key| (key.as_str(), row)))
+                .filter_map(|row| Some((row.keys.first()?.as_str(), row.cells.as_slice())))
                 .collect();
-            (matrix, rows)
+            (rows.len() == matrix.rows.len()).then(|| Legend {
+                matrix_id: Some(matrix.matrix_id.as_str()),
+                table_id: None,
+                columns: matrix
+                    .column_keys
+                    .iter()
+                    .map(|keys| keys.last().cloned().unwrap_or_default())
+                    .collect(),
+                rows,
+            })
         })
-        .filter(|(matrix, rows)| rows.len() == matrix.rows.len())
         .collect();
+    let held: BTreeSet<&str> = matrices
+        .iter()
+        .flat_map(|matrix| matrix.table_ids.iter().map(String::as_str))
+        .chain(records.iter().map(|record| record.table_id.as_str()))
+        .collect();
+    let key_rows: Vec<(&StructuredTableRecord, Vec<(&str, &str)>)> = structured_tables
+        .iter()
+        .filter(|table| !held.contains(table.table_id.as_str()))
+        .filter_map(|table| {
+            let header = table.header_rows.last()?;
+            if header.len() != 2 || table.body_rows.len() < 2 {
+                return None;
+            }
+            let rows: Vec<(&str, &str)> = table
+                .body_rows
+                .iter()
+                .map(|row| match row.as_slice() {
+                    [code, meaning] => Some((code.text.trim(), meaning.text.trim())),
+                    _ => None,
+                })
+                .collect::<Option<_>>()?;
+            let distinct: BTreeSet<&str> = rows.iter().map(|(code, _)| *code).collect();
+            (distinct.len() == rows.len()
+                && rows
+                    .iter()
+                    .all(|(code, meaning)| !code.is_empty() && !meaning.is_empty()))
+            .then_some((table, rows))
+        })
+        .collect();
+    let key_cells: Vec<Vec<String>> = key_rows
+        .iter()
+        .map(|(_, rows)| {
+            rows.iter()
+                .map(|(_, meaning)| meaning.to_string())
+                .collect()
+        })
+        .collect();
+    for ((table, rows), cells) in key_rows.iter().zip(&key_cells) {
+        legends.push(Legend {
+            matrix_id: None,
+            table_id: Some(table.table_id.as_str()),
+            columns: vec![table.header_rows.last().map_or_else(String::new, |header| {
+                header[1]
+                    .text
+                    .split_whitespace()
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            })],
+            rows: rows
+                .iter()
+                .zip(cells)
+                .map(|((code, _), meaning)| (*code, std::slice::from_ref(meaning)))
+                .collect(),
+        });
+    }
     if legends.is_empty() {
         return;
     }
@@ -32648,8 +32734,11 @@ fn bind_presence_legends(records: &mut [SignalPresenceRecord], matrices: &[Matri
             let covering: Vec<usize> = legends
                 .iter()
                 .enumerate()
-                .filter(|(_, (_, rows))| {
-                    !codes.is_empty() && codes.iter().all(|code| rows.contains_key(code.as_str()))
+                .filter(|(_, legend)| {
+                    !codes.is_empty()
+                        && codes
+                            .iter()
+                            .all(|code| legend.rows.contains_key(code.as_str()))
                 })
                 .map(|(index, _)| index)
                 .collect();
@@ -32663,16 +32752,17 @@ fn bind_presence_legends(records: &mut [SignalPresenceRecord], matrices: &[Matri
         let Some(&index) = binding.get(&record.table_id) else {
             continue;
         };
-        let (matrix, rows) = &legends[index];
-        record.legend_matrix_id = Some(matrix.matrix_id.clone());
+        let legend = &legends[index];
+        record.legend_matrix_id = legend.matrix_id.map(str::to_string);
+        record.legend_table_id = legend.table_id.map(str::to_string);
         for entry in &mut record.variant_presence {
-            if let Some(row) = rows.get(entry.code.as_str()) {
-                entry.legend = matrix
-                    .column_keys
+            if let Some(cells) = legend.rows.get(entry.code.as_str()) {
+                entry.legend = legend
+                    .columns
                     .iter()
-                    .zip(&row.cells)
-                    .map(|(keys, cell)| PresenceLegendMeaning {
-                        column: keys.last().cloned().unwrap_or_default(),
+                    .zip(cells.iter())
+                    .map(|(column, cell)| PresenceLegendMeaning {
+                        column: column.clone(),
                         meaning: cell.clone(),
                     })
                     .collect();
@@ -50451,13 +50541,14 @@ The control register.
             absent_value: None,
             qualified_absent_values: Vec::new(),
             legend_matrix_id: None,
+            legend_table_id: None,
         };
         let mut records = vec![
             presence("0", "table_summary", &["Y", "YM"]),
             presence("1", "table_summary", &["N"]),
             presence("2", "table_versions", &["Y", "C"]),
         ];
-        super::bind_presence_legends(&mut records, std::slice::from_ref(&legend));
+        super::bind_presence_legends(&mut records, std::slice::from_ref(&legend), &[]);
         assert_eq!(
             records[0].legend_matrix_id.as_deref(),
             Some("matrix_table_0007")
@@ -50483,8 +50574,83 @@ The control register.
         let mut twice = vec![presence("3", "table_summary", &["Y"])];
         let mut other = legend.clone();
         other.matrix_id = "matrix_table_0008".to_string();
-        super::bind_presence_legends(&mut twice, &[legend, other]);
+        super::bind_presence_legends(&mut twice, &[legend, other], &[]);
         assert!(twice[0].legend_matrix_id.is_none());
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.66` — a two-column key table whose codes cover a presence table's is that
+    /// table's legend; a two-column table with a repeated code is none, and two covering keys bind neither.
+    #[test]
+    fn a_two_column_code_key_is_a_legend() {
+        let cell = |text: &str, header: bool| make_table_cell(text, header);
+        let table = |id: &str, header: [&str; 2], rows: &[[&str; 2]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: (1 + rows.len()) as u32,
+            col_count: 2,
+            header_rows: vec![header.iter().map(|text| cell(text, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|row| row.iter().map(|text| cell(text, false)).collect())
+                .collect(),
+        };
+        let presence = |id: &str, codes: &[&str]| super::SignalPresenceRecord {
+            presence_id: format!("presence_{id}"),
+            signal_name: format!("H{id}"),
+            presence_condition: None,
+            variant_presence: codes
+                .iter()
+                .map(|code| super::VariantPresenceEntry {
+                    variant_label: "AHB5".to_string(),
+                    code: code.to_string(),
+                    legend: Vec::new(),
+                })
+                .collect(),
+            table_id: "table_summary".to_string(),
+            absent_value: None,
+            qualified_absent_values: Vec::new(),
+            legend_matrix_id: None,
+            legend_table_id: None,
+        };
+        let key = table(
+            "table_key",
+            ["Code", "Meaning"],
+            &[
+                ["Y", "Mandatory for inputs and outputs"],
+                ["N", "Must not be present"],
+                ["OC", "Optional conditional"],
+            ],
+        );
+        // A repeated first cell is no key.
+        let repeated = table(
+            "table_repeated",
+            ["Code", "Meaning"],
+            &[["Y", "Yes"], ["Y", "Again"], ["OC", "Other"], ["N", "No"]],
+        );
+        let mut records = vec![presence("0", &["Y", "OC"]), presence("1", &["N"])];
+        super::bind_presence_legends(&mut records, &[], &[key.clone(), repeated]);
+        assert_eq!(records[0].legend_table_id.as_deref(), Some("table_key"));
+        assert!(records[0].legend_matrix_id.is_none());
+        assert_eq!(
+            records[0].variant_presence[1]
+                .legend
+                .iter()
+                .map(|meaning| (meaning.column.as_str(), meaning.meaning.as_str()))
+                .collect::<Vec<_>>(),
+            [("Meaning", "Optional conditional")]
+        );
+        // Two keys covering the codes: neither is the table's.
+        let mut twice = vec![presence("2", &["Y"])];
+        let mut other = key.clone();
+        other.table_id = "table_key_copy".to_string();
+        super::bind_presence_legends(&mut twice, &[], &[key, other]);
+        assert!(twice[0].legend_table_id.is_none());
+        assert!(twice[0].variant_presence[0].legend.is_empty());
     }
 
     /// `EXTRACTION-REPRESENTATION-GAPS.64` — a matrix title's or cell's trailing mark cites the note printed beside the
@@ -67504,6 +67670,7 @@ mod stated_absent_value_tests {
             absent_value: None,
             qualified_absent_values: Vec::new(),
             legend_matrix_id: None,
+            legend_table_id: None,
         }
     }
 
@@ -67758,6 +67925,7 @@ mod labeled_absent_value_tests {
             absent_value: None,
             qualified_absent_values: Vec::new(),
             legend_matrix_id: None,
+            legend_table_id: None,
         }
     }
 
@@ -68519,6 +68687,7 @@ mod check_coverage_tests {
             absent_value: None,
             qualified_absent_values: Vec::new(),
             legend_matrix_id: None,
+            legend_table_id: None,
         }
     }
 
@@ -68790,6 +68959,7 @@ mod collective_signal_name_tests {
             absent_value: None,
             qualified_absent_values: Vec::new(),
             legend_matrix_id: None,
+            legend_table_id: None,
         }
     }
 

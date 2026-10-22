@@ -521,12 +521,45 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   `captured-region-residual-carrier`; `docs/research/category-family-census.md`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.66`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.vi`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.vi`; checklist below)
   Goal: **a one-column code key is a legend.** **Reproduce:** AHB *Table A-1 Key for Table A-2 and Table A-3* (`Code |
   Meaning`: `Y` *Mandatory for inputs and outputs*, `N`, `O`, `C`, `OC`) defines every code AHB's 80 presence rows
   use, but it has one data column, so `read_matrix_tables` does not take it and `bind_presence_legends` finds no
   legend; `.3.c.v.iii` recorded AHB's codes as having none. Acceptance: read a code key whose codes cover a presence
   table's (by codes, never by a vocabulary), bind it as `.3.c.v.iii` binds *B2.1*, and measure every chain.
+  **Done `2026-10-22`.**
+  - **Candidates.** `bind_presence_legends` takes the SourceIR tables too. Beside the legend matrices, a table is a
+    candidate when its last header row has two columns, it has two or more body rows of two filled cells, its first
+    cells are distinct, and no matrix or presence record holds it. Matrices and keys compete on the same terms: a
+    presence table binds to the one candidate whose codes include every code it uses, and to none when two do.
+  - **Record.** A key binding sets `SignalPresenceRecord.legend_table_id` (`legend_matrix_id` stays for a matrix), and
+    each code gains the key's second column as `legend` (`Meaning`: *Optional conditional, …*).
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AHB's 40 presence records (*A-2*, *A-3*) bind to *Table A-1*
+    (`table_0032`), all 80 entries. No two-column key covers AXI's codes, so *B2.1* keeps them; APB5 prints no key.
+    The book's line that AHB's codes had no legend was true only of matrices; it now says what binds them.
+  - **Rebuilt.** AHB rebuilt stage by stage: only `signal_presence_records` moved in SemanticIR and IntentIR; its 43
+    residuals and `manager.isf` are unchanged, and `check_chain_currency.sh` confirms the ruleset did not move.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.66` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — every chain's presence tables and the two-column tables whose first cells cover their
+  codes (a prototype over the 31 chains: AHB's three tables, covered by *A-1* alone; none elsewhere).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `bind_presence_legends` took only matrices,
+  and the matrix reader needs two data columns. RED 4/4, the file restored byte-identically: a key table never a
+  candidate, a repeated code taken as a key, two covering legends binding the first, the key table not recorded;
+  each fails `a_two_column_code_key_is_a_legend` (the third also `a_presence_code_reads_its_legend`).
+- [x] **ADDRESSED (verified)** — AHB's 80 bound entries, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `72a84a6a5`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,930 passed. `flow_census.json` rolled (+3 decision sites, +1 helper edge,
+  +1 semantic macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a key is found by its shape and the codes it covers, never by its title or a code
+  vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (AHB's codes bind to *A-1*) and `pipeline/semanticir.md`
+  (`legend_table_id`); KM card `a-two-way-table-of-marks-is-a-matrix`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
   Goal: **a table listing the signals a rule names is the rule's operands.** **Reproduce:** AXI *Table A6.5 Signals

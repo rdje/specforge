@@ -3,6 +3,7 @@ id: a-two-way-table-of-marks-is-a-matrix
 title: A two-way table whose cells are marks or modal words is a matrix (matrix_tables), unless another reader holds it
 answers:
   - "what does a presence code like YM mean (bind_presence_legends, .3.c.v.iii)"
+  - "what does AHB's presence code OC mean (Table A-1, legend_table_id, .66)"
   - "what does a footnoted matrix cell like Y 2 or a title like Update 1 mean (MatrixNote, bind_matrix_notes, .64)"
   - "what is the isf_protocol_matrix_table residual (.3.c.v.ii)"
   - "what is matrix_tables / MatrixTableRecord / read_matrix_tables (.3.c.v.i)"
@@ -52,7 +53,9 @@ requirement, version or effect matrix states configuration the `.isf` does not c
 with one label column and modal cells as a legend. A presence table binds to it when every code the
 table uses is a row key of exactly one such legend. Each `VariantPresenceEntry` then gains `legend`
 (column, meaning) and the record `legend_matrix_id`. AXI: 297 of 306 presence rows bind to *B2.1*;
-*A13.3* uses `C`, which *B2.1* does not define.
+*A13.3* uses `C`, which *B2.1* does not define. Since `.66` (`2026-10-22`) a two-column key table
+(distinct codes, every row filled, no matrix or presence table) competes on the same terms and is
+recorded as `legend_table_id`: AHB's 80 presence entries bind to *Table A-1*.
 
 **A cell's note (`.64`, `2026-10-22`).** `bind_matrix_notes` reads each data-column title's and cell's
 trailing marks (`trailing_note_marks`: `Y 2`, `O [2]`, `State 1, 2`; a cell of marks alone has none)

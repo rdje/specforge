@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why does a field repeat on value sub-rows (row-spanning cells)
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > why does a learned table kind not re-type a bit layout (is_recognized_layout_header)
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -296,5 +298,3 @@
   > why does the MPAM 'must be included' sentence extract nothing
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why does the OpenCAPI AFU Address Space Usage note emit no ISF
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > why does the OpenCAPI Certified Definition emit no ISF

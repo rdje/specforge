@@ -3119,6 +3119,7 @@ mod tests {
                 }],
                 table_id: "table_presence".to_string(),
                 legend_matrix_id: None,
+                legend_table_id: None,
                 absent_value: None,
                 qualified_absent_values: Vec::new(),
             },
@@ -3133,6 +3134,7 @@ mod tests {
                 }],
                 table_id: "table_presence".to_string(),
                 legend_matrix_id: None,
+                legend_table_id: None,
                 absent_value: Some(StatedAbsentValue {
                     value: "0b000".to_string(),
                     supporting_statement_ids: vec!["statement_absent".to_string()],
