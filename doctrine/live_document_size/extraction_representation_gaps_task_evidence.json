@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b",
-      "literal" : "`.3.c.iv.b` — a signal's bit described as a named sub-field is typed.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i",
+      "literal" : "`.3.c.iv.b.i` — a table naming a signal's bit sub-fields is typed.",
       "mode" : "eligible",
       "part_id" : "encoding-and-state-leaves"
    },
@@ -154,13 +154,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — encoding and state leaves",
             "metrics" : {
-               "bytes" : 49971,
+               "bytes" : 56823,
                "line_bytes" : 128,
-               "lines" : 551
+               "lines" : 627
             },
             "part_id" : "encoding-and-state-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/encoding-and-state-leaves.md",
-            "sha256" : "9fcc2fcd24297f313ff277eecfc0b9a68de7bca6557b1afd61f73a05a6816d4b",
+            "sha256" : "33d26f68e8272e1f508fa1c80a5002bb1096a4acaee3d757f36d7a64de22a602",
             "state" : "active"
          },
          {
@@ -1500,6 +1500,30 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "encoding-and-state-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "encoding-and-state-leaves"
@@ -1630,7 +1654,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.iv.b` — a signal's bit described as a named sub-field is typed.",
+         "`.3.c.iv.b.i` — a table naming a signal's bit sub-fields is typed.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1666,7 +1690,10 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.60`"
       ]
    },
    "migration_metadata" : {

@@ -409,11 +409,39 @@ several signals' values, code columns that repeat, tables whose every row is a h
   `a-jointly-keyed-table-is-a-value-combination` amended. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b`
-  Status: `open` (`2026-10-22`; DESIGN; split from `.3.c.iv`)
+  Status: `done` (`2026-10-22`; DESIGN; split from `.3.c.iv`; decision below; opened `.3.c.iv.b.i`, `.3.c.iv.b.ii`,
+  `.3.c.iv.c`, `.60`)
   Goal: **a signal's bit described as a named sub-field is typed.** **Reproduce:** AHB *3-6* (*Bit | Name |
   Description*) and APB's `PPROT` table (*PPROT[0] | Normal or Privileged | … | LOW indicates normal access …*) reach
   no record. Acceptance: decide the record (bit, name, description, the meaning per level as written), its carrier to
   IntentIR, and how it relates to the signal's own record; measure every chain's row-per-bit tables; open the CODE leaf.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.b`)
+  Goal: **a table naming a signal's bit sub-fields is typed.** **Reproduce:** AHB *3-6*, APB-E `table_0007`, AXI-L
+  *A12.3*-*A12.6* reach EvidenceIR as raw rows only. Acceptance: the `signal_layouts` surface, its shape and level
+  reading as `.3.c.iv.b` decided; every other family of the 23 tables untouched; measure the 31 chains; amend the
+  book's *captured region* sentence.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii`
+  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.b`)
+  Goal: **a signal's sub-field layout reaches IntentIR, and the adapter names it.** Acceptance: carry `signal_layouts`
+  through SemanticIR to IntentIR; an adapter residual per layout, naming any sub-field past its width parameter's
+  default; `.isf` texts unchanged and FSMGen-strict-clean; rebuild what moves.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
+  Goal: **a signal laid out per message kind is read.** **Reproduce:** AXI-L *A15.20*-*A15.22* and their continuations
+  give each `ACADDR` bit a constant or a source field (`VA[56]`) per TLBI/BPI/VICI/PICI message part, and no reader
+  takes them. Acceptance: decide the record (a layout per message kind, with constant and source-field bits), how it
+  joins the message kinds' encodings and `DOC-INTENT-TAXONOMY.4b`'s layouts, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.60`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
+  Goal: **a register field's sub-field table types the field's sub-fields.** **Reproduce:** ADIv6 *B3-10* lays
+  `IDCODE`'s `DESIGNER` (`bits[11:1]`) out as *Continuation code* `Bits[11:8]` and *Identity code* `Bits[7:1]`, with
+  ARM's values; `RegisterFieldRecord` has no sub-fields. Acceptance: decide the carrier (as `MessageSubField` did for
+  message fields, `.55.b.iv.b.i`), how the register's bit positions map onto the field's, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.59`
   Status: `done` (`2026-10-22`; CODE; found by `.3.g.iii.c`; checklist below)
@@ -517,6 +545,54 @@ several signals' values, code columns that repeat, tables whose every row is a h
   - **Upper header rows.** A reader takes a table's last header row as its columns, so an upper row's qualifier is
     lost (*TRANSMITTER* or *RECEIVER*, *MTE_Support = Basic*). `.57.a` measures how many lifted tables keep more than
     one header row and routes each to the leaf owning its family's reader.
+
+- **`.3.c.iv.b`'s measurement and decision** (`2026-10-22`).
+  **Measured `2026-10-22`** (31 chains; `.project-data/tmp/erg-3civb/scan2.py`). 23 tables have a column whose every
+  body cell, or most of them, is a slice of one name (`SIG[n]`, `SIG[h:l]`). They fall into five families.
+  - **A signal's named sub-fields: 6.** AHB *3-6* (*Bit | Name | Description*, `HPROT[0]` … `[6]`), APB-E `table_0007`
+    (*PPROT | Protection | Description | Comments*, `PPROT[0]` … `[2]`, each comment *LOW indicates … HIGH indicates
+    …*) and AXI-L *A12.3*-*A12.6* (*Field | Description | Width | Mapping*: `MPAM_NS`, `PARTID`, `PMG` onto `AxMPAM`
+    slices; two layouts per MPAM width, chosen by `RME_Support`, which put `PARTID` at different bits). Each reaches
+    EvidenceIR only as raw row statements (AHB 8, APB 4, AXI-L 2 per table); no record holds a bit's name.
+  - **A signal's bits laid out per message kind: 6.** AXI-L *A15.20*-*A15.22* and their continuations: a row per
+    `ACADDR` bit, a column per TLBI/BPI/VICI/PICI message part, each cell a constant (`0b0`) or a source field
+    (`VA[56]`, `PA[51]`). No reader takes them: `.3.c.iv.c`.
+  - **A register field's bits mapped onto signal bits: 5.** ADIv6 *E1-1*-*E1-4* and the caption-less AHB map
+    (`table_0205`: a register bit number beside `HPROT[n]`). Read since `.41.e` and `.41.g` as `signal_bindings`.
+  - **Packet and byte layouts: 5.** AXI-L `table_0042`, ADIv6 *C2-4*, *C3-3* and `table_0113`, CHI C2C `table_0006`:
+    `DOC-INTENT-TAXONOMY.4b`, as `.57.a` routed them.
+  - **A register field's sub-fields: 1.** ADIv6 *B3-10* lays `IDCODE`'s `DESIGNER` out as *Continuation code*
+    `Bits[11:8]` and *Identity code* `Bits[7:1]`; `Bits` is no signal, and no record types a register field's
+    sub-fields: `.60`.
+  **Decided.**
+  - **The record.** An EvidenceIR surface `signal_layouts`, one record per table and its continuations: the signal as
+    written (`HPROT`, `AxMPAM`), the tables, the caption as written, and one sub-field per row: the slice as written
+    with its high and low bit, the name, the width when a column states one (it must equal the slice's, or the row is
+    refused), the other cells as written, and the meaning per level where the cell states it. Layouts are never
+    merged: AXI-L's two `RME_Support` layouts disagree on `PARTID`, and each keeps its caption. No condition is parsed
+    from a caption; nothing reads one yet.
+  - **The shape (ADR 0006).** Exactly one column whose every body cell is a slice of one declared signal or
+    collective, at least two distinct slices that do not overlap, and a name column: the first other column of
+    distinct cells that are no slice, number or binary literal (*Name*, *Protection*, *Field*). A second column of
+    slices or binary constants is another family (`.41.e`'s map, `.3.c.iv.c`'s layout), and so is a column of bare bit
+    numbers (`table_0205`); an undeclared base (`Bits`) is none.
+  - **Levels.** A clause that opens *When asserted*, *When deasserted*, *LOW indicates* or *HIGH indicates* (or a
+    bullet *Asserted,* / *Deasserted,*) gives that level its meaning, as written. A cell whose level clauses sit under
+    a condition keeps its description and gets no level: AHB `HPROT[2]` reads *If both of HPROT[4:3] are deasserted,
+    then when this bit is: • Deasserted, …*, and dropping the condition would invent an unconditional meaning.
+  - **The signal's own record.** A sub-field past a literal width is refused. One past a parameter's default is kept
+    and named in the residual, never truncated: AHB's `HPROT_WIDTH` defaults to 4, and `HPROT[6:4]` exist when it is
+    7.
+  - **Carriage.** Through SemanticIR to IntentIR, as `.3.g.iii.b.ii` carried value combinations, and the adapter names
+    each layout in a residual. The single-column scan is unaffected: a row per bit is no encoding column.
+  - **Lowering.** None, at the pin or upstream. Port options are a closed set (`width`, `type`, `domain`, an output's
+    `reset`/`default`; FSMGen book 13a at `c51e22712`). `(fields …)` exists on scalar storage only (02 §5.1.1), and a
+    packed record type names sub-fields by declaration order at a fixed width, on input ports only (outputs:
+    `sf-isf-aggregate-interface-ports`). `HPROT`'s layout reaches past a parameter's default and `AxMPAM`'s is chosen
+    by a parameter, so neither form holds them: `FSMGEN-REQUESTS.15` asks for a sub-field layout on an interface port.
+  - **Lockstep for the CODE leaves.** Book `pipeline/isf-enums.md` says a `PPROT` or `HPROT` table read by the wrong
+    key *mints nothing, and the table stays a captured region*; `.3.c.iv.b.i` makes that false for the sub-field
+    tables and amends it.
 
 - **`.19` closes** (`2026-10-22`; the leaf's record is in `representation-leaves`).
   FSMGen answered on `2026-09-26`: an interface-port clause it does not recognise is a validation defect, to be

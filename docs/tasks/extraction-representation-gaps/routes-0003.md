@@ -9,4 +9,8 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | Leaf | Lifecycle | Primary detail |
 | --- | --- | --- |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.a` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.60` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
