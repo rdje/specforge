@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > what does opaque identifier mean in SpecForge
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > what does parse_encoding_value_literal do
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -296,5 +298,3 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b and .3.c.iv.b.i
 - [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.c.v and .3.c.v.i
-- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.3.d

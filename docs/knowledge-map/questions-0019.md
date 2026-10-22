@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > where does the post-boundary retention declaration live and why
 - [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
   > where does the reserved space of a packet layout go (Reserved (R) . at 3:19)
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
@@ -296,5 +298,3 @@
   > which current claim census counts may be published and which must be read from the report
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > which declaration producers need the normalized markdown bundle
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > which determiners stop a relation verb from licensing a relation

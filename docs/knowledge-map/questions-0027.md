@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > why is the first trajectory snapshot diverging with insufficient history
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > why is the in-repo corpus tree outside the host-library refresh cohort
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)

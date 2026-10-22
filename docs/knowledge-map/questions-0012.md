@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > may SpecForge resolve ARLEN[7:0] to ARLEN
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > may a SourceIR table classifier look at the table before it
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
@@ -295,5 +297,3 @@
   > what blocks EXTRACTION-QUALITY-GAUGE.3j from wiring a gate
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what blocks a Rust code change from committing in specforge
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > what blocks adding a node to the pressure-headroom task tree

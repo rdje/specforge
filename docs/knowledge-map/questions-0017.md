@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > what is the flow-arrow direction grammar
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what is the frozen adjudication set for the bounded decision provider
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
@@ -295,5 +297,3 @@
   > what structural surfaces discriminate document class
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
   > what survives a rejected provider evaluation
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what table structure is required before port or pin vocabulary grants signal authority

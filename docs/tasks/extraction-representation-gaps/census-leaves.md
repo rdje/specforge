@@ -33,12 +33,46 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.f.i — a timing limit keeps the row condition it is stated under`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`
-  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.f`)
+  Status: `done` (`2026-10-22`; DESIGN + CODE; found by `.3.f`; checklist below)
   Goal: **a single-condition timing table keeps its condition.** I2C's Hs-mode *Table 12* and Ultra Fast-mode *Tables
   14, 15* head their one `Min | Max` pair with the mode, exactly as USB 3.2 heads a pair with `Limits`, so `.3.f` reads
   all four as scalar: 37 I2C records carry no condition and read as unconditional beside Table 11's per-mode ones.
   Decide from structure whether one spanning label is a condition (a candidate: the caption restates it, *… for
   Hs-mode I2C-bus devices*), and measure.
+  **Done `2026-10-22`.**
+  - **Decided.** Structure alone cannot tell `Hs-mode` from `Limits`; the document can. A single label is the scalar
+    layout's condition when the table's caption, or the title of the section opened before the table, restates its
+    words in order. *Table 14*'s caption does not name its mode, but it sits under *6.3 Ultra Fast-mode devices*, and
+    its uncaptioned continuation (`table_0019`) under the same section.
+  - **Code.** `timing_single_group_label` (SourceIR) reads the one label a table heads every value column with, each
+    copy spanning them. `timing_label_restated` (EvidenceIR) places the table at its caption element, or before its
+    page's first element when it has none, and reads the last `document_sections` entry before it.
+  - **Measured.** Over the 31 chains 4 tables have such a label. I2C's three are restated (*Table 12* by caption and
+    section, *Table 14* and its continuation by section 6.3): 37 records gain `Hs-mode` (17) or `Ultra Fast-mode`
+    (8 + 12). USB 3.2 *6-17*'s `Limits` is restated by neither and stays scalar. The other 30 chains are identical,
+    and record ids are unchanged (one layout).
+  - **Rebuilt.** I2C rebuilt stage by stage: only `timing_constraints` moved in each stage; its 3 temporal rules and
+    9 residuals are unchanged.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — a prototype over the 31 chains (`.project-data/tmp/erg-3fii/census.py`): 4
+  single-label tables, which the caption or the section heading restates.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs` `timing_table_condition_groups` needs two
+  conditions, so one label left the scalar layout with none, and nothing read the document's restatement of it. RED
+  4/4, the file restored byte-identically: a single label never a condition, any single label a condition, the
+  section title not read, a later section holding the table; each fails
+  `a_single_column_label_the_document_restates_is_the_condition`.
+- [x] **ADDRESSED (verified)** — I2C's 37 records above, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `5782a8b77`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,933 passed. `flow_census.json` rolled (+2 functions, +13 decision sites,
+  +9 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the table's header shape and the document's own caption and section title; no
+  mode or label vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`; KM card `timing-table-structural-authority`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`
   Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.f`)

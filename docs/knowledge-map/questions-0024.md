@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why does a document with no declared signals carry more ungrounded rules than one with signals
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why does a dynamic constraint record need no modal
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
@@ -296,5 +298,3 @@
   > why does the Introducing CoreSight guide emit no ISF
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
   > why does the LLM constraint path refuse APB PSEL when the deterministic path recovers it (the same-clause appositive local declaration is implemented at ONE call site, is_same_clause_signal_appositive inside parse_inference_antecedent_signal_constraint at ir/evidence.rs:10107, and the LLM path types against the global catalog alone)
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > why does the MPAM 'must be included' sentence extract nothing

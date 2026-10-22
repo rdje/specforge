@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > which untyped tables are contract content
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > which upstream claim-verification material is deliberately not adopted
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -295,5 +297,3 @@
   > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why did HSELx must_be_asserted carry the wrong condition
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > why did INFORMATION-FLOW fail only on CI

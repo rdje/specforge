@@ -273,6 +273,8 @@
   > is a repeated leading token enough to tell a split identifier from a phrase
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > is a sentence opening with the word signal and no attribute a lost declaration
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > is a single column label like Hs-mode a timing condition (timing_single_group_label, timing_label_restated, .3.f.ii)
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > is a subscript split the same defect as an underscore split
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -295,5 +297,3 @@
   > is an unless clause an antecedent (no — an exception, kept apart and lowered negated)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is any corpus document ingested at fewer pages than its source PDF
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > is avoiding a new EVIDENCE_RULE_FIELDS entry enough to keep persisted proofs valid

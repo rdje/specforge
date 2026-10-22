@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.d
 - [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.i and .52
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
@@ -296,5 +298,3 @@
   > what is leaf_route_exemption in a task-evidence contract
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > what is lower_parity_checks / isf_parity_checks_not_lowered / parity_<CHK> rules (.46.b)
-- [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
-  > what is matrix_tables / MatrixTableRecord / read_matrix_tables (.3.c.v.i)

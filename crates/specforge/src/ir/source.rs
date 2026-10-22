@@ -618,6 +618,38 @@ pub(crate) fn timing_table_layouts(table: &StructuredTableRecord) -> Vec<Conditi
         .collect()
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.f.ii — the one label a timing table heads every value column with (I2C *Table 12*'s
+/// `Hs-mode` over `Min | Max`): exactly one header row above the role row carries the same non-role label over all the
+/// value columns, each copy spanning them. Whether it is a condition the table alone cannot say, since USB 3.2 heads
+/// a pair `Limits` the same way; the caller decides from the document.
+pub(crate) fn timing_single_group_label(table: &StructuredTableRecord) -> Option<String> {
+    let rows = timing_structural_header_rows(table);
+    let (role_row, label_rows) = rows.split_last()?;
+    let value_columns: Vec<usize> = role_row
+        .iter()
+        .enumerate()
+        .filter_map(|(column, cell)| timing_value_role(&cell.text).map(|_| column))
+        .collect();
+    if value_columns.is_empty() {
+        return None;
+    }
+    let mut labels = label_rows.iter().filter_map(|row| {
+        let cells: Vec<&StructuredTableCellRecord> = value_columns
+            .iter()
+            .map(|&column| row.get(column))
+            .collect::<Option<_>>()?;
+        let label = cells.first()?.text.trim();
+        (!label.is_empty()
+            && timing_value_role(label).is_none()
+            && cells.iter().all(|cell| {
+                cell.text.trim() == label && cell.col_span as usize == value_columns.len()
+            }))
+        .then(|| label.to_string())
+    });
+    let label = labels.next()?;
+    labels.next().is_none().then_some(label)
+}
+
 fn timing_value_role(text: &str) -> Option<TimingValueRole> {
     let mut words = timing_header_words(text);
     let word = words.next()?;

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.ii",
-      "literal" : "`.3.f.ii` — a single-condition timing table keeps its condition.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iii",
+      "literal" : "`.3.f.iii` — a grouped timing table that names no parameter column.",
       "mode" : "eligible",
       "part_id" : "census-leaves"
    },
@@ -28,13 +28,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
             "metrics" : {
-               "bytes" : 55308,
+               "bytes" : 58253,
                "line_bytes" : 283,
-               "lines" : 567
+               "lines" : 601
             },
             "part_id" : "census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-            "sha256" : "7e5362ece46682a1a8e7b771037c957f9a90e91801638aa9a505d008ca3ea956",
+            "sha256" : "0aec341f90632b5cd8a2f44eef4b49429e12fd380120c10b5cb94b5978b4e1ee",
             "state" : "active"
          },
          {
@@ -900,7 +900,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -1762,13 +1762,12 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.f.ii` — a single-condition timing table keeps its condition.",
+         "`.3.f.iii` — a grouped timing table that names no parameter column.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.4`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.5`",

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why do APB tables 0016 0017 0018 produce no signal records
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why do AXI signals from a Continued from previous page table have no actor relation
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -295,5 +297,3 @@
   > why does a constraint have no condition although its sentence states one
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > why does a digit regex not catch a quoted number in a contract
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why does a document with no declared signals carry more ungrounded rules than one with signals

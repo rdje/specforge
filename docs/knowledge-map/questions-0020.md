@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > which determiners stop a relation verb from licensing a relation
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
@@ -295,5 +297,3 @@
   > which tree owns the normalized-markdown escape truncation
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > which units mark a timing record as decibel domain
-- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
-  > which untyped tables are contract content

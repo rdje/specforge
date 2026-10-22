@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-VIII-FUSED-DIRECTION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-F-II-RESTATED-SINGLE-LABEL",
    "baseline": {
-    "analyzed_functions": 2875,
-    "decision_sites": 16216,
-    "helper_edges": 20775,
+    "analyzed_functions": 2876,
+    "decision_sites": 16222,
+    "helper_edges": 20781,
     "semantic_macros": 1646
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 6,
-    "helper_edges": 6,
+    "analyzed_functions": 2,
+    "decision_sites": 13,
+    "helper_edges": 9,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.viii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.viii: a direction the converter fused into a name cell gives the row's direction when its direction cell is empty (fused_direction_word)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.f.ii",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.f.ii: a timing table's one label over every value column is its condition when the caption or the table's section restates it (timing_single_group_label, timing_label_restated)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

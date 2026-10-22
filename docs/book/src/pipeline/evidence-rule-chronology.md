@@ -709,8 +709,11 @@ carry no `operating_condition`. The reading is strict, and a table that fails it
   parameters and the rows the conditions: USB 3.2 heads `tBurst` and `tRepeat` over rows `Polling.LFPS` and
   `Ping.LFPS`, and reading it as modes would swap parameter and condition.
 
-One label over every value column (`Hs-mode` over I2C's *Table 12*, `Limits` over a USB 3.2 table) is not read as a
-condition, because the two cannot be told apart by structure; those tables keep their scalar reading. The
+One label over every value column (`Hs-mode` over I2C's *Table 12*, `Limits` over a USB 3.2 table) cannot be told
+apart by structure alone. Since `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` (`2026-10-22`) it is the scalar layout's
+condition when the document restates it for the table, in the caption (*… for Hs-mode I2C-bus devices*) or in the
+title of the section the table sits in (*6.3 Ultra Fast-mode devices*). I2C's 37 Hs-mode and Ultra Fast-mode limits
+carry their mode; `Limits` is restated by neither and stays scalar. The
 conditions are read before the scalar layout, so a table that heads `Min` with one mode and `Max` with another is
 never paired into one record. A cell holding only note references, with or without a dash (`[2]`, `- [3]`), states
 no value: the limit is in the note. SemanticIR and IntentIR carry the condition unchanged, and a per-condition

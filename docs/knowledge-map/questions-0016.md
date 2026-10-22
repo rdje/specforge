@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
+  > what is matrix_tables / MatrixTableRecord / read_matrix_tables (.3.c.v.i)
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > what is max_records times max_record_bytes supposed to equal
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -295,5 +297,3 @@
   > what is the first reviewed source-to-IntentIR evaluation result
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what is the first task in canonical recovery
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > what is the flow-arrow direction grammar

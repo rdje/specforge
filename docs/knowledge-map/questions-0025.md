@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why does the MPAM 'must be included' sentence extract nothing
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why does the OpenCAPI AFU Address Space Usage note emit no ISF
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -296,5 +298,3 @@
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
 - [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
   > why is a Conventions, Typographic conventions, RTL notation or Signal Naming Conventions section apparatus
-- [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
-  > why is a Reserved row of a packet or descriptor layout not a message field

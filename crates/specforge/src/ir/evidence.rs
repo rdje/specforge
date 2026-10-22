@@ -27,8 +27,8 @@ use crate::ir::source::{
     RegisterFieldEnumRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
     SignalConstraintKind, SignalConstraintRecord, StructuredTableCellRecord, StructuredTableRecord,
     TimingConstraintRecord, TimingIntentBoundary, TimingIntentDisposition, TimingTableColumns,
-    ValidationReportRecord, WidthHint, timing_caption_unit, timing_table_has_structural_authority,
-    timing_table_layouts,
+    ValidationReportRecord, WidthHint, timing_caption_unit, timing_single_group_label,
+    timing_table_has_structural_authority, timing_table_layouts,
 };
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
@@ -30772,9 +30772,17 @@ fn synthesize_timing_constraints(
         let marks = printed_note_marks(&notes, table);
         // EXTRACTION-REPRESENTATION-GAPS.3.f — one scalar layout, or one per operating condition the
         // table's column groups state; each record keeps its layout's condition.
-        let layouts = timing_table_layouts(table);
+        let mut layouts = timing_table_layouts(table);
         if layouts.is_empty() {
             continue;
+        }
+        // EXTRACTION-REPRESENTATION-GAPS.3.f.ii — one label over every value column is the scalar layout's condition
+        // when the document restates it for the table.
+        if let [layout] = layouts.as_mut_slice()
+            && layout.operating_condition.is_none()
+        {
+            layout.operating_condition = timing_single_group_label(table)
+                .filter(|label| timing_label_restated(label, table, source_ir));
         }
 
         // PDF-VARIANT-DIGESTION.9.11 — recover data rows Docling trapped in `header_rows`
@@ -30858,6 +30866,61 @@ fn synthesize_timing_constraints(
         prior_guidance,
     ));
     records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.f.ii — does the document restate a table's one column label for that table: in its
+/// caption (I2C *Table 12 … for Hs-mode I2C-bus devices*) or in the title of the section the table sits in (*6.3 Ultra
+/// Fast-mode devices* over *Table 14*)? The label's words must appear in order, compared without case or closing
+/// punctuation. The table sits where its caption element is read; one with no caption element sits before its page's
+/// first element, so only a section opened on an earlier page holds it. USB 3.2's `Limits` is restated by neither.
+fn timing_label_restated(label: &str, table: &StructuredTableRecord, source_ir: &SourceIr) -> bool {
+    let words = |text: &str| -> Vec<String> {
+        text.split_whitespace()
+            .map(|word| {
+                word.trim_matches(|c: char| matches!(c, '.' | ',' | ';' | ':' | '(' | ')'))
+                    .to_lowercase()
+            })
+            .filter(|word| !word.is_empty())
+            .collect()
+    };
+    let wanted = words(label);
+    let restates = |text: &str| {
+        let have = words(text);
+        !wanted.is_empty() && have.windows(wanted.len()).any(|window| window == wanted)
+    };
+    let caption = table.caption_text.as_deref().unwrap_or_default();
+    if restates(caption) {
+        return true;
+    }
+    let on_page = |element: &&crate::ir::source::ContentElementRecord| {
+        element.page_id.is_some() && element.page_id == table.page_id
+    };
+    let position = source_ir
+        .content_elements
+        .iter()
+        .filter(on_page)
+        .find(|element| {
+            element.kind == crate::ir::source::ContentElementKind::Caption
+                && !caption.trim().is_empty()
+                && element.text.trim() == caption.trim()
+        })
+        .or_else(|| {
+            source_ir
+                .content_elements
+                .iter()
+                .filter(on_page)
+                .min_by_key(|element| element.reading_order)
+        })
+        .map(|element| element.reading_order);
+    let Some(position) = position else {
+        return false;
+    };
+    source_ir
+        .document_sections
+        .iter()
+        .filter(|section| section.reading_order < position)
+        .max_by_key(|section| section.reading_order)
+        .is_some_and(|section| restates(&section.title))
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.f.i — what each row's limit holds under, from the table's
@@ -50677,6 +50740,164 @@ The control register.
         super::bind_presence_legends(&mut twice, &[], &[key, other]);
         assert!(twice[0].legend_table_id.is_none());
         assert!(twice[0].variant_presence[0].legend.is_empty());
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` — one label over every value column is a condition when the caption or
+    /// the table's section restates it; a grouping word neither restates stays a scalar layout.
+    #[test]
+    fn a_single_column_label_the_document_restates_is_the_condition() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("modes.md");
+        fs::write(&source, "# Modes\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let cell = |text: &str, span: u32| StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: span,
+            is_header: true,
+        };
+        let table =
+            |id: &str, page: &str, caption: Option<&str>, label: &str| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: Some(page.to_string()),
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::TimingParameter,
+                header_rows: vec![
+                    vec![
+                        cell("Symbol", 1),
+                        cell("Parameter", 1),
+                        cell(label, 2),
+                        cell(label, 2),
+                        cell("Unit", 1),
+                    ],
+                    vec![
+                        cell("Symbol", 1),
+                        cell("Parameter", 1),
+                        cell("Min", 1),
+                        cell("Max", 1),
+                        cell("Unit", 1),
+                    ],
+                ],
+                body_rows: vec![
+                    ["tR", "rise time", "10", "40", "ns"]
+                        .iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect(),
+                ],
+                row_count: 3,
+                col_count: 5,
+            };
+        // Restated by the caption.
+        source_ir.structured_tables.push(table(
+            "table_hs",
+            "page_0046",
+            Some("Table 12. Characteristics of the I/O stages for Hs-mode devices"),
+            "Hs-mode",
+        ));
+        // Restated by the section the table sits in, after its heading.
+        source_ir.structured_tables.push(table(
+            "table_uf",
+            "page_0048",
+            Some("Table 14. Characteristics of the USDA and USCL I/O stages"),
+            "Ultra Fast-mode",
+        ));
+        // Restated by neither.
+        source_ir.structured_tables.push(table(
+            "table_ssc",
+            "page_0090",
+            Some("Table 6-17. SSC Parameters"),
+            "Limits",
+        ));
+        let element = |id: &str,
+                       kind: crate::ir::source::ContentElementKind,
+                       text: &str,
+                       page: &str,
+                       order: u32| {
+            crate::ir::source::ContentElementRecord {
+                element_id: id.to_string(),
+                kind,
+                text: text.to_string(),
+                heading_level: None,
+                page_id: Some(page.to_string()),
+                source_ref: None,
+                source_batch: None,
+                reading_order: order,
+            }
+        };
+        source_ir.content_elements.extend([
+            element(
+                "e1",
+                crate::ir::source::ContentElementKind::SectionHeader,
+                "6.3 Ultra Fast-mode devices",
+                "page_0048",
+                672,
+            ),
+            element(
+                "e2",
+                crate::ir::source::ContentElementKind::Caption,
+                "Table 14. Characteristics of the USDA and USCL I/O stages",
+                "page_0048",
+                675,
+            ),
+            element(
+                "e3",
+                crate::ir::source::ContentElementKind::SectionHeader,
+                "6.5.3 Normative Spread Spectrum Clocking (SSC)",
+                "page_0090",
+                900,
+            ),
+            element(
+                "e4",
+                crate::ir::source::ContentElementKind::Caption,
+                "Table 6-17. SSC Parameters",
+                "page_0090",
+                905,
+            ),
+        ]);
+        let section = |id: &str, title: &str, page: &str, order: u32| {
+            crate::ir::source::ContentSectionRecord {
+                section_id: id.to_string(),
+                title: title.to_string(),
+                heading_level: 2,
+                page_id: Some(page.to_string()),
+                source_ref: None,
+                source_batch: None,
+                reading_order: order,
+                section_kind: SectionKind::Unknown,
+            }
+        };
+        source_ir.document_sections.extend([
+            section("sec_uf", "6.3 Ultra Fast-mode devices", "page_0048", 672),
+            section(
+                "sec_ssc",
+                "6.5.3 Normative Spread Spectrum Clocking (SSC)",
+                "page_0090",
+                900,
+            ),
+        ]);
+        let conditions: Vec<(String, Option<String>)> =
+            super::synthesize_timing_constraints(&source_ir, None)
+                .into_iter()
+                .map(|record| {
+                    (
+                        record.supporting_table_ids[0].clone(),
+                        record.operating_condition,
+                    )
+                })
+                .collect();
+        assert_eq!(
+            conditions,
+            [
+                ("table_hs".to_string(), Some("Hs-mode".to_string())),
+                ("table_uf".to_string(), Some("Ultra Fast-mode".to_string())),
+                ("table_ssc".to_string(), None),
+            ]
+        );
+        Ok(())
     }
 
     /// `EXTRACTION-REPRESENTATION-GAPS.64` — a matrix title's or cell's trailing mark cites the note printed beside the

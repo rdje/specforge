@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > is avoiding a new EVIDENCE_RULE_FIELDS entry enough to keep persisted proofs valid
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -295,5 +297,3 @@
   > may I cite a persisted artifact as evidence about the current reader
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
   > may I publish a current number measured from a persisted artifact
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > may SpecForge resolve ARLEN[7:0] to ARLEN

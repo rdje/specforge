@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > why did INFORMATION-FLOW fail only on CI
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > why did ISF renderability fall from 44 to 17
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -295,5 +297,3 @@
   > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why do AMD DTE / NVMe command dword tables go to message fields and not registers
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why do APB tables 0016 0017 0018 produce no signal records

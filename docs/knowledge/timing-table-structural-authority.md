@@ -2,6 +2,7 @@
 id: timing-table-structural-authority
 title: Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max schema
 answers:
+  - "is a single column label like Hs-mode a timing condition (timing_single_group_label, timing_label_restated, .3.f.ii)"
   - "why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values"
   - "can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)"
   - "how does SpecForge distinguish a timing table category from a scalar min typ max layout"
@@ -18,7 +19,7 @@ answers:
   - "why is a timeout value a typ value"
   - "why does a timing value keep a trailing footnote number (4.0690104 1)"
   - "does a footnote element prove a note number"
-date: 2026-09-29
+date: 2026-10-22
 tags: [timing, table, source-ir, evidence-ir, structural-authority, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.47a); crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/source/docling_backend.rs
 reverify: "cargo test --workspace --exclude specforge-production-graph timing_table_ --lib && target/debug/specforge kg-bench"
@@ -63,7 +64,15 @@ name its parameter column `Symbol`/`Parameter`/`Name`. Each record then carries 
 out of temporal rules. On the 31 current chains only I2C's Tables 10, 11 and 13 qualify (37 -> 148 records). USB
 3.2's five grouped tables name no parameter column, and two of them (`tBurst | tRepeat`) put the parameters in the
 groups, so they stay residual (`.3.f.iii`); a single label over every value column (`Hs-mode`, `Limits`) is not a
-condition (`.3.f.ii`). A cell holding only note references (`[2]`, `- [3]`) states no value.
+condition by structure alone. A cell holding only note references (`[2]`, `- [3]`) states no value.
+
+**A single label the document restates (`2026-10-22`, `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`).**
+`timing_single_group_label` reads the one label a table heads all its value columns with, and
+`timing_label_restated` keeps it as the scalar layout's `operating_condition` when the caption, or the title of the
+section opened before the table's caption (before its page, for an uncaptioned table), restates its words in order.
+On the 31 chains 4 tables have such a label: I2C *Table 12* (`Hs-mode`, caption and section), *Table 14* and its
+uncaptioned continuation (`Ultra Fast-mode`, section *6.3*): 37 records gain their mode. USB 3.2 *6-17*'s `Limits`
+is restated by neither and stays scalar; the other 30 chains are identical.
 
 **Row conditions (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.3.f.i`).** A column a header names `Condition(s)` or
 `Test condition(s)` (and nothing else) is read into `TimingConstraintRecord.row_conditions`, verbatim; a heading
