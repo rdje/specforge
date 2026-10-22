@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-G-III-C-I-ALIASING-ENUMS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-57-A-ROW-LABEL-LIFTING",
    "baseline": {
-    "analyzed_functions": 2854,
-    "decision_sites": 15844,
-    "helper_edges": 20345,
-    "semantic_macros": 1638
+    "analyzed_functions": 2856,
+    "decision_sites": 15867,
+    "helper_edges": 20371,
+    "semantic_macros": 1640
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 23,
-    "helper_edges": 26,
-    "semantic_macros": 2
+    "analyzed_functions": 0,
+    "decision_sites": 2,
+    "helper_edges": 0,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i: a channel code table gives each channel its whole aliasing enum (read_channel_code_tables, channel_code_and_alternative), and only its marking sentence exempts that enum from SemanticIR's collision rule (shared_code_enums)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.57.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.57.a: a header row whose flagged cells are a leading run of row labels over data is data (is_row_header_data_row)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

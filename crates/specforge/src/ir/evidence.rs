@@ -29888,12 +29888,16 @@ pub fn recovered_trapped_data_rows(
         .filter(|row| is_row_header_data_row(row))
 }
 
-/// A header row that is data: two or more cells, a non-empty first cell, and no flagged cell after the
-/// first — a row whose only header cell is its row label.
+/// A header row that is data: two or more cells, a non-empty first cell, and flagged cells only as a leading run of
+/// row labels followed by at least one unflagged cell. EXTRACTION-REPRESENTATION-GAPS.57.a widened the run from one
+/// label to any number: OpenCAPI's *Transmission order | 8 consecutive bytes | P | P* labels its row twice. A row
+/// with a flag after its first unflagged cell, or with every cell flagged, is still a header row.
 fn is_row_header_data_row(row: &[StructuredTableCellRecord]) -> bool {
+    let labels = row.iter().take_while(|cell| cell.is_header).count();
     row.len() >= 2
         && !row[0].text.trim().is_empty()
-        && row.iter().skip(1).all(|cell| !cell.is_header)
+        && labels < row.len()
+        && row[labels..].iter().all(|cell| !cell.is_header)
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.g — the SourceIR with each row-header table's data rows in its body.
@@ -48882,6 +48886,53 @@ The control register.
 
     /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` — a channel code table gives each channel its whole enum: shared
     /// codes kept and marked, a bracketed alternative stated beside its member; other shapes are not read.
+    /// `EXTRACTION-REPRESENTATION-GAPS.57.a` — a header row whose flagged cells lead it as row labels is data.
+    #[test]
+    fn a_header_row_of_leading_row_labels_over_data_is_data() {
+        let row = |cells: &[(&str, bool)]| -> Vec<StructuredTableCellRecord> {
+            cells
+                .iter()
+                .map(|(text, header)| make_table_cell(text, *header))
+                .collect()
+        };
+        let data = |cells: &[(&str, bool)]| super::is_row_header_data_row(&row(cells));
+        assert!(
+            data(&[("Start", true), ("M", false), ("M", false)]),
+            "one label, as before"
+        );
+        assert!(
+            data(&[("Start", false), ("M", false)]),
+            "no label, as before"
+        );
+        assert!(
+            data(&[
+                ("Transmission order", true),
+                ("8 consecutive bytes", true),
+                ("P", false),
+                ("", false)
+            ]),
+            "two labels"
+        );
+        assert!(
+            !data(&[("Opcode", true), ("Transfer", true), ("Fetch", true)]),
+            "every cell flagged"
+        );
+        assert!(
+            !data(&[
+                ("01", false),
+                ("LGO_Ux", false),
+                ("b6~4", true),
+                ("Reserved", false)
+            ]),
+            "a flag mid-row"
+        );
+        assert!(
+            !data(&[("", true), ("V4", true), ("L", false)]),
+            "a lost span's empty first cell"
+        );
+        assert!(!data(&[("Start", true)]), "one cell");
+    }
+
     #[test]
     fn a_channel_code_table_gives_each_channel_its_whole_enum() -> Result<()> {
         let tempdir = tempdir()?;

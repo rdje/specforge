@@ -332,12 +332,42 @@ several signals' values, code columns that repeat, tables whose every row is a h
     15. Then `.3.g.iii.c.i`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.57.a`
-  Status: `open` (`2026-10-22`; CODE; split from `.57`)
+  Status: `done` (`2026-10-22`; CODE; split from `.57`; checklist below)
   Goal: **a header row of leading row labels over data is data.** **Reproduce:** OpenCAPI DLL *Table 8-1* rows
   (*Transmission order | 8 consecutive bytes | P | P | P*) stay header rows, so no reader sees them; I2S's timing table,
   USB 3.2's *7-14* and its packet figure likewise. Acceptance: generalize `source_ir_with_row_header_rows_in_body`
   to `.57`'s rule; measure the 6 tables, the 131 already lifted (unchanged) and every chain's EvidenceIR; route the
   lifted tables that keep more than one header row to the leaves owning their families' readers; rebuild what moves.
+  **Done `2026-10-22`.** `is_row_header_data_row` (the one rule shared by the lifting, `recovered_trapped_data_rows`,
+  the timing and signal-table readers and the completeness coverage) now lifts a row whose flagged cells are a
+  leading run of row labels over unflagged data. A row with every cell flagged, a mid-row flag or an empty first cell
+  stays a header row. **Measured:** dry-run of the 31 chains with every EvidenceIR identical, and chain currency
+  31/31 with no chain rebuilt. No current reader turns the newly lifted rows of OpenCAPI's *8-1*/*8-2*, I2S's timing
+  table and USB's *7-14* into a record, so the rows now wait in the body for their families' readers. **Routed:** 24
+  lifted tables keep a second header row whose qualifiers a reader taking the last header row loses:
+  - `.3.f.iii`, the grouped timing tables: USB 3.2 *6-16*, *6-20*, *6-31*, *6-33*, the two `tBurst` tables, *7-8*
+    and an untitled one, and I2S's timing table (*TRANSMITTER*/*RECEIVER*, *LOWER*/*UPPER LIMIT*, *MIN*/*MAX*);
+  - `.3.c.v`, the requirement and legality matrices: AXI *A12.11*, *A12.13* (*MTE_Support = Basic* …), I2C *Table
+    3*, OpenCAPI *8-1*, *8-2*, *8-3*, and USB 3.2 *7-14*, *8-8*, *9-2*, *9-10* and an untitled event table;
+  - `DOC-INTENT-TAXONOMY.4b`, layouts: OpenCAPI *2-2* (training sets) and a USB packet figure;
+  - non-contract: TMC's revision table and ADIv6's component-ID offset grid.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.57.a` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — the 137 header-only tables by lifting outcome before and after; the 24 that keep two
+  or more header rows, by family.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `is_row_header_data_row` required the
+  row label to be the only flagged cell, so a row labelled by two columns stayed a header row. RED 2/2, the file
+  restored byte-identically: one label only, a fully flagged row lifted.
+- [x] **ADDRESSED (verified)** — the rule lifts the measured rows; no artifact moves on any chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `93de7a29c`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,920 passed. `flow_census.json` rolled (+2 decision sites); boundary
+  unchanged.
+- [x] **GENERICITY (ADR 0006)** — the converter's header flags and cell emptiness; no document or table name.
+- [x] **LOCKSTEP** — no book page states the old rule; KM card `a-signal-titled-code-column-determining-its-member-is-an-enum`
+  already names `.57.a`. No production rule deleted or replaced.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.59`
   Status: `done` (`2026-10-22`; CODE; found by `.3.g.iii.c`; checklist below)
