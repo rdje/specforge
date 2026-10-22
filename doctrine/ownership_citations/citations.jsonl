@@ -103,7 +103,7 @@
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"TEXT-LAYER-IDENTIFIER-SPLIT.1","kind":"current_owner"}
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"WIRE-BASED-100.10d","kind":"current_owner"}
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"WIRE-BASED-100.10f","kind":"current_owner"}
-{"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii","kind":"current_owner"}
+{"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-GAP-FIX.15","kind":"historical","reason":"named as the done leaf that removed AXI's 71 phantom registers; the row's current owner is EXTRACTION-REPRESENTATION-GAPS.13"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"FSMGEN-REQUESTS.8","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a","kind":"historical","reason":"named as the done leaf that bound a stated absent value to its presence record and carried it to IntentIR; the row's current owners are EXTRACTION-REPRESENTATION-GAPS.4 (FSMGen's half), .3.d.ii.a.i (the class sentence) and .3.d.ii.a.ii (the generic name) in the same cell"}

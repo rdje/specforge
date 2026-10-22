@@ -320,6 +320,14 @@ impl IsfIr {
         &self.temporal_residuals
     }
 
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii — a port's elaborated width and the parameter that sizes it, if any.
+    pub(crate) fn signal_width(&self, name: &str) -> Option<(u32, Option<&str>)> {
+        self.signals
+            .iter()
+            .find(|signal| signal.name == name)
+            .map(|signal| (signal.width, signal.width_param.as_deref()))
+    }
+
     /// Register resets that could not be lowered to a storage `(reset V)`
     /// (ISF-REGISTER-RESET-EMIT.2). The adapter artifact appends these to its
     /// residual-decision set so a dropped reset is visible rather than silently lost.

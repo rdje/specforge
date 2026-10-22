@@ -1336,6 +1336,66 @@ fn absent_value_residual_packet(
 /// None of the current record types supplies every operand required by a supported executable ISF
 /// construct. Keep one stable residual packet per input record, in schema and record order, instead
 /// of silently dropping observations or fabricating transitions, values, ports, storage, or timing.
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` — one residual per signal layout. No `.isf` port takes a field: port
+/// options are a closed set (FSMGen ladder F29, anticipated). A sub-field reaching past the elaborated width of a port
+/// the layout names (the signal, or each member of the collective it is) is listed with that width, so a field that
+/// exists only at a wider parameter value is stated rather than dropped (AHB `HPROT[6:4]` at `HPROT_WIDTH` 4).
+fn signal_layout_residuals(intent_ir: &IntentIr, isf_model: &IsfIr) -> Vec<ResidualDecisionPacket> {
+    intent_ir
+        .signal_layouts
+        .iter()
+        .map(|layout| {
+            let ports: Vec<&str> = intent_ir
+                .collective_signal_names
+                .iter()
+                .find(|collective| collective.collective_name == layout.signal)
+                .map(|collective| collective.member_names.iter().map(String::as_str).collect())
+                .unwrap_or_else(|| vec![layout.signal.as_str()]);
+            let mut beyond = Vec::new();
+            let mut absent = Vec::new();
+            for port in ports {
+                let Some((width, param)) = isf_model.signal_width(port) else {
+                    absent.push(format!("`{port}`"));
+                    continue;
+                };
+                let past: Vec<String> = layout
+                    .sub_fields
+                    .iter()
+                    .filter(|field| field.msb >= width)
+                    .map(|field| format!("{} {}", field.name, field.bits))
+                    .collect();
+                if !past.is_empty() {
+                    let size = match param {
+                        Some(param) => format!("`{param}`'s default {width}"),
+                        None => format!("its width {width}"),
+                    };
+                    beyond.push(format!("`{port}` ({size}) leaves {} past it", past.join(", ")));
+                }
+            }
+            let mut missing = "an `.isf` form for a port's sub-fields: port options are a closed set, so no port \
+                               takes a field (FSMGen ladder F29, anticipated)"
+                .to_string();
+            if !beyond.is_empty() {
+                missing.push_str(&format!("; {}", beyond.join("; ")));
+            }
+            if !absent.is_empty() {
+                missing.push_str(&format!(
+                    "; no port of this actor is named {}",
+                    absent.join(" or ")
+                ));
+            }
+            protocol_residual_packet(
+                "signal_layout",
+                "signal layout",
+                &layout.layout_id,
+                &[],
+                &layout.table_ids,
+                &missing,
+            )
+        })
+        .collect()
+}
+
 fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPacket> {
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a / .3.d.ii.b.iii.a — every stated absent value, the signal's own and
     // each class-scoped one, in record order.
@@ -1562,6 +1622,8 @@ fn build_isf_adapter_artifact(
     // record types do not carry every executable binding; per-record residuals keep that omission
     // visible without blocking independently licensed ISF.
     residual_decisions.extend(protocol_residual_decisions(intent_ir));
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii — a signal's sub-field layout has no `.isf` port form.
+    residual_decisions.extend(signal_layout_residuals(intent_ir, &isf_model));
     residual_decisions.extend(isf_model.temporal_residuals().iter().cloned());
     // Register resets that could not be lowered to a storage `(reset V)`
     // (ISF-REGISTER-RESET-EMIT.2) are surfaced the same way, so an un-lowered reset is
@@ -2673,6 +2735,112 @@ mod tests {
         assert_eq!(
             isf.rule_count, emitted_rules,
             "rule_count must equal emitted (rule …) forms\n{src}"
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` — a signal layout reaches the adapter as one residual citing its
+    /// tables and naming each sub-field past its port's width, and the rendered `.isf` is unchanged.
+    #[test]
+    fn isf_adapter_residualizes_a_signal_layout_naming_fields_past_the_width() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_signal_layouts.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let baseline = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("baseline_adapter"),
+        )?;
+        let baseline_isf = baseline.isf.expect("baseline ISF artifact");
+        let field =
+            |bits: &str, msb: u32, lsb: u32, name: &str| crate::ir::evidence::SignalSubField {
+                table_id: "table_0001".to_string(),
+                bits: bits.to_string(),
+                msb,
+                lsb,
+                name: name.to_string(),
+                cells: Vec::new(),
+                levels: Vec::new(),
+            };
+        let layout = |id: &str, signal: &str, sub_fields| crate::ir::evidence::SignalLayoutRecord {
+            layout_id: id.to_string(),
+            signal: signal.to_string(),
+            table_ids: vec!["table_0001".to_string()],
+            caption: None,
+            name_column: "Name".to_string(),
+            other_columns: Vec::new(),
+            sub_fields,
+        };
+        intent_ir.signal_layouts = vec![
+            layout(
+                "signal_layout_0001",
+                "DATA_IN",
+                vec![field("[3:0]", 3, 0, "LOW"), field("[9:8]", 9, 8, "HIGH")],
+            ),
+            layout(
+                "signal_layout_0002",
+                "NOPE",
+                vec![field("[0]", 0, 0, "BIT")],
+            ),
+            layout(
+                "signal_layout_0003",
+                "DATA_X",
+                vec![field("[8]", 8, 8, "TOP")],
+            ),
+        ];
+        // A layout on a collective names each member's port.
+        intent_ir.collective_signal_names = vec![crate::ir::evidence::CollectiveSignalNameRecord {
+            collective_id: "collective_0001".to_string(),
+            collective_name: "DATA_X".to_string(),
+            member_names: vec!["DATA_IN".to_string()],
+            supporting_statement_ids: Vec::new(),
+        }];
+        intent_ir.write_to_disk()?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("layout_adapter"),
+        )?;
+        let isf = artifact.isf.clone().expect("layout ISF artifact");
+        assert_eq!(isf.source_text, baseline_isf.source_text);
+        let packets = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| packet.packet_id.starts_with("isf_protocol_signal_layout_"))
+            .collect::<Vec<_>>();
+        assert_eq!(packets.len(), 3);
+        assert_eq!(
+            packets[0].packet_id,
+            "isf_protocol_signal_layout_signal_layout_0001"
+        );
+        assert!(packets[0].why_unresolved.contains("FSMGen ladder F29"));
+        assert!(
+            packets[0]
+                .why_unresolved
+                .contains("`DATA_IN` (its width 8) leaves HIGH [9:8] past it"),
+            "{}",
+            packets[0].why_unresolved
+        );
+        assert!(!packets[0].why_unresolved.contains("LOW [3:0]"));
+        assert!(
+            packets[0]
+                .why_unresolved
+                .contains("supporting tables: table_0001")
+        );
+        assert!(
+            packets[1]
+                .why_unresolved
+                .contains("no port of this actor is named `NOPE`")
+        );
+        assert!(
+            packets[2]
+                .why_unresolved
+                .contains("`DATA_IN` (its width 8) leaves TOP [8] past it"),
+            "{}",
+            packets[2].why_unresolved
         );
         Ok(())
     }

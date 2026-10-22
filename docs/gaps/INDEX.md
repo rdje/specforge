@@ -70,7 +70,7 @@ Status on `2026-09-26`. Side: **S** SpecForge, **F** FSMGen (the owner is the Sp
 | F23 | F | register IP, wire protocol | adapter | anticipated | `DOC-INTENT-TAXONOMY.4b` |
 | F26 | F | platform | adapter | anticipated (multi-bit crossings) | `EXTRACTION-REPRESENTATION-GAPS.3` |
 | F28 | F | tooling | — | requested (acknowledged) | `FSMGEN-REQUESTS.3` |
-| F29 | F | wire protocol | adapter | anticipated | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` |
+| F29 | F | wire protocol | adapter | anticipated | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` |
 
 <!-- gap_catalog_owners:end -->
 

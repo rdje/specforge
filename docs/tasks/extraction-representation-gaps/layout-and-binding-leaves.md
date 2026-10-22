@@ -44,11 +44,12 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   byte-identically: levels read under a condition, a number column not checked against the widths, overlapping slices
   kept, a level word needing its space; each fails `a_table_naming_a_signals_sub_fields_is_its_layout`.
 - [x] **ADDRESSED (verified)** — the six layouts above in the dry-run and the rebuilt chains.
-- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports and the
-  temporal one byte-identical to `f5ceee7cb`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo
-  clippy --offline --workspace --all-targets -- -D warnings` clean (an `if let` collapsed). `cargo test --workspace
-  --lib --exclude specforge-production-graph` 475 / 171 / 1,922 passed; the proof test counts 50 EvidenceIR rule
-  fields and the inventory 206 rules (`signal_layouts` added to `evidence.protocol_structure` in both inventories).
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports (the three
+  temporal ones among them; first written "and the temporal one", corrected by `.3.c.iv.b.ii`) byte-identical to
+  `f5ceee7cb`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean (an `if let` collapsed). `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,922 passed; the proof test counts 50 EvidenceIR rule fields and the
+  inventory 206 rules (`signal_layouts` added to `evidence.protocol_structure` in both inventories).
   `flow_census.json` rolled (+6 functions, +57 decision sites, +94 helper edges, +2 macros) and its boundary moved for
   the new producer (rule roots 134, grammar declassifiers 75).
 - [x] **GENERICITY (ADR 0006)** — the shape is read from cells (a slice of a declared name, a number restating a
@@ -57,12 +58,61 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   amended, as `.3.c.iv.b` named); KM card `a-table-naming-a-signals-bits-is-its-layout`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.b`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.iv.b`; checklist below)
   Goal: **a signal's sub-field layout reaches IntentIR, and the adapter names it.** Acceptance: carry `signal_layouts`
   through SemanticIR to IntentIR; an adapter residual per layout, naming any sub-field past its width parameter's
   default; `.isf` texts unchanged and FSMGen-strict-clean; rebuild what moves. Then re-evaluate ADR 0033 §4 for
   `docs/gaps/fsmgen-ladder.md` F29: file the drafted request (`.project-data/tmp/req-port-fields/packet`) only if an
   executable consumer needs the layout.
+  **Done `2026-10-22`.**
+  - **Carried.** `signal_layouts` is a field of SemanticIR (`semantic.carried_evidence`) and IntentIR
+    (`intent.carried_semantics`), cloned as it is; both claim-family inventories name it.
+  - **Residual.** `signal_layout_residuals` states one `isf_protocol_signal_layout_*` packet per layout: no `.isf`
+    port form (ladder F29), and per port the layout names (the signal, or each member of its collective) every
+    sub-field whose high bit reaches the port's elaborated width (`IsfIr::signal_width`), with the parameter's
+    default. A layout whose signal is no port of the actor says so.
+  - **Measured.** AHB's residual names `Lookup [4]`, `Allocate [5]` and `Shareable [6]` past `HPROT_WIDTH`'s default
+    4. APB5's `PPROT` fits its width 3. AXI's four name each layout's fields past `MPAM_WIDTH`'s default 1 (a
+    placeholder default, `KG-ISF-COMPLETENESS.2a.vii`) on `ARMPAM` and `AWMPAM`. Residuals: AHB 41 -> 42, APB5 41 ->
+    42, AXI 83 -> 87; only `signal_layouts` moved in SemanticIR and IntentIR, and every `.isf` text is byte-identical.
+  - **ADR 0033 §4, re-evaluated.** No rule, guard or drive names a sub-field, and a field changes no generated HDL, so
+    no executable consumer needs the layout: no request is filed, and F29 stays *anticipated*, now owned by
+    `.3.c.iv.b.iii` with its drafted bundle and trigger.
+  - **Rebuilt.** AHB, APB5, AXI and ADIv6 rebuilt stage by stage (ADIv6 unchanged at every stage). The new fields
+    moved the SemanticIR and IntentIR ruleset hashes, so `rebuild_stage_cascade.sh --write` re-sealed all 31 chains,
+    content-identical at every stage.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — after `.3.c.iv.b.i` the six layouts stopped at EvidenceIR; the adapters' residual
+  packets per chain; the ports the layouts name and their widths in each `.isf`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` and `intent.rs` declared no carrier, and
+  `crates/specforge/src/ir/adapters.rs` stated no residual. New carried fields, `signal_layout_residuals` and
+  `IsfIr::signal_width` (`isf_ir.rs`). RED 5/5, each file restored byte-identically: SemanticIR dropping the layouts,
+  IntentIR dropping them, the adapter stating no residual, no field listed past the width, a collective not expanded;
+  each fails its test (`projects_protocol_surfaces_exactly_across_all_three_stages`,
+  `isf_adapter_residualizes_a_signal_layout_naming_fields_past_the_width`).
+- [x] **ADDRESSED (verified)** — the residuals above on the rebuilt chains; `.isf` texts byte-identical, so their
+  FSMGen strict verdicts are unchanged.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `86ea02e05`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,923 passed; the proof tests count 64 SemanticIR and 63 IntentIR rule
+  fields (43 carried) and the inventory 208 rules. `flow_census.json` rolled (+2 functions, +8 decision sites, +19
+  helper edges, +1 macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the residual reads the record, the collective's members and the port's own width;
+  no document, signal or parameter name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A signal's bit sub-fields*: carriage and residual); KM card
+  `a-table-naming-a-signals-bits-is-its-layout`; ladder F29 re-evaluated, unchanged.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`
+  Status: `open` (`2026-10-22`; REQUEST, waits for a consumer; opened by `.3.c.iv.b.ii`)
+  Goal: **a port's sub-field layout reaches FSMGen once something executable names a sub-field.** FSMGen ladder F29 is
+  *anticipated*: no `.isf` port takes a field, and ADR 0033 §4 files a request only when executable intent needs one.
+  Trigger: a rule, guard or drive SPECFORGE lowers names a sub-field (`HPROT` *Privileged*, `AxMPAM` *PARTID*).
+  Acceptance: on the trigger, refresh the drafted bundle (`.project-data/tmp/req-port-fields/packet`, reproduced on
+  the pin `54ac1c22` and upstream `c51e22712`) against the current pin and upstream, sign it off as an
+  `FSMGEN-REQUESTS` leaf and its ledger record, and move F29 to *requested*.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)

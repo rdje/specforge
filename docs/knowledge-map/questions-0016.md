@@ -53,6 +53,8 @@
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > what is signal_families / SignalFamilyRecord
 - [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
+  > what is signal_layout_residuals / isf_protocol_signal_layout (.3.c.iv.b.ii)
+- [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
   > what is signal_layouts / SignalLayoutRecord / SignalSubField (.3.c.iv.b.i)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is signal_presence_records and what does a SignalPresenceRecord hold
@@ -295,5 +297,3 @@
   > what is the longest legitimate parametric width expression in the corpus
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
   > what is the measured peak day for workflow standards
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is the message_field_catalog_dump measurement harness

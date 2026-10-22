@@ -563,9 +563,13 @@ of one signal. Since `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` (`2026-10-22`) 
   others keep their manifests.
 
 On the 31 chains (`2026-10-22`): AHB 1 layout (7 sub-fields, 12 levels), APB5 1 (3 sub-fields, 6 levels), AXI 4
-(`AxMPAM`, 3 fields each); ADIv6's candidate is refused. Nothing crosses SemanticIR yet (`.3.c.iv.b.ii`), and no port
-carries a field: `.isf` port options are a closed set, so a sub-field layout on a port is FSMGen ladder rung F29,
-*anticipated*.
+(`AxMPAM`, 3 fields each); ADIv6's candidate is refused.
+
+Since `.3.c.iv.b.ii` a layout crosses SemanticIR and IntentIR unchanged. No port carries a field: `.isf` port options
+are a closed set, so a sub-field layout on a port is FSMGen ladder rung F29, *anticipated*. ADR 0033 §4 files no
+request, because nothing executable names a sub-field. The adapter states one `isf_protocol_signal_layout_*` residual
+per layout and lists every sub-field reaching past its port's elaborated width: AHB's `Lookup [4]`, `Allocate [5]` and
+`Shareable [6]` lie past `HPROT_WIDTH`'s default 4.
 
 ### Which table an enum was read from
 

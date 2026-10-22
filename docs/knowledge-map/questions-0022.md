@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
+  > why did RTY_I, STALL_I and HREADYOUT lose a ready-like hint (a denied readiness)
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > why did SWD protocol_state score 0/13 when the state names were right
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
@@ -295,5 +297,3 @@
   > why do conditional_rules lower to .isf only partially
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > why do content_elements reading_order values skip numbers
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > why do doctrine gate timings vary so much between runs

@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii",
-      "literal" : "`.3.c.iv.b.ii` — a signal's sub-field layout reaches IntentIR, and the adapter names it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v",
+      "literal" : "`.3.c.v` — a requirement matrix keeps both of its keys.",
       "mode" : "eligible",
-      "part_id" : "layout-and-binding-leaves"
+      "part_id" : "census-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -166,13 +166,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
             "metrics" : {
-               "bytes" : 6716,
+               "bytes" : 11293,
                "line_bytes" : 119,
-               "lines" : 79
+               "lines" : 129
             },
             "part_id" : "layout-and-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-            "sha256" : "cdd574d9a1134dfc61112171f2e359f958a9643614612fdaf6a695037557ac1c",
+            "sha256" : "d358dafff55e0dc1f7697497dac538d8ffec6c7ae611f5f0de3a1a5e1b5e7870",
             "state" : "active"
          },
          {
@@ -1524,7 +1524,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
       },
@@ -1536,6 +1536,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "layout-and-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
@@ -1666,7 +1672,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.iv.b.ii` — a signal's sub-field layout reaches IntentIR, and the adapter names it.",
+         "`.3.c.v` — a requirement matrix keeps both of its keys.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1702,9 +1708,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.60`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.60`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`"
       ]
    },
    "migration_metadata" : {

@@ -2,6 +2,7 @@
 id: a-table-naming-a-signals-bits-is-its-layout
 title: A table whose one column lists slices of one declared signal, each named, is that signal's layout (signal_layouts); a level is read only outside a condition
 answers:
+  - "what is signal_layout_residuals / isf_protocol_signal_layout (.3.c.iv.b.ii)"
   - "what is signal_layouts / SignalLayoutRecord / SignalSubField (.3.c.iv.b.i)"
   - "how is AHB Table 3-6 Meaning of the HPROT bits read"
   - "how is APB's PPROT table (Normal or Privileged, LOW indicates …) read"
@@ -40,6 +41,11 @@ That is why AHB `HPROT[2]` (*If both of HPROT[4:3] are deasserted, then when thi
 each), ADIv6 one candidate refused; 27 chains identical. The `signal_layouts` manifest entry is recorded only when a
 table has the slice column, so other documents keep their manifests.
 
-**Not lowered.** `.3.c.iv.b.ii` carries the layouts to IntentIR. An `.isf` port takes no field (port options are a
-closed set at the pin and upstream; `(fields …)` is storage-only), and ADR 0033 §4 files an FSMGen request only for a
-semantic in IntentIR that executable intent needs. So FSMGen ladder rung F29 is *anticipated*.
+**Carried, not lowered (`.3.c.iv.b.ii`, `2026-10-22`).** SemanticIR and IntentIR carry `signal_layouts`
+unchanged. `signal_layout_residuals` states one `isf_protocol_signal_layout_*` residual per layout. It
+names every sub-field reaching past the elaborated width of a port the layout names
+(`IsfIr::signal_width`; a collective expands to its members): AHB `HPROT[6:4]` past `HPROT_WIDTH`'s
+default 4, AXI's MPAM fields past `MPAM_WIDTH`'s 1. An `.isf` port takes no field (port options are a
+closed set at the pin and upstream; `(fields …)` is storage-only). ADR 0033 §4 files an FSMGen request
+only for a semantic in IntentIR that executable intent needs, and no rule names a sub-field, so FSMGen
+ladder rung F29 stays *anticipated*.

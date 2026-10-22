@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why does the emitted .isf default ~98% of signals to output and width 1
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
@@ -296,5 +298,3 @@
   > why is a file-level line ceiling not enough for a bounded snapshot
 - [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
   > why is a fused Value Meaning sub-header or a 0 1 bit cell not read
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a gate's own numeral grammar part of its contract

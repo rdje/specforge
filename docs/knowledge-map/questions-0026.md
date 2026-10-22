@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a gate's own numeral grammar part of its contract
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > why is a gerund after while/when not a condition (action coordination)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -295,5 +297,3 @@
   > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
-- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
-  > why is the target drives SCL relation in I2C kept

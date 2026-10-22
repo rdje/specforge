@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-IV-B-I-SIGNAL-LAYOUTS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-IV-B-II-LAYOUT-CARRIAGE",
    "baseline": {
-    "analyzed_functions": 2856,
-    "decision_sites": 15875,
-    "helper_edges": 20371,
-    "semantic_macros": 1640
+    "analyzed_functions": 2862,
+    "decision_sites": 15932,
+    "helper_edges": 20465,
+    "semantic_macros": 1642
    },
    "delta": {
-    "analyzed_functions": 6,
-    "decision_sites": 57,
-    "helper_edges": 94,
-    "semantic_macros": 2
+    "analyzed_functions": 2,
+    "decision_sites": 8,
+    "helper_edges": 19,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i: a table whose one column lists slices of one declared signal, each named, is that signal's layout (read_signal_layouts, parse_name_slice, sub_field_levels, sentence_level, cell_sentences, signal_layout_surface)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii: signal_layouts carried through SemanticIR and IntentIR; signal_layout_residuals states one adapter residual per layout, naming the sub-fields past each port's width (IsfIr::signal_width)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

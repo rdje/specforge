@@ -17,11 +17,12 @@ use crate::ir::evidence::{
     CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord, EvidenceIr,
     InterfaceEdgeTimingRecord, KeywordDefinitionRecord, OptionalFeatureRecord,
     PermissionRuleRecord, ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord,
-    SerialFrameField, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord,
-    SignalPresenceRecord, SignalSemanticConflictRecord, SignalSemanticHintRecord,
-    SignalSemanticHintSourceKind, SignalSemanticTag, SoftwareIntentRecord,
-    SourceLocalInferenceConstraintGrounding, StatementClass, ValueCombinationRecord,
-    VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
+    SerialFrameField, SignalLayoutRecord, SignalPolarity, SignalPolarityConflictRecord,
+    SignalPolarityRecord, SignalPresenceRecord, SignalSemanticConflictRecord,
+    SignalSemanticHintRecord, SignalSemanticHintSourceKind, SignalSemanticTag,
+    SoftwareIntentRecord, SourceLocalInferenceConstraintGrounding, StatementClass,
+    ValueCombinationRecord, VisualEvidenceRole, VisualObservationKind,
+    parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
     CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
@@ -295,6 +296,10 @@ pub struct SemanticIr {
     /// projected losslessly from EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub value_combinations: Vec<ValueCombinationRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii — the tables naming a signal's sub-fields, one layout each,
+    /// projected losslessly from EvidenceIR (ADR 0016).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_layouts: Vec<SignalLayoutRecord>,
     /// Interface-edge timing observations projected losslessly from EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
@@ -462,6 +467,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_states", "semantic.carried_evidence"),
     ("protocol_transitions", "semantic.carried_evidence"),
     ("value_combinations", "semantic.carried_evidence"),
+    ("signal_layouts", "semantic.carried_evidence"),
     ("interface_edge_timings", "semantic.carried_evidence"),
     ("signal_presence_records", "semantic.carried_evidence"),
     ("check_signal_records", "semantic.carried_evidence"),
@@ -1038,6 +1044,7 @@ impl SemanticIr {
             protocol_states: evidence_ir.protocol_states.clone(),
             protocol_transitions: evidence_ir.protocol_transitions.clone(),
             value_combinations: evidence_ir.value_combinations.clone(),
+            signal_layouts: evidence_ir.signal_layouts.clone(),
             interface_edge_timings: evidence_ir.interface_edge_timings.clone(),
             signal_presence_records: evidence_ir.signal_presence_records.clone(),
             check_signal_records: evidence_ir.check_signal_records.clone(),
@@ -1243,6 +1250,7 @@ impl SemanticIr {
         insert_field!(protocol_states);
         insert_field!(protocol_transitions);
         insert_field!(value_combinations);
+        insert_field!(signal_layouts);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
@@ -29282,7 +29290,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 63);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 64);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

@@ -16,8 +16,9 @@ use crate::ir::evidence::{
     CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord,
     InterfaceEdgeTimingRecord, KeywordDefinitionRecord, OptionalFeatureRecord,
     PermissionRuleRecord, ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord,
-    SerialFrameField, SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
-    SignalSemanticConflictRecord, SoftwareIntentRecord, ValueCombinationRecord,
+    SerialFrameField, SignalLayoutRecord, SignalPolarityConflictRecord, SignalPolarityRecord,
+    SignalPresenceRecord, SignalSemanticConflictRecord, SoftwareIntentRecord,
+    ValueCombinationRecord,
 };
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
@@ -182,6 +183,11 @@ pub struct IntentIr {
     /// per record.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub value_combinations: Vec<ValueCombinationRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii — the tables naming a signal's sub-fields, one layout each, carried
+    /// losslessly from SemanticIR (ADR 0016). No `.isf` port takes a field, so the adapter keeps one residual per
+    /// layout.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_layouts: Vec<SignalLayoutRecord>,
     /// Interface-edge timing observations carried losslessly from SemanticIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
@@ -347,6 +353,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_states", "intent.carried_semantics"),
     ("protocol_transitions", "intent.carried_semantics"),
     ("value_combinations", "intent.carried_semantics"),
+    ("signal_layouts", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
     ("signal_presence_records", "intent.carried_semantics"),
     ("check_signal_records", "intent.carried_semantics"),
@@ -407,6 +414,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "protocol_states",
     "protocol_transitions",
     "value_combinations",
+    "signal_layouts",
     "interface_edge_timings",
     "signal_presence_records",
     "check_signal_records",
@@ -782,6 +790,7 @@ impl IntentIr {
             protocol_states: semantic_ir.protocol_states.clone(),
             protocol_transitions: semantic_ir.protocol_transitions.clone(),
             value_combinations: semantic_ir.value_combinations.clone(),
+            signal_layouts: semantic_ir.signal_layouts.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             signal_presence_records: semantic_ir.signal_presence_records.clone(),
             check_signal_records: semantic_ir.check_signal_records.clone(),
@@ -865,6 +874,7 @@ impl IntentIr {
         insert_field!(protocol_states);
         insert_field!(protocol_transitions);
         insert_field!(value_combinations);
+        insert_field!(signal_layouts);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
@@ -1453,6 +1463,7 @@ impl IntentIr {
             protocol_states: Vec::new(),
             protocol_transitions: Vec::new(),
             value_combinations: Vec::new(),
+            signal_layouts: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_presence_records: Vec::new(),
             check_signal_records: Vec::new(),
@@ -3882,6 +3893,28 @@ mod tests {
         let expected_states = evidence_ir.protocol_states.clone();
         let expected_edge_timings = evidence_ir.interface_edge_timings.clone();
         let expected_combinations = evidence_ir.value_combinations.clone();
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii — a signal layout is carried as it is.
+        evidence_ir.signal_layouts = vec![crate::ir::evidence::SignalLayoutRecord {
+            layout_id: "signal_layout_0001".to_string(),
+            signal: "HPROT".to_string(),
+            table_ids: vec!["table_0020".to_string()],
+            caption: Some("Table 3-6 Meaning of the HPROT bits".to_string()),
+            name_column: "Name".to_string(),
+            other_columns: vec!["Description".to_string()],
+            sub_fields: vec![crate::ir::evidence::SignalSubField {
+                table_id: "table_0020".to_string(),
+                bits: "[1]".to_string(),
+                msb: 1,
+                lsb: 1,
+                name: "Privileged".to_string(),
+                cells: vec!["When asserted, the access is privileged.".to_string()],
+                levels: vec![crate::ir::evidence::SubFieldLevel {
+                    level: crate::ir::evidence::SignalLevel::Asserted,
+                    meaning: "When asserted, the access is privileged.".to_string(),
+                }],
+            }],
+        }];
+        let expected_layouts = evidence_ir.signal_layouts.clone();
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -3893,6 +3926,7 @@ mod tests {
         assert_eq!(semantic_ir.protocol_states, expected_states);
         assert_eq!(semantic_ir.interface_edge_timings, expected_edge_timings);
         assert_eq!(semantic_ir.value_combinations, expected_combinations);
+        assert_eq!(semantic_ir.signal_layouts, expected_layouts);
         semantic_ir.write_to_disk()?;
 
         let intent_ir = IntentIr::build(
@@ -3904,6 +3938,7 @@ mod tests {
         assert_eq!(intent_ir.protocol_states, expected_states);
         assert_eq!(intent_ir.interface_edge_timings, expected_edge_timings);
         assert_eq!(intent_ir.value_combinations, expected_combinations);
+        assert_eq!(intent_ir.signal_layouts, expected_layouts);
 
         let encoded = serde_json::to_value(&intent_ir)?;
         assert_eq!(
@@ -3929,6 +3964,7 @@ mod tests {
         empty.protocol_states.clear();
         empty.interface_edge_timings.clear();
         empty.value_combinations.clear();
+        empty.signal_layouts.clear();
         let legacy_shape = serde_json::to_value(&empty)?;
         for field in [
             "serial_frame_fields",
@@ -3936,6 +3972,7 @@ mod tests {
             "protocol_states",
             "interface_edge_timings",
             "value_combinations",
+            "signal_layouts",
         ] {
             assert!(
                 legacy_shape.get(field).is_none(),
@@ -6853,8 +6890,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 62);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 42);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 63);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 43);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()
