@@ -594,7 +594,9 @@ record: one per table and its continuations, the message titles as written, and 
 source per message. Every body row must start with a declared signal's slice and every other cell take one of those
 forms, empty or `-` included, with at least one field slice; that is the shape the sub-field reader refuses. AXI's
 three tables are read, 56 rows each; no other chain has the shape. The message kinds join the fixed-field tables
-*A15.7*-*A15.16*, which `DOC-INTENT-TAXONOMY.4b` owns, and the record reaches IntentIR with `.3.c.iv.c.ii`.
+*A15.7*-*A15.16*, which `DOC-INTENT-TAXONOMY.4b` owns. Since `.3.c.iv.c.ii` the record crosses SemanticIR and
+IntentIR unchanged, and the adapter states one `isf_protocol_message_signal_layout_*` residual per record naming its
+signals and message kinds: no `.isf` port takes a per-message bit mapping (FSMGen ladder F29, *anticipated*).
 
 ### A table of marks per pair of keys
 

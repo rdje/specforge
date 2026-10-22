@@ -141,10 +141,48 @@ here whole.
   `a-table-naming-a-signals-bits-is-its-layout`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.iv.c`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.iv.c`; checklist below)
   Goal: **a per-message layout reaches IntentIR, and the adapter names it.** Acceptance: carry
   `message_signal_layouts` through SemanticIR and IntentIR unchanged, state one `isf_protocol_message_signal_layout_*`
   residual per record naming its message kinds, and measure every chain's adapter.
+  **Done `2026-10-22`.**
+  - **Carried.** SemanticIR (`semantic.carried_evidence`) and IntentIR (`intent.carried_semantics`) carry
+    `message_signal_layouts` unchanged. `cited_table_ids` gathers its tables, as `.3.c.vi.a` requires of every carried
+    record, so its fragments are no longer captured-table residuals.
+  - **Residual.** The adapter states one `isf_protocol_message_signal_layout_*` residual per record, naming its signals
+    and message kinds (`ACADDR, ACVMIDEXT over TLBI 1-part; TLBI 1st of 2-part; …`) and citing its tables: no `.isf`
+    port takes a per-message bit mapping (FSMGen ladder F29, anticipated).
+  - **Measured.** AXI rebuilt stage by stage: `message_signal_layouts` and `captured_region_residuals` moved in
+    SemanticIR and IntentIR; A15.20-A15.22's six fragments leave the table residuals (140 -> 134); the adapter states
+    114 residuals (111, plus the three); `manager.isf` is byte-identical. The rule fields moved the SemanticIR and
+    IntentIR ruleset hashes, so `rebuild_stage_cascade.sh --write` re-sealed all 31 chains, content-identical.
+  - **Lockstep, and an earlier gap.** The book's carried-collection lists (`pipeline/semanticir.md`,
+    `pipeline/intentir.md`) still named six collections, missing `signal_layouts` and `matrix_tables` that
+    `.3.c.iv.b.ii` and `.3.c.v.ii` carried; they now name all nine.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — `.3.c.iv.c.i`'s three AXI records stopped at EvidenceIR, and their six fragments were
+  table residuals.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` and `intent.rs` did not carry the field,
+  and `crates/specforge/src/ir/adapters.rs` stated nothing for it. RED 4/4, each file restored byte-identically:
+  SemanticIR dropping the layouts, IntentIR dropping them, the adapter stating no residual, the record citing no
+  table; each fails `projects_protocol_surfaces_exactly_across_all_three_stages`,
+  `isf_adapter_residualizes_a_message_signal_layout_naming_its_messages` or
+  `cited_table_ids_gathers_every_declared_table_provenance_surface`.
+- [x] **ADDRESSED (verified)** — AXI's carried records, three residuals and six cited fragments above.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current after the cascade. WIRE-BASED-100: all 11 seed
+  reports byte-identical to `4d48e580e`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo
+  clippy --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,936 passed once the field joined both carried rows of
+  `claim_family_inventory.tsv` (the first run failed the inventory bound, 212 against 214); proof fields SemanticIR 66,
+  IntentIR 65 (45 carried), inventory 214 rules. `flow_census.json` rolled (+61 decision sites, +45 helper edges, +1
+  macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — carriage and a residual per record; no document, table or message vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md`, `pipeline/semanticir.md`, `pipeline/intentir.md`; KM card
+  `a-table-naming-a-signals-bits-is-its-layout`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.56.c`
   Status: `open` (`2026-10-22`; DOC; opened by `.3.c.iv.c`'s part rollover)
   Goal: **`layout-and-binding-leaves`, every leaf closed, is archived.** Its open leaves moved whole to

@@ -15,14 +15,14 @@ use crate::ir::derivation::{
 };
 use crate::ir::evidence::{
     CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord, EvidenceIr,
-    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, MatrixTableRecord, OptionalFeatureRecord,
-    PermissionRuleRecord, ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord,
-    SerialFrameField, SignalLayoutRecord, SignalPolarity, SignalPolarityConflictRecord,
-    SignalPolarityRecord, SignalPresenceRecord, SignalSemanticConflictRecord,
-    SignalSemanticHintRecord, SignalSemanticHintSourceKind, SignalSemanticTag,
-    SoftwareIntentRecord, SourceLocalInferenceConstraintGrounding, StatementClass,
-    ValueCombinationRecord, VisualEvidenceRole, VisualObservationKind,
-    parse_visual_observation_json,
+    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, MatrixTableRecord,
+    MessageSignalLayoutRecord, OptionalFeatureRecord, PermissionRuleRecord,
+    ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
+    SignalLayoutRecord, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord,
+    SignalPresenceRecord, SignalSemanticConflictRecord, SignalSemanticHintRecord,
+    SignalSemanticHintSourceKind, SignalSemanticTag, SoftwareIntentRecord,
+    SourceLocalInferenceConstraintGrounding, StatementClass, ValueCombinationRecord,
+    VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
     CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
@@ -300,6 +300,10 @@ pub struct SemanticIr {
     /// projected losslessly from EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_layouts: Vec<SignalLayoutRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii — the tables giving signal bits per message kind, carried from
+    /// EvidenceIR unchanged.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub message_signal_layouts: Vec<MessageSignalLayoutRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — the two-way tables of marks or modal words, projected losslessly from
     /// EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -472,6 +476,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_transitions", "semantic.carried_evidence"),
     ("value_combinations", "semantic.carried_evidence"),
     ("signal_layouts", "semantic.carried_evidence"),
+    ("message_signal_layouts", "semantic.carried_evidence"),
     ("matrix_tables", "semantic.carried_evidence"),
     ("interface_edge_timings", "semantic.carried_evidence"),
     ("signal_presence_records", "semantic.carried_evidence"),
@@ -1050,6 +1055,7 @@ impl SemanticIr {
             protocol_transitions: evidence_ir.protocol_transitions.clone(),
             value_combinations: evidence_ir.value_combinations.clone(),
             signal_layouts: evidence_ir.signal_layouts.clone(),
+            message_signal_layouts: evidence_ir.message_signal_layouts.clone(),
             matrix_tables: evidence_ir.matrix_tables.clone(),
             interface_edge_timings: evidence_ir.interface_edge_timings.clone(),
             signal_presence_records: evidence_ir.signal_presence_records.clone(),
@@ -1215,6 +1221,9 @@ impl SemanticIr {
         for record in &self.signal_layouts {
             cited.extend(borrow(&record.table_ids));
         }
+        for record in &self.message_signal_layouts {
+            cited.extend(borrow(&record.table_ids));
+        }
         for record in &self.matrix_tables {
             cited.extend(borrow(&record.table_ids));
         }
@@ -1306,6 +1315,7 @@ impl SemanticIr {
         insert_field!(protocol_transitions);
         insert_field!(value_combinations);
         insert_field!(signal_layouts);
+        insert_field!(message_signal_layouts);
         insert_field!(matrix_tables);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
@@ -15138,6 +15148,7 @@ mod tests {
         semantic_ir.symbol_definitions.clear();
         semantic_ir.value_combinations.clear();
         semantic_ir.signal_layouts.clear();
+        semantic_ir.message_signal_layouts.clear();
         semantic_ir.matrix_tables.clear();
         semantic_ir.signal_presence_records.clear();
         semantic_ir.check_signal_records.clear();
@@ -15300,11 +15311,15 @@ mod tests {
             "trigger": {"kind": "timer_expiry", "timer_name": "tA", "timing_constraint_ids": []},
             "supporting_table_ids": ["table_1017"]
         }]))?;
+        semantic_ir.message_signal_layouts = serde_json::from_value(serde_json::json!([{
+            "layout_id": "message_signal_layout_0001", "table_ids": ["table_1019"], "messages": ["TLBI"],
+            "bits": []
+        }]))?;
         semantic_ir.signal_channel_memberships = serde_json::from_value(serde_json::json!([{
             "signal_name": "ACADDR", "channel_role": "snoop request", "table_ids": ["table_1018"]
         }]))?;
 
-        let expected: BTreeSet<String> = (1000..=1018).map(|n| format!("table_{n}")).collect();
+        let expected: BTreeSet<String> = (1000..=1019).map(|n| format!("table_{n}")).collect();
         let gathered: BTreeSet<String> = semantic_ir
             .cited_table_ids()
             .into_iter()
@@ -29411,7 +29426,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 65);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 66);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

@@ -1422,6 +1422,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.protocol_transitions.len()
             + intent_ir.value_combinations.len()
             + intent_ir.matrix_tables.len()
+            + intent_ir.message_signal_layouts.len()
             + intent_ir.interface_edge_timings.len()
             + stated_absent_values.len()
             + intent_ir.equivalence_rules.len()
@@ -1504,6 +1505,29 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             &[],
             &record.table_ids,
             "a consumer: no rule, guard or drive names its row and column keys; a legality matrix's lowering is decided apart (`EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`), and a requirement, version or effect matrix states configuration the `.isf` does not carry (ADR 0033 §6)",
+        ));
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii — a signal laid out per message kind. No `.isf` port takes a per-message
+    // bit mapping (FSMGen ladder F29, anticipated); the record names its signals and message kinds and stays typed.
+    for record in &intent_ir.message_signal_layouts {
+        let mut signals: Vec<&str> = Vec::new();
+        for bit in &record.bits {
+            if !signals.contains(&bit.signal.as_str()) {
+                signals.push(bit.signal.as_str());
+            }
+        }
+        residuals.push(protocol_residual_packet(
+            "message_signal_layout",
+            "message signal layout",
+            &record.layout_id,
+            &[],
+            &record.table_ids,
+            &format!(
+                "an `.isf` form for a signal laid out per message kind ({} over {}): port options are a closed set, so \
+                 no port takes a per-message bit mapping (FSMGen ladder F29, anticipated)",
+                signals.join(", "),
+                record.messages.join("; ")
+            ),
         ));
     }
     for record in &intent_ir.interface_edge_timings {
@@ -2810,6 +2834,69 @@ mod tests {
             packets[0]
                 .why_unresolved
                 .contains("supporting tables: table_0174, table_0175")
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii` — a per-message layout reaches the adapter as one residual naming its
+    /// signals and message kinds, and the rendered `.isf` is unchanged.
+    #[test]
+    fn isf_adapter_residualizes_a_message_signal_layout_naming_its_messages() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_message_signal_layouts.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let baseline = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("baseline_adapter"),
+        )?;
+        let baseline_isf = baseline.isf.expect("baseline ISF artifact");
+        intent_ir.message_signal_layouts = serde_json::from_value(serde_json::json!([{
+            "layout_id": "message_signal_layout_0001",
+            "table_ids": ["table_0230", "table_0231"],
+            "messages": ["TLBI 1-part", "TLBI 2nd part"],
+            "bits": [
+                {"table_id": "table_0230", "signal": "ACADDR", "bits": "[47]", "msb": 47, "lsb": 47,
+                 "sources": [{"kind": "constant", "code": "0b0"},
+                             {"kind": "field", "name": "VA", "bits": "[52]", "msb": 52, "lsb": 52}]},
+                {"table_id": "table_0231", "signal": "ACVMIDEXT", "bits": "[0]", "msb": 0, "lsb": 0,
+                 "sources": [{"kind": "field", "name": "VMIDV"}, {"kind": "unstated", "text": "-"}]}
+            ]
+        }]))?;
+        intent_ir.write_to_disk()?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("message_layout_adapter"),
+        )?;
+        let isf = artifact.isf.clone().expect("message layout ISF artifact");
+        assert_eq!(isf.source_text, baseline_isf.source_text);
+        let packets = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| {
+                packet
+                    .packet_id
+                    .starts_with("isf_protocol_message_signal_layout_")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(packets.len(), 1);
+        assert_eq!(
+            packets[0].packet_id,
+            "isf_protocol_message_signal_layout_message_signal_layout_0001"
+        );
+        assert!(
+            packets[0]
+                .why_unresolved
+                .contains("ACADDR, ACVMIDEXT over TLBI 1-part; TLBI 2nd part")
+        );
+        assert!(
+            packets[0]
+                .why_unresolved
+                .contains("supporting tables: table_0230, table_0231")
         );
         Ok(())
     }

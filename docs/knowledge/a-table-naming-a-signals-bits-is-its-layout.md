@@ -64,3 +64,8 @@ an adapter residual by `.3.c.iv.c.ii`. The message kinds join the fixed-field ta
 named alone, `unstated`) runs in each convergence pass. AXI's three tables are read with their continuations, 56
 rows each (52 `ACADDR`, 4 `ACVMIDEXT`); a cell of prose or a slice of no declared signal refuses a table. The new
 field moved the EvidenceIR ruleset hash, so every chain was re-sealed.
+
+**Carried (`.3.c.iv.c.ii`, `2026-10-22`).** SemanticIR and IntentIR carry `message_signal_layouts` unchanged, and
+`cited_table_ids` gathers its tables, so A15.20-A15.22's six fragments leave the captured-table residuals. The
+adapter states one `isf_protocol_message_signal_layout_*` residual per record naming its signals and message kinds
+(`ACADDR, ACVMIDEXT over TLBI 1-part; …`); no `.isf` port takes a per-message bit mapping (F29, anticipated).

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii",
-      "literal" : "`.3.c.iv.c.ii` — a per-message layout reaches IntentIR, and the adapter names it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.c",
+      "literal" : "`.56.c` — `layout-and-binding-leaves`, every leaf closed, is archived.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -178,13 +178,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
-               "bytes" : 14088,
+               "bytes" : 17381,
                "line_bytes" : 119,
-               "lines" : 158
+               "lines" : 196
             },
             "part_id" : "table-reading-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-            "sha256" : "6b9ec76207e5229a3442191f0469320eca4f835ada95ff4213bfd00d7e0ec675",
+            "sha256" : "f6136a35f12c2c7c2ee6c7e5a33c5e0b4572ec53b30219f9f1f0d56fef03f740",
             "state" : "active"
          },
          {
@@ -1656,7 +1656,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1798,7 +1798,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.iv.c.ii` — a per-message layout reaches IntentIR, and the adapter names it.",
+         "`.56.c` — `layout-and-binding-leaves`, every leaf closed, is archived.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1837,7 +1837,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.67`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.68`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.56.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`"
       ]

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-IV-C-I-MESSAGE-SIGNAL-LAYOUTS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-IV-C-II-MESSAGE-LAYOUT-CARRIAGE",
    "baseline": {
-    "analyzed_functions": 2879,
-    "decision_sites": 16244,
-    "helper_edges": 20796,
-    "semantic_macros": 1646
+    "analyzed_functions": 2881,
+    "decision_sites": 16263,
+    "helper_edges": 20850,
+    "semantic_macros": 1648
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 19,
-    "helper_edges": 54,
-    "semantic_macros": 2
+    "analyzed_functions": 0,
+    "decision_sites": 61,
+    "helper_edges": 45,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i: a table giving signal bits per message kind is EvidenceIR's message_signal_layouts (read_message_signal_layouts, message_signal_layout_surface)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii: message_signal_layouts crosses SemanticIR and IntentIR, its tables are cited, and the adapter states one residual per record."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

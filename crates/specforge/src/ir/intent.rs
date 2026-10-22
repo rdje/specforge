@@ -14,11 +14,11 @@ use crate::ir::derivation::{
 };
 use crate::ir::evidence::{
     CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord,
-    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, MatrixTableRecord, OptionalFeatureRecord,
-    PermissionRuleRecord, ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord,
-    SerialFrameField, SignalLayoutRecord, SignalPolarityConflictRecord, SignalPolarityRecord,
-    SignalPresenceRecord, SignalSemanticConflictRecord, SoftwareIntentRecord,
-    ValueCombinationRecord,
+    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, MatrixTableRecord,
+    MessageSignalLayoutRecord, OptionalFeatureRecord, PermissionRuleRecord,
+    ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
+    SignalLayoutRecord, SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
+    SignalSemanticConflictRecord, SoftwareIntentRecord, ValueCombinationRecord,
 };
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
@@ -188,6 +188,10 @@ pub struct IntentIr {
     /// layout.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_layouts: Vec<SignalLayoutRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii — the tables giving signal bits per message kind, carried from
+    /// SemanticIR unchanged.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub message_signal_layouts: Vec<MessageSignalLayoutRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — the two-way tables of marks or modal words, carried losslessly from
     /// SemanticIR (ADR 0016). The adapter lowers none of them and keeps one residual per matrix.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -358,6 +362,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_transitions", "intent.carried_semantics"),
     ("value_combinations", "intent.carried_semantics"),
     ("signal_layouts", "intent.carried_semantics"),
+    ("message_signal_layouts", "intent.carried_semantics"),
     ("matrix_tables", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
     ("signal_presence_records", "intent.carried_semantics"),
@@ -420,6 +425,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "protocol_transitions",
     "value_combinations",
     "signal_layouts",
+    "message_signal_layouts",
     "matrix_tables",
     "interface_edge_timings",
     "signal_presence_records",
@@ -797,6 +803,7 @@ impl IntentIr {
             protocol_transitions: semantic_ir.protocol_transitions.clone(),
             value_combinations: semantic_ir.value_combinations.clone(),
             signal_layouts: semantic_ir.signal_layouts.clone(),
+            message_signal_layouts: semantic_ir.message_signal_layouts.clone(),
             matrix_tables: semantic_ir.matrix_tables.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             signal_presence_records: semantic_ir.signal_presence_records.clone(),
@@ -882,6 +889,7 @@ impl IntentIr {
         insert_field!(protocol_transitions);
         insert_field!(value_combinations);
         insert_field!(signal_layouts);
+        insert_field!(message_signal_layouts);
         insert_field!(matrix_tables);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
@@ -1472,6 +1480,7 @@ impl IntentIr {
             protocol_transitions: Vec::new(),
             value_combinations: Vec::new(),
             signal_layouts: Vec::new(),
+            message_signal_layouts: Vec::new(),
             matrix_tables: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_presence_records: Vec::new(),
@@ -3925,6 +3934,13 @@ mod tests {
             }],
         }];
         let expected_layouts = evidence_ir.signal_layouts.clone();
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii — a per-message layout is carried as it is.
+        evidence_ir.message_signal_layouts = serde_json::from_value(serde_json::json!([{
+            "layout_id": "message_signal_layout_0001", "table_ids": ["table_0230"], "messages": ["TLBI 1-part"],
+            "bits": [{"table_id": "table_0230", "signal": "ACADDR", "bits": "[47]", "msb": 47, "lsb": 47,
+                      "sources": [{"kind": "field", "name": "VA", "bits": "[56]", "msb": 56, "lsb": 56}]}]
+        }]))?;
+        let expected_message_layouts = evidence_ir.message_signal_layouts.clone();
         // EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — a matrix table is carried as it is.
         evidence_ir.matrix_tables = vec![crate::ir::evidence::MatrixTableRecord {
             matrix_id: "matrix_table_0001".to_string(),
@@ -3957,6 +3973,7 @@ mod tests {
         assert_eq!(semantic_ir.interface_edge_timings, expected_edge_timings);
         assert_eq!(semantic_ir.value_combinations, expected_combinations);
         assert_eq!(semantic_ir.signal_layouts, expected_layouts);
+        assert_eq!(semantic_ir.message_signal_layouts, expected_message_layouts);
         assert_eq!(semantic_ir.matrix_tables, expected_matrices);
         semantic_ir.write_to_disk()?;
 
@@ -3970,6 +3987,7 @@ mod tests {
         assert_eq!(intent_ir.interface_edge_timings, expected_edge_timings);
         assert_eq!(intent_ir.value_combinations, expected_combinations);
         assert_eq!(intent_ir.signal_layouts, expected_layouts);
+        assert_eq!(intent_ir.message_signal_layouts, expected_message_layouts);
         assert_eq!(intent_ir.matrix_tables, expected_matrices);
 
         let encoded = serde_json::to_value(&intent_ir)?;
@@ -3997,6 +4015,7 @@ mod tests {
         empty.interface_edge_timings.clear();
         empty.value_combinations.clear();
         empty.signal_layouts.clear();
+        empty.message_signal_layouts.clear();
         empty.matrix_tables.clear();
         let legacy_shape = serde_json::to_value(&empty)?;
         for field in [
@@ -4006,6 +4025,7 @@ mod tests {
             "interface_edge_timings",
             "value_combinations",
             "signal_layouts",
+            "message_signal_layouts",
             "matrix_tables",
         ] {
             assert!(
@@ -6924,8 +6944,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 64);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 44);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 65);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 45);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()
