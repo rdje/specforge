@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -295,5 +297,3 @@
   > where does the specforge chipdoc host library symlink currently resolve
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > where does the until release go (the temporal rule's exceptions, not the condition)
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > where does the uppercase spelling in a declaration come from

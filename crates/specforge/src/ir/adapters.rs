@@ -2785,6 +2785,7 @@ mod tests {
             }],
             cell_class: crate::ir::evidence::MatrixCellClass::Mark,
             legend: Vec::new(),
+            notes: Vec::new(),
         }];
         intent_ir.write_to_disk()?;
         let artifact = AdapterArtifact::build(

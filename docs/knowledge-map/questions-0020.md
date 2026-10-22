@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -295,5 +297,3 @@
   > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > which validate metrics/finding surface channel membership
-- [unread-behaviors-are-permissions-and-the-timing-class-misfires](../knowledge/unread-behaviors-are-permissions-and-the-timing-class-misfires.md)
-  > which words does the timing arm of classify_statement match (cycle, cycles, at least; cycle, ns, ps, time, edge as substrings)

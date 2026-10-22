@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why does the OpenCAPI Ready Definition emit no ISF
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > why does the OpenCAPI Ready engineering note emit no ISF
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -296,5 +298,3 @@
   > why is a comma-separated signal family safe when a space-separated one is not
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > why is a concatenating join more dangerous than an underscore join
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > why is a condition like 'X is asserted, Y must remain asserted' wrong

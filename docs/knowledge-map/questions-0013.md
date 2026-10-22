@@ -201,6 +201,8 @@
   > what does UNMEASURABLE mean in check_chain_currency
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what does a fast category recognizer need beyond surface counts (wire-relation shape, front-matter/self-declared type, topology cue)
+- [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
+  > what does a footnoted matrix cell like Y 2 or a title like Update 1 mean (MatrixNote, bind_matrix_notes, .64)
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > what does a green hosted CI run actually prove
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
@@ -295,5 +297,3 @@
   > what does record-00000102 mean in a SourceIR proof verification failure
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > what does refusing a phrase name cell cost
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what does registered derivation output or input topology is stale mean

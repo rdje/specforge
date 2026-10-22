@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is the ingest disk pre-flight check
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -295,5 +297,3 @@
   > what temporal logic backs temporal_rules
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > what turned on the total probe at semantic and intent
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2

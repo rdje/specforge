@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what does registered derivation output or input topology is stale mean
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > what does resolve_indexed_signal_family do
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
@@ -296,5 +298,3 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a
 - [a-timing-constraint-states-a-time](../knowledge/a-timing-constraint-states-a-time.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.b
-- [an-obligation-stated-with-assume-keeps-its-class](../knowledge/an-obligation-stated-with-assume-keeps-its-class.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.3.d.iii.c and .3.d.iii.e

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > where does the uppercase spelling in a declaration come from
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -296,5 +298,3 @@
   > which docs fail to ingest (giants / timeouts)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])

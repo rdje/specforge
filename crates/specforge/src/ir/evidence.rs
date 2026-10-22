@@ -1082,6 +1082,9 @@ pub struct MatrixTableRecord {
     /// The codes the caption defines (I2C *Table 3*: *M = mandatory; O = optional; n/a = not applicable*).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub legend: Vec<MatrixLegendEntry>,
+    /// EXTRACTION-REPRESENTATION-GAPS.64 — the notes its data-column titles and cells cite by a trailing mark.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub notes: Vec<MatrixNote>,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — one row of a [`MatrixTableRecord`].
@@ -1108,6 +1111,30 @@ pub enum MatrixCellClass {
 pub struct MatrixLegendEntry {
     pub code: String,
     pub meaning: String,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.64` — a note a matrix's data-column titles or cells cite by a trailing mark (AXI
+/// *A12.13* `Y 2`: *Not Exclusive write.*), and what cites it. The titles and cells stay as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MatrixNote {
+    /// The mark, as printed (`2`; `[2]` is `2`).
+    pub mark: String,
+    /// The note's text, as printed after its mark.
+    pub text: String,
+    /// The data columns a title of which carries the mark, by position in `column_keys`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub columns: Vec<usize>,
+    /// The cells carrying the mark.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub cells: Vec<MatrixCellPosition>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.64` — a cell of a matrix: its row's position in `rows` and its own in that row's
+/// `cells`.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MatrixCellPosition {
+    pub row: usize,
+    pub column: usize,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a level as a sub-field's description names it.
@@ -2722,7 +2749,7 @@ impl EvidenceIr {
         );
         // EXTRACTION-REPRESENTATION-GAPS.3.c.v.i — a two-way table of marks or modal words is a matrix, unless another
         // reader holds it.
-        let matrix_tables = matrix_table_surface(
+        let mut matrix_tables = matrix_table_surface(
             read_matrix_tables(
                 source_ir,
                 &register_records,
@@ -2732,6 +2759,8 @@ impl EvidenceIr {
             ),
             &mut extraction_manifest,
         );
+        // EXTRACTION-REPRESENTATION-GAPS.64 — a matrix cell's or column title's mark cites the note printed beside it.
+        bind_matrix_notes(&mut matrix_tables, source_ir);
         // EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii — a presence code reads the legend the document states for it.
         bind_presence_legends(&mut signal_presence_records, &matrix_tables);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
@@ -32460,10 +32489,120 @@ fn read_matrix_tables(
                 MatrixCellClass::Modal
             },
             legend: matrix_caption_legend(table.caption_text.as_deref()),
+            notes: Vec::new(),
         });
         references.push((reference.map(|(reference, _)| reference), titles));
     }
     (records, candidates)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.64` — the marks a cell or title closes with, in order: the words after its last
+/// other word, each a note number, a bracketed one or a lowercase letter (`Y 2`, `O [2]`, `State 1, 2`). A text of
+/// marks alone (`2, 3`) closes with none.
+fn trailing_note_marks(text: &str) -> Vec<String> {
+    let mark = |word: &str| -> Option<String> {
+        let word = word.trim_end_matches(',');
+        let number =
+            |text: &str| (1..=2).contains(&text.len()) && text.bytes().all(|b| b.is_ascii_digit());
+        match word
+            .strip_prefix('[')
+            .and_then(|inner| inner.strip_suffix(']'))
+        {
+            Some(inner) => number(inner).then(|| inner.to_string()),
+            None => (number(word)
+                || (word.len() == 1 && word.bytes().all(|b| b.is_ascii_lowercase())))
+            .then(|| word.to_string()),
+        }
+    };
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let Some(last_other) = words.iter().rposition(|word| mark(word).is_none()) else {
+        return Vec::new();
+    };
+    words[last_other + 1..]
+        .iter()
+        .filter_map(|word| mark(word))
+        .collect()
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.64` — each matrix's notes: for every mark a data-column title or a cell closes with
+/// ([`trailing_note_marks`]), the one text that footnotes with that mark print on the pages beside the matrix's tables
+/// ([`footnote_texts_by_page`]). A mark no note explains, or two different notes do, cites nothing, so USB 3.2's `Set
+/// Address 0` stays a title. Notes follow the order in which titles, then cells, first cite them.
+fn bind_matrix_notes(matrices: &mut [MatrixTableRecord], source_ir: &SourceIr) {
+    if matrices.is_empty() {
+        return;
+    }
+    let notes_by_page = footnote_texts_by_page(source_ir);
+    let page_of: HashMap<&str, u32> = source_ir
+        .structured_tables
+        .iter()
+        .filter_map(|table| Some((table.table_id.as_str(), bit_position_table_page(table)?)))
+        .collect();
+    for matrix in matrices.iter_mut() {
+        let pages: BTreeSet<u32> = matrix
+            .table_ids
+            .iter()
+            .filter_map(|table_id| page_of.get(table_id.as_str()))
+            .flat_map(|&page| [page.saturating_sub(1), page, page + 1])
+            .collect();
+        let text_of = |mark: &str| -> Option<String> {
+            let texts: BTreeSet<&str> = pages
+                .iter()
+                .filter_map(|page| notes_by_page.get(page))
+                .flatten()
+                .filter(|(note_mark, _)| note_mark == mark)
+                .map(|(_, text)| text.as_str())
+                .collect();
+            match texts.into_iter().collect::<Vec<_>>().as_slice() {
+                [text] => Some(text.to_string()),
+                _ => None,
+            }
+        };
+        let mut notes: Vec<MatrixNote> = Vec::new();
+        let mut cite = |mark: String, column: Option<usize>, cell: Option<MatrixCellPosition>| {
+            let index = match notes.iter().position(|note| note.mark == mark) {
+                Some(index) => index,
+                None => {
+                    let Some(text) = text_of(&mark) else {
+                        return;
+                    };
+                    notes.push(MatrixNote {
+                        mark,
+                        text,
+                        columns: Vec::new(),
+                        cells: Vec::new(),
+                    });
+                    notes.len() - 1
+                }
+            };
+            let note = &mut notes[index];
+            if let Some(column) = column
+                && !note.columns.contains(&column)
+            {
+                note.columns.push(column);
+            }
+            if let Some(cell) = cell
+                && !note.cells.contains(&cell)
+            {
+                note.cells.push(cell);
+            }
+        };
+        for (column, titles) in matrix.column_keys.iter().enumerate() {
+            for title in titles {
+                for mark in trailing_note_marks(title) {
+                    cite(mark, Some(column), None);
+                }
+            }
+        }
+        for (row, record) in matrix.rows.iter().enumerate() {
+            for (column, cell) in record.cells.iter().enumerate() {
+                for mark in trailing_note_marks(cell) {
+                    cite(mark, None, Some(MatrixCellPosition { row, column }));
+                }
+            }
+        }
+        matrix.notes = notes;
+    }
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii` — each presence code, read against the legend the document states for it.
@@ -50294,6 +50433,7 @@ The control register.
             ],
             cell_class: super::MatrixCellClass::Modal,
             legend: Vec::new(),
+            notes: Vec::new(),
         };
         let presence = |id: &str, table: &str, codes: &[&str]| super::SignalPresenceRecord {
             presence_id: id.to_string(),
@@ -50345,6 +50485,106 @@ The control register.
         other.matrix_id = "matrix_table_0008".to_string();
         super::bind_presence_legends(&mut twice, &[legend, other]);
         assert!(twice[0].legend_matrix_id.is_none());
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.64` — a matrix title's or cell's trailing mark cites the note printed beside the
+    /// matrix; a mark no nearby note explains, and a cell of marks alone, cite nothing.
+    #[test]
+    fn a_matrix_cell_or_title_cites_the_note_printed_beside_it() -> Result<()> {
+        assert_eq!(
+            super::trailing_note_marks("Suspended USB Device State 1, 2"),
+            ["1", "2"]
+        );
+        assert_eq!(super::trailing_note_marks("O [2]"), ["2"]);
+        assert!(super::trailing_note_marks("2, 3").is_empty());
+        assert!(super::trailing_note_marks("Y").is_empty());
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("tags.md");
+        fs::write(&source, "# Tags\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_tags".to_string(),
+            asset_id: "asset_table_tags".to_string(),
+            page_id: Some("page_0195".to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: 0,
+            col_count: 0,
+            header_rows: Vec::new(),
+            body_rows: Vec::new(),
+        });
+        let footnote = |id: &str, page: &str, text: &str| crate::ir::source::ContentElementRecord {
+            element_id: id.to_string(),
+            kind: crate::ir::source::ContentElementKind::Footnote,
+            text: text.to_string(),
+            heading_level: None,
+            page_id: Some(page.to_string()),
+            source_ref: None,
+            source_batch: None,
+            reading_order: 1,
+        };
+        source_ir.content_elements.extend([
+            footnote(
+                "fn_1",
+                "page_0195",
+                "1 Partial tag updates are not supported.",
+            ),
+            footnote("fn_2", "page_0196", "2 Not Exclusive write."),
+            footnote("fn_3", "page_0300", "3 Domain must be Non-shareable."),
+        ]);
+        let row = |opcode: &str, cells: [&str; 2]| super::MatrixRow {
+            table_id: "table_tags".to_string(),
+            keys: vec![opcode.to_string()],
+            cells: cells.iter().map(|cell| cell.to_string()).collect(),
+        };
+        let mut matrices = vec![super::MatrixTableRecord {
+            matrix_id: "matrix_table_0001".to_string(),
+            table_ids: vec!["table_tags".to_string()],
+            caption: None,
+            row_key_titles: vec!["Opcode".to_string()],
+            column_keys: vec![
+                vec![
+                    "MTE_Support = Simplified".to_string(),
+                    "Update 1".to_string(),
+                ],
+                vec!["MTE_Support = Simplified".to_string(), "Match".to_string()],
+            ],
+            rows: vec![
+                row("WriteNoSnoop", ["Y", "Y 2"]),
+                row("Write*CMO", ["Y 3", "-"]),
+                row("Atomic", ["2, 3", "Y 2"]),
+            ],
+            cell_class: super::MatrixCellClass::Mark,
+            legend: Vec::new(),
+            notes: Vec::new(),
+        }];
+        super::bind_matrix_notes(&mut matrices, &source_ir);
+        let cell = |row: usize, column: usize| super::MatrixCellPosition { row, column };
+        assert_eq!(
+            matrices[0].notes,
+            [
+                super::MatrixNote {
+                    mark: "1".to_string(),
+                    text: "Partial tag updates are not supported.".to_string(),
+                    columns: vec![0],
+                    cells: Vec::new(),
+                },
+                super::MatrixNote {
+                    mark: "2".to_string(),
+                    text: "Not Exclusive write.".to_string(),
+                    columns: Vec::new(),
+                    cells: vec![cell(0, 1), cell(2, 1)],
+                },
+            ]
+        );
+        assert_eq!(
+            matrices[0].rows[0].cells[1], "Y 2",
+            "a cell stays as written"
+        );
+        Ok(())
     }
 
     /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a two-way table of marks or modal words is a matrix with its keys,

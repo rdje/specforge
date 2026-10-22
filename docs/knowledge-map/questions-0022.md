@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why did LRPROT must be 0 carry the condition When LRRESP is FaultAbort
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did LTI unexplained tables go UP from 5 to 6
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -295,5 +297,3 @@
   > why do Avalon's readdata and writedata never become declarations
 - [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
   > why do AxPROT[1] and AxNSE not mint an enum from A4.7 (they key the space only jointly)
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why do CCIX-class docs extract hundreds of register fields now

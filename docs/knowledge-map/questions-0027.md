@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why is the metavariable test run after the identifier test
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why do CCIX-class docs extract hundreds of register fields now
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > why do CORPUS-COVERAGE's 52 of 57 refreshes and ADR 0048's 27 of 78 loadable documents disagree (they count different things: a refresh makes a document's source repository-local and rebuilds it with the binary of the day, which is provenance; loadability is whether the persisted artifact is at the current schema with a verified proof ledger)
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
@@ -295,5 +297,3 @@
   > why does a learned table kind not re-type a bit layout (is_recognized_layout_header)
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > why does a list condition with two values drop its first members
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why does a magnitude against a literal still yield no record

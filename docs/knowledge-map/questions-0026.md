@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why is a condition like 'X is asserted, Y must remain asserted' wrong
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -295,5 +297,3 @@
   > why is the knowledge map budget ten question keys per fact
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why is the latest reviewed population replay not published
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why is the metavariable test run after the identifier test

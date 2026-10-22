@@ -318,8 +318,8 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   - **The other families** (requirement, version, effect) stay typed, as `.3.c.v` decided.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`
-  Status: `open` (`2026-10-22`; CODE, waits for `.64`, `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin with
-  actor-level assertions; opened by `.3.c.v.iv`; `.62` and `.63` done)
+  Status: `open` (`2026-10-22`; CODE, waits for `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin with
+  actor-level assertions; opened by `.3.c.v.iv`; `.62`, `.63` and `.64` done)
   Goal: **a legality matrix lowers to an always-on assertion.** Acceptance: once the opcode decode, the property
   parameter and actor-level assertions exist, lower AXI *A12.11*/*A12.13* as `.3.c.v.iv` decided (column guard: the
   property value and the tag operation's code; consequent: the marked opcodes, decoded, `*` keys expanded), FSMGen
@@ -427,12 +427,58 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   `a-jointly-keyed-table-is-a-value-combination`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.64`
-  Status: `open` (`2026-10-22`; CODE; opened by `.62`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.62`; opened `.65`; checklist below)
   Goal: **a matrix cell's note narrows it.** **Reproduce:** AXI *A12.13* marks `WriteNoSnoop`'s Standard `Match` `Y
   2` (*Not Exclusive write*) and `Write*CMO`'s Transfer `Y 3` (*Domain must be Non-shareable*), and titles a column
   `Update 1` (*Partial tag updates are not supported*); the matrix keeps `Y 2` as written and the note is read by
   no record. Acceptance: bind a matrix cell's or column title's mark to its note's text, kept on the matrix, and
   measure every chain's matrices.
+  **Done `2026-10-22`.**
+  - **Marks.** `trailing_note_marks` reads the words after a title's or cell's last other word, each a note number,
+    a bracketed one or a lowercase letter (`Y 2`, `O [2]`, `State 1, 2`). A cell of marks alone (`2, 3`) has none.
+  - **Notes.** `bind_matrix_notes` runs after the matrix reader. Each mark cites the one note with that mark that
+    `footnote` elements print on the pages beside the matrix's tables (`footnote_texts_by_page`); with none, or two
+    different ones, it cites nothing. `MatrixTableRecord.notes` holds one `MatrixNote` per note: its mark, its text,
+    the data columns whose title cites it and the cells (`MatrixCellPosition`) that do. Titles and cells stay as
+    written.
+  - **Measured.** Dry-run of the 31 chains: 29 identical. AXI *A12.13* (`matrix_table_0018`) cites three notes:
+    note 1 on column 4 (`Update 1`), note 2 on one cell, note 3 on two. USB 3.2 *9-2* cites notes 1 and 2 on both
+    columns (*'Yes' indicates a parameter that shall be preserved*). ADIv6's `64 bits d` and USB's `Set Address 0`
+    have no such note and cite nothing. I2C *Table 3* prints its three notes as list items whose numbers the
+    converter drops, so `O [2]` and `Target [1]` reach no note: `.65`. No EvidenceIR field is new
+    (`MatrixTableRecord.notes` is a nested field).
+  - **Rebuilt.** AXI and USB 3.2 rebuilt stage by stage: only `matrix_tables` moved in SemanticIR and IntentIR;
+    their residuals (111, 102) and AXI's `manager.isf` are unchanged, and `check_chain_currency.sh` confirms the
+    ruleset did not move.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.64` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — every chain's matrix titles and cells closing with a mark, and the notes printed
+  beside each matrix: AXI *A12.13*, USB 3.2 *9-2*/*9-10*, I2C *Table 3*, ADIv6, Cortex-A76.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `matrix_cell_kind` drops a trailing mark
+  to classify a cell, and nothing read the note it cites. RED 4/4, the file restored byte-identically: a cell of
+  marks alone citing its marks, a mark no note explains kept, a title citing no column, a note on any page taken as
+  the matrix's; each fails `a_matrix_cell_or_title_cites_the_note_printed_beside_it`.
+- [x] **ADDRESSED (verified)** — AXI's three and USB 3.2's two notes above, in the dry-run and the rebuilt chains.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `d7336f49f`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,929 passed. `flow_census.json` rolled (+2 functions, +14 decision
+  sites, +68 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a mark's shape and the document's own printed notes; no document, table or mark
+  list.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (a matrix keeps its notes); KM card
+  `a-two-way-table-of-marks-is-a-matrix`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.65`
+  Status: `open` (`2026-10-22`; CODE; opened by `.64`)
+  Goal: **a note printed as a numbered list keeps its number.** **Reproduce:** I2C *Table 3* marks `Target [1]`, `O
+  [2]` and `O [3]`, and prints the notes after its continuation as three `list_item` elements on `page_0008` (*Also
+  refers to a controller acting as a target.*, *Clock stretching is a feature of some targets …*, *'Bit banging' …
+  should consider a START byte.*) with no number, so no mark reaches its note. Acceptance: find where the number is
+  lost (the conversion or SourceIR's list reading), keep it so the note is read as note 1-3, never bind by position
+  alone, and measure every chain's numbered notes.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives

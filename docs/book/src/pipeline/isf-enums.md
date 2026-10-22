@@ -612,9 +612,17 @@ Since `.3.c.v.ii` a matrix crosses SemanticIR and IntentIR unchanged, and the ad
 lowers to an always-on assertion per actor, decided by `.3.c.v.iv`: each column guarded by its property value and tag
 operation, the marked opcodes decoded to their signals. It waits for three things: the opcode decode (*A7.4*, a
 value combination since `.62`, whose domain labels `.63` binds), the property as an `.isf` parameter, and FSMGen's
-actor-level assertion (`.3.c.v.v`). A marked cell's note narrows it (*A12.13* `Y 2`: *Not Exclusive write*), which
-`.64` reads. A requirement, version or effect matrix states configuration that stays typed in IR (ADR 0033
-§6).
+actor-level assertion (`.3.c.v.v`). A marked cell's note narrows it (*A12.13* `Y 2`: *Not Exclusive write*), and the
+lowering states that note too. A requirement, version or effect matrix states configuration that stays typed in IR
+(ADR 0033 §6).
+
+Since `.64` (`2026-10-22`) a matrix keeps the notes its cells and data-column titles cite. A trailing mark (`Y 2`,
+`O [2]`, `State 1, 2`) cites the one note with that mark printed beside the matrix's tables; the cell stays as written,
+and the record's `notes` give each note's text with the columns and cells that cite it. On the 31 chains: AXI
+*A12.13* cites three (`Update 1`: *Partial tag updates are not supported*; `Y 2`: *Not Exclusive write*, one cell; `Y
+3`: *Domain must be Non-shareable*, two), and USB 3.2 *9-2* two on both its columns. A mark no note explains cites
+nothing: ADIv6's `64 bits d` and USB's `Set Address 0`. I2C *Table 3* prints its notes as list items whose numbers the
+converter drops, so `O [2]` reaches no note (`.65`).
 
 Since `.3.c.v.iii` (`2026-10-22`) a matrix can be a legend. AXI *B2.1 Key to signals table* gives each presence code
 its meaning on a manager and on a subordinate (`YM`: *Mandatory*, *Optional*), and a presence table whose every code

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-63-NOTE-DEFINED-LABELS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-64-MATRIX-CELL-NOTES",
    "baseline": {
-    "analyzed_functions": 2870,
-    "decision_sites": 16055,
-    "helper_edges": 20632,
+    "analyzed_functions": 2873,
+    "decision_sites": 16081,
+    "helper_edges": 20676,
     "semantic_macros": 1645
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 26,
-    "helper_edges": 44,
+    "analyzed_functions": 2,
+    "decision_sites": 14,
+    "helper_edges": 68,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.63",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.63: a marked combination key keeps its note, and a value listing labels the note defines carries each label's codes through the key's encoding (footnote_texts_by_page, note_label_definitions, defined_labels_encoding)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.64",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.64: a matrix cell's or data-column title's trailing mark cites the one note printed beside the matrix (trailing_note_marks, bind_matrix_notes)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

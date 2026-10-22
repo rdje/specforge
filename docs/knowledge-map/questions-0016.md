@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
+  > what is message_fields.width_offset_layout / extract_width_offset_layout_fields / width_offset_field_name
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is name_and_size_registers_from_layout
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
@@ -295,5 +297,3 @@
   > what is the gap_catalog surface / gap_catalog_owners region
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints

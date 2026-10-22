@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why does a magnitude against a literal still yield no record
 - [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
   > why does a member named only by a number mint nothing (16 message credits, a PPROT bit's 0)
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -296,5 +298,3 @@
   > why does the OpenCAPI Certified engineering note emit no ISF
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > why does the OpenCAPI Data Link Layer specification emit no isf target
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why does the OpenCAPI Ready Definition emit no ISF

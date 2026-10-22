@@ -3942,6 +3942,7 @@ mod tests {
                 code: "M".to_string(),
                 meaning: "mandatory".to_string(),
             }],
+            notes: Vec::new(),
         }];
         let expected_matrices = evidence_ir.matrix_tables.clone();
         evidence_ir.write_to_disk()?;
