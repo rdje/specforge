@@ -111,7 +111,8 @@ sub check_project {
     for my $block (split /^(?=### )/m, $open_region // '') {
         my ($name) = $block =~ /\A### ([a-z0-9]+(?:-[a-z0-9]+)*)\b/ or next;
         my %fields;
-        $fields{$1} = $2 while $block =~ /^- (\w+): `([^`]*)`/mg;
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.45: one bullet per field, or every field on one ` · `-separated line.
+        $fields{$1} = $2 while $block =~ /(?:^- | \x{00B7} )(\w+): `([^`]*)`/mg;
         $record_fields{$name} = \%fields;
     }
     my %packets_for_record;
@@ -286,7 +287,7 @@ sub self_test {
         # (FSMGEN-REQUESTS.6: once every packet was acknowledged, a fixed 'acknowledged' mutated nothing).
         ['status disagrees with its record' => qr/needs record status (?:accepted|awaiting_response)\b/, sub { json_edit($_[1], sub { $_[0]{status} = $_[0]{status} eq 'acknowledged' ? 'forwarded' : 'acknowledged'; $_[0]{forwarded} //= { date => '2026-09-25', channel => 'test' } }) }],
         ['kind disagrees with its record' => qr/record '[^']+' says/, sub { json_edit($_[1], sub { $_[0]{kind} = 'question' }) }],
-        ['record cites another packet' => qr/not this packet's README/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?- Evidence: `)[^`]+/${1}docs\/elsewhere.md/s }) }],
+        ['record cites another packet' => qr/not this packet's README/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?\bEvidence: `)[^`]+/${1}docs\/elsewhere.md/s }) }],
         ['unregistered upstream project' => qr/docs\/upstream\/other: not a registered upstream project/, sub { make_path($_[0] . '/docs/upstream/other/sf-x') }],
         ['outgoing record without a packet' => qr/record 'no-such-packet': an outgoing record needs exactly one packet/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?)(?=\n### )/$1\n\n### no-such-packet — a question with no packet\n\n- Direction: `SpecForge \xe2\x86\x92 FSMGen`\n- Kind: `question`\n- Status: `open`\n- Owner: `none`\n- Evidence: `none`\n/s }) }],
     );

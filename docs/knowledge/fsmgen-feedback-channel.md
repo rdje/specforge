@@ -10,7 +10,7 @@ answers:
   - "how is the FSMGen feedback channel kept bounded without losing old requests and responses"
   - "are any SpecForge requests to FSMGen currently open"
   - "what is the exact pre-containment FSMGEN_FEEDBACK source identity"
-date: 2026-06-04
+date: 2026-10-22
 tags: [fsmgen, isf, feedback, handoff]
 evidence: docs/FSMGEN_FEEDBACK.md; doctrine/live_document_size/fsmgen_feedback.json; docs/decisions/0011-bounded-fsmgen-feedback-channel.md; subs/fsmgen/docs/DOWNSTREAM_ISSUE_REPORTING.md; docs/upstream/fsmgen/
 reverify: perl scripts/check_fsmgen_feedback_protocol.pl --report
@@ -42,3 +42,10 @@ evidence. The executable migrated contract pins five exhaustive source regions, 
 statuses/directions/evidence routes, 26 consumers, both stale-current findings, open-record fields and
 limits, current-root bounds, and archive topology. It authenticates the capsule and validates the live
 open region, concise closed register, manifest, index, and direct retrieval on every doctrine run.
+
+**Since then (verified `2026-10-22`).** The pin is `54ac1c22`, and the open region holds 16 records,
+each indexing one packet under `docs/upstream/fsmgen/` (ADR 0054). Since
+`LIVE-DOCUMENT-PRESSURE-HEADROOM.45` a record is its heading, its fields on one ` · `-separated line,
+and one line of dates, upstream state and ask. The cap is 20 records of at most 8 lines and 1,024 bytes,
+so a full list stays under the 80% warning of the 256-line target. The paragraphs above describe the
+`2026-06-04` sealing.

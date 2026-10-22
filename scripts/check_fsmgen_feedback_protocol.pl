@@ -405,9 +405,13 @@ sub validate_current_root {
             problem($errors, "open record '$id' exceeds $limit_key")
                 if defined($open_limits->{$limit_key}) && $chunk_metrics->{$actual_key} > $open_limits->{$limit_key};
         }
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.45: an open record states its fields on one bullet line, separated by
+        # ` · `; the packet holds the detail, so the record is an index entry. One bullet per field still reads.
         my %fields;
-        while ($chunk =~ /^- ([A-Za-z]+):\s+`?([^`\n]+?)`?\s*$/mg) {
-            $fields{$1} = $2;
+        for my $line ($chunk =~ /^- ([^\n]+)$/mg) {
+            for my $pair (split / \x{00B7} /, $line) {
+                $fields{$1} = $2 if $pair =~ /\A([A-Za-z]+):\s+`?([^`\n]+?)`?\s*\z/;
+            }
         }
         for my $field (@{required_array($current->{open_required_fields}, 'current_root.open_required_fields', $errors)}) {
             problem($errors, "open record '$id' lacks $field") if !defined($fields{$field}) || $fields{$field} eq '';
@@ -546,11 +550,9 @@ sub render_current_root {
     my @open_body = @open_ids
         ? map {
             ("### $_ — fixture record", '',
-             "- Direction: `$current->{open_direction_values}[0]`",
-             "- Kind: `$current->{open_kind_values}[0]`",
-             "- Status: `$current->{open_status_values}[0]`",
-             '- Owner: `FIXTURE-OWNER`',
-             '- Evidence: `docs/FSMGEN_FEEDBACK.md`', '')
+             "- Direction: `$current->{open_direction_values}[0]` \x{00B7} Kind: `$current->{open_kind_values}[0]`"
+                 . " \x{00B7} Status: `$current->{open_status_values}[0]` \x{00B7} Owner: `FIXTURE-OWNER`"
+                 . " \x{00B7} Evidence: `docs/FSMGEN_FEEDBACK.md`", '')
           } @open_ids
         : ('- None at the sealed source boundary.');
     push @out, '## Open correspondence', '', $current->{open_start_marker},
@@ -705,6 +707,19 @@ sub run_self_test {
             my $raw = read_raw($path);
             write_raw($path, $raw . $migrated->{current_root}{forbidden_literals}[0] . "\n");
         }],
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.45: a field missing from, or misvalued on, the one-line form is refused.
+        ['inline field line lacking its owner', 0, sub {
+            my $path = absolute($fixture, $migrated->{source}{path});
+            my $raw = decode('UTF-8', read_raw($path));
+            $raw =~ s/ \x{00B7} Owner: `FIXTURE-OWNER`// or die "fixture has no inline owner\n";
+            write_raw($path, $raw);
+        }],
+        ['inline field line with an unknown status', 0, sub {
+            my $path = absolute($fixture, $migrated->{source}{path});
+            my $raw = decode('UTF-8', read_raw($path));
+            $raw =~ s/ \x{00B7} Status: `[^`]+`/ \x{00B7} Status: `bogus`/ or die "fixture has no inline status\n";
+            write_raw($path, $raw);
+        }],
         ['manifest identity drift', 0, sub {
             my $path = absolute($fixture, $migrated->{archive}{manifest});
             my $manifest = load_json($path);
@@ -728,7 +743,7 @@ sub run_self_test {
     }
     remove_tree($fixture);
     die "feedback-protocol self-test residue remains at $fixture\n" if -e $fixture;
-    print "feedback-protocol: self-test $passed/11 passed.\n";
+    print "feedback-protocol: self-test $passed/13 passed.\n";
 }
 
 my $contract_absolute = absolute($root, $contract_path);

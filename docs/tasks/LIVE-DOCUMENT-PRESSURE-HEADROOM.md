@@ -50,8 +50,7 @@ Open leaves, read from the contract's own route lifecycles rather than restated:
 `direction/temporal-intent-capture.md` line warning `.34e`; the alignment-index residual `.16` and the task-evidence
 manifest's byte ceiling `.17a` (`.17`, the leaf-route count, closed by ADR 0056); the semantic-part and ledger
 splits `.14b`/`.14c`; the classification-refusal control `.6`; the claim registry's lifecycle `.36d`; the
-ownership-citation registry's bound `.42`; the FSMGen ledger's line target `.45`; and the containers `.2`, `.4`,
-`.14` and `.36`.
+ownership-citation registry's bound `.42`; and the containers `.2`, `.4`, `.14` and `.36`.
 
 **This section is overwritten, never appended to.** It stated the frontier in two lines and then carried a
 paragraph per closure, which made it the largest single writer on this root's binding axis: 39 of the 83
@@ -92,7 +91,6 @@ primary detail-routing authority.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34e`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.42`
-- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.45`
 
 ## Verification Log
 

@@ -150,7 +150,7 @@
     "register_start_marker": "<!-- fsmgen_feedback_register:start -->",
     "register_end_marker": "<!-- fsmgen_feedback_register:end -->",
     "open_record_ids": ["derived-width-parameter", "undeclared-rule-operand", "issue-bundle-foreign-git-head", "optional-signal", "parameter-value-set", "generic-port-widths", "actor-level-assertion", "known-value-predicate", "strict-unknown-port-clause", "transaction-phase-groups", "storage-register-access", "duration-time-units", "named-timers", "unstated-reset", "aggregate-interface-ports", "byte-group-reduction"],
-    "open_record_limits": {"records": 16, "lines_each": 96, "bytes_each": 12288, "line_bytes_each": 512},
+    "open_record_limits": {"records": 20, "lines_each": 8, "bytes_each": 1024, "line_bytes_each": 512},
     "open_required_fields": ["Direction", "Kind", "Status", "Owner", "Evidence"],
     "open_direction_values": ["SpecForge → FSMGen", "FSMGen → SpecForge"],
     "open_kind_values": ["answer", "bug_report", "clarity_request", "feature_request", "question", "suggestion"],

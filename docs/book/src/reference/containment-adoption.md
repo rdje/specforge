@@ -556,16 +556,19 @@ useful history, but the word “latest” is not current truth.
 - the upstream response file and reproducible issue-bundle catalog remain the authoritative detailed
   response and bug surfaces.
 
-Future open records declare direction, kind, status, owning task, and evidence. The live set allows at
-most eight records, each no larger than 96 lines / 12,288 bytes / 512 bytes per line; detailed designs
-and reproductions stay in task/research records or issue bundles. The entire root has independent
-256-line / 32,768-byte / 512-byte health targets and 384-line / 49,152-byte / 1,024-byte hard limits.
+Future open records declare direction, kind, status, owning task, and evidence. Since `2026-10-22`
+(`LIVE-DOCUMENT-PRESSURE-HEADROOM.45`) a record is an index entry for its packet: its fields on one line
+and its state and ask on one more. The live set allows at most 20 records, each no larger than 8 lines /
+1,024 bytes / 512 bytes per line; detailed designs and reproductions stay in task/research records or
+issue bundles. The entire root has independent 256-line / 32,768-byte / 512-byte health targets and
+384-line / 49,152-byte / 1,024-byte hard limits.
 
 The migrated executable gate pins the source SHA-256, five exhaustive regions, all six record spans,
 status/direction/evidence, both stale-current findings, 26 consumers, current-root schema, and archive
-topology. Its ten focused cases cover both lifecycle forms; the live-document doctrine now
-authenticates the capsule and independently checks the root, open-record schema, closed register,
-manifest, index, direct routes, and pressure ceilings. Feedback transition debt is gone.
+topology. Its thirteen focused cases (`2026-10-22`) cover both lifecycle forms and the one-line record;
+the live-document doctrine now authenticates the capsule and independently checks the root, open-record
+schema, closed register, manifest, index, direct routes, and pressure ceilings. Feedback transition debt
+is gone.
 
 #### Validation snapshot means last reviewed
 

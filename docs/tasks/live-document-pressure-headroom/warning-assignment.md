@@ -341,7 +341,7 @@ owner's `Status` line rather than from any mention of the surface.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44 — one book-quantity region per paragraph and outcome`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.45`
-  Status: `open` (`2026-09-29`; opened by `FSMGEN-REQUESTS.7`-`.10`)
+  Status: `done` (`2026-10-22`; opened by `FSMGEN-REQUESTS.7`-`.10`; checklist below)
   Goal: keep `docs/FSMGEN_FEEDBACK.md` inside its line target as requests to FSMGen accumulate
   Acceptance: the `fsmgen_feedback` surface's health target is 256 lines per file, and filing four packets on
   `2026-09-29` took the ledger from 225 to 274 lines (107%); the ceiling is 384. Open records stay open until FSMGen
@@ -351,7 +351,32 @@ owner's `Status` line rather than from any mention of the surface.
   packets, whose README already holds the summary, so an open record may shrink to its fields and one line, or the
   open section may partition by status. Measure the per-record lines first, and leave headroom for the next
   batch of requests.
+  **Done `2026-10-22`.** **Measured:** 16 open records took 193 of the ledger's 288 lines (112.5% of its 256-line
+  target): 11 to 16 lines each, an 8-line skeleton (heading, five one-field bullets, blank lines) and 3 to 8 lines of
+  prose that restate the packet's README and the book's packet table. Prose cut to one line would have left 239 lines
+  (93%), no room for a batch. **Decided:** an open record indexes its packet. Its fields go on one bullet line,
+  separated by ` · `, and its dates, upstream state and ask go on one more, so a record is 6 lines. Both ledger
+  readers (`check_fsmgen_feedback_protocol.pl`, `check_fsmgen_request_bundles.pl`) read the one-line form and still
+  read one bullet per field. **Result:** the ledger is 173 lines (67.6%), 80 of them outside the open section. The
+  open-record cap moves 16 -> 20, the most a 6-line record allows below the 80% warning (80 + 20 x 6 = 200 lines), and
+  each record is bounded at 8 lines and 1,024 bytes instead of 96 and 12,288. History stays in the packets, the task
+  records and git; no claim region covered the open section.
 
+## Acceptance Checklist (enforced) — `LIVE-DOCUMENT-PRESSURE-HEADROOM.45` (DOCTRINE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — per-record lines and bytes of the 16 open records (193 of 288 lines; 11-16 each);
+  the `fsmgen_feedback` surface at 112.5% of its line target and 96 below its 384 ceiling.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `docs/FSMGEN_FEEDBACK.md`'s record format put each field on its own bullet and
+  repeated the packet's summary in prose, and both readers read fields only one bullet per line.
+- [x] **ADDRESSED (verified)** — `check_fsmgen_feedback_protocol.pl --check` and `check_fsmgen_request_bundles.pl`
+  pass on the rewritten ledger; `live-document-size` reports no `fsmgen_feedback` warning.
+- [x] **NO REGRESSION** — protocol self-test 13/13 (two new: an inline line lacking its owner, an inline line with an
+  unknown status); request-bundle self-test 17/17 (the *record cites another packet* case now edits either field
+  form). RED 2/2, each checker restored byte-identically: the protocol reader taking one bullet per field reports 81
+  violations (`lacks Direction` …), the bundle reader 16 records citing no packet.
+- [x] **GENERICITY** — the separator and field names are the ledger contract's own; no record is named in a reader.
+- [x] **LOCKSTEP** — the ledger's own *Feedback record format*; book `reference/containment-adoption.md` (its stale
+  "eight records, 96 lines" and "ten focused cases" corrected); `doctrine/live_document_size/fsmgen_feedback.json`.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34d`
   Status: `done` (`2026-10-20`; opened and closed by `EXTRACTION-REPRESENTATION-GAPS.52`)
