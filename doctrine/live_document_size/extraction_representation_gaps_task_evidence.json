@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iii",
-      "literal" : "`.3.f.iii` — a grouped timing table that names no parameter column.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c",
+      "literal" : "`.3.c.iv.c` — a signal laid out per message kind is read.",
       "mode" : "eligible",
-      "part_id" : "census-leaves"
+      "part_id" : "layout-and-binding-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -28,13 +28,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
             "metrics" : {
-               "bytes" : 58253,
+               "bytes" : 58292,
                "line_bytes" : 283,
                "lines" : 601
             },
             "part_id" : "census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-            "sha256" : "0aec341f90632b5cd8a2f44eef4b49429e12fd380120c10b5cb94b5978b4e1ee",
+            "sha256" : "f78f1f2f48ccd5bce78721f711b96ecfb275a1638f6581c7cc5f632c5a2f1ecd",
             "state" : "active"
          },
          {
@@ -166,13 +166,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
             "metrics" : {
-               "bytes" : 53897,
+               "bytes" : 56963,
                "line_bytes" : 121,
-               "lines" : 604
+               "lines" : 641
             },
             "part_id" : "layout-and-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-            "sha256" : "dc3e6033ba79623c16f39367b31d4c215c34651b2241efbcf75855b6698d2644",
+            "sha256" : "8216bff09cd793edcce868bfd5278c2ce627dd538a07162c23775edc3f93a750",
             "state" : "active"
          },
          {
@@ -906,7 +906,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -1762,13 +1762,12 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.f.iii` — a grouped timing table that names no parameter column.",
+         "`.3.c.iv.c` — a signal laid out per message kind is read.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.4`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.5`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.6`",

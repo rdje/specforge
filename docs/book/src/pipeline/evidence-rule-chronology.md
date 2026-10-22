@@ -707,7 +707,11 @@ carry no `operating_condition`. The reading is strict, and a table that fails it
   spans exactly its run, no label heading two runs and no run naming a role twice;
 - the table names its parameter column `Symbol`, `Parameter` or `Name`. Without that, the column groups may be the
   parameters and the rows the conditions: USB 3.2 heads `tBurst` and `tRepeat` over rows `Polling.LFPS` and
-  `Ping.LFPS`, and reading it as modes would swap parameter and condition.
+  `Ping.LFPS`, and reading it as modes would swap parameter and condition. Since `.3.f.iii` (`2026-10-22`) the
+  first column names the parameters when it is titled (*6-20*'s `Signal Characteristic`), or untitled with every
+  row written as a timing symbol (*6-31*'s `t11 - t10`, *6-33*'s `tPWM`), and no group label is a symbol: USB 3.2
+  gains 31 records. *6-30*'s groups are the symbols and its rows mix conditions with a parameter (`tReset`), so no
+  dimension is the parameter throughout and it stays refused.
 
 One label over every value column (`Hs-mode` over I2C's *Table 12*, `Limits` over a USB 3.2 table) cannot be told
 apart by structure alone. Since `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` (`2026-10-22`) it is the scalar layout's

@@ -2,6 +2,7 @@
 id: timing-table-structural-authority
 title: Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max schema
 answers:
+  - "how is a grouped timing table with no Symbol or Parameter column read (USB 3.2 6-20, 6-31, 6-33; .3.f.iii)"
   - "is a single column label like Hs-mode a timing condition (timing_single_group_label, timing_label_restated, .3.f.ii)"
   - "why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values"
   - "can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)"
@@ -95,3 +96,11 @@ element that opens with its number prints that note too, and a typed timing tabl
 else on the 31 chains moves. The table's `Timeout to Next State` column is the transition each timer takes
 ([[a-timeouts-next-state-is-a-stated-transition]]).
 
+**The row-label column names the parameters (`2026-10-22`, `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`).** A grouped
+table that heads no `Symbol`/`Parameter`/`Name` column is read when its first column says the rows are the
+parameters (`timing_row_label_parameter_column`): titled (USB 3.2 *6-20*'s `Signal Characteristic` over `Eye
+Height`, `Dj`, `Rj`, `Tj`), or untitled with every data row's label a timing symbol (a lowercase letter, then a
+capital or a digit: *6-31*'s `t11 - t10`, *6-33*'s `tPWM`). No group label may be a symbol. USB 3.2 gains 31 records
+(6-20 8, 6-31 18, 6-33 5); the other 30 chains are identical. *6-30*'s two fragments head `tBurst | tRepeat`, symbols,
+over rows that mix conditions (`Polling.LFPS`, `U1 Exit`) with a parameter (`tReset`), so neither dimension is the
+parameter throughout and they stay residual.

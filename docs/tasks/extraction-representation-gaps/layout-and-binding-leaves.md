@@ -583,6 +583,43 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   rotated. Acceptance: census tables whose header-named name column holds no names while another column holds only
   names, decide whether the pairs are read (TMC's rows state no direction or width; *B2-7* is a wire-to-register-bit
   map like `.41.e`'s), and measure every chain.
+### `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` (a `census-leaves` leaf) — done `2026-10-22`
+
+Goal as recorded there: a grouped timing table that names no parameter column; decide from its structure which
+dimension is the parameter, or state why it cannot be, and measure.
+- **Decided.** The first column names the parameters when it is titled (USB 3.2 *6-20*'s `Signal Characteristic`)
+  or untitled with every data row's label a timing symbol (a lowercase letter, then a capital or a digit: *6-31*'s
+  `t11 - t10`, *6-33*'s `tPWM`), and no group label is a symbol. *6-30*'s two fragments cannot be read either way:
+  their groups are symbols (`tBurst`, `tRepeat`) and their rows mix conditions (`Polling.LFPS`, `U1 Exit`) with a
+  parameter (`tReset`), so neither dimension is the parameter throughout; they stay residual.
+- **Code.** `timing_row_label_parameter_column` (SourceIR), consulted by `timing_table_condition_groups` when no
+  column is headed `Symbol`, `Parameter` or `Name`.
+- **Measured.** Dry-run of the 31 chains: 30 identical. USB 3.2 gains 31 records: *6-20* 8 (four characteristics x
+  `5GT/s`, `10GT/s`), *6-31* 18 (six intervals x three exits), *6-33* 5 (`Transmit`/`Receive`). Values stay as
+  written, the Symbol-font `µ` included (`.44`).
+- **Rebuilt.** USB 3.2 rebuilt stage by stage: only `timing_constraints` and `captured_region_residuals` moved; its
+  three tables leave the table residuals (241 -> 238); 102 adapter residuals unchanged.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — USB 3.2's five grouped tables (`.57.a`'s routing), each read for which dimension
+  its structure names the parameter.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs` `timing_table_condition_groups` refused
+  every grouped table with no `Symbol`/`Parameter`/`Name` header, whatever its rows said. RED 4/4, the file restored
+  byte-identically: a titled row-label column not read, untitled rows not required to be symbols, symbol groups not
+  refused, a symbol starting with any character; each fails
+  `a_row_label_column_names_the_parameters_when_its_structure_says_so`.
+- [x] **ADDRESSED (verified)** — USB 3.2's 31 records above, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `c1df8002f`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,934 passed. `flow_census.json` rolled (+1 function, +9 decision sites,
+  +6 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — header shape and a symbol's letter shape; no parameter or condition vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`; KM card `timing-table-structural-authority`;
+  `docs/research/category-family-census.md`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives

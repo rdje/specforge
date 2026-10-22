@@ -720,7 +720,9 @@ fn timing_table_condition_groups(
     }
 
     let columns = timing_structural_header_columns(table)?;
-    let Some(name) = timing_name_column(&columns) else {
+    let Some(name) = timing_name_column(&columns).or_else(|| {
+        timing_row_label_parameter_column(table, rows.len(), &columns, &value_columns, &conditions)
+    }) else {
         return Some(Vec::new());
     };
     if !timing_columns_have_context(table, &columns) {
@@ -746,6 +748,46 @@ fn timing_table_condition_groups(
             })
             .collect(),
     )
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.f.iii — the row-label column of a grouped timing table that heads no `Symbol`,
+/// `Parameter` or `Name` column, when the table's structure says its rows are the parameters: the first column
+/// before every value column, either titled (USB 3.2 *6-20*'s `Signal Characteristic` over `Eye Height`, `Dj`) or
+/// untitled with every data row's label written as a timing symbol (*6-31*'s `t11 - t10`, *6-33*'s `tPWM`). No
+/// condition label may itself be a symbol: *6-30* heads `tBurst | tRepeat` over rows `Polling.LFPS`, its parameters in
+/// the groups, which this reading would swap, so that table stays refused.
+fn timing_row_label_parameter_column(
+    table: &StructuredTableRecord,
+    structural_rows: usize,
+    columns: &[Vec<&str>],
+    value_columns: &[usize],
+    conditions: &[TimingCondition],
+) -> Option<usize> {
+    let symbol = |text: &str| {
+        let mut letters = text.split_whitespace().next().unwrap_or_default().chars();
+        matches!(
+            (letters.next(), letters.next()),
+            (Some(first), Some(second))
+                if first.is_ascii_lowercase() && (second.is_ascii_uppercase() || second.is_ascii_digit())
+        )
+    };
+    if conditions.iter().any(|condition| symbol(&condition.label)) {
+        return None;
+    }
+    let column = 0;
+    if value_columns.contains(&column) {
+        return None;
+    }
+    let titles = columns.get(column)?;
+    if titles.iter().any(|title| !title.trim().is_empty()) {
+        return Some(column);
+    }
+    let labels: Vec<&str> = table.header_rows[structural_rows.min(table.header_rows.len())..]
+        .iter()
+        .chain(&table.body_rows)
+        .filter_map(|row| row.get(column).map(|cell| cell.text.trim()))
+        .collect();
+    (!labels.is_empty() && labels.iter().all(|label| symbol(label))).then_some(column)
 }
 
 /// The leading header rows whose non-empty cells are all header cells, the rows
@@ -5038,6 +5080,74 @@ mod tests {
                 (Some("Fast-mode".to_string()), None, Some(2)),
             ]
         );
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` — a grouped table that heads no parameter column names its rows the
+    /// parameters by a titled row-label column, or by rows all written as timing symbols; groups written as symbols
+    /// are the parameters instead, and that table stays refused.
+    #[test]
+    fn a_row_label_column_names_the_parameters_when_its_structure_says_so() {
+        let grouped = |title: &str, groups: [&str; 2], labels: &[&str]| {
+            let mut rows = vec![
+                vec![
+                    table_cell(title, !title.is_empty()),
+                    spanned_header(groups[0], 2),
+                    spanned_header(groups[0], 2),
+                    spanned_header(groups[1], 2),
+                    spanned_header(groups[1], 2),
+                    table_cell("Units", true),
+                ],
+                vec![
+                    table_cell(title, !title.is_empty()),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                    table_cell("Units", true),
+                ],
+            ];
+            for label in labels {
+                rows.push(vec![
+                    table_cell(label, true),
+                    table_cell("1", false),
+                    table_cell("2", false),
+                    table_cell("3", false),
+                    table_cell("4", false),
+                    table_cell("ns", false),
+                ]);
+            }
+            timing_test_table(TableKind::TimingParameter, Some("Transmitter timing"), rows)
+        };
+        let conditions = |table: &StructuredTableRecord| -> Vec<(usize, Option<String>)> {
+            timing_table_layouts(table)
+                .into_iter()
+                .map(|layout| (layout.columns.name, layout.operating_condition))
+                .collect()
+        };
+        let both = vec![
+            (0, Some("5GT/s".to_string())),
+            (0, Some("10GT/s".to_string())),
+        ];
+        // A titled row-label column.
+        assert_eq!(
+            conditions(&grouped(
+                "Signal Characteristic",
+                ["5GT/s", "10GT/s"],
+                &["Eye Height"]
+            )),
+            both
+        );
+        // An untitled one whose rows are all timing symbols.
+        assert_eq!(
+            conditions(&grouped("", ["5GT/s", "10GT/s"], &["tPWM", "t11 - t10"])),
+            both
+        );
+        // An untitled one with a row that is no symbol.
+        assert!(
+            conditions(&grouped("", ["5GT/s", "10GT/s"], &["tPWM", "Polling.LFPS"])).is_empty()
+        );
+        // Groups written as symbols: the parameters are the groups.
+        assert!(conditions(&grouped("", ["tBurst", "tRepeat"], &["tReset"])).is_empty());
     }
 
     #[test]

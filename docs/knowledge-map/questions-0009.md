@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > how many arrow-form direction cells exist corpus-wide
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
   > how many bit cells are in signal_description tables corpus-wide
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
@@ -296,5 +298,3 @@
   > how many tables declare themselves a continuation
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > how many tables does a whole-table column offset fail to serve
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > how many tables in the frozen set are mixed real and phantom

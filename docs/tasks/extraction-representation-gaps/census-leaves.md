@@ -75,7 +75,7 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`; KM card `timing-table-structural-authority`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`
-  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.f`)
+  Status: `done` (`2026-10-22`; DESIGN + CODE; found by `.3.f`; record in `layout-and-binding-leaves`)
   Goal: **a grouped timing table that names no parameter column.** USB 3.2 gives per-condition limits with rows as
   parameters in *Table 6-20* (`5GT/s | 10GT/s`), *6-31* (`U1 Exit | U2/Loopback Exit | U3 Wakeup`) and *6-33*
   (`Transmit | Receive`), but its *Table 6-30* fragments put the parameters in the groups (`tBurst | tRepeat`) and

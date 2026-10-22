@@ -84,6 +84,8 @@
   > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how is a fused contract's automation_confidence computed
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how is a grouped timing table with no Symbol or Parameter column read (USB 3.2 6-20, 6-31, 6-33; .3.f.iii)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
@@ -295,5 +297,3 @@
   > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how many alignment task owners and routes survive migration
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > how many arrow-form direction cells exist corpus-wide
