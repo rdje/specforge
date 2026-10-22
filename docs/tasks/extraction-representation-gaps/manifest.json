@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60",
-      "literal" : "`.60` — a register field's sub-field table types the field's sub-fields.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60.a",
+      "literal" : "`.60.a` — a register field's sub-field table is read into its sub-fields.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -1269,7 +1269,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1389,6 +1389,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.69",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
@@ -1566,13 +1572,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 18007,
+            "bytes" : 19794,
             "line_bytes" : 119,
-            "lines" : 202
+            "lines" : 221
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "cb7c0c8dbc2084ac16f0d131a7edfc7f5e2acc36410d1a01ced99bc1703e3122",
+         "sha256" : "1b851c77406f48da957e599b96fbd045c8e1278e3136613300f340e652a0a8fc",
          "state" : "active"
       },
       {

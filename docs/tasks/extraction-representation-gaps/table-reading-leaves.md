@@ -195,8 +195,27 @@ here whole.
   it (11 targets) and `erg_task_evidence_archived_parts` takes it (9 files; per-file bounds unchanged, totals 9x). Two
   KM cards' evidence paths repointed. Its leaves stay routed to it, every one closed.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.60`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
+  Status: `done` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`; opened `.60.a`)
   Goal: **a register field's sub-field table types the field's sub-fields.** **Reproduce:** ADIv6 *B3-10* lays
   `IDCODE`'s `DESIGNER` (`bits[11:1]`) out as *Continuation code* `Bits[11:8]` and *Identity code* `Bits[7:1]`, with
   ARM's values; `RegisterFieldRecord` has no sub-fields. Acceptance: decide the carrier (as `MessageSubField` did for
   message fields, `.55.b.iv.b.i`), how the register's bit positions map onto the field's, and measure every chain.
+  **Measured `2026-10-22`** (31 chains; `.project-data/tmp/erg-60/census.py`: a column of bit ranges titled by, or
+  captioned with, a declared register, every range inside one field and none the whole field). One table qualifies:
+  ADIv6 *B3-10* (`JEP106 field | Width (bits) | Bits in IDCODE | ARM registered value`), `Continuation code`
+  `Bits[11:8]` and `Identity code` `Bits[7:1]` inside `IDCODE.DESIGNER` (`bits[11:1]`).
+  **Decided.**
+  - **The carrier.** `RegisterFieldRecord.sub_fields`, one `RegisterSubField` per row: its name, its bits as the
+    register numbers them (the table states *Bits in IDCODE*; field-relative positions follow from the field's low
+    bit), and every other cell as written (`0b0100 ( 0x4 )`), with the table cited. It parallels `MessageSubField`
+    (`.55.b.iv.b.i`), whose rows state field-relative bits.
+  - **The shape.** A bit-range column whose title or caption names a declared register; every range strictly inside
+    one field of it; a name column of distinct cells; a width column, when present, restating each range's width, as
+    `signal_layouts` requires. A range outside every field, or covering a whole field, refuses the table.
+  - **Not lowered.** Register records already cross SemanticIR and IntentIR whole, so the sub-fields travel with
+    them; `.isf` storage fields are one level, and no rule names a sub-field, so they stay typed (ADR 0033 §6).
+- ID: `EXTRACTION-REPRESENTATION-GAPS.60.a`
+  Status: `open` (`2026-10-22`; CODE; opened by `.60`)
+  Goal: **a register field's sub-field table is read into its sub-fields.** Acceptance: read `.60`'s shape into
+  `RegisterFieldRecord.sub_fields` (ADIv6 *B3-10* into `IDCODE.DESIGNER`), keep every cell as written, and measure
+  every chain's register records.
