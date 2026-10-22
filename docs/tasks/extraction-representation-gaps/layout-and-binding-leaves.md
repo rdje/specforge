@@ -162,11 +162,55 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   `FSMGEN-REQUESTS` leaf and its ledger record, and move F29 to *requested*.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.v`; checklist below)
   Goal: **a two-way table is a matrix record.** **Reproduce:** AXI *A12.11*, I2C *Table 3*, USB 3.2 *10-2* and *7-14*
   reach EvidenceIR as raw rows. Acceptance: the `matrix_tables` surface as `.3.c.v` decided (row keys, column key
   paths, cells as written, cell class, a caption's or a legend table's codes); precedence for the readers named there;
   measure the 31 chains, every family of the census accounted for.
+  **Done `2026-10-22`.**
+  - **Reader.** `read_matrix_tables` runs after the convergent loop. Label columns are every leading column before the
+    first whose filled cells are mostly marks or modal words (`matrix_cell_kind`: a closed class, cells opening with a
+    modal word included, a footnote mark dropped). The header is the leading run of non-data rows, at most the header
+    rows EvidenceIR keeps, and seven in ten filled data cells are marks or modal words. Refused and counted: a
+    slice-titled data column, all-number column titles, code-literal label columns (`is_matrix_code_literal`), two or
+    more register-field titles. Presence, register, value-combination and layout tables are left to their readers.
+    Records keep row key titles, column header paths, rows as written, the cell class and a caption's legend
+    (`matrix_caption_legend`); a continuation page joins a head it repeats.
+  - **Manifest.** `matrix_table_surface` records the `matrix_tables` entry only when a table had the shape.
+  - **Measured.** Dry-run of the 31 chains: 20 identical; 48 matrices in 10 documents (AXI 22, USB 3.2 7, ADIv6 5,
+    APB5 4, the Cortex-A76 guide 3, OpenCAPI 3, I2C 2, AHB 1, USB4 CM 1), and TMC's three *Permitted register* tables
+    refused as field-keyed. Against `.3.c.v`'s census: the 34 less the 5 non-matrices and TMC's 3, that leaves 26, all
+    read, and 22 more: 17 AXI and AHB property compatibility and interoperability tables whose cells open with
+    *Compatible* (the census had counted only whole-cell words), 3 APB5 *presence and compatibility* tables, ADIv6's
+    untitled `table_0098` and I2C's `table_0021`. I2C *Table 3*'s second page (no *continued* caption, one data row)
+    stays unread. No statement or other record moved.
+  - **Rebuilt.** The 11 chains whose EvidenceIR moved (10 with matrices, TMC with its refused candidates) rebuilt
+      stage by stage: SemanticIR, IntentIR, every residual and every `.isf` text unchanged. The new field moved the
+      EvidenceIR ruleset hash, so `rebuild_stage_cascade.sh --write` re-sealed all 31 chains, content-identical at
+      every stage.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — `.3.c.v`'s census and the Python prototype of the rule
+  (`.project-data/tmp/erg-3cvi/proto2.py`) over the 31 chains, each table classified.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` had no reader for a table keyed by rows and
+  columns at once; the encoding, combination and presence readers key on codes, titled signals or presence rows. RED
+  5/5, the file restored byte-identically: a code-keyed table read as a matrix, slice-titled columns read,
+  field-titled columns read, the caption legend dropped, a cell opening with a modal word not modal; each fails
+  `a_two_way_table_of_marks_is_a_matrix`..
+- [x] **ADDRESSED (verified)** — the 48 matrices above in the dry-run and the rebuilt chains.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `a5eefe9fe`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,924 passed; the proof test counts 51 EvidenceIR rule fields and the
+  inventory 209 rules (`matrix_tables` in both production-genericity inventories). `flow_census.json` rolled (+5
+  functions, +71 decision sites, +108 helper edges, +2 macros) and its boundary moved for the new producer (rule roots
+  135, grammar declassifiers 76).
+- [x] **GENERICITY (ADR 0006)** — closed grammatical classes (marks, modal words), code-literal and slice shapes, and
+  the document's own register field names; no document, table or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A table of marks per pair of keys*); KM card
+  `a-two-way-table-of-marks-is-a-matrix`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii`
   Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)

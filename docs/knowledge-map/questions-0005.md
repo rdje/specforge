@@ -130,6 +130,8 @@
   > how are APB PNSE | PPROT[1] | Physical address space and AXI A15.26 SYSCOREQ | SYSCOACK read
 - [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
   > how are AXI's MPAM field tables (PARTID onto AxMPAM[9:1]) read
+- [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
+  > how are AXI's property interoperability and compatibility tables read
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -296,5 +298,3 @@
   > how do Continued from previous page fragments find their home
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I add a new enforced doctrine / doctrine check
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > how do I add a new part to a task tree that is already partitioned (targets in surfaces.jsonl, a census evidence record)

@@ -206,7 +206,7 @@ mod production_genericity_qualification_tests {
             }
         }
         assert_eq!(fields_by_family.len(), 41);
-        assert_eq!(expected.len(), 208);
+        assert_eq!(expected.len(), 209);
 
         let registries = [
             source::rule_registry_for_qualification().expect("SourceIR rule registry"),
@@ -233,7 +233,7 @@ mod production_genericity_qualification_tests {
                 );
             }
         }
-        assert_eq!(actual.len(), 208);
+        assert_eq!(actual.len(), 209);
         assert_eq!(
             actual.keys().collect::<BTreeSet<_>>(),
             expected.keys().collect::<BTreeSet<_>>(),

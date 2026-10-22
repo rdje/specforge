@@ -38,19 +38,18 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c.v.i` — a two-way table is a matrix record.
+`.3.c.v.ii` — a matrix reaches IntentIR, and the adapter names it.
 
-Then, in order: `.3.c.v.ii` (matrices to IntentIR), `.3.c.v.iii` (a presence code's legend), `.3.c.v.iv` (a legality
-matrix's lowering), `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
-`.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.vi` (today's typed tables), `.3.c.viii` (a
-converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables),
-`.3.c.iv.c` (a signal laid out per message kind), `.60` (a register field's sub-fields), `.61` (an encoding member's
-enabling property), `.54.a.ii` (the corpus memory's refresh: an equivalent store re-pinned with the 24-document
-behavioral re-qualification), `.44` (Symbol-font glyphs, a re-seal of every chain). After those: `.7.e.i` once
-`KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
-`.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a legacy register-map document's re-ingest. Closed leaves are read
-from the route catalog's lifecycles, not restated here; the list this paragraph carried until `2026-10-19` is in the
-`register-binding-leaves` part.
+Then, in order: `.3.c.v.iii` (a presence code's legend), `.3.c.v.iv` (a legality matrix's lowering), `.46.c` waits for
+a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`), `.3.c.iv.b.iii` waits for a rule naming a
+signal's sub-field, `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and
+`.3.f.iii` (single-label and unnamed grouped timing tables), `.3.c.iv.c` (a signal laid out per message kind), `.60`
+(a register field's sub-fields), `.61` (an encoding member's enabling property), `.54.a.ii` (the corpus memory's
+refresh: an equivalent store re-pinned with the 24-document behavioral re-qualification), `.44` (Symbol-font glyphs, a
+re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`,
+`.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a legacy
+register-map document's re-ingest. Closed leaves are read from the route catalog's lifecycles, not restated here; the
+list this paragraph carried until `2026-10-19` is in the `register-binding-leaves` part.
 
 Every new leaf and dated entry goes to the `layout-and-binding-leaves` part, since `encoding-and-state-leaves` reached
 its rollover on `2026-10-22`. Since `2026-10-21` (`.56.a`) a part whose every leaf is closed is archived, byte-exact,
@@ -77,7 +76,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > how do I add a new part to a task tree that is already partitioned (targets in surfaces.jsonl, a census evidence record)
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > how do I add a reviewed residual gold key
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -295,5 +297,3 @@
   > how does SpecForge detect two surfaces disagreeing about one quantity
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > how does SpecForge distinguish a timing table category from a scalar min typ max layout

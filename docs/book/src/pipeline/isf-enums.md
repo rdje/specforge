@@ -571,6 +571,32 @@ request, because nothing executable names a sub-field. The adapter states one `i
 per layout and lists every sub-field reaching past its port's elaborated width: AHB's `Lookup [4]`, `Allocate [5]` and
 `Shareable [6]` lie past `HPROT_WIDTH`'s default 4.
 
+### A table of marks per pair of keys
+
+AXI *Table A12.11* says which tag operation each read opcode may carry under each `MTE_Support` value (`Y` or `-`).
+I2C *Table 3* marks each protocol feature `M`, `O` or `n/a` per configuration, and its caption defines the codes.
+AXI's *interoperability* tables say, for a manager's and a subordinate's property values, *Compatible* or *Not
+compatible*, often with a reason. No column is an enum there and no row is one signal's code: each cell answers for a
+pair. Since `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` (`2026-10-22`) such a table is an EvidenceIR `matrix_tables`
+record:
+
+- **Shape.** The label columns are every leading column before the first whose filled cells are mostly marks (`Y`,
+  `-`, `X`, `M`, `O`, `N/A`) or modal words (*Required*, *Permitted*, *Compatible*, *May be off*), or cells opening
+  with one. Two or more data columns follow. The header is the leading run of non-data rows, and seven in ten filled
+  data cells must be marks or modal words. A footnote mark (`O [2]`, `Y 2`) is not part of the word.
+- **What is kept.** The row key titles, each data column's header path (`MTE_Support = Basic` over `Transfer`), each
+  row's keys and cells as written, the cell class (*mark* or *modal*), and the codes a caption defines (*M =
+  mandatory; O = optional; n/a = not applicable*).
+- **Refused, and counted.** A data column titled by a slice (a layout or a value combination), bare-number column
+  titles (a bit layout), label columns of code literals (an encoding), and two or more columns titled by declared
+  register fields (TMC's *Permitted register writes*, keyed by `TraceCaptEn`, `TMCReady` and `MODE`). A table another
+  reader holds keeps it: presence, register, value-combination and layout tables.
+
+On the 31 chains (`2026-10-22`): 48 matrices in 10 documents (AXI 22, USB 3.2 7, ADIv6 5, APB5 4, Cortex-A76 guide 3,
+OpenCAPI 3, I2C 2, AHB 1, USB4 CM 1); TMC's three field-keyed tables are refused. Cross-tabs whose cells are values or
+prose (USB 3.2 *7-14*, *8-8*) are not matrices of this kind. Carriage to IntentIR is `.3.c.v.ii`, and a legality
+matrix's lowering is decided apart (`.3.c.v.iv`).
+
 ### Which table an enum was read from
 
 An enum member reaches the IR as a synthesized statement, `Enum AxBURST INCR = 1.`, with no text span, so nothing

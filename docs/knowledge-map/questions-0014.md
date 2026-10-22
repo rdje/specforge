@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does scripts/check_chain_currency.sh check
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what does scripts/measure_subscript_split_name_cells.py measure
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what does self-test 15/15 passed actually prove
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > what does shipping the caption repair still need
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -272,6 +278,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f
 - [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b and .3.c.iv.b.i
+- [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.c.v and .3.c.v.i
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.d
 - [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
@@ -290,11 +298,3 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b and .3.g.iii.b.i
 - [a-channel-code-column-is-an-aliasing-enum](../knowledge/a-channel-code-column-is-an-aliasing-enum.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c and .3.g.iii.c.i
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.41.c
-- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.48
-- [a-hint-role-counts-only-for-the-signal-that-bears-it](../knowledge/a-hint-role-counts-only-for-the-signal-that-bears-it.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.50
-- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
-  > what is EXTRACTION-REPRESENTATION-GAPS.51 and .55

@@ -441,6 +441,10 @@ pub struct EvidenceIr {
     /// (serde-skipped) for documents with none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_layouts: Vec<SignalLayoutRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.i: the two-way tables whose cells are marks or modal words. Empty
+    /// (serde-skipped) for documents with none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub matrix_tables: Vec<MatrixTableRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: state transitions a document states, with what fires each. Empty
     /// (serde-skipped) for documents that state none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -1031,6 +1035,58 @@ pub struct SubFieldLevel {
     pub meaning: String,
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a two-way table: a row per item (*Opcode*, *Feature*, *Parameter*), a
+/// column per mode, configuration, version or event, and each cell a mark (`Y`, `-`, `X`, `M`, `O`, `N/A`) or a modal
+/// word (*Required*, *Permitted*, *Compatible*, *May be off*) for that pair. One record per table and its
+/// continuations; every cell as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MatrixTableRecord {
+    /// Stable id, e.g. `matrix_table_0004`.
+    pub matrix_id: String,
+    /// The table and, in order, each continuation of it.
+    pub table_ids: Vec<String>,
+    /// The table's caption, as written, when it has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+    /// The titles of the leading columns that name each row, from the last header row.
+    pub row_key_titles: Vec<String>,
+    /// For each data column, its header cells from the top header row down, as written.
+    pub column_keys: Vec<Vec<String>>,
+    /// The rows, in order.
+    pub rows: Vec<MatrixRow>,
+    /// Whether the cells are mostly marks or mostly modal words.
+    pub cell_class: MatrixCellClass,
+    /// The codes the caption defines (I2C *Table 3*: *M = mandatory; O = optional; n/a = not applicable*).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub legend: Vec<MatrixLegendEntry>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — one row of a [`MatrixTableRecord`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MatrixRow {
+    /// The table (page fragment) the row sits in.
+    pub table_id: String,
+    /// The row's key cells, as written.
+    pub keys: Vec<String>,
+    /// Each data column's cell, as written, in column order.
+    pub cells: Vec<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — what a matrix's cells mostly are.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum MatrixCellClass {
+    Mark,
+    Modal,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a code a matrix's caption defines, and its meaning, as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MatrixLegendEntry {
+    pub code: String,
+    pub meaning: String,
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a level as a sub-field's description names it.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
@@ -1507,6 +1563,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_states", "evidence.protocol_structure"),
     ("value_combinations", "evidence.protocol_structure"),
     ("signal_layouts", "evidence.protocol_structure"),
+    ("matrix_tables", "evidence.protocol_structure"),
     ("protocol_transitions", "evidence.protocol_structure"),
     ("protocol_actors", "evidence.protocol_structure"),
     ("protocol_operations", "evidence.protocol_structure"),
@@ -1920,6 +1977,7 @@ impl EvidenceIr {
         insert_field!(protocol_states);
         insert_field!(value_combinations);
         insert_field!(signal_layouts);
+        insert_field!(matrix_tables);
         insert_field!(protocol_transitions);
         insert_field!(protocol_actors);
         insert_field!(protocol_operations);
@@ -2639,6 +2697,18 @@ impl EvidenceIr {
             &source_ir.structured_tables,
             &collective_signal_names,
         );
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.v.i — a two-way table of marks or modal words is a matrix, unless another
+        // reader holds it.
+        let matrix_tables = matrix_table_surface(
+            read_matrix_tables(
+                source_ir,
+                &register_records,
+                &signal_presence_records,
+                &value_combinations,
+                &signal_layouts,
+            ),
+            &mut extraction_manifest,
+        );
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
         let equivalence_rules = equivalence_rule_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
@@ -2826,6 +2896,7 @@ impl EvidenceIr {
             protocol_states,
             value_combinations,
             signal_layouts,
+            matrix_tables,
             protocol_transitions,
             protocol_actors,
             protocol_operations,
@@ -31799,6 +31870,344 @@ fn signal_layout_surface(
     records
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — what a matrix cell is: a mark (`Y`, `-`, `X`, `M`, `O`, `N/A`, a check
+/// mark), a modal word, or a cell that opens with one (*Compatible. Tie AWAKEUP LOW*), once a footnote mark (`O [2]`,
+/// `Y 2`, `On*`) is dropped. These are closed grammatical classes, not a document's vocabulary (ADR 0006).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum MatrixCellKind {
+    Blank,
+    Mark,
+    Modal,
+    Other,
+}
+
+fn matrix_cell_kind(cell: &str) -> MatrixCellKind {
+    const MARKS: &[&str] = &[
+        "y", "n", "yes", "no", "-", "x", "n/a", "na", "o", "m", "r", "c", "\u{2713}", "\u{2714}",
+        "\u{2717}", "\u{2718}", "\u{221a}",
+    ];
+    const MODAL: &[&str] = &[
+        "not compatible",
+        "incompatible",
+        "compatible",
+        "not permitted",
+        "permitted",
+        "not supported",
+        "supported",
+        "not required",
+        "required",
+        "prohibited",
+        "not allowed",
+        "allowed",
+        "optional",
+        "mandatory",
+        "recommended",
+        "may be off",
+        "not defined",
+        "reserved",
+        "not present",
+        "on",
+        "off",
+        "legal",
+        "illegal",
+        "ignored",
+    ];
+    let mut text = cell.trim();
+    if let Some(open) = text.rfind('[')
+        && text.ends_with(']')
+        && text[open + 1..text.len() - 1]
+            .bytes()
+            .all(|b| b.is_ascii_digit())
+    {
+        text = text[..open].trim_end();
+    }
+    let text = text.trim_end_matches('*').trim_end();
+    let text = match text.rsplit_once(' ') {
+        Some((head, tail))
+            if tail.len() == 1 && tail.bytes().all(|b| b.is_ascii_alphanumeric()) =>
+        {
+            head
+        }
+        _ => text,
+    };
+    let lower = text.to_lowercase();
+    if lower.is_empty() {
+        MatrixCellKind::Blank
+    } else if MARKS.contains(&lower.as_str()) {
+        MatrixCellKind::Mark
+    } else if MODAL.iter().any(|word| {
+        lower == *word
+            || lower
+                .strip_prefix(word)
+                .is_some_and(|rest| rest.starts_with(['.', ',', ';', ':', ' ', '(']))
+    }) {
+        MatrixCellKind::Modal
+    } else {
+        MatrixCellKind::Other
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a cell that is a code literal: binary (`0b010`, `0000 001`), hex
+/// (`0x8`, `x'0023'`) or decimal.
+fn is_matrix_code_literal(cell: &str) -> bool {
+    let cell = cell.trim();
+    let all = |text: &str, ok: fn(u8) -> bool| !text.is_empty() && text.bytes().all(ok);
+    cell.strip_prefix("0b")
+        .is_some_and(|bits| all(bits, |b| matches!(b, b'0' | b'1' | b'_')))
+        || cell
+            .strip_prefix("0x")
+            .is_some_and(|hex| all(hex, |b| b.is_ascii_hexdigit() || b == b'_'))
+        || cell
+            .strip_prefix("x'")
+            .and_then(|rest| rest.strip_suffix('\''))
+            .is_some_and(|hex| all(hex, |b| b.is_ascii_hexdigit()))
+        || all(cell, |b| b.is_ascii_digit())
+        || (cell.contains(' ') && all(cell, |b| matches!(b, b'0' | b'1' | b' ')))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — the codes a caption defines before its table reference: *M = mandatory;
+/// O = optional; n/a = not applicable. Table 3. …*.
+fn matrix_caption_legend(caption: Option<&str>) -> Vec<MatrixLegendEntry> {
+    let Some(caption) = caption else {
+        return Vec::new();
+    };
+    let lead = caption.split("Table ").next().unwrap_or("");
+    lead.split(';')
+        .filter_map(|part| {
+            let (code, meaning) = part.split_once(" = ")?;
+            let code = code.trim();
+            let meaning = meaning.trim().trim_end_matches('.').trim();
+            (!code.is_empty() && code.split_whitespace().count() == 1 && !meaning.is_empty()).then(
+                || MatrixLegendEntry {
+                    code: code.to_string(),
+                    meaning: meaning.to_string(),
+                },
+            )
+        })
+        .collect()
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — the two-way tables whose cells are marks or modal words, and how many
+/// had the shape before the refusals.
+///
+/// The shape, read from the table alone (ADR 0006): rows of one width; label columns are every leading column before
+/// the first whose filled cells are mostly marks or modal words, and two or more data columns follow. The header is
+/// the leading run of rows that are no data row (a data row holds marks or modal words in half its data columns), at
+/// most the header rows EvidenceIR keeps; every later row is data. At least two data rows, and seven in ten filled
+/// data cells marks or modal words. Refused, and counted: a data column titled by a slice (a layout or a value combination), every data column
+/// titled by a bare number (a bit layout), label columns holding only code literals (an encoding), and two or more
+/// columns titled by a declared register field (a value combination of those fields). A table another reader holds
+/// (presence, register, value combination, signal layout) is left to it. A continuation page joins the table it
+/// continues.
+fn read_matrix_tables(
+    source_ir: &SourceIr,
+    register_records: &[RegisterRecord],
+    presence: &[SignalPresenceRecord],
+    combinations: &[ValueCombinationRecord],
+    layouts: &[SignalLayoutRecord],
+) -> (Vec<MatrixTableRecord>, usize) {
+    let claimed: HashSet<&str> = presence
+        .iter()
+        .map(|record| record.table_id.as_str())
+        .chain(
+            register_records
+                .iter()
+                .flat_map(|record| record.supporting_table_ids.iter().map(String::as_str)),
+        )
+        .chain(
+            combinations
+                .iter()
+                .flat_map(|record| record.table_ids.iter().map(String::as_str)),
+        )
+        .chain(
+            layouts
+                .iter()
+                .flat_map(|record| record.table_ids.iter().map(String::as_str)),
+        )
+        .collect();
+    let field_names: HashSet<&str> = register_records
+        .iter()
+        .flat_map(|record| record.fields.iter().map(|field| field.field_name.as_str()))
+        .collect();
+    let is_vocab = |cell: &str| {
+        matches!(
+            matrix_cell_kind(cell),
+            MatrixCellKind::Mark | MatrixCellKind::Modal
+        )
+    };
+    let mut candidates = 0;
+    let mut records: Vec<MatrixTableRecord> = Vec::new();
+    let mut references: Vec<(Option<String>, Vec<String>)> = Vec::new();
+    for table in &source_ir.structured_tables {
+        if claimed.contains(table.table_id.as_str()) {
+            continue;
+        }
+        let rows: Vec<Vec<String>> = table
+            .header_rows
+            .iter()
+            .chain(&table.body_rows)
+            .map(|row| {
+                row.iter()
+                    .map(|cell| cell.text.trim().to_string())
+                    .collect()
+            })
+            .collect();
+        let titles: Vec<String> = table
+            .header_rows
+            .last()
+            .map(|row| {
+                row.iter()
+                    .map(|cell| cell.text.split_whitespace().collect::<Vec<_>>().join(" "))
+                    .collect()
+            })
+            .unwrap_or_default();
+        let reference = caption_table_ref(table.caption_text.as_deref());
+        // A continuation page joins its head when that head was read and repeats its header.
+        if let Some((reference, true)) = &reference
+            && let Some(index) = references.iter().rposition(|(head, head_titles)| {
+                head.as_deref() == Some(reference.as_str()) && *head_titles == titles
+            })
+        {
+            let width = records[index].row_key_titles.len() + records[index].column_keys.len();
+            let header = records[index].column_keys.first().map_or(0, Vec::len);
+            let label = records[index].row_key_titles.len();
+            if rows.iter().all(|row| row.len() == width) && rows.len() > header {
+                records[index].table_ids.push(table.table_id.clone());
+                for row in &rows[header..] {
+                    records[index].rows.push(MatrixRow {
+                        table_id: table.table_id.clone(),
+                        keys: row[..label].to_vec(),
+                        cells: row[label..].to_vec(),
+                    });
+                }
+            }
+            continue;
+        }
+        let width = rows.first().map_or(0, Vec::len);
+        if rows.len() < 3 || width < 3 || rows.iter().any(|row| row.len() != width) {
+            continue;
+        }
+        let column_is_vocab = |index: usize| {
+            let filled: Vec<&str> = rows
+                .iter()
+                .map(|row| row[index].as_str())
+                .filter(|cell| !cell.is_empty())
+                .collect();
+            !filled.is_empty()
+                && filled.iter().filter(|cell| is_vocab(cell)).count() * 2 >= filled.len()
+        };
+        let Some(label) = (0..width).find(|&index| column_is_vocab(index)) else {
+            continue;
+        };
+        if label == 0 || width - label < 2 {
+            continue;
+        }
+        let is_data = |row: &Vec<String>| {
+            row[label..].iter().filter(|cell| is_vocab(cell)).count() * 2 >= width - label
+        };
+        let header = rows
+            .iter()
+            .position(is_data)
+            .unwrap_or(rows.len())
+            .min(table.header_rows.len());
+        if header == 0 {
+            continue;
+        }
+        let data = &rows[header..];
+        let filled: Vec<MatrixCellKind> = data
+            .iter()
+            .flat_map(|row| row[label..].iter().map(|cell| matrix_cell_kind(cell)))
+            .filter(|kind| *kind != MatrixCellKind::Blank)
+            .collect();
+        let vocab = filled
+            .iter()
+            .filter(|kind| matches!(kind, MatrixCellKind::Mark | MatrixCellKind::Modal))
+            .count();
+        if filled.is_empty()
+            || vocab * 10 < filled.len() * 7
+            || data.iter().filter(|row| is_data(row)).count() < 2
+        {
+            continue;
+        }
+        candidates += 1;
+        let column_keys: Vec<Vec<String>> = (label..width)
+            .map(|index| {
+                rows[..header]
+                    .iter()
+                    .map(|row| row[index].clone())
+                    .collect()
+            })
+            .collect();
+        let last_keys: Vec<&str> = column_keys
+            .iter()
+            .map(|keys| keys.last().map_or("", String::as_str))
+            .collect();
+        let slice_column = last_keys.iter().any(|key| parse_name_slice(key).is_some());
+        let bit_columns = last_keys
+            .iter()
+            .all(|key| !key.is_empty() && key.bytes().all(|b| b.is_ascii_digit()));
+        let code_rows =
+            (0..label).all(|index| data.iter().all(|row| is_matrix_code_literal(&row[index])));
+        let field_columns = rows[header - 1][1..]
+            .iter()
+            .filter(|title| field_names.contains(title.as_str()))
+            .count()
+            >= 2;
+        if slice_column || bit_columns || code_rows || field_columns {
+            continue;
+        }
+        let marks = filled
+            .iter()
+            .filter(|kind| **kind == MatrixCellKind::Mark)
+            .count();
+        records.push(MatrixTableRecord {
+            matrix_id: format!("matrix_table_{:04}", records.len() + 1),
+            table_ids: vec![table.table_id.clone()],
+            caption: table.caption_text.clone(),
+            row_key_titles: rows[header - 1][..label].to_vec(),
+            column_keys,
+            rows: data
+                .iter()
+                .map(|row| MatrixRow {
+                    table_id: table.table_id.clone(),
+                    keys: row[..label].to_vec(),
+                    cells: row[label..].to_vec(),
+                })
+                .collect(),
+            cell_class: if marks * 2 > vocab {
+                MatrixCellClass::Mark
+            } else {
+                MatrixCellClass::Modal
+            },
+            legend: matrix_caption_legend(table.caption_text.as_deref()),
+        });
+        references.push((reference.map(|(reference, _)| reference), titles));
+    }
+    (records, candidates)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — the matrices read, recorded as the `matrix_tables` surface only when a
+/// table had the shape, so a document without one keeps its manifest unchanged.
+fn matrix_table_surface(
+    (records, candidates): (Vec<MatrixTableRecord>, usize),
+    manifest: &mut ExtractionManifest,
+) -> Vec<MatrixTableRecord> {
+    if candidates > 0 {
+        manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
+            surface: "matrix_tables".to_string(),
+            eligible: 1,
+            entries: vec![crate::ir::extractor::ExtractorRunEntry {
+                name: "mark_and_modal_tables".to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced: candidates,
+                kept: records.len(),
+            }],
+        });
+    }
+    records
+}
+
 /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i — every state a stated transition names is a protocol state.
 ///
 /// A transition names the state it leaves and the states it may enter, and the table it comes from states them as
@@ -44097,7 +44506,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 50);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 51);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -49370,6 +49779,152 @@ The control register.
         assert_eq!(protection.member_column.as_deref(), Some("Description"));
         assert_eq!(protection.rows[1].values, ["-", "1"]);
         assert_eq!(protection.rows[1].member.as_deref(), Some("Data access"));
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a two-way table of marks or modal words is a matrix with its keys,
+    /// cells and caption legend; a slice-titled table, a code-keyed encoding and a field-keyed table are refused.
+    #[test]
+    fn a_two_way_table_of_marks_is_a_matrix() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("matrices.md");
+        fs::write(&source, "# Matrices\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, caption: Option<&str>, header: &[&[&str]], body: &[&[&str]]| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                row_count: (header.len() + body.len()) as u32,
+                col_count: header[0].len() as u32,
+                header_rows: rows(header),
+                body_rows: rows(body),
+            }
+        };
+        // I2C Table 3: two header rows, footnoted marks, a caption legend.
+        source_ir.structured_tables.push(table(
+            "table_0001",
+            Some("M = mandatory; O = optional; n/a = not applicable. Table 3. Applicability of features"),
+            &[
+                &["Feature", "Configuration", "Configuration"],
+                &["Feature", "Single controller", "Target [1]"],
+            ],
+            &[
+                &["START condition", "M", "M"],
+                &["Clock stretching", "O [2]", "O"],
+                &["Synchronization", "n/a", "n/a"],
+            ],
+        ));
+        // AXI: an interoperability matrix whose cells open with a modal word.
+        source_ir.structured_tables.push(table(
+            "table_0002",
+            Some("Table A3.18: Regular_Transactions_Only interoperability"),
+            &[&["Regular", "Subordinate: False", "Subordinate: True"]],
+            &[
+                &[
+                    "Manager: False",
+                    "Compatible.",
+                    "Not compatible. The Subordinate must reject it.",
+                ],
+                &["Manager: True", "Compatible.", "Compatible."],
+            ],
+        ));
+        // Byte lanes: data columns titled by slices are a layout.
+        source_ir.structured_tables.push(table(
+            "table_0003",
+            None,
+            &[&["Transfer size", "DATA[15:8]", "DATA[7:0]"]],
+            &[&["Byte", "-", "Y"], &["Halfword", "Y", "Y"]],
+        ));
+        // An encoding: the label column holds codes.
+        source_ir.structured_tables.push(table(
+            "table_0004",
+            None,
+            &[&["Code", "Read", "Write"]],
+            &[&["0b00", "Y", "-"], &["0b01", "-", "Y"]],
+        ));
+        // Columns titled by declared register fields: a value combination of those fields.
+        source_ir.structured_tables.push(table(
+            "table_0005",
+            None,
+            &[&["Register", "TraceCaptEn", "TMCReady"]],
+            &[&["RRP", "X", "Y"], &["RWP", "X", "X"]],
+        ));
+        let registers = vec![crate::ir::source::RegisterRecord {
+            register_id: "reg_ctl".to_string(),
+            register_name: "CTL".to_string(),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields: ["TraceCaptEn", "TMCReady"]
+                .iter()
+                .map(|name| crate::ir::source::RegisterFieldRecord {
+                    field_name: name.to_string(),
+                    bits_high: None,
+                    bits_low: None,
+                    bit_width: None,
+                    access_type: None,
+                    reset_value: None,
+                    description: None,
+                    enumerated_values: Vec::new(),
+                    signal_bindings: Vec::new(),
+                })
+                .collect(),
+            supporting_table_ids: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: crate::ir::source::AutomationConfidence::Medium,
+        }];
+        let (matrices, candidates) =
+            super::read_matrix_tables(&source_ir, &registers, &[], &[], &[]);
+        assert_eq!(candidates, 5);
+        assert_eq!(
+            matrices
+                .iter()
+                .map(|matrix| matrix.table_ids[0].as_str())
+                .collect::<Vec<_>>(),
+            ["table_0001", "table_0002"]
+        );
+        let i2c = &matrices[0];
+        assert_eq!(i2c.row_key_titles, ["Feature"]);
+        assert_eq!(
+            i2c.column_keys,
+            [
+                vec!["Configuration".to_string(), "Single controller".to_string()],
+                vec!["Configuration".to_string(), "Target [1]".to_string()],
+            ]
+        );
+        assert_eq!(i2c.rows[1].keys, ["Clock stretching"]);
+        assert_eq!(i2c.rows[1].cells, ["O [2]", "O"]);
+        assert_eq!(i2c.cell_class, super::MatrixCellClass::Mark);
+        assert_eq!(
+            i2c.legend
+                .iter()
+                .map(|entry| (entry.code.as_str(), entry.meaning.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                ("M", "mandatory"),
+                ("O", "optional"),
+                ("n/a", "not applicable")
+            ]
+        );
+        assert_eq!(matrices[1].cell_class, super::MatrixCellClass::Modal);
+        assert!(matrices[1].legend.is_empty());
         Ok(())
     }
 

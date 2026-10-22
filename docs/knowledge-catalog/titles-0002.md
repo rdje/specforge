@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md) | 2026-06-16 | `current` | The .1a structural agent-identity gate rejects relation subjects whose first content token is a universal fun… |
 | [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md) | 2026-06-17 | `current` | The .1b.ii named-interface consolidation folds an "X interface" relation subject onto the bare agent "X" (Sub… |
 | [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md) | 2026-06-17 | `current` | The .1b.iv Class-C PURE-INFERRED phantom drop removes a generic role-term actor (agent/controller/producer/… |
 | [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md) | 2026-06-16 | `current` | The KG agent surface has 3 structural defect classes (junk / fragment / zero-evidence); the "disconnected rea… |
@@ -60,4 +61,3 @@
 | [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-08-30 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
 | [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |
-| [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `superseded` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |

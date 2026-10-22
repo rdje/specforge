@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i",
-      "literal" : "`.3.c.v.i` — a two-way table is a matrix record.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii",
+      "literal" : "`.3.c.v.ii` — a matrix reaches IntentIR, and the adapter names it.",
       "mode" : "eligible",
       "part_id" : "layout-and-binding-leaves"
    },
@@ -166,13 +166,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
             "metrics" : {
-               "bytes" : 18473,
-               "line_bytes" : 119,
-               "lines" : 210
+               "bytes" : 22545,
+               "line_bytes" : 120,
+               "lines" : 254
             },
             "part_id" : "layout-and-binding-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-            "sha256" : "9d97abfe1bfd3e2976e11778b0107fe291d25e898afe2d2efdfc3a78aadb202c",
+            "sha256" : "bef2a07a20d050db79d13cb0a4ce65c7f2359465d494900d6bfe54ce9224f3b1",
             "state" : "active"
          },
          {
@@ -1548,7 +1548,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
       },
@@ -1702,7 +1702,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.v.i` — a two-way table is a matrix record.",
+         "`.3.c.v.ii` — a matrix reaches IntentIR, and the adapter names it.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1740,7 +1740,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.60`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`",
