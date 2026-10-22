@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what was the must_be_value recall gap and how was it closed
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what were the initial 17-document held-out relation outcomes
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
@@ -295,5 +297,3 @@
   > where is a minimum duration such as for at least one clock cycle kept
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > where is a register summary's Reset column kept (RegisterRecord.reset_value)
-- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
-  > where is a tie-off's configuration (the signal's own absence on the driver, its presence condition)

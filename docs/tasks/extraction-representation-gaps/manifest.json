@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii",
-      "literal" : "`.3.c.v.ii` — a matrix reaches IntentIR, and the adapter names it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii",
+      "literal" : "`.3.c.v.iii` — a presence code reads its legend.",
       "mode" : "eligible",
       "part_id" : "layout-and-binding-leaves"
    },
@@ -1287,7 +1287,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "layout-and-binding-leaves"
       },
@@ -1467,13 +1467,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
          "metrics" : {
-            "bytes" : 22545,
-            "line_bytes" : 120,
-            "lines" : 254
+            "bytes" : 25306,
+            "line_bytes" : 121,
+            "lines" : 286
          },
          "part_id" : "layout-and-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-         "sha256" : "bef2a07a20d050db79d13cb0a4ce65c7f2359465d494900d6bfe54ce9224f3b1",
+         "sha256" : "a6b5376834f852fa6d8d7379cc10090ea980409b9ca2f20f099eb0d165e25281",
          "state" : "active"
       },
       {

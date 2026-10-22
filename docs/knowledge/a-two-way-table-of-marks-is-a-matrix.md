@@ -2,6 +2,7 @@
 id: a-two-way-table-of-marks-is-a-matrix
 title: A two-way table whose cells are marks or modal words is a matrix (matrix_tables), unless another reader holds it
 answers:
+  - "what is the isf_protocol_matrix_table residual (.3.c.v.ii)"
   - "what is matrix_tables / MatrixTableRecord / read_matrix_tables (.3.c.v.i)"
   - "how is AXI Table A12.11 Legal tag operations read"
   - "how is I2C Table 3 (M = mandatory; O = optional) read"
@@ -39,3 +40,8 @@ tables are refused (their columns are register fields with `0`/`1`/`X`, a value 
 combination reader refuses for its emptied cells). The prototype had read B2.4's last page with 3 header
 rows; EvidenceIR keeps 1 there after `.57.a`, so the header is capped at the kept rows and the sparse
 rows below it are data. The `matrix_tables` manifest entry is recorded only when a table had the shape.
+
+**Carried (`.3.c.v.ii`, `2026-10-22`).** SemanticIR and IntentIR carry `matrix_tables` unchanged, and
+the adapter states one `isf_protocol_matrix_table_*` residual per matrix, citing its tables: no rule,
+guard or drive names a matrix's keys. A legality matrix's lowering is `.3.c.v.iv`'s to decide; a
+requirement, version or effect matrix states configuration the `.isf` does not carry (ADR 0033 §6).

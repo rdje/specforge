@@ -14,7 +14,7 @@ use crate::ir::derivation::{
 };
 use crate::ir::evidence::{
     CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord,
-    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, OptionalFeatureRecord,
+    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, MatrixTableRecord, OptionalFeatureRecord,
     PermissionRuleRecord, ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord,
     SerialFrameField, SignalLayoutRecord, SignalPolarityConflictRecord, SignalPolarityRecord,
     SignalPresenceRecord, SignalSemanticConflictRecord, SoftwareIntentRecord,
@@ -188,6 +188,10 @@ pub struct IntentIr {
     /// layout.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_layouts: Vec<SignalLayoutRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — the two-way tables of marks or modal words, carried losslessly from
+    /// SemanticIR (ADR 0016). The adapter lowers none of them and keeps one residual per matrix.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub matrix_tables: Vec<MatrixTableRecord>,
     /// Interface-edge timing observations carried losslessly from SemanticIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
@@ -354,6 +358,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_transitions", "intent.carried_semantics"),
     ("value_combinations", "intent.carried_semantics"),
     ("signal_layouts", "intent.carried_semantics"),
+    ("matrix_tables", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
     ("signal_presence_records", "intent.carried_semantics"),
     ("check_signal_records", "intent.carried_semantics"),
@@ -415,6 +420,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "protocol_transitions",
     "value_combinations",
     "signal_layouts",
+    "matrix_tables",
     "interface_edge_timings",
     "signal_presence_records",
     "check_signal_records",
@@ -791,6 +797,7 @@ impl IntentIr {
             protocol_transitions: semantic_ir.protocol_transitions.clone(),
             value_combinations: semantic_ir.value_combinations.clone(),
             signal_layouts: semantic_ir.signal_layouts.clone(),
+            matrix_tables: semantic_ir.matrix_tables.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             signal_presence_records: semantic_ir.signal_presence_records.clone(),
             check_signal_records: semantic_ir.check_signal_records.clone(),
@@ -875,6 +882,7 @@ impl IntentIr {
         insert_field!(protocol_transitions);
         insert_field!(value_combinations);
         insert_field!(signal_layouts);
+        insert_field!(matrix_tables);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
@@ -1464,6 +1472,7 @@ impl IntentIr {
             protocol_transitions: Vec::new(),
             value_combinations: Vec::new(),
             signal_layouts: Vec::new(),
+            matrix_tables: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_presence_records: Vec::new(),
             check_signal_records: Vec::new(),
@@ -3915,6 +3924,25 @@ mod tests {
             }],
         }];
         let expected_layouts = evidence_ir.signal_layouts.clone();
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — a matrix table is carried as it is.
+        evidence_ir.matrix_tables = vec![crate::ir::evidence::MatrixTableRecord {
+            matrix_id: "matrix_table_0001".to_string(),
+            table_ids: vec!["table_0004".to_string()],
+            caption: Some("M = mandatory; O = optional. Table 3. Applicability".to_string()),
+            row_key_titles: vec!["Feature".to_string()],
+            column_keys: vec![vec!["Single controller".to_string()]],
+            rows: vec![crate::ir::evidence::MatrixRow {
+                table_id: "table_0004".to_string(),
+                keys: vec!["START condition".to_string()],
+                cells: vec!["M".to_string()],
+            }],
+            cell_class: crate::ir::evidence::MatrixCellClass::Mark,
+            legend: vec![crate::ir::evidence::MatrixLegendEntry {
+                code: "M".to_string(),
+                meaning: "mandatory".to_string(),
+            }],
+        }];
+        let expected_matrices = evidence_ir.matrix_tables.clone();
         evidence_ir.write_to_disk()?;
 
         let semantic_ir = SemanticIr::build(
@@ -3927,6 +3955,7 @@ mod tests {
         assert_eq!(semantic_ir.interface_edge_timings, expected_edge_timings);
         assert_eq!(semantic_ir.value_combinations, expected_combinations);
         assert_eq!(semantic_ir.signal_layouts, expected_layouts);
+        assert_eq!(semantic_ir.matrix_tables, expected_matrices);
         semantic_ir.write_to_disk()?;
 
         let intent_ir = IntentIr::build(
@@ -3939,6 +3968,7 @@ mod tests {
         assert_eq!(intent_ir.interface_edge_timings, expected_edge_timings);
         assert_eq!(intent_ir.value_combinations, expected_combinations);
         assert_eq!(intent_ir.signal_layouts, expected_layouts);
+        assert_eq!(intent_ir.matrix_tables, expected_matrices);
 
         let encoded = serde_json::to_value(&intent_ir)?;
         assert_eq!(
@@ -3965,6 +3995,7 @@ mod tests {
         empty.interface_edge_timings.clear();
         empty.value_combinations.clear();
         empty.signal_layouts.clear();
+        empty.matrix_tables.clear();
         let legacy_shape = serde_json::to_value(&empty)?;
         for field in [
             "serial_frame_fields",
@@ -3973,6 +4004,7 @@ mod tests {
             "interface_edge_timings",
             "value_combinations",
             "signal_layouts",
+            "matrix_tables",
         ] {
             assert!(
                 legacy_shape.get(field).is_none(),
@@ -6890,8 +6922,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 63);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 43);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 64);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 44);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-V-I-MATRIX-TABLES",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-V-II-MATRIX-CARRIAGE",
    "baseline": {
-    "analyzed_functions": 2864,
-    "decision_sites": 15940,
-    "helper_edges": 20484,
-    "semantic_macros": 1643
+    "analyzed_functions": 2869,
+    "decision_sites": 16011,
+    "helper_edges": 20592,
+    "semantic_macros": 1645
    },
    "delta": {
-    "analyzed_functions": 5,
-    "decision_sites": 71,
-    "helper_edges": 108,
-    "semantic_macros": 2
+    "analyzed_functions": 0,
+    "decision_sites": 2,
+    "helper_edges": 0,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i: a two-way table whose cells are marks or modal words is a matrix (read_matrix_tables, matrix_cell_kind, is_matrix_code_literal, matrix_caption_legend, matrix_table_surface)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii: matrix_tables carried through SemanticIR and IntentIR; the adapter states one isf_protocol_matrix_table residual per matrix."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

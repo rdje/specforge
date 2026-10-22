@@ -594,8 +594,12 @@ record:
 
 On the 31 chains (`2026-10-22`): 48 matrices in 10 documents (AXI 22, USB 3.2 7, ADIv6 5, APB5 4, Cortex-A76 guide 3,
 OpenCAPI 3, I2C 2, AHB 1, USB4 CM 1); TMC's three field-keyed tables are refused. Cross-tabs whose cells are values or
-prose (USB 3.2 *7-14*, *8-8*) are not matrices of this kind. Carriage to IntentIR is `.3.c.v.ii`, and a legality
-matrix's lowering is decided apart (`.3.c.v.iv`).
+prose (USB 3.2 *7-14*, *8-8*) are not matrices of this kind.
+
+Since `.3.c.v.ii` a matrix crosses SemanticIR and IntentIR unchanged, and the adapter states one
+`isf_protocol_matrix_table_*` residual per matrix: nothing executable names a matrix's keys yet. A legality matrix's
+lowering is decided apart (`.3.c.v.iv`); a requirement, version or effect matrix states configuration that stays typed
+in IR (ADR 0033 §6).
 
 ### Which table an enum was read from
 

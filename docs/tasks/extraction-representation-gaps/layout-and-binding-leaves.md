@@ -213,10 +213,42 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   `a-two-way-table-of-marks-is-a-matrix`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii`
-  Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)
+  Status: `done` (`2026-10-22`; CODE; opened by `.3.c.v`; checklist below)
   Goal: **a matrix reaches IntentIR, and the adapter names it.** Acceptance: carry `matrix_tables` through SemanticIR
   to IntentIR; one adapter residual per matrix naming its family's disposition; `.isf` texts unchanged; rebuild what
   moves.
+  **Done `2026-10-22`.**
+  - **Carried.** `matrix_tables` is a field of SemanticIR (`semantic.carried_evidence`) and IntentIR
+    (`intent.carried_semantics`), cloned as it is; both claim-family inventories name it.
+  - **Residual.** One `isf_protocol_matrix_table_*` packet per matrix, citing its tables: no rule, guard or drive
+    names its keys; a legality matrix's lowering is `.3.c.v.iv`'s; a requirement, version or effect matrix states
+    configuration the `.isf` does not carry (ADR 0033 §6).
+  - **Rebuilt.** The 10 matrix chains rebuilt stage by stage: only `matrix_tables` moved in SemanticIR and IntentIR,
+      and the adapters gained 48 residuals (AXI 87 -> 109, USB 3.2 95 -> 102, ADIv6 30 -> 35, APB5 42 -> 46, the
+      Cortex-A76 guide 3 -> 6, OpenCAPI discovery 3 -> 5, I2C 7 -> 9, AHB 42 -> 43, OpenCAPI DLL 1 -> 2, USB4 CM 5 ->
+      6); every `.isf` text byte-identical. The new fields moved the SemanticIR and IntentIR ruleset hashes, so
+      `rebuild_stage_cascade.sh --write` re-sealed all 31 chains, content-identical at every stage.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii` (CODE) — DONE `2026-10-22`
+
+- [x] **REPRODUCE / MEASURE** — after `.3.c.v.i` the 48 matrices stopped at EvidenceIR; the adapters' residual packets
+  per chain.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` and `intent.rs` declared no carrier, and
+  `crates/specforge/src/ir/adapters.rs` stated no residual. RED 3/3, each file restored byte-identically: SemanticIR
+  dropping the matrices, IntentIR dropping them, the adapter stating no residual; each fails its test
+  (`projects_protocol_surfaces_exactly_across_all_three_stages`,
+  `isf_adapter_residualizes_a_matrix_table_citing_its_tables`)..
+- [x] **ADDRESSED (verified)** — the residuals on the rebuilt chains; `.isf` texts byte-identical, so their FSMGen
+  strict verdicts are unchanged.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `d5a85fe5a`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,925 passed; the proof tests count 65 SemanticIR and 64 IntentIR rule
+  fields (44 carried) and the inventory 211 rules. `flow_census.json` rolled (+2 decision sites); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — the residual reads the record only; no document or table name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A table of marks per pair of keys*: carriage and residual); KM card
+  `a-two-way-table-of-marks-is-a-matrix`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii`
   Status: `open` (`2026-10-22`; CODE; opened by `.3.c.v`)

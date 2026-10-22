@@ -1421,6 +1421,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.protocol_states.len()
             + intent_ir.protocol_transitions.len()
             + intent_ir.value_combinations.len()
+            + intent_ir.matrix_tables.len()
             + intent_ir.interface_edge_timings.len()
             + stated_absent_values.len()
             + intent_ir.equivalence_rules.len()
@@ -1490,6 +1491,19 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             &[],
             &record.table_ids,
             "a consumer: no condition names one of its members, and `.isf` has no combinational assignment that states the table without an invented storage target (ADR 0016)",
+        ));
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — a two-way table of marks or modal words. Whether a legality matrix
+    // becomes an assertion is decided from a consumer (`.3.c.v.iv`); requirement, version and effect matrices describe
+    // configuration and stay typed in IR (ADR 0033 §6).
+    for record in &intent_ir.matrix_tables {
+        residuals.push(protocol_residual_packet(
+            "matrix_table",
+            "matrix table",
+            &record.matrix_id,
+            &[],
+            &record.table_ids,
+            "a consumer: no rule, guard or drive names its row and column keys; a legality matrix's lowering is decided apart (`EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`), and a requirement, version or effect matrix states configuration the `.isf` does not carry (ADR 0033 §6)",
         ));
     }
     for record in &intent_ir.interface_edge_timings {
@@ -2735,6 +2749,66 @@ mod tests {
         assert_eq!(
             isf.rule_count, emitted_rules,
             "rule_count must equal emitted (rule …) forms\n{src}"
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii` — a matrix table reaches the adapter as one residual citing its tables,
+    /// and the rendered `.isf` is unchanged.
+    #[test]
+    fn isf_adapter_residualizes_a_matrix_table_citing_its_tables() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_matrix_tables.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let baseline = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("baseline_adapter"),
+        )?;
+        let baseline_isf = baseline.isf.expect("baseline ISF artifact");
+        intent_ir.matrix_tables = vec![crate::ir::evidence::MatrixTableRecord {
+            matrix_id: "matrix_table_0001".to_string(),
+            table_ids: vec!["table_0174".to_string(), "table_0175".to_string()],
+            caption: Some("Table A12.11: Legal tag operations for read transactions".to_string()),
+            row_key_titles: vec!["Opcode".to_string()],
+            column_keys: vec![vec![
+                "MTE_Support = Basic".to_string(),
+                "Transfer".to_string(),
+            ]],
+            rows: vec![crate::ir::evidence::MatrixRow {
+                table_id: "table_0174".to_string(),
+                keys: vec!["ReadNoSnoop".to_string()],
+                cells: vec!["Y".to_string()],
+            }],
+            cell_class: crate::ir::evidence::MatrixCellClass::Mark,
+            legend: Vec::new(),
+        }];
+        intent_ir.write_to_disk()?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("matrix_adapter"),
+        )?;
+        let isf = artifact.isf.clone().expect("matrix ISF artifact");
+        assert_eq!(isf.source_text, baseline_isf.source_text);
+        let packets = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| packet.packet_id.starts_with("isf_protocol_matrix_table_"))
+            .collect::<Vec<_>>();
+        assert_eq!(packets.len(), 1);
+        assert_eq!(
+            packets[0].packet_id,
+            "isf_protocol_matrix_table_matrix_table_0001"
+        );
+        assert!(packets[0].why_unresolved.contains(".3.c.v.iv"));
+        assert!(
+            packets[0]
+                .why_unresolved
+                .contains("supporting tables: table_0174, table_0175")
         );
         Ok(())
     }
