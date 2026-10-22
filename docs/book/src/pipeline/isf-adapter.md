@@ -360,6 +360,14 @@ no emitted file is affected. FSMGen had already fixed this in its development li
 SpecForge found it, so no report was sent. The fix is not published yet; the pin refresh
 (`FSMGEN-REFRESH-INTEGRATE-10`) brings it in once it is.
 
+**A reset the document never names is never defaulted** (`FSMGEN-REQUESTS.9.a`, `2026-10-22`). FSMGen answered how
+`.isf` states an unnamed reset: an omitted `(reset …)` becomes its `rst_n` async active-low default (reported
+`legacy_default`), a clock-only domain has no reset and no startup state, and no form leaves the choice to
+instantiation. SpecForge takes none of these: a kind may be chosen for a named reset, but writing a reset pin the
+specification does not name would be invention, so such a document stays blocked with its residual. On the 31 chains
+every blocked adapter also lacks a grounded clock, so a deferred-reset form would unblock none and none is requested;
+the four whose only clocks are bus signals (`TCK`, `SWCLK`, `SCL`, `SCK`) are `EXTRACTION-REPRESENTATION-GAPS.69`.
+
 Once the contract names the reset, the reset leaves the interface, but a rule may still test it: AXI *SYSCOREQ
 and SYSCOACK must be deasserted when ARESETn is asserted* lowers with the guard `(== ARESETn 0)`, the level its
 stated polarity gives. No rule drives the reset.

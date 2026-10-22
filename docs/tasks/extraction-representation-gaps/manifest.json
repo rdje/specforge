@@ -1386,6 +1386,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.69",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1557,13 +1563,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 13196,
+            "bytes" : 14088,
             "line_bytes" : 119,
-            "lines" : 149
+            "lines" : 158
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "613d379b187e223c4e273d7bf7c29f9c238caf49b829aef800fa614eefbf408f",
+         "sha256" : "6b9ec76207e5229a3442191f0469320eca4f835ada95ff4213bfd00d7e0ec675",
          "state" : "active"
       },
       {

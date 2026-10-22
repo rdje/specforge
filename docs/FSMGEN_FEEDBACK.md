@@ -106,7 +106,7 @@ Signed off `2026-09-29`; received `2026-09-30`, acknowledged `2026-10-21` (SEM `
 
 - Direction: `SpecForge → FSMGen` · Kind: `question` · Status: `answered` · Owner: `FSMGEN-REQUESTS.9` · Evidence: `docs/upstream/fsmgen/sf-isf-unstated-reset/README.md`
 
-Signed off `2026-09-29`; answered `2026-09-30` (SEM `.60.3`): an omitted reset is FSMGen's `rst_n` default, reported `legacy_default`, and a clock-only domain has none. SPECFORGE decides whether to accept the default.
+Signed off `2026-09-29`; answered `2026-09-30` (SEM `.60.3`): an omitted reset is FSMGen's `rst_n` default, reported `legacy_default`, and a clock-only domain has none. SPECFORGE does not accept the default (`.9.a`, `2026-10-22`).
 
 ### aggregate-interface-ports — a record-typed interface port for packets and headers
 

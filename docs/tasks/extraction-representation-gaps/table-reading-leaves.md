@@ -59,6 +59,15 @@ here whole.
   rotated. Acceptance: census tables whose header-named name column holds no names while another column holds only
   names, decide whether the pairs are read (TMC's rows state no direction or width; *B2-7* is a wire-to-register-bit
   map like `.41.e`'s), and measure every chain.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.69`
+  Status: `open` (`2026-10-22`; DESIGN; opened by `FSMGEN-REQUESTS.9.a`)
+  Goal: **a protocol whose only clock is a bus signal grounds its actor's clock, or says why not.** **Reproduce:**
+  RISC-V debug, ADIv6, I2C and I2S are blocked by nothing but *no source-grounded system clock/reset contract*; each
+  documents a bus clock (`TCK`, `SWCLK`, `SCL`, `SCK`) but no system clock, so the adapter writes
+  `(clock __specforge_unresolved_clock)`. A bus clock is an input on one side and a generated output on the other (an
+  I2C controller drives `SCL` from a clock the specification does not name). Acceptance: census the 26 blocked chains'
+  clock evidence, decide per role whether a bus clock is the actor's `.isf` clock (and what reset then applies, given
+  `FSMGEN-REQUESTS.9.a`'s refusal of an invented reset), and measure every chain's adapter.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives

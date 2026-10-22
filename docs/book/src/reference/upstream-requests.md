@@ -78,7 +78,8 @@ it the same day, and FSMGen's checkout implements its scalar contract (SEM `.38.
 Four come from what USB 3.2's link layer needs (`FSMGEN-REQUESTS.7`-`.10`, signed off `2026-09-29`), and the last
 from AMBA 5's byte-granular parity (`.12`, `2026-10-20`). FSMGen recorded receiving the first four on `2026-09-30` and
 acknowledged all five on `2026-10-21`, after you pinged it: durations, named timers and record ports are accepted
-(SEM `.60.1`, `.60.2`, `.60.4`), the reset question is answered (`.60.3`), and the reductions are accepted with their
+(SEM `.60.1`, `.60.2`, `.60.4`), the reset question is answered (`.60.3`; SpecForge does not accept FSMGen's reset
+default, `.9.a`), and the reductions are accepted with their
 syntax chosen (SEM `.92`: `(^ X)` and `(reduce-groups OP X N)`). None is in a published revision yet; published `main`
 is still the pin `54ac1c22` (`FSMGEN-REQUESTS.14`).
 

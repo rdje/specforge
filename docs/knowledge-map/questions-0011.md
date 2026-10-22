@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > is an empty result from a table-kind-keyed pass an answer or a blind spot
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > is an unless clause an antecedent (no — an exception, kept apart and lowered negated)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -295,5 +297,3 @@
   > is upstream extraction or ISF expressiveness the next measured blocker
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > is validation_report.json current after specforge evidence
-- [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md)
-  > may .11 lower a statement invariant as a stability assertion

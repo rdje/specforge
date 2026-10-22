@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > does the alpha harness expose transform recipes to production core
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -296,5 +298,3 @@
   > how did APB temporal reach 100% (WIRE-BASED-100.4)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how do Continued from previous page fragments find their home

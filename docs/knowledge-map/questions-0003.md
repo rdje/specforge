@@ -220,6 +220,8 @@
   > does SemanticIR record a declaration it refused for an unreadable width
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > does SourceIR carry the markdown escape
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > does SpecForge accept FSMGen's default reset rst_n for a document that states no reset (FSMGEN-REQUESTS.9.a)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -296,5 +298,3 @@
   > does a clean checkout or a CI runner pay for the corpus replay build
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > does a collective name's sentence have to name declared signals (no, the sentence declares them)
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > does a conditional rule's consequent end at its sentence (yes, since .39.a)

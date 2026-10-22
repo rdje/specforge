@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > does a conditional rule's consequent end at its sentence (yes, since .39.a)
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > does a constraint keep its list lead-in
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -296,5 +298,3 @@
   > does the actor-relation reader read a Continued from previous page fragment's Source column
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does the administrative classifier name OpenCAPI or a vendor
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > does the agent-identity gate keep Class-B fragments like Subordinate extends

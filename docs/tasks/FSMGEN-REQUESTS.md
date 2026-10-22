@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R0` (downstream contract hygiene) and the `KG-ISF-COMPLETENESS` lowering it unblocks
 - Created: `2026-09-24`
-- Last updated: `2026-10-20`
+- Last updated: `2026-10-22`
 - Owner: repo-local workflow
 
 ## Goal
@@ -181,6 +181,23 @@ drafting to integration, and forwarded by the owner. The process is
   is accepted too; FSMGen's book does not say which of these, if either, states an unspecified reset honestly.
   Acceptance: question packet `sf-isf-unstated-reset`, reproduced, signed off, open record.
 
+- ID: `FSMGEN-REQUESTS.9.a` · Status: `done` (`2026-10-22`; MEASUREMENT + DECISION; opened by `.9`'s answer) · Goal:
+  **decide whether SPECFORGE accepts FSMGen's reset default, and whether a deferred-reset form has a consumer.**
+  FSMGen's answer (`2026-09-30`, SEM `.60.3`, restated in its `2026-10-22` status): an omitted reset is `rst_n` async
+  active-low, reported `legacy_default`; a clock-only domain has no reset and no startup state; no form defers reset
+  policy to instantiation; accepting the default is SPECFORGE's decision.
+  **Decided.** The adapter does not accept the default. It would write a reset pin the specification does not state,
+  which is invention (ADR 0016); the adapter already defaults only a stated reset's unstated kind, listing it as a
+  residual (`EXTRACTION-REPRESENTATION-GAPS.7.d`). A document with no grounded reset stays blocked, its residual naming
+  the gap, as the packet's `specforge_side` says.
+  **Measured** (the 31 chains' adapters, `2026-10-22`): 26 are blocked, every one with *no source-grounded system
+  clock/reset contract* and both placeholders, `(clock __specforge_unresolved_clock)` and `(reset
+  (__specforge_unresolved_reset …))`; 4 of them (RISC-V debug, ADIv6, I2C, I2S) have no other blocker. No chain grounds
+  a clock and lacks only its reset, so a deferred-reset form would unblock none: **no request is filed** (ADR 0033
+  §4). The clock is the first gap for those four, whose only clocks are bus signals (`TCK`, `SWCLK`, `SCL`, `SCK`):
+  `EXTRACTION-REPRESENTATION-GAPS.69`. A deferred-reset request is reconsidered when a chain grounds its clock and
+  not its reset.
+
 - ID: `FSMGEN-REQUESTS.10` · Status: `open` (`2026-09-29`; REQUEST; found by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`)
   · Goal: **a packet-typed interface port.** USB 3.2's interfaces carry packets and ordered sets whose headers are field
   layouts (75 of the 191 untyped layout tables on the 31 chains are USB 3.2's). `.isf` accepts a record type on
@@ -247,7 +264,8 @@ drafting to integration, and forwarded by the owner. The process is
 ## Current Frontier
 
 `.7`, `.8`, `.10`, `.12` — acknowledged by FSMGen (`2026-10-21`, `.14`): owned by SEM `.60.1`, `.60.2`, `.60.4` and `.92`,
-implementation open (`.10` partly delivered in FSMGen's checkout). `.9` — answered (`2026-09-30`). None is in a
+implementation open (`.10` partly delivered in FSMGen's checkout). `.9` — answered (`2026-09-30`); `.9.a` decided not to
+accept FSMGen's reset default and filed no deferred-reset request (no consumer, `2026-10-22`). None is in a
 published FSMGen revision: published `main` is still the pin `54ac1c22`. Each advances when a published revision
 contains its change; the push waits for that (`FSMGEN-REFRESH-INTEGRATE-10`).
 
@@ -279,3 +297,6 @@ acknowledged (`2026-09-24`). Each advances when a published FSMGen revision cont
   ledger (`.9` answered); `.13` opened for the typed-storage `$width` warning.
 - `2026-10-22`: `.13` — the typed-storage reset defect reproduces on the pin and is fixed at upstream `23eed7627`; no
   packet; `FSMGEN-REFRESH-INTEGRATE-10` re-checks it on the new pin.
+- `2026-10-22`: `.9.a` — SPECFORGE does not accept FSMGen's reset default; a deferred-reset form would unblock no chain
+  (all 26 blocked chains lack a grounded clock too), so no request; the bus-clock gap goes to
+  `EXTRACTION-REPRESENTATION-GAPS.69`.
