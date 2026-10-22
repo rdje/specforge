@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
+  > what is leaf_route_exemption in a task-evidence contract
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > what is lower_parity_checks / isf_parity_checks_not_lowered / parity_<CHK> rules (.46.b)
 - [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
@@ -295,5 +297,3 @@
   > what is the first SpecForge trajectory snapshot
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > what is the first reviewed source-to-IntentIR evaluation result

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how many tables does a whole-table column offset fail to serve
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how many tables in the frozen set are mixed real and phantom
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -295,5 +297,3 @@
   > is an absent value interpreted against the signal's polarity
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > is an empty result from a table-kind-keyed pass an answer or a blind spot
-- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
-  > is an unless clause an antecedent (no — an exception, kept apart and lowered negated)

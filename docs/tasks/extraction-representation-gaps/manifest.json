@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c",
-      "literal" : "`.3.c.iv.c` — a signal laid out per message kind is read.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i",
+      "literal" : "`.3.c.iv.c.i` — a table giving a signal's bits per message kind is EvidenceIR's `message_signal_layouts`.",
       "mode" : "eligible",
-      "part_id" : "layout-and-binding-leaves"
+      "part_id" : "table-reading-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -1263,21 +1263,21 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i",
@@ -1307,13 +1307,13 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.v",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.62",
@@ -1337,7 +1337,7 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a",
@@ -1355,19 +1355,37 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "layout-and-binding-leaves"
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.56.c",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1527,13 +1545,25 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — layout and binding leaves",
          "metrics" : {
-            "bytes" : 56963,
+            "bytes" : 50947,
             "line_bytes" : 121,
-            "lines" : 641
+            "lines" : 573
          },
          "part_id" : "layout-and-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/layout-and-binding-leaves.md",
-         "sha256" : "8216bff09cd793edcce868bfd5278c2ce627dd538a07162c23775edc3f93a750",
+         "sha256" : "3c339d34af62f703097071ad0d1b54eda1b208178d7ab2b0d3a3bc5099ffd285",
+         "state" : "active"
+      },
+      {
+         "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
+         "metrics" : {
+            "bytes" : 9813,
+            "line_bytes" : 119,
+            "lines" : 111
+         },
+         "part_id" : "table-reading-leaves",
+         "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
+         "sha256" : "9ced96e3e41ad74170cdbc8dbae8c107f154c1f3a1f3990b0331dd9fdbe66858",
          "state" : "active"
       },
       {

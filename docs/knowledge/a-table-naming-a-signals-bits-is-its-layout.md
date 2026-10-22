@@ -11,6 +11,7 @@ answers:
   - "why is ADIv6's caption-less HPROT map not a signal layout"
   - "does a signal's sub-field layout reach the .isf (FSMGen ladder F29)"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b and .3.c.iv.b.i"
+  - "how is a signal laid out per message kind read (AXI A15.20-A15.22, message_signal_layouts, .3.c.iv.c)"
 date: 2026-10-22
 status: current
 tags: [evidence-ir, signals, sub-fields, layouts, encodings, extraction-representation-gaps, measured]
@@ -49,3 +50,10 @@ default 4, AXI's MPAM fields past `MPAM_WIDTH`'s 1. An `.isf` port takes no fiel
 closed set at the pin and upstream; `(fields …)` is storage-only). ADR 0033 §4 files an FSMGen request
 only for a semantic in IntentIR that executable intent needs, and no rule names a sub-field, so FSMGen
 ladder rung F29 stays *anticipated*.
+
+**A layout per message kind (`.3.c.iv.c`, decided `2026-10-22`).** AXI *A15.20*-*A15.22* and their continuations
+give each `ACADDR` (then `ACVMIDEXT`) bit a constant (`0b0`) or a source field's slice (`VA[56]`, `ASID[4]`) per
+message part: the shape `signal_layouts` refuses. It becomes its own EvidenceIR surface, `message_signal_layouts`
+(one record per table and continuations; per row the slice and one source per message, as written), read by
+`.3.c.iv.c.i` and carried with an adapter residual by `.3.c.iv.c.ii`. The message kinds join the fixed-field tables
+*A15.7*-*A15.16* that `DOC-INTENT-TAXONOMY.4b` owns; no other chain has the shape.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > where does the phantom signal DATA in the CoreSight TMC come from
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
@@ -296,5 +298,3 @@
   > which crate owns the source-to-intent vertical evaluator tests
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts are stable and which ones move
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts may be published and which must be read from the report

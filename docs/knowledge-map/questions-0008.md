@@ -122,6 +122,8 @@
   > how is a roadmap rollover capsule verified
 - [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
   > how is a sealed ADR amended (by a new record; an edit fails the seal)
+- [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
+  > how is a signal laid out per message kind read (AXI A15.20-A15.22, message_signal_layouts, .3.c.iv.c)
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how is a state machine identifier introduced generically
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
@@ -295,5 +297,3 @@
   > how many adapter residuals are SpecForge gaps and how many FSMGen gaps
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how many administrative workflow statements were measured
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how many alignment task owners and routes survive migration

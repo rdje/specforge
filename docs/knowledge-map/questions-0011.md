@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > is an unless clause an antecedent (no — an exception, kept apart and lowered negated)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is any corpus document ingested at fewer pages than its source PDF
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
@@ -295,5 +297,3 @@
   > is validation_report.json current after specforge evidence
 - [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md)
   > may .11 lower a statement invariant as a stability assertion
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > may I cite a persisted artifact as evidence about the current reader

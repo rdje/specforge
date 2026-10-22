@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b and .3.c.iv.b.i
 - [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.c.v and .3.c.v.i
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
@@ -296,5 +298,3 @@
   > what is keyed_row_value_predicate
 - [a-keyword-definition-is-typed-with-the-obligations-it-states](../knowledge/a-keyword-definition-is-typed-with-the-obligations-it-states.md)
   > what is keyword_definitions / KeywordDefinitionRecord / KeywordObligation / KeywordObligationModality
-- [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
-  > what is leaf_route_exemption in a task-evidence contract

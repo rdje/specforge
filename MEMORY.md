@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.c.iv.c` (a signal laid out per message kind), then `.60`; `.3.c.v.v` waits;
+- Next action: ERG `.3.c.iv.c.i` (message_signal_layouts), `.3.c.iv.c.ii`, `.56.c`; `.3.c.v.v` waits;
   `.46.c` waits on FSMGEN-REQUESTS.12; `.3.c.vi`-`.3.f.iii`, `.3.c.iv.c`, `.60`, `.54.a.ii`, `.44`, SRC `.15`, KG-ISF
   `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`-`.5`, LDPH `.17a`/`.34c`/`.42`. Score 11 seeds per slice;
   book regions: `adjudicate_book_quantity_regions.py`. Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for
@@ -23,7 +23,7 @@
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`). A new top-level IR field moves that stage's rule
   fields, so it re-seals too: rebuild the content-changed chain by hand, then `rebuild_stage_cascade.sh --write`.
-- Part sizes: new ERG leaves -> `layout-and-binding-leaves`; all-closed parts may be archived (`.56.a`); KG-ISF
+- Part sizes: new ERG leaves -> `table-reading-leaves`; all-closed parts may be archived (`.56.a`); KG-ISF
   actor-surface leaves -> `actor-surface-leaves`. A new part needs a contract part entry + a surfaces target.
   SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
   84.7% lines. Read which contract raised a warning before acting on it.

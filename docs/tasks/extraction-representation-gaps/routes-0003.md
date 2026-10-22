@@ -12,21 +12,24 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.60` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c` | `closed` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.60` | `open` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` | `open` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iii` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.61` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.61` | `open` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v` | `open` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.62` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.63` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.64` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.65` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.65` | `open` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.66` | `closed` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.67` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.68` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a` | `open` | [Layout and binding leaves](layout-and-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.67` | `open` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.68` | `open` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a` | `open` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` | `open` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii` | `open` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.56.c` | `open` | [Table reading leaves](table-reading-leaves.md) |

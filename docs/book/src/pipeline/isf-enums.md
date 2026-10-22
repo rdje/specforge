@@ -563,8 +563,10 @@ of one signal. Since `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` (`2026-10-22`) 
 - **Shape.** Exactly one column holds a slice of one declared signal or collective in every cell, with at least two
   slices that do not overlap. The name column is the first other column of distinct short cells. A second column of
   slices or binary literals is another table: a register field's bits mapped onto signal bits, or a layout per message
-  kind. A column of numbers must restate each slice's width, so ADIv6's caption-less map (a register bit beside each
-  `HPROT` bit) is refused and counted.
+  kind (AXI *A15.20*-*A15.22*: per `ACADDR` bit, `0b0` or `VA[56]` for each TLBI, BPI, VICI and PICI message part,
+  which `.3.c.iv.c` decided is its own record, `message_signal_layouts`, still to be read). A column of numbers must
+  restate each slice's width, so ADIv6's caption-less map (a register bit beside each `HPROT` bit) is refused and
+  counted.
 - **What is kept.** The signal, the caption, and per row the slice with its high and low bit, the name and every
   other cell as written. Layouts are never merged: AXI's two `RME_Support` layouts put `PARTID` at different bits.
 - **Levels.** For a one-bit sub-field, a sentence opening *When asserted*, *When deasserted*, *LOW indicates* or *HIGH

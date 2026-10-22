@@ -3,9 +3,11 @@
 - Part ID: `layout-and-binding-leaves`
 - State: `active`
 
-Open ERG leaves continue here, after `encoding-and-state-leaves` reached its rollover (`2026-10-22`): a signal's
+Open ERG leaves continued here, after `encoding-and-state-leaves` reached its rollover (`2026-10-22`): a signal's
 sub-field layouts, a signal laid out per message kind, a register field's sub-fields, and every later ERG leaf.
-`.3.c.iv.b.i`, `.3.c.iv.b.ii`, `.3.c.iv.c` and `.60` moved here whole.
+`.3.c.iv.b.i`, `.3.c.iv.b.ii`, `.3.c.iv.c` and `.60` moved here whole. This part reached its size warning the same day,
+so its open leaves (`.3.c.iv.b.iii`, `.3.c.v.v`, `.65`, `.67`, `.68`, `.3.c.viii.a`, `.61`, `.3.c.iv.c`, `.60`) moved
+whole to `table-reading-leaves`, and every leaf here is closed.
 
 ## Post-migration records
 
@@ -151,15 +153,6 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
   no document, signal or parameter name.
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A signal's bit sub-fields*: carriage and residual); KM card
   `a-table-naming-a-signals-bits-is-its-layout`; ladder F29 re-evaluated, unchanged.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`
-  Status: `open` (`2026-10-22`; REQUEST, waits for a consumer; opened by `.3.c.iv.b.ii`)
-  Goal: **a port's sub-field layout reaches FSMGen once something executable names a sub-field.** FSMGen ladder F29 is
-  *anticipated*: no `.isf` port takes a field, and ADR 0033 §4 files a request only when executable intent needs one.
-  Trigger: a rule, guard or drive SPECFORGE lowers names a sub-field (`HPROT` *Privileged*, `AxMPAM` *PARTID*).
-  Acceptance: on the trigger, refresh the drafted bundle (`.project-data/tmp/req-port-fields/packet`, reproduced on
-  the pin `54ac1c22` and upstream `c51e22712`) against the current pin and upstream, sign it off as an
-  `FSMGEN-REQUESTS` leaf and its ledger record, and move F29 to *requested*.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i`
   Status: `done` (`2026-10-22`; CODE; opened by `.3.c.v`; checklist below)
@@ -317,17 +310,6 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
     assertion, and ADR 0033 §4 holds.
   - **The other families** (requirement, version, effect) stay typed, as `.3.c.v` decided.
 
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`
-  Status: `open` (`2026-10-22`; CODE, waits for `KG-ISF-COMPLETENESS.2a.vii.c.vi` and an FSMGen pin with
-  actor-level assertions; opened by `.3.c.v.iv`; `.62`, `.63` and `.64` done)
-  Goal: **a legality matrix lowers to an always-on assertion.** Acceptance: once the opcode decode, the property
-  parameter and actor-level assertions exist, lower AXI *A12.11*/*A12.13* as `.3.c.v.iv` decided (column guard: the
-  property value and the tag operation's code; consequent: the marked opcodes, decoded, `*` keys expanded), FSMGen
-  strict-clean, and measure every chain's legality matrices; repoint the adapter's `isf_protocol_matrix_table_*`
-  residual text, which names `.3.c.v.iv`, to the lowering. Since `.62` the decode is a record whose domain values
-  are labels (`.63` binds them), and a marked cell may carry a note that narrows it (`Y 2`: *Not Exclusive write*,
-  `.64`); the lowering states both.
-
 - ID: `EXTRACTION-REPRESENTATION-GAPS.62`
   Status: `done` (`2026-10-22`; CODE; opened by `.3.c.v.iv`; opened `.63`, `.64`; checklist below)
   Goal: **a column title with a footnote mark names its signal.** **Reproduce:** AXI *A7.4 ARSNOOP encodings* titles
@@ -471,14 +453,6 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (a matrix keeps its notes); KM card
   `a-two-way-table-of-marks-is-a-matrix`.
 
-- ID: `EXTRACTION-REPRESENTATION-GAPS.65`
-  Status: `open` (`2026-10-22`; CODE; opened by `.64`)
-  Goal: **a note printed as a numbered list keeps its number.** **Reproduce:** I2C *Table 3* marks `Target [1]`, `O
-  [2]` and `O [3]`, and prints the notes after its continuation as three `list_item` elements on `page_0008` (*Also
-  refers to a controller acting as a target.*, *Clock stretching is a feature of some targets …*, *'Bit banging' …
-  should consider a START byte.*) with no number, so no mark reaches its note. Acceptance: find where the number is
-  lost (the conversion or SourceIR's list reading), keep it so the note is read as note 1-3, never bind by position
-  alone, and measure every chain's numbered notes.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi.a`
   Status: `done` (`2026-10-22`; CODE; opened by `.3.c.vi`; checklist below)
   Goal: **a table a carried record reads is cited.** **Reproduce:** `SemanticIr::cited_table_ids` gathers register,
@@ -560,29 +534,6 @@ sub-field layouts, a signal laid out per message kind, a register field's sub-fi
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (AHB's codes bind to *A-1*) and `pipeline/semanticir.md`
   (`legend_table_id`); KM card `a-two-way-table-of-marks-is-a-matrix`.
 
-- ID: `EXTRACTION-REPRESENTATION-GAPS.67`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
-  Goal: **a table listing the signals a rule names is the rule's operands.** **Reproduce:** AXI *Table A6.5 Signals
-  that should be the same in an exclusive sequence* lists 25 signals (`AxID`, `AxADDR`, … `AxMMUSSIDV`) in a grid of
-  five columns; the rule (an exclusive read and its write *should* carry equal values) is in the caption and prose,
-  and `.3.c` disposed of the table as navigation. Acceptance: census tables whose cells are all declared names under
-  a caption stating a rule, decide the carrier (the rule's operand set) and measure every chain.
-- ID: `EXTRACTION-REPRESENTATION-GAPS.68`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
-  Goal: **a cross-tab whose cells are prose is read.** **Reproduce:** USB 3.2 *Table 8-8 Port Type Selection Matrix*
-  answers, per pair of port capabilities (`Upstream Only`, `Downstream Only`, `Both`), which port is downstream in a
-  sentence (*Port 2 is the downstream port*); `.3.c.v` set such cross-tabs aside as no matrix of marks (*7-14* too).
-  Acceptance: census cross-tabs of prose or values, decide the record (keys and a statement per cell) and measure
-  every chain.
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.viii`)
-  Goal: **a table whose columns the converter swapped is read or refused as such.** **Reproduce:** CoreSight TMC
-  *Table 2-1 Memory interface signals* puts each description under *Signal* and each name under *Description*
-  (`Chip enable, active LOW. | MEMCEN`), its first and last rows garbled (`CLK input clock for the design | The`);
-  ADIv6 *Table B2-7* puts each register bit under *Signal* and each wire under *Programmers' model*, its last row
-  rotated. Acceptance: census tables whose header-named name column holds no names while another column holds only
-  names, decide whether the pairs are read (TMC's rows state no direction or width; *B2-7* is a wire-to-register-bit
-  map like `.41.e`'s), and measure every chain.
 ### `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` (a `census-leaves` leaf) — done `2026-10-22`
 
 Goal as recorded there: a grouped timing table that names no parameter column; decide from its structure which
@@ -620,22 +571,3 @@ dimension is the parameter, or state why it cannot be, and measure.
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`; KM card `timing-table-structural-authority`;
   `docs/research/category-family-census.md`.
 
-- ID: `EXTRACTION-REPRESENTATION-GAPS.61`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
-  Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives
-  `CleanSharedPersist` the enabling property `Persist_CMO` and `CleanInvalidPoPA` `RME_Support`; the members are read
-  (`Enum AWCMO …`) and the property is not. Acceptance: census encoding tables with such a column, decide the carrier
-  (a member's enabling property, joined to the property's own record), and measure every chain.
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
-  Goal: **a signal laid out per message kind is read.** **Reproduce:** AXI-L *A15.20*-*A15.22* and their continuations
-  give each `ACADDR` bit a constant or a source field (`VA[56]`) per TLBI/BPI/VICI/PICI message part, and no reader
-  takes them. Acceptance: decide the record (a layout per message kind, with constant and source-field bits), how it
-  joins the message kinds' encodings and `DOC-INTENT-TAXONOMY.4b`'s layouts, and measure every chain.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.60`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`)
-  Goal: **a register field's sub-field table types the field's sub-fields.** **Reproduce:** ADIv6 *B3-10* lays
-  `IDCODE`'s `DESIGNER` (`bits[11:1]`) out as *Continuation code* `Bits[11:8]` and *Identity code* `Bits[7:1]`, with
-  ARM's values; `RegisterFieldRecord` has no sub-fields. Acceptance: decide the carrier (as `MessageSubField` did for
-  message fields, `.55.b.iv.b.i`), how the register's bit positions map onto the field's, and measure every chain.

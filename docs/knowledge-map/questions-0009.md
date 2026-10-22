@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > how many alignment task owners and routes survive migration
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > how many arrow-form direction cells exist corpus-wide
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
@@ -296,5 +298,3 @@
   > how many tables corpus-wide are base-name templates
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how many tables declare themselves a continuation
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > how many tables does a whole-table column offset fail to serve

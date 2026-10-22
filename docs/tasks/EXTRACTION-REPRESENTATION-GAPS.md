@@ -38,11 +38,12 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c.iv.c` — a signal laid out per message kind is read.
+`.3.c.iv.c.i` — a table giving a signal's bits per message kind is EvidenceIR's `message_signal_layouts`.
 
-Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
-`.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property parameter
-(`KG-ISF-COMPLETENESS.2a.vii.c.vi`) and an FSMGen pin with actor-level assertions, `.60` (a register field's
+Then, in order: `.3.c.iv.c.ii` (the adapter names a per-message layout), `.56.c` (archive
+`layout-and-binding-leaves`), `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction`
+(`FSMGEN-REQUESTS.12`), `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property
+parameter (`KG-ISF-COMPLETENESS.2a.vii.c.vi`) and an FSMGen pin with actor-level assertions, `.60` (a register field's
 sub-fields), `.61` (an encoding member's enabling property), `.65` (a note printed as a numbered list), `.67` (a
 rule's signal-list table), `.68` (a cross-tab of prose), `.3.c.viii.a` (a table whose columns the converter swapped),
 `.54.a.ii` (the corpus memory's refresh: an equivalent store re-pinned with the 24-document behavioral
@@ -52,14 +53,15 @@ re-qualification), `.44` (Symbol-font glyphs, a re-seal of every chain). After t
 from the route catalog's lifecycles, not restated here; the list this paragraph carried until `2026-10-19` is in the
 `register-binding-leaves` part.
 
-Every new leaf and dated entry goes to the `layout-and-binding-leaves` part, since `encoding-and-state-leaves` reached
-its rollover on `2026-10-22`. Since `2026-10-21` (`.56.a`) a part whose every leaf is closed is archived, byte-exact,
-under `docs/archive/tasks/extraction-representation-gaps/` and takes no writes: `table-census-leaves`,
+Every new leaf and dated entry goes to the `table-reading-leaves` part, since `layout-and-binding-leaves` reached its
+size warning on `2026-10-22`; its open leaves moved there whole, and the part, every leaf closed, is archived next
+(`.56.c`). Since `2026-10-21` (`.56.a`) a part whose every leaf is closed is archived, byte-exact, under
+`docs/archive/tasks/extraction-representation-gaps/` and takes no writes: `table-census-leaves`,
 `hint-and-notation-leaves`, `unread-intent-leaves`, `default-and-assumption-leaves`, `environment-assumption-leaves`,
 both `acceptance-checklists` halves and the `changelog`. A sealed leaf is amended by a new record in a live part. Of
-the eleven live parts, `program-and-census`, `census-leaves`, `clause-and-register-leaves`, `register-binding-leaves`
+the twelve live parts, `program-and-census`, `census-leaves`, `clause-and-register-leaves`, `register-binding-leaves`
 and `encoding-and-state-leaves` are at or past their size warning (`2026-10-22`; a record for an open `census-leaves`
-leaf goes to `layout-and-binding-leaves`), and the three legacy parts hold records for their own open leaves only.
+leaf goes to `table-reading-leaves`), and the three legacy parts hold records for their own open leaves only.
 
 ## Detailed task evidence
 
@@ -76,7 +78,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.5`
@@ -109,6 +110,9 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.68`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.56.c`
 
 ## Changelog
 
