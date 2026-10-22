@@ -259,15 +259,25 @@
   cites the `.fsm` `+size` width-expression surface as precedent. This leaf now owns only the SPECFORGE
   integration: once FSMGen ships R1-R3, lower each derived width to a derived `(params …)` entry.
 
-- ID: `KG-ISF-COMPLETENESS.2a.vii.e` · Status: `open` (`2026-09-24`; MEASUREMENT) · Goal: **the two legacy
-  findings are confirmed absent from the current producer, or fixed.** Replay today's readers over the legacy
-  stratum (`corpus_chain_currency_11`'s method) and determine whether they still mint (i) a `VALID` rule value
-  from *"must be valid"* and (ii) the non-parameter symbolic widths `.a` lists. A reader that still mints one is
-  a defect fixed here; one that does not closes as evidence.
+- ID: `KG-ISF-COMPLETENESS.2a.vii.e` · Status: `open` (`2026-09-24`; MEASUREMENT) · Goal: **the legacy findings
+  ((i)-(iv) since `2026-10-22`) are confirmed absent from the current producer, or fixed.** Replay today's readers
+  over the legacy stratum (`corpus_chain_currency_11`'s method) and determine whether they still mint (i) a `VALID`
+  rule value from *"must be valid"* and (ii) the non-parameter symbolic widths `.a` lists. A reader that still mints
+  one is a defect fixed here; one that does not closes as evidence.
   **The finding has an FSMGen half, filed `2026-09-24`** as `FSMGEN-REQUESTS.2`
   ([`sf-isf-undeclared-rule-operand`](../../upstream/fsmgen/sf-isf-undeclared-rule-operand/README.md)): FSMGen's
   strict mode accepts the undeclared `VALID` and invents an input port for it, against its own book 10. That
   half is FSMGen's to fix; this leaf keeps SPECFORGE's half (never emitting a prose word as a rule value).
+  **Widened `2026-10-22` (measured on FSMGen upstream `c51e22712`, a read-only export known-good-checked first).** The
+  tip refuses an undeclared rule read (`FSMGEN-REQUESTS.2`, fixed upstream), and 4 of the 19 written `.isf` files, all
+  legacy, draw that refusal; the pin passes them. Beyond (i), they read 8 more undeclared operands in two classes.
+  (iii) A signal name case-folded in an LLM-path guard: `pselx` (APB-D, declared `PSELX`), `tlast` (AXI-Stream,
+  `TLAST`), `lmopenreq` and `lmopenack` (LTI), `aresetn` (AXI-H, whose reset is `ARESETN`). (iv) A prose word or an
+  enum member used as a rule value: AXI-H's `INCR` (a member of a lowered enum, not an actor-scope name), `INVALID`
+  and `zero` (`(AWTAGOP INVALID)`, `(WTAG zero)`), beside (i)'s `VALID`. The replay covers all four. Of the 31 current
+  chains' `source_text`s, the 5 the tip passes read none; the other 26 stop at earlier refusals (20 an empty `(+size)`
+  section, 6 the blocked chains' placeholder reset), so the operand check is not shown to reach them.
+  `FSMGEN-REFRESH-INTEGRATE-10` cites this leaf for the 4 verdicts that change.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.vii.b` (CODE) — DONE `2026-09-24`
 
