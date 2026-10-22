@@ -47,8 +47,9 @@ Audit the published-contract delta as cycle 9 did, and integrate only what that 
 - `subs/fsmgen` is detached, clean, exactly at the tip; only the parent gitlink changes.
 - Every changed published-contract surface relevant to what SpecForge emits is read, each with an adopt /
   incompatible / no-action conclusion.
-- The Rust strict canaries pass on the new pin; every emitted `.isf` (the 2 written files and the 27 live
-  `source_text`s) gives the same strict verdict as on the old pin, or each difference is explained and owned.
+- The Rust strict canaries pass on the new pin; every emitted `.isf` (every written file and every live `source_text`:
+  19 and 31 on `2026-10-22`) gives the same strict verdict as on the old pin, or each difference is explained and
+  owned.
 - Every port an emitted `.isf` declares is a port of its generated module on the new pin (a strict pass does not
   show this; `scripts/measure_isf_realized_ports.py <export>` inventories it), or each absence is owned.
 - Every open request bundle is re-run on the new pin; `FSMGEN-REQUESTS.2` and `EXTRACTION-REPRESENTATION-GAPS.21`
@@ -111,6 +112,18 @@ None.
   `.isf` files lacks 123 of 126 declared inputs on the pin and none on `5be6a3c08`; 0 of 255 outputs absent on
   both. `git ls-remote origin refs/heads/main` is still `54ac1c22`.
 
+- `2026-10-22` — strict census on a read-only export of upstream `c51e22712` (known-good-checked first: AHB's
+  `manager.isf` checks with no diagnostic and no stderr on both installations), against the pin. **Written `.isf`
+  files (19):** 15 keep their verdict; 4, all legacy chains, pass on the pin and are refused on the tip for undeclared
+  rule reads (`FSMGEN-REQUESTS.2`'s fix): AXI-H (`INCR`, `INVALID`, `VALID`, `aresetn`, `zero`), APB-D (`VALID`,
+  `pselx`), AXI-Stream (`tlast`) and LTI (`lmopenack`, `lmopenreq`), owned by `KG-ISF-COMPLETENESS.2a.vii.e`. **Live
+  `source_text`s (31):** 25 keep their verdict (5 pass on both; 20 are refused on both for an empty `(+size)`
+  section). 6 pass on the pin and are refused on the tip for the placeholder `(reset (__specforge_unresolved_reset
+  unknown unknown))` (*unsupported reset option 'unknown'*): RISC-V IOMMU, RISC-V debug, ADIv6, OpenCAPI discovery,
+  I2C and I2S. Each is a blocked chain whose adapter writes no file (*no source-grounded system clock/reset
+  contract*), so the change is explained and nothing waits on it. No port in either set draws the new
+  unknown-port-option refusal (`EXTRACTION-REPRESENTATION-GAPS.19`).
+
 ## Commit Log
 
 None yet.
@@ -122,3 +135,5 @@ None yet.
 - `2026-09-26` — `a7bf398ac` added to what the tip must contain, and a realized-port acceptance item
   (`FSMGEN-REQUESTS.6`); still blocked: `origin/main` is `54ac1c22`.
 - `2026-09-26` — the owner stated FSMGen's publish cadence; `.1` waits for its next, exceptional push.
+- `2026-10-22` — pre-refresh strict census against upstream `c51e22712`: 10 verdicts change, each explained and owned
+  (Verification Log); the acceptance's unknown-port-clause probe came with `EXTRACTION-REPRESENTATION-GAPS.19`.
