@@ -331,6 +331,14 @@ several signals' values, code columns that repeat, tables whose every row is a h
   - **Order.** `.59` (an enum type as wide as its largest code) lands first, because the re-read `ARCACHE` codes reach
     15. Then `.3.g.iii.c.i`.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.57.a`
+  Status: `open` (`2026-10-22`; CODE; split from `.57`)
+  Goal: **a header row of leading row labels over data is data.** **Reproduce:** OpenCAPI DLL *Table 8-1* rows
+  (*Transmission order | 8 consecutive bytes | P | P | P*) stay header rows, so no reader sees them; I2S's timing table,
+  USB 3.2's *7-14* and its packet figure likewise. Acceptance: generalize `source_ir_with_row_header_rows_in_body`
+  to `.57`'s rule; measure the 6 tables, the 131 already lifted (unchanged) and every chain's EvidenceIR; route the
+  lifted tables that keep more than one header row to the leaves owning their families' readers; rebuild what moves.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.59`
   Status: `done` (`2026-10-22`; CODE; found by `.3.g.iii.c`; checklist below)
   Goal: **an `.isf` enum type is as wide as its largest code.** **Reproduce:** AXI's `manager.isf` declares `(type
@@ -405,10 +413,32 @@ several signals' values, code columns that repeat, tables whose every row is a h
   amended. No production rule deleted or replaced: `.5.xiv.a` keeps its default.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.57`
-  Status: `open` (`2026-10-21`; DESIGN; found by `.3.g.iii`)
+  Status: `done` (`2026-10-22`; DESIGN; found by `.3.g.iii`; opened `.57.a`)
   Goal: **a table whose every row the converter put in its header has one header row.** 137 tables in 16 documents
   have more than one header row and no body row (the Cortex-A76 guide 37, AXI 26, USB 3.2 23, ADIv6 14), so every
   table reader sees no data. AXI *A4.7* is one. **Reproduce:** `generated/source_ir/ihi0022…/source_ir.json`
   `table_0061` (7 header rows, 0 body rows). Acceptance: census the 137 by shape (front matter, data tables, true
   multi-row headers), decide whether SourceIR normalizes them or each reader does, from what the converter states,
   and measure every chain.
+  **Measured `2026-10-22`** (31 chains). The 137 tables are all on the retained chains, but the premise that every
+  table reader sees no data is wrong. EvidenceIR reads every table through `source_ir_with_row_header_rows_in_body`
+  (`.3.g`), which moves into the body each header row after the first whose only flagged cell is its first.
+  - **Fully lifted (109).** Every data row is moved, A4.7 among them: `.3.g.iii.a` and `.3.g.iii.b.i` read it.
+  - **Partly lifted (22).** These have a genuine two- or three-row header over data rows. The data rows are lifted;
+    the rows kept are header rows (*Opcode | Transfer | Fetch* under *MTE_Support = Basic*, *MIN | MAX* under
+    *LOWER LIMIT* under *TRANSMITTER*).
+  - **Not lifted (6).** OpenCAPI DLL 2, I2S 1 and USB 3.2 3. Their data rows carry two flagged row-label cells
+    (*Transmission order | 8 consecutive bytes | P | P*), or a converter flag mid-row (USB *b6~4*).
+
+  **Decided.**
+  - **SourceIR keeps what the converter states.** The lifting stays the evidence stage's local reading, as it is
+    today: every evidence reader sees the lifted view, and the converter's header flags are untouched.
+  - **A leading run of row labels.** A header row after the first lifts when its flagged cells are a leading run of
+    row labels with a non-empty first cell, followed by at least one unflagged cell and no flagged cell after it.
+    This lifts OpenCAPI's *8-1* (10 rows) and *8-2* (1), I2S's timing table (9) and USB's *7-14* (4) and packet
+    figure (2). A row under a lost span (empty first cell) and a row with a flag mid-row stay header rows. The
+    measurement must show the 131 lifted tables unchanged.
+  - **Upper header rows.** A reader takes a table's last header row as its columns, so an upper row's qualifier is
+    lost (*TRANSMITTER* or *RECEIVER*, *MTE_Support = Basic*). `.57.a` measures how many lifted tables keep more than
+    one header row and routes each to the leaf owning its family's reader.
+

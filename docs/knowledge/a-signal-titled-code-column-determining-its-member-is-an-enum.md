@@ -22,7 +22,8 @@ An encoding table can title several code columns by signals. AXI *A4.7 Physical 
 space an `AxPAS` code next to the `AxPROT[1]` and `AxNSE` bits that key four of them jointly. AHB *3-2 Transfer size
 encoding* writes `HSIZE` as three one-bit columns. The single-column reader (`synthesize_encoding_declarations_for_enum`)
 takes one value column, and `adjudicate_member_name_column` refuses a table keyed by more than it. So A4.7 minted
-nothing: every row sits in its header, which is a converter defect (`.57`). AHB read `HSIZE[2]` alone and published
+nothing: every row sits in its header. EvidenceIR lifts such rows into the body before any reader runs (`.3.g`;
+`.57` measured 109 of 137 such tables fully lifted, and `.57.a` widens the rule). AHB read `HSIZE[2]` alone and published
 `BYTE = 0`, `HALFWORD = 0`, … on two codes, which SemanticIR refused to fuse.
 
 **Reading (`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a`, `2026-10-21`).** `synthesize_signal_column_encodings` runs in

@@ -95,7 +95,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.a` | `closed` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.57` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.57` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.58` | `closed` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.i` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
@@ -103,3 +103,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.59` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i` | `closed` | [Encoding and state leaves](encoding-and-state-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.57.a` | `open` | [Encoding and state leaves](encoding-and-state-leaves.md) |
