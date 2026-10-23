@@ -104,14 +104,26 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.3 — the API reference is published beside the mdBook`
 
 - ID: `RUSTDOC-AND-XTASK.4`
-  Status: `pending`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: `cargo xtask` dispatches to the current tooling
   Acceptance: an `xtask` workspace member (not default, standard library only) and the alias; `cargo xtask
   doctrines`, `ci` and `docs` run `check_doctrines.sh`, `run_ci.sh` and `run_docs_ci.sh` with their arguments and
   exit codes; the production-genericity census reads no `xtask` code (measured, not assumed); the book's
   contributor page documents it.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/` is a workspace member (not a default one) with no dependencies; `.cargo/config.toml`
+  aliases `cargo xtask` to `cargo run --quiet --package xtask --`. Its library holds the command table (`TASKS`:
+  `doctrines`, `ci`, `docs`), runs a command's script from the repository root by its repository-relative path, with
+  the arguments passed through, and returns the script's exit code (128 plus the signal for one a signal ended);
+  `help` lists the commands and an unknown one exits 2. **Parity:** `cargo xtask doctrines` and `bash
+  scripts/check_doctrines.sh` give byte-identical stdout and stderr and the same exit code for `--list` (0),
+  `--bogus` (2), `--only RUSTDOC` (0) and `--only NOPE` (2); the first run differed only in `$0` until the script was
+  named by its relative path. `cargo xtask docs` and `run_docs_ci.sh` both pass, with identical step lines and an
+  identical API file list. `ci` runs through the same function. **The census:** `module_inventory.tsv` lists only
+  `crates/specforge*` paths and `flow_census.json` did not move, so the census reads no `xtask` code; the
+  `DEPENDENCIES` component, which refused the unexpected member, now allows `xtask` and requires it to depend on
+  nothing and nothing to depend on it (two self-test cases, 7/7 -> 9/9).
+  Verification: `cargo test -p xtask --lib` 3/3; parity runs in `.project-data/tmp/rdx-4/`
+  Commit: `RUSTDOC-AND-XTASK.4 — cargo xtask dispatches to the current tooling`
 
 - ID: `RUSTDOC-AND-XTASK.5`
   Status: `pending`
@@ -154,14 +166,29 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 - [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md` and the book's `reference/doctrine-enforcement.md` list `RUSTDOC`;
   KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.4` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `cargo xtask` did not exist; the tooling ran only as `bash scripts/...` (`.1`'s
+  inventory: 123 scripts, 23 of them the doctrine driver's).
+- [x] **ROOT CAUSE (WHY + WHERE)** — no Rust entry point: `Cargo.toml` had no `xtask` member and
+  `.cargo/config.toml` no alias. RED 3/3 on `xtask/src/lib.rs`, restored byte-identically: a signal reported as its
+  raw code, a command naming a missing script, an existing command not found; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — commands 0 -> 3, each byte-identical to its script on the runs above.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean (with `xtask` in the workspace); `cargo test --workspace --lib --exclude specforge-production-graph` 475 /
+  171 / 1,943 and `xtask` 3 passed; `check_doctrines.sh --only PRODUCTION-GENERICITY` PASS, its flow census
+  unchanged; no product code changed, so no chain moved.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — book `getting-started.md` (*Local verification*); KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.4` | `pending` | the dispatcher, with no behaviour change |
-| 2 | `RUSTDOC-AND-XTASK.5` | `pending` | the first native command |
-| 3 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
-| 4 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 1 | `RUSTDOC-AND-XTASK.5` | `pending` | the first native command |
+| 2 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
+| 3 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
 
 ## Decisions
 
@@ -183,6 +210,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `2026-10-23` | `.1` | rustdoc build under `-D warnings`; `missing_docs` per crate; scripts inventory | fails on one link; counts and inventory recorded |
 | `2026-10-23` | `.2` | `RUSTDOC` doctrine; RED with the link restored; oracles | PASS; RED fails as it must |
 | `2026-10-23` | `.3` | `run_docs_ci.sh`; the built page's API links | PASS; four links resolve |
+| `2026-10-23` | `.4` | xtask tests; dispatcher parity with the scripts | 3/3; identical output and exit codes |
 
 ## Commit Log
 
@@ -191,6 +219,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `.1` | `RUSTDOC-AND-XTASK.1 — measure rustdoc and the scripts, decide the API reference and xtask (DESIGN)` | measurement and decisions |
 | `.2` | `RUSTDOC-AND-XTASK.2 — rustdoc builds warning-free, and a commit that breaks it is refused` | the link escaped; the `RUSTDOC` gate |
 | `.3` | `RUSTDOC-AND-XTASK.3 — the API reference is published beside the mdBook` | the docs build and the book chapter |
+| `.4` | `RUSTDOC-AND-XTASK.4 — cargo xtask dispatches to the current tooling` | the `xtask` crate and alias |
 
 ## Changelog
 

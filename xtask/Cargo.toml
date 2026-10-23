@@ -1,0 +1,10 @@
+[package]
+name = "xtask"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+description = "Repository tooling entry point: `cargo xtask <command>` (RUSTDOC-AND-XTASK.4)."
+
+# Standard library only, so the tooling builds offline with nothing but the toolchain.
+[dependencies]

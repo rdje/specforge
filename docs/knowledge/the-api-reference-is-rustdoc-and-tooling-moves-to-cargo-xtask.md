@@ -7,6 +7,7 @@ answers:
   - "does cargo doc pass with -D warnings (CLK_I unresolved link)"
   - "what is the RUSTDOC doctrine / check_rustdoc.sh"
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
+  - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "how many scripts does SpecForge have and who calls them"
   - "how many public items lack documentation (missing_docs)"
   - "is a ported script deleted"
@@ -30,9 +31,10 @@ so it is the library API. Undocumented public items (`clippy -W missing_docs`): 
 **Decided (`.1`).** The rustdoc of the four crates is built into `generated/mdbook/specforge/api/` beside the book and
 linked from a reference page: since `.3`, `scripts/run_docs_ci.sh` does both, and the book's
 `reference/api-reference.md` links each crate's index (196 MiB under the gitignored `generated/`). `cargo xtask` is a
-workspace member `xtask`, not a default member, standard library only, aliased in `.cargo/config.toml`. It starts as a
-dispatcher to the scripts (`.4`); its first native command builds the docs (`.5`); the gates move one leaf each, in an
-order `.6` sets.
+workspace member `xtask`, not a default member, standard library only, aliased in `.cargo/config.toml`. Since `.4` it
+dispatches `doctrines`, `ci` and `docs` to their scripts, byte-identical in output and exit code (`xtask/src/lib.rs`,
+`TASKS`), and the production-genericity `DEPENDENCIES` check keeps it dependency-free and disconnected from the
+product; its first native command builds the docs (`.5`); the gates move one leaf each, in an order `.6` sets.
 
 **Scripts.** 123 under `scripts/`: 64 Python (23,831 lines), 32 Perl (26,723), 27 shell (4,694). The doctrine driver
 calls 23, CI 5, the hooks only the driver; 53 are maintenance tools run by hand. Records cite them 8,089 times, so a

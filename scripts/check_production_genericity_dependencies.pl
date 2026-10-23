@@ -70,6 +70,7 @@ sub inspect_boundary {
         crates/specforge-core
         crates/specforge-conformance
         tools/production-genericity-graph
+        xtask
     );
     my @members = workspace_members(File::Spec->catfile($project_root, 'Cargo.toml'));
     push @problems, exact_set_problems('workspace', \@members, \@expected_members);
@@ -108,6 +109,13 @@ sub inspect_boundary {
         push @problems, "the enforcement graph tool must not depend on $product"
             if $deps{'specforge-production-graph'}{$product};
     }
+    # RUSTDOC-AND-XTASK.4 — the tooling entry point is disconnected from the product both ways and depends on
+    # nothing at all, so `cargo xtask` builds offline with the toolchain alone.
+    my @xtask_names = dependency_names(File::Spec->catfile($project_root, qw(xtask Cargo.toml)));
+    push @problems, "the xtask tooling crate must depend on nothing, but names: @xtask_names" if @xtask_names;
+    for my $package (qw(specforge specforge-core specforge-conformance specforge-production-graph)) {
+        push @problems, "$package must not depend on the xtask tooling crate" if $deps{$package}{xtask};
+    }
 
     my $core_root = slurp(
         File::Spec->catfile($project_root, qw(crates specforge-core src lib.rs))
@@ -130,7 +138,11 @@ sub write_fixture {
     my ($fixture) = @_;
     write_text(
         File::Spec->catfile($fixture, 'Cargo.toml'),
-        "[workspace]\nmembers = [\"crates/specforge\", \"crates/specforge-core\", \"crates/specforge-conformance\", \"tools/production-genericity-graph\"]\n",
+        "[workspace]\nmembers = [\"crates/specforge\", \"crates/specforge-core\", \"crates/specforge-conformance\", \"tools/production-genericity-graph\", \"xtask\"]\n",
+    );
+    write_text(
+        File::Spec->catfile($fixture, qw(xtask Cargo.toml)),
+        "[package]\nname = \"xtask\"\n\n[dependencies]\n",
     );
     write_text(
         File::Spec->catfile($fixture, qw(crates specforge Cargo.toml)),
@@ -235,12 +247,25 @@ sub run_self_tests {
         my ($tool_uses_product) = inspect_boundary($fixture);
         die "self-test did not reject an enforcement-tool dependency on a product crate\n"
             if !grep { /enforcement graph tool must not depend on specforge-core/ } @{$tool_uses_product};
+        write_fixture($fixture);
+
+        my $xtask_manifest = File::Spec->catfile($fixture, qw(xtask Cargo.toml));
+        write_text($xtask_manifest, slurp($xtask_manifest) . "specforge-core = { path = \"../crates/specforge-core\" }\n");
+        my ($xtask_uses_product) = inspect_boundary($fixture);
+        die "self-test did not reject a dependency of the xtask tooling crate\n"
+            if !grep { /xtask tooling crate must depend on nothing/ } @{$xtask_uses_product};
+        write_fixture($fixture);
+
+        write_text($core_manifest, slurp($core_manifest) . "xtask = { path = \"../../xtask\" }\n");
+        my ($product_uses_xtask) = inspect_boundary($fixture);
+        die "self-test did not reject a product dependency on the xtask tooling crate\n"
+            if !grep { /specforge-core must not depend on the xtask tooling crate/ } @{$product_uses_xtask};
     };
     $failure = $@;
     remove_tree($fixture) if -e $fixture;
     die "self-test residue remains at $fixture\n" if -e $fixture;
     die $failure if $failure;
-    print "production-genericity-dependencies self-test: 7/7 pass\n";
+    print "production-genericity-dependencies self-test: 9/9 pass\n";
 }
 
 $root //= abs_path(File::Spec->catdir($Bin, '..'));
@@ -258,4 +283,4 @@ if (@{$problems}) {
 }
 print "production-genericity-dependencies: core -> conformance absent; "
     . "conformance -> core and application -> {core, conformance} present; "
-    . "enforcement graph tool disconnected from all product packages\n";
+    . "enforcement graph tool disconnected from all product packages; xtask depends on nothing and nothing on it\n";

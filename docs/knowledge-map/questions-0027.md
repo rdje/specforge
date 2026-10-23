@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > why is seed_swd's CSYSPWRUPACK gold must_be_high and not must_be_asserted
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > why is signal direction hard to lower faithfully to a single .isf module
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -296,5 +298,3 @@
   > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > why was the ISF explicit-FSM feature request withdrawn
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why was the at least timing paraphrase rejected

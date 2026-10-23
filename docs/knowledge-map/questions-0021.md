@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > which signal is a conditional rule's consequent signal
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > which signal tables have per-row column drift
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -295,5 +297,3 @@
   > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > why could the 262-table upper bound not be reproduced
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i

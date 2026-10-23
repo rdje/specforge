@@ -84,6 +84,19 @@ That now checks:
 - Rustdoc with warnings denied
 - mdBook build
 
+The same tooling also runs through `cargo xtask`, which needs nothing but the Rust toolchain to start:
+
+```bash
+cargo xtask help              # the commands
+cargo xtask ci                # scripts/run_ci.sh
+cargo xtask doctrines --fast  # scripts/check_doctrines.sh --fast
+cargo xtask docs              # the mdBook and the rustdoc API reference beside it
+```
+
+Each command runs its script with the same arguments and returns its exit code. Commands move to native
+Rust one at a time, and a script stays behind as a shim once its port reproduces it
+(`RUSTDOC-AND-XTASK`).
+
 ## Where the outputs go
 
 Generated artifacts are written under `generated/`:

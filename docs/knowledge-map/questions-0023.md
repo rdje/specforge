@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -296,5 +298,3 @@
   > why does PPROT have members named 0 and 1
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > why does PPROT publish members named 0 and 1
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer

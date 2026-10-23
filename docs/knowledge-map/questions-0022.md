@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
   > why did 102 invariants leave the USB4 connection-manager guide and ADIv6 (withhold_software_rules, software_statement_ids)
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -295,5 +297,3 @@
   > why did the Cortex-A76 reviewed source region disappear
 - [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
   > why did the Knowledge Map bundle's 512-fact and 4,096-key caps move
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > why did the Knowledge Map shard simulator and generator report different canonical input hashes

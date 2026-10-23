@@ -22,6 +22,8 @@
   > which caption grammar can supply a unit to every timing row
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which cargo profile do the corpus replay checks build
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > which cargo xtask commands exist (doctrines, ci, docs)
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > which cell did the CoreSight TMC DATA phantom come from
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -295,5 +297,3 @@
   > which section should a chapter split move
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > which signal is a conditional rule's consequent signal

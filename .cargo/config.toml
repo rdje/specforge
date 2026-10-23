@@ -9,3 +9,7 @@ HUGGINGFACE_HUB_CACHE = { value = ".cache/huggingface/hub", relative = true, for
 PIP_CACHE_DIR = { value = ".cache/pip", relative = true, force = true }
 TORCH_HOME = { value = ".cache/torch", relative = true, force = true }
 MPLCONFIGDIR = { value = ".cache/matplotlib", relative = true, force = true }
+
+# RUSTDOC-AND-XTASK.4 — `cargo xtask <command>` runs the repository tooling (see xtask/src/lib.rs).
+[alias]
+xtask = "run --quiet --package xtask --"

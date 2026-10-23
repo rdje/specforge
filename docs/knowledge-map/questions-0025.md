@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why does my visual asset have no interior_texts key
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -296,5 +298,3 @@
   > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > why is AxSNOOP's absent value bound to AWSNOOP and ARSNOOP now
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built

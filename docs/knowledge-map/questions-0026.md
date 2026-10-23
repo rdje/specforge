@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
@@ -296,5 +298,3 @@
   > why is scripts/lib/corpus_replay_binary.sh a shared predicate
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > why is section-title boilerplate filtering insufficient
-- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
-  > why is seed_swd's CSYSPWRUPACK gold must_be_high and not must_be_asserted

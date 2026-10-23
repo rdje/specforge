@@ -4,10 +4,12 @@ members = [
     "crates/specforge-core",
     "crates/specforge-conformance",
     "tools/production-genericity-graph",
+    "xtask",
 ]
 # `cargo run --manifest-path Cargo.toml -- <command>` is the documented form (README quick start, the
 # book, the corpus-KB producer contract). It needs exactly one binary among the default members, and
-# the enforcement tool is a second one, so it is a member but not a default one. Every gate that must
+# the enforcement tool is a second one, so it is a member but not a default one; so is `xtask`, the tooling
+# entry point run as `cargo xtask` (RUSTDOC-AND-XTASK.4). Every gate that must
 # cover it says `--workspace` or `-p` explicitly (SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a).
 default-members = [
     "crates/specforge",

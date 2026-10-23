@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > why does QDENY output absent or tied low not bind a constraint
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -295,5 +297,3 @@
   > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > why does my census of backend.json tables find only 477
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
