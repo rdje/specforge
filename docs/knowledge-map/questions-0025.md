@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why does narrowing the dynamic subject lose NVMe register-row constraints
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > why does no live chain emit an isf file
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -296,5 +298,3 @@
   > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > why is DATA_WIDTH declared as 8 in the AXI isf

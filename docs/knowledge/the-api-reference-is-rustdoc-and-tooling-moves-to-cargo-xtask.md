@@ -4,6 +4,7 @@ title: The API reference is the workspace's rustdoc beside the mdBook, and repos
 answers:
   - "how is the SpecForge API reference built (cargo doc, rustdoc)"
   - "does cargo doc pass with -D warnings (CLK_I unresolved link)"
+  - "what is the RUSTDOC doctrine / check_rustdoc.sh"
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "how many scripts does SpecForge have and who calls them"
   - "how many public items lack documentation (missing_docs)"
@@ -11,17 +12,19 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1); scripts/run_ci.sh (cargo doc step); .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
 **Rustdoc (`2026-10-23`).** CI runs `cargo doc --workspace --no-deps` under `-D warnings` (`scripts/run_ci.sh`), and
 it failed on one unresolved intra-doc link: `[CLK_I]` in a doc comment quoting Wishbone's *rising [CLK_I] edge*,
 written on `2026-09-26`. That was the workspace's only rustdoc warning. Only the push-time CI ran rustdoc, so the
-break went unseen for four weeks; `RUSTDOC-AND-XTASK.2` fixes it and adds a commit-time gate. The four crates build in
-45 s cold into 161 MiB of `target/doc`. `specforge-core` compiles the `ir` sources through `#[path]`, so it is the
-library API. Undocumented public items (`clippy -W missing_docs`): `specforge-core` 2,119, `specforge` 2,922,
-`specforge-conformance` 2,883, `specforge-production-graph` 33. Coverage is ratcheted (`.7`), not switched on.
+break went unseen for four weeks. Since `RUSTDOC-AND-XTASK.2` the quotation is escaped and the `RUSTDOC` doctrine
+(`scripts/check_rustdoc.sh`, gate tier) runs CI's command at every commit, after a self-test that requires a scratch
+crate with an unresolved link to fail; 0.3 s unchanged, about 75 s when `specforge-core` is re-documented. The four
+crates build in 45 s cold into 161 MiB of `target/doc`. `specforge-core` compiles the `ir` sources through `#[path]`,
+so it is the library API. Undocumented public items (`clippy -W missing_docs`): `specforge-core` 2,119, `specforge`
+2,922, `specforge-conformance` 2,883, `specforge-production-graph` 33. Coverage is ratcheted (`.7`), not switched on.
 
 **Decided (`.1`).** The rustdoc of the four crates is built into `generated/mdbook/specforge/api/` beside the book and
 linked from a reference page (`.3`). `cargo xtask` is a workspace member `xtask`, not a default member, standard

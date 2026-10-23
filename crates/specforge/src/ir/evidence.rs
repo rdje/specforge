@@ -203,7 +203,7 @@ pub enum StatementClass {
     /// document, a figure, the reader, an example or an analysis rather than the hardware (*This guide assumes
     /// that you are familiar with …*; *the bus or signal can assume any value within the shaded area*). No reader
     /// consumes it: measured, a diagram key's *You must not assume …* read as a source fact mints a conditional
-    /// rule, and an example circuit's *assumes that output data is valid at the rising [CLK_I] edge* a semantic
+    /// rule, and an example circuit's *assumes that output data is valid at the rising \[CLK_I\] edge* a semantic
     /// hint on the clock. Since `EXTRACTION-REPRESENTATION-GAPS.51`, also every sentence of a section that defines the
     /// document's own notation (`document_notation_sections`).
     Apparatus,

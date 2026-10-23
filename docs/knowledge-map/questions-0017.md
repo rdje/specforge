@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > what is the control for a persisted-versus-reader comparison
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -295,5 +297,3 @@
   > what radix does a single-quoted cell use
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > what re-pins durability artifacts sha256
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what real PDF proves the FigureRegion vertical path

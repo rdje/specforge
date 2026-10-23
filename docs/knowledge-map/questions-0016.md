@@ -247,6 +247,8 @@
   > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is the RISC-V Debug register-field recall / precision
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > what is the RUSTDOC doctrine / check_rustdoc.sh
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what is the SWD line state machine (reset/operating/protocol-error/lockout)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -295,5 +297,3 @@
   > what is the condition-read-as-obligation error class and its gate
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > what is the constraint-subject-must-be-declared filter
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > what is the control for a persisted-versus-reader comparison

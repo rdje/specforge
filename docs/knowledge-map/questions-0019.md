@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > where does a minted enum's name actually come from
 - [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
   > where does a question to an upstream project go
 - [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
@@ -296,5 +298,3 @@
   > which banded registries are coherent
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > which behavioral genericity transforms cover rich PDF capture
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which binary does check_proof_seal_currency.sh probe with

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > which source modalities and IntentIR surfaces are required per chip-spec category
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > which source modalities are represented in the first vertical population
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
@@ -295,5 +297,3 @@
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
   > why did 102 invariants leave the USB4 connection-manager guide and ADIv6 (withhold_software_rules, software_statement_ids)
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did 64 AArch64 External Debug interfaces disappear

@@ -75,12 +75,19 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.1 — measure rustdoc and the scripts, decide the API reference and xtask (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.2`
-  Status: `pending`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: rustdoc builds warning-free, and a commit that breaks it is refused
   Acceptance: escape the `[CLK_I]` quotation; register a `RUSTDOC` doctrine (`cargo doc --workspace --no-deps`,
   `-D warnings`) in the commit gate, RED with the link restored; full CI's docs step passes.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** The quotation is escaped (`\[CLK_I\]`), so rustdoc reads it as text.
+  `scripts/check_rustdoc.sh` is registered as the `RUSTDOC` doctrine at `gate` tier, so the pre-commit hook and
+  `--fast` run it. It first documents a scratch crate whose doc comment links to nothing and requires that build to
+  fail with *unresolved link*, then runs CI's own command, `cargo doc --offline --locked --workspace --no-deps`
+  under `-D warnings`. It costs 0.3 s on a tree whose Rust is unchanged and about 75 s when `specforge-core` is
+  re-documented, so it stays in the fast set. RED: with the bracket restored the gate fails on `specforge-core`; the
+  file restored byte-identically.
+  Verification: `bash scripts/check_doctrines.sh --only RUSTDOC` PASS; RED above; oracles in the checklist
+  Commit: `RUSTDOC-AND-XTASK.2 — rustdoc builds warning-free, and a commit that breaks it is refused`
 
 - ID: `RUSTDOC-AND-XTASK.3`
   Status: `pending`
@@ -124,16 +131,32 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Verification: `pending`
   Commit: `pending`
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `RUSTDOCFLAGS="-D warnings" cargo doc --offline --workspace --no-deps` failed:
+  `unresolved link to CLK_I` in `crates/specforge/src/ir/evidence.rs`, the workspace's only rustdoc warning (`.1`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — a doc comment quoting Wishbone's *rising [CLK_I] edge*
+  (`crates/specforge/src/ir/evidence.rs:206`, written by `EXTRACTION-REPRESENTATION-GAPS.17`) reads as an intra-doc
+  link, and only push-time CI ran rustdoc. RED: the
+  bracket restored makes `scripts/check_rustdoc.sh` fail on `specforge-core`; the file restored byte-identically.
+- [x] **ADDRESSED (verified)** — workspace rustdoc warnings 1 -> 0; the `RUSTDOC` gate passes.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current (a doc comment moves no ruleset hash);
+  `check_production_genericity_flow.sh` unchanged; `cargo fmt --check` and `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 /
+  1,943 passed.
+- [x] **GENERICITY (ADR 0006)** — a doc-comment escape and a build gate; no extraction behaviour changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md` and the book's `reference/doctrine-enforcement.md` list `RUSTDOC`;
+  KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.2` | `pending` | the docs build fails today, and full CI with it |
-| 2 | `RUSTDOC-AND-XTASK.3` | `pending` | the API reference, once rustdoc is green |
-| 3 | `RUSTDOC-AND-XTASK.4` | `pending` | the dispatcher, with no behaviour change |
-| 4 | `RUSTDOC-AND-XTASK.5` | `pending` | the first native command |
-| 5 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
-| 6 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 1 | `RUSTDOC-AND-XTASK.3` | `pending` | the API reference, now that rustdoc is green |
+| 2 | `RUSTDOC-AND-XTASK.4` | `pending` | the dispatcher, with no behaviour change |
+| 3 | `RUSTDOC-AND-XTASK.5` | `pending` | the first native command |
+| 4 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
+| 5 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
 
 ## Decisions
 
@@ -153,12 +176,14 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-10-23` | `.1` | rustdoc build under `-D warnings`; `missing_docs` per crate; scripts inventory | fails on one link; counts and inventory recorded |
+| `2026-10-23` | `.2` | `RUSTDOC` doctrine; RED with the link restored; oracles | PASS; RED fails as it must |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.1` | `RUSTDOC-AND-XTASK.1 — measure rustdoc and the scripts, decide the API reference and xtask (DESIGN)` | measurement and decisions |
+| `.2` | `RUSTDOC-AND-XTASK.2 — rustdoc builds warning-free, and a commit that breaks it is refused` | the link escaped; the `RUSTDOC` gate |
 
 ## Changelog
 

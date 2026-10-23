@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why is source_ref ambiguous
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > why is standalone wins circular for an escaped identifier fragment
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -294,6 +296,3 @@
   > why was the ISF explicit-FSM feature request withdrawn
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > why was the at least timing paraphrase rejected
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why was the deeper fix of unbinding artifact_layout from the replay topology not taken (it would change the frozen 38-family/170-field producer graph AND invalidate all 24 sealed chains at once, since every sealed proof was taken over a replay that already contains the location. Re-proving on relocation is bounded, keeps every existing seal valid, and cannot persist tampered
-  > content because write_to_disk re-verifies against an independent rebuild)

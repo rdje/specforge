@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why is DATA_WIDTH declared as 8 in the AXI isf
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > why is DTI DOWNSTREAM not preserved as a heuristic only wire
 - [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
@@ -296,5 +298,3 @@
   > why is seed_swd's CSYSPWRUPACK gold must_be_high and not must_be_asserted
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > why is signal direction hard to lower faithfully to a single .isf module
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why is source_ref ambiguous

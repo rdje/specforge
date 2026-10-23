@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which binary does check_proof_seal_currency.sh probe with
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > which bit-position columns must a radix repair leave alone
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
@@ -295,5 +297,3 @@
   > which signal is a conditional rule's consequent signal
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > which signal tables have per-row column drift
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > which source modalities and IntentIR surfaces are required per chip-spec category
