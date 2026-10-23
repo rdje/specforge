@@ -232,11 +232,26 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.16 — a portable architecture's kit stays portable (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.12`
-  Status: `pending` (CODE; wave 1)
+  Status: `done` (`2026-10-23`; CODE; wave 1; checklist below)
   Goal: `cargo xtask check readme-policy` replaces `scripts/check_readme_policy.sh`
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/src/checks/readme_policy.rs` checks the README's two ceilings, the policy's fenced
+  adoption note, and the route registry (header, three ceilings, every row, the README's reader links, the seven
+  author-overflow routes), printing the script's lines and exit codes; `--self-test` runs its 13 cases on the same
+  functions the check uses. The shim keeps the registered path, its own argument refusal and the project-data
+  activation, then runs `exec cargo xtask check readme-policy "$@"`. **Parity** with HEAD's script through the
+  driver's absolute-path invocation, on 33 inputs: identical stdout, stderr and exit code on 28 (the current tree,
+  the self-test, two argument refusals, 24 broken inputs covering its 23 refusal messages). **Two fail-opens, fixed by
+  the port:** the script's `while read` loop dropped a last registry row without its newline unchecked, and its
+  `IFS=$'\t'` merged runs of tabs, so a row with an empty extra column or a leading or trailing tab read as
+  complete; those 4 inputs exit 0 under the script and 1 under the port. The fifth difference: on a missing
+  registry the script's self-test leaked awk's error to stderr. **Claim gate:** `claim-verification-contract-published`
+  pinned its RED case at lines 113-115 of the script, which now live in Rust, and the gate required a case region
+  to lie in the control's producer; a region may now name the file its producer delegates to (`source_region.path`,
+  which must be one of the control's inputs), in `scripts/check_claim_verification.pl` (self-test 32 -> 34),
+  `scripts/repin_claim_regions.py` (37 -> 38) and `CLAIM_VERIFICATION.md`.
+  Verification: `cargo test -p xtask --lib` 15/15; parity and RED in `.project-data/tmp/rdx-12/`
+  Commit: `RUSTDOC-AND-XTASK.12 — cargo xtask check readme-policy replaces the README-POLICY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.13`
   Status: `pending` (container; wave 2)
@@ -280,7 +295,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   **Decided.**
   - **A kit artifact is not ported.** It stays in its portable language, and `cargo xtask doctrines` runs it through
     the driver; a fix to it is a fix to the kit, made in place.
-  - **The port set** is the 16 SpecForge doctrines: `RUSTDOC` (done, `.8`), `README-POLICY` (`.12`), wave 2's six
+  - **The port set** is the 16 SpecForge doctrines: `RUSTDOC` (done, `.8`), `README-POLICY` (done, `.12`), wave 2's six
     single-file gates (`.13`), wave 3's six multi-file gates and oracles (`.14`), and wave 4's two composites (`.15`).
   - `.9`-`.11` are retired with this reason, their nodes kept as history.
   Verification: `classification in .project-data/tmp/rdx-16/kit.txt; doctrine gates at commit`
@@ -350,13 +365,31 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 - [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s `RUSTDOC` row; KM card
   `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.12` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `README-POLICY` doctrine ran only as shell; its script exits 0 on 4 malformed
+  registries (`.project-data/tmp/rdx-12/old/`: `unterminated-last-row`, `row-empty-column`, `row-leading-tab`,
+  `row-trailing-tab`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — HEAD's `scripts/check_readme_policy.sh:158`: `while IFS=$'\t' read -r` skips an
+  unterminated last line and treats a tab as whitespace. RED 4/4, every file restored byte-identically with a fresh
+  mtime: the line ceiling made inclusive, tabs merged again, the unterminated row dropped, the shim running another
+  check; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 1 -> 2; identical output on 28 of 33 inputs, the 5 differences the
+  two fixed fail-opens and the leaked awk error.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 15
+  passed; claim-gate self-test 34/34 and repin self-test 38/38; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
+  `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
+  `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.12` | `pending` | wave 1's last SpecForge gate (`.9`-`.11` retired by `.16`) |
-| 2 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
-| 3 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4 |
+| 1 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 2 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4 |
 
 ## Decisions
 

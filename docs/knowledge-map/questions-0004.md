@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > does a citation like TOOLBOX.md section 7.7 still resolve after the toolbox partition (yes - section numbers were deliberately preserved and every cited number is still named in the landing, which routes it to its part in one hop; 26 such citations exist and several sit in sealed archive segments whose source end can never be repaired)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > does a clean checkout or a CI runner pay for the corpus replay build
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
@@ -296,5 +298,3 @@
   > does the LLM constraint path use classify_signal_constraint_kind
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
   > does the Layer D grounding filter need to be weakened
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > does the NLI verifier actually catch real extraction errors

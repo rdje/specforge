@@ -225,7 +225,8 @@
       "docs/book/src/reference/documentation-scope.md",
       "docs/book/src/reference/live-docs.md",
       "doctrine/readme_entrypoint/routed_destinations.tsv",
-      "scripts/check_readme_policy.sh"
+      "scripts/check_readme_policy.sh",
+      "xtask/src/checks/readme_policy.rs"
     ],
     "writers": ["COMMIT.md"],
     "required_literals": [

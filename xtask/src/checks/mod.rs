@@ -1,6 +1,7 @@
 //! `cargo xtask check <doctrine>`: the doctrine gates ported to Rust (`RUSTDOC-AND-XTASK.6`). Each replaces the
 //! script the doctrine driver registers, which stays as a shim over it.
 
+pub mod readme_policy;
 pub mod rustdoc;
 
 use std::path::Path;
@@ -14,11 +15,18 @@ pub struct Check {
 }
 
 /// Every ported check, in the order `.6` ports them.
-pub const CHECKS: &[Check] = &[Check {
-    name: "rustdoc",
-    replaces: "scripts/check_rustdoc.sh",
-    run: rustdoc::run,
-}];
+pub const CHECKS: &[Check] = &[
+    Check {
+        name: "rustdoc",
+        replaces: "scripts/check_rustdoc.sh",
+        run: rustdoc::run,
+    },
+    Check {
+        name: "readme-policy",
+        replaces: "scripts/check_readme_policy.sh",
+        run: readme_policy::run,
+    },
+];
 
 /// Run the check named by the first argument with the rest; a missing or unknown name prints the checks and
 /// exits 2.

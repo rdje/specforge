@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what is the completeness gauge over-counting on APB
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > what is the condition-read-as-obligation error class and its gate
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
@@ -295,5 +297,3 @@
   > what produces the backslash in an EvidenceIR statement text
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > what proved that analysis commands can violate project data locality

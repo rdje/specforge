@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does Mode Name not count as a name role
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > why does OpenCAPI Discovery Configuration no longer emit ISF
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
@@ -296,5 +298,3 @@
   > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
   > why does max_question_keys land on 4096 exactly
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > why does mdbook test interpret ISF and console examples as Rust

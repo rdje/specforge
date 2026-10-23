@@ -112,8 +112,10 @@ A valid falsification leg identifies:
 - the result that rules out, narrows, or exposes the competitor.
 
 For a registry-backed verified claim, the cited control also binds one named known-bad case to an exact
-line-range/SHA-256 region in its tracked producer. The gate executes the whole control and rejects a stale or
-misdirected case region; a self-test name without durable mutation evidence is not enough.
+line-range/SHA-256 region in its tracked producer, or, when the producer delegates the case to another tracked
+file, in that file, which the region names and the control declares among its inputs. The gate executes the whole
+control and rejects a stale or misdirected case region; a self-test name without durable mutation evidence is not
+enough.
 
 Conservation totals cannot falsify bucket misassignment. A source-derived row count cannot falsify a wrong value
 in every row. Tests and implementation derived from the same interpretation do not independently validate that

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > can the reviewed dataset source_region predicates be edited
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > can the signal-table name-column override be reused for enums
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -296,5 +298,3 @@
   > does a caption route r1 refuses ever get admitted by the caption repair
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > does a check notice when one of its own self-test cases is deleted
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > does a citation like TOOLBOX.md section 7.7 still resolve after the toolbox partition (yes - section numbers were deliberately preserved and every cited number is still named in the landing, which routes it to its part in one hop; 26 such citations exist and several sit in sealed archive segments whose source end can never be repaired)

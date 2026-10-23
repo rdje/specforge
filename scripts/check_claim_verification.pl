@@ -512,12 +512,12 @@ sub validate_command {
     }
     exact_integer($command->{expected_exit}, 0, "$label.expected_exit", $errors);
     required_scalar($command->{stdout_contains}, "$label.stdout_contains", $errors);
-    validate_red_evidence($base, $producer, $command->{red_evidence}, "$label.red_evidence", $errors)
+    validate_red_evidence($base, $producer, $command->{inputs}, $command->{red_evidence}, "$label.red_evidence", $errors)
         if $require_red_evidence;
 }
 
 sub validate_red_evidence {
-    my ($base, $producer, $evidence, $label, $errors) = @_;
+    my ($base, $producer, $inputs, $evidence, $label, $errors) = @_;
     if (ref($evidence) ne 'HASH') {
         push @$errors, "$label must be an object";
         return;
@@ -533,14 +533,31 @@ sub validate_red_evidence {
         push @$errors, "$label.source_region must be an object";
         return;
     }
-    reject_unknown($region, "$label.source_region", $errors, qw(kind start_line end_line sha256));
+    reject_unknown($region, "$label.source_region", $errors, qw(kind start_line end_line sha256 path));
     exact_scalar($region->{kind}, 'line_range_sha256', "$label.source_region.kind", $errors);
     my $start = positive_integer($region->{start_line}, "$label.source_region.start_line", $errors);
     my $end = positive_integer($region->{end_line}, "$label.source_region.end_line", $errors);
     my $sha = required_scalar($region->{sha256}, "$label.source_region.sha256", $errors);
     push @$errors, "$label.source_region.sha256 is not lowercase SHA-256"
         if defined($sha) && $sha !~ /\A[0-9a-f]{64}\z/;
-    return if !defined($start) || !defined($end) || !defined($producer) || !safe_relative($producer);
+    # RUSTDOC-AND-XTASK.12 — the case lives in the producer, unless the region names the file the producer delegates
+    # to (a shim over a compiled check); that file must then be one of the control's declared inputs, so the
+    # durability artifacts and stale check watch it as they watch the producer.
+    my ($source, $source_label) = ($producer, 'producer');
+    if (exists $region->{path}) {
+        ($source, $source_label) = (required_scalar($region->{path}, "$label.source_region.path", $errors),
+            'source_region.path');
+        return if !defined($source);
+        if (!safe_relative($source)) {
+            push @$errors, "$label.source_region.path '$source' is unsafe";
+            return;
+        }
+        if (!grep { defined($_) && !ref($_) && $_ eq $source } (ref($inputs) eq 'ARRAY' ? @$inputs : ())) {
+            push @$errors, "$label.source_region.path '$source' is not among the control's inputs";
+            return;
+        }
+    }
+    return if !defined($start) || !defined($end) || !defined($source) || !safe_relative($source);
     if ($start > $end) {
         push @$errors, "$label.source_region start_line exceeds end_line";
         return;
@@ -549,15 +566,15 @@ sub validate_red_evidence {
         push @$errors, "$label.source_region exceeds 64-line evidence bound";
         return;
     }
-    my $path = absolute($base, $producer);
+    my $path = absolute($base, $source);
     if (!-f $path || -l $path) {
-        push @$errors, "$label producer '$producer' must be a regular non-symlink file";
+        push @$errors, "$label $source_label '$source' must be a regular non-symlink file";
         return;
     }
-    my $raw = read_raw($path, $errors, $producer);
+    my $raw = read_raw($path, $errors, $source);
     my @lines = split /(?<=\n)/, $raw;
     if ($end > @lines) {
-        push @$errors, "$label.source_region ends at line $end beyond producer line count " . scalar(@lines);
+        push @$errors, "$label.source_region ends at line $end beyond $source_label line count " . scalar(@lines);
         return;
     }
     my $selected = join '', @lines[$start - 1 .. $end - 1];
@@ -907,6 +924,19 @@ sub run_self_test {
         ['RED evidence omits diagnostic', 0, qr/omits expected RED diagnostic/, sub {
             $_[0][1]{falsification}{controls}[0]{red_evidence}{expected_red} = 'missing RED diagnostic';
         }],
+        # RUSTDOC-AND-XTASK.12 — a region may name the input its producer delegates to, never another file.
+        ['RED evidence in a delegated input', 1, qr//, sub {
+            my $evidence = $_[0][1]{falsification}{controls}[0]{red_evidence};
+            $evidence->{expected_red} = 'canonical';
+            $evidence->{source_region} = {kind => 'line_range_sha256', path => 'input.txt', start_line => 1,
+                end_line => 1, sha256 => sha256_hex("canonical\n")};
+        }],
+        ['RED evidence outside the inputs', 0, qr/is not among the control's inputs/, sub {
+            my $evidence = $_[0][1]{falsification}{controls}[0]{red_evidence};
+            $evidence->{expected_red} = 'retained';
+            $evidence->{source_region} = {kind => 'line_range_sha256', path => 'evidence.txt', start_line => 1,
+                end_line => 1, sha256 => sha256_hex("retained\n")};
+        }],
         ['untracked producer candidate', 0, qr/untracked producer-shaped path/, sub {
             write_raw(File::Spec->catfile($fixture, 'scripts', 'scratch.pl'), "print qq{scratch\\n};\n");
         }],
@@ -1003,7 +1033,7 @@ sub run_self_test {
     # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
     # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
     # expected case count is therefore declared here, independently of the loop.
-    my $expected_cases = 32;
+    my $expected_cases = 34;
     die "claim-verification: self-test ran $total cases, declaration expects $expected_cases — "
         . "re-derive the declaration beside the suite\n"
         if $total != $expected_cases;

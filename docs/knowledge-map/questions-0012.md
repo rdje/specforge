@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > is the traverse_pictures mechanism measured or only read from source
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
@@ -295,5 +297,3 @@
   > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > what are the exact migrated alignment task evidence metrics
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > what are the exact source-to-IntentIR precision recall and stage-loss totals

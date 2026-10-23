@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -296,5 +298,3 @@
   > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > how does the value slot tell a state from a relation without an adjective list
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate classify a document / what is document_class

@@ -186,7 +186,8 @@ never change.
 - **THREE SHAPES, and the last two were invisible until `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`:**
   `{"path", "region"}` pins a governed document; `control.red_case` pins a RED case **inside a checker
   script** and carries no `kind`; `red_evidence.source_region` pins the same kind of line range with
-  the file named by its control's `producer` or `inputs[0]`. Editing a gate script moves the last two,
+  the file named by its own `path` (a producer's delegate, which must be one of the control's inputs:
+  `RUSTDOC-AND-XTASK.12`), else by its control's `producer` or `inputs[0]`. Editing a gate script moves the last two,
   and the tool used to report `unchanged` while they were displaced.
 - **THE WHOLE-FILE FAMILY, and why it is the one ordinary work hits.** `durability.artifacts[].sha256`
   in `claims.jsonl` and `{"record_type": "source", …}` records in the other three carry a digest of the

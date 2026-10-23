@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate classify a document / what is document_class
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > how does validate know an intent_ir is stale relative to its semantic_ir
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -295,5 +297,3 @@
   > how many Introducing CoreSight page paths are repository relative
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many OpenCAPI AFU address note page paths are repository relative
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many OpenCAPI Certified Definition paths are repository relative

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why was the AXI write-address handshake invariant never extracted
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > why was the Arm Debug replay killed at 400 pages
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)

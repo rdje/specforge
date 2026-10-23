@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > what is ADR 0051
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > what is ADR 0052
 - [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
@@ -235,7 +237,7 @@
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is captured_region_residuals
 - [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
-  > what is cargo xtask check (rustdoc)
+  > what is cargo xtask check (rustdoc, readme-policy)
 - [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
   > what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
@@ -296,5 +298,3 @@
   > what is every_assume_word_states_no_abstraction / premise_of_a_figure_a_guideline_or_an_analysis
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what is excludes_self and why does a classifier need it
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word

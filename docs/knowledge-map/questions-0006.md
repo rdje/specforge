@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how can a script ask the SpecForge canonical loader without mutating the artifact
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > how can one compound sentence contain two independent signal facts
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -295,5 +297,3 @@
   > how does SpecForge bind a protocol state to its state machine
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)

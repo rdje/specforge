@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what are the exact source-to-IntentIR precision recall and stage-loss totals
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what are the extraction_quality_* validate metrics and when do they read n/a
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -295,5 +297,3 @@
   > what does completeness_candidate_misses count
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > what does converge --promote-constraints-llm do and when does it run
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > what does converge do after stabilization

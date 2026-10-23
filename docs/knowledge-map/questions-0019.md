@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > where does Wishbone's clock and reset come from (it has no signal table)
 - [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
   > where does a fronted condition end when it contains a list
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
@@ -296,5 +298,3 @@
   > which actor does a section-heading signal table relate its rows to
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > which admissibility routes run before the relational test
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > which architecture owns work and which one verifies published claims

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > does the NLI verifier actually catch real extraction errors
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > does the SourceIR classifier type a bus-mode matrix as a signal table
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -296,5 +298,3 @@
   > how can a live surface null a size dimension
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > how can a prose signal spelling bind to a declared one without a suffix inference
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how can a script ask the SpecForge canonical loader without mutating the artifact

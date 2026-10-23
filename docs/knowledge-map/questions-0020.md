@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > which architecture owns work and which one verifies published claims
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > which arrow spellings does the declaration reader accept
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
@@ -295,5 +297,3 @@
   > which root rolling ledger is currently above its rollover signal
 - [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
   > which scripts are not ported to xtask (portable architecture kits)
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > which seam reads the quoted encoding notation

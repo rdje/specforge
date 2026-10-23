@@ -141,6 +141,8 @@
   > can a VLM-invented waveform lane become canonical intent
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > can a census over the persisted corpus describe the current producer
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > can a claim's RED region live outside its producer (source_region.path)
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > can a correct refreshed count hide a missing corpus document
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -296,5 +298,3 @@
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > can the retired SWD serial frame fields be recovered by binding a document-stated phase to nearby statements (NO — the nearest preceding phase-stating statement resolves for all 11 gold fields and is WRONG for ALL ELEVEN, correct on none; re-derive with python3 scripts/measure_swd_frame_phase_scope.py. APnDP/RnW/Start/Parity/Stop would inherit transfer and Park would inherit
   > data, all against a gold phase of request; A, ACK and DATAIN sit 278, 303 and 324 statements after the nearest one, which says response)
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > can the reviewed dataset source_region predicates be edited

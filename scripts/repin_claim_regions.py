@@ -14,8 +14,8 @@ editing a checker script moved seven regions while `--check` reported `unchanged
 
   * `{"path": ..., "region": {...}}`                     - a governed document line range
   * `{"control": {"red_case": {"path": ..., ...}}}`      - a RED case pinned INSIDE a checker script
-  * `{"red_evidence": {"source_region": {...}}}`         - the same, with the file named by the
-                                                           enclosing control's `producer`/`inputs[0]`
+  * `{"red_evidence": {"source_region": {...}}}`         - the same, with the file named by its own
+                                                           `path`, else the enclosing control's `producer`/`inputs[0]`
 
 The last two pin line ranges inside the gate scripts themselves, so ANY edit to a checker shifts
 them — a class the first two registries never exercised.
@@ -127,7 +127,7 @@ REGISTRIES = [
 ]
 BLANK_LINE_DIGEST = hashlib.sha256(b"\n").hexdigest()
 # Declared beside the suite so the matrix cannot silently shrink; re-derive it, never guess.
-EXPECTED_SELF_TEST_CASES = 37
+EXPECTED_SELF_TEST_CASES = 38
 
 
 def read_lines(path, cache):
@@ -197,8 +197,11 @@ def pinned_regions(node):
         found.append((red_case, red_case["path"]))
     evidence = node.get("red_evidence")
     if isinstance(evidence, dict) and is_pin(evidence.get("source_region")):
-        # The control that owns the evidence names the file it was measured in.
-        source = node.get("producer")
+        # The region may name its own file (a producer's delegate, RUSTDOC-AND-XTASK.12); otherwise the
+        # control that owns the evidence names the file it was measured in.
+        source = evidence["source_region"].get("path")
+        if not isinstance(source, str):
+            source = node.get("producer")
         if not isinstance(source, str):
             inputs = node.get("inputs")
             source = inputs[0] if isinstance(inputs, list) and inputs else None
@@ -791,6 +794,21 @@ def self_test(out):
         region = moved["falsification"]["controls"][0]["red_evidence"]["source_region"]
         check("a source_region resolves through its control's producer", exit_code == 0)
         check("a source_region re-pins to its new line", region["start_line"] == 2)
+
+        # A region's own `path` names the file before the producer does (RUSTDOC-AND-XTASK.12).
+        control = record["falsification"]["controls"][0]
+        control["inputs"] = ["scripts/check_fixture.pl", "scripts/fixture_delegate.rs"]
+        region = control["red_evidence"]["source_region"]
+        region.update({"path": "scripts/fixture_delegate.rs", "start_line": 1, "end_line": 1})
+        open(os.path.join(root, "scripts/fixture_delegate.rs"), "w", encoding="utf-8").write(
+            "// moved\n" + open(os.path.join(root, "scripts/check_fixture.pl"), encoding="utf-8").read()
+        )
+        open(claims, "w", encoding="utf-8").write(json.dumps(record) + "\n")
+        exit_code = process(root, None, True, sink)
+        moved = json.loads(open(claims, encoding="utf-8").read().strip())
+        region = moved["falsification"]["controls"][0]["red_evidence"]["source_region"]
+        check("a source_region's own path names its file", exit_code == 0 and region["start_line"] == 3)
+        del record["falsification"]["controls"][0]["red_evidence"]["source_region"]["path"]
 
         # With no producer, `inputs[0]` names the file instead.
         control = record["falsification"]["controls"][0]
