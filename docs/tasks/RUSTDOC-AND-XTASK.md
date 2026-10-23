@@ -269,7 +269,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.12 — cargo xtask check readme-policy replaces the README-POLICY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.13`
-  Status: `in_progress` (container; wave 2; `.13.a`-`.13.c` done)
+  Status: `in_progress` (container; wave 2; `.13.a`-`.13.d` done)
   Goal: the single-file Perl and Python gates move to xtask
   Acceptance: one leaf per doctrine, in order: `SECTION-ANCHORS`, `TASK-NODE-RETENTION`, `CONTRACT-ENCODING`,
   `OWNERSHIP-CITATIONS`, `PUBLISHED-ASSERTIONS`, `RESIDUAL-ACTIONABILITY`; the `DEPENDENCIES` change for locked
@@ -349,11 +349,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   script`
 
 - ID: `RUSTDOC-AND-XTASK.13.d`
-  Status: `pending` (CODE; wave 2)
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: `cargo xtask check ownership-citations` replaces `scripts/check_ownership_citations.pl`
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/src/checks/ownership_citations.rs` reads the citation registry (as Perl's `JSON::PP`
+  reads it: `pyjson::loads_strict`, the JSON both accept, measured to refuse only Python's non-finite literals and
+  lone surrogates), extracts each region's links and backticked ids as the script's two regexes do, resolves each
+  current owner's status in either leaf grammar across a partitioned tree's parts, and prints fields as Perl
+  stringifies them (booleans `1`/`0`, numbers `%.15g`); its 16 self-test cases keep their verdicts. The Perl shim
+  keeps the argument loop, its output layers and the root resolution, so a usage error, a missing root and their
+  exit codes (`die` exits with the `errno` those layers leave, 25) are the script's own, then passes `--root`,
+  `--registry` and the mode on. **Parity** with HEAD's script through the driver's absolute-path invocation, on 36
+  inputs (the current tree's 109 citations in 4 regions, eleven argument forms, 24 fixture roots with a broken
+  input per refusal): identical stdout, stderr and exit code on 35. The other names a citation whose `unit` is a JSON
+  array: Perl prints the array's address (`ARRAY(0x78592704c8)`, different on every run), the port an empty name.
+  **Cost:** 0.09 s for the script, 0.22 s for the shim.
+  Verification: `cargo test -p xtask --lib` 50/50; the pyjson corpus 14,964/14,964; parity and RED in
+  `.project-data/tmp/rdx-13d/`
+  Commit: `RUSTDOC-AND-XTASK.13.d — cargo xtask check ownership-citations replaces the OWNERSHIP-CITATIONS gate's
+  script`
 
 - ID: `RUSTDOC-AND-XTASK.13.e`
   Status: `pending` (CODE; wave 2)
@@ -520,6 +534,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.d` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `OWNERSHIP-CITATIONS` doctrine ran only as Perl
+  (`scripts/check_ownership_citations.pl`); baseline on 36 inputs in `.project-data/tmp/rdx-13d/old/`; `JSON::PP`'s
+  acceptance measured on 21 edge inputs.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 5 ported gates, and
+  `pyjson` had no reader for the JSON `JSON::PP` accepts. RED 6/6, every file restored byte-identically with a
+  fresh mtime: a lone surrogate accepted by the strict reader, a historical citation checked as an owner, a link
+  required to start its parenthesis, an uppercase leaf segment accepted, a same-line `Status` taken for the
+  two-line grammar, the shim running another check; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 5 -> 6; identical output on 35 of 36 inputs, the other a Perl memory
+  address; the pyjson corpus still 14,964/14,964.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 50
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s `OWNERSHIP-CITATIONS` row; book `getting-started.md`; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.c` (CODE) — DONE `2026-10-23`
 
 - [x] **REPRODUCE / MEASURE** — the `CONTRACT-ENCODING` doctrine ran only as Python
@@ -618,9 +651,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.13.d` | `pending` | wave 2's next gate (`OWNERSHIP-CITATIONS`) |
-| 2 | `RUSTDOC-AND-XTASK.18` | `pending` | the doctrine tables drifted from the registry unseen (`.13.c`) |
-| 3 | `RUSTDOC-AND-XTASK.13.e`-`.13.f` | `pending` | the rest of wave 2, in order |
+| 1 | `RUSTDOC-AND-XTASK.18` | `pending` | the doctrine tables drifted from the registry unseen (`.13.c`) |
+| 2 | `RUSTDOC-AND-XTASK.13.e`-`.13.f` | `pending` | the rest of wave 2, in order |
 | 3 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
 
 ## Decisions

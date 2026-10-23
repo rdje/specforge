@@ -47,6 +47,17 @@ pub fn to_text(text: &[u32]) -> String {
 
 /// `json.loads(text)` for a `str`: the value, or the `ValueError` message Python raises.
 pub fn loads(text: &str) -> Result<Py, String> {
+    parse(text, false)
+}
+
+/// The JSON that Perl's `JSON::PP` also accepts (`RUSTDOC-AND-XTASK.13.d`, measured): `loads` without Python's
+/// `NaN`, `Infinity` and `-Infinity` literals and without a lone surrogate escape. A refusal's message is
+/// `loads`'s, or `Expecting value` / `Lone surrogate` at the construct only Python admits.
+pub fn loads_strict(text: &str) -> Result<Py, String> {
+    parse(text, true)
+}
+
+fn parse(text: &str, strict: bool) -> Result<Py, String> {
     let characters: Vec<char> = text.chars().collect();
     if characters.first() == Some(&'\u{feff}') {
         return Err(decode_error(
@@ -55,7 +66,10 @@ pub fn loads(text: &str) -> Result<Py, String> {
             0,
         ));
     }
-    let mut scanner = Scanner { text: &characters };
+    let mut scanner = Scanner {
+        text: &characters,
+        strict,
+    };
     let start = scanner.skip_whitespace(0);
     let (value, end) = match scanner.scan_once(start) {
         Ok(found) => found,
@@ -109,6 +123,8 @@ enum Failure {
 
 struct Scanner<'a> {
     text: &'a [char],
+    /// Refuse what only Python admits: the non-finite literals and lone surrogates.
+    strict: bool,
 }
 
 impl Scanner<'_> {
@@ -144,11 +160,13 @@ impl Scanner<'_> {
             'n' if self.matches(index, "null") => return Ok((Py::None, index + 4)),
             't' if self.matches(index, "true") => return Ok((Py::Bool(true), index + 4)),
             'f' if self.matches(index, "false") => return Ok((Py::Bool(false), index + 5)),
-            'N' if self.matches(index, "NaN") => return Ok((Py::Float(f64::NAN), index + 3)),
-            'I' if self.matches(index, "Infinity") => {
+            'N' if !self.strict && self.matches(index, "NaN") => {
+                return Ok((Py::Float(f64::NAN), index + 3));
+            }
+            'I' if !self.strict && self.matches(index, "Infinity") => {
                 return Ok((Py::Float(f64::INFINITY), index + 8));
             }
-            '-' if self.matches(index, "-Infinity") => {
+            '-' if !self.strict && self.matches(index, "-Infinity") => {
                 return Ok((Py::Float(f64::NEG_INFINITY), index + 9));
             }
             _ => {}
@@ -292,6 +310,9 @@ impl Scanner<'_> {
                     code = 0x10000 + ((code - 0xd800) << 10) + (low - 0xdc00);
                     end += 6;
                 }
+            }
+            if self.strict && (0xd800..0xe000).contains(&code) {
+                return Err(Failure::Decode("Lone surrogate", end - 6));
             }
             out.push(code);
         }
@@ -1025,6 +1046,31 @@ mod tests {
             failures[..failures.len().min(20)].join("\n")
         );
         println!("pyjson: {cases} corpus cases agree with Python");
+    }
+
+    #[test]
+    fn the_strict_reader_refuses_only_what_json_pp_refuses() {
+        for refused in [
+            "{\"a\":NaN}",
+            "{\"a\":Infinity}",
+            "{\"a\":-Infinity}",
+            "{\"a\":\"\\ud800\"}",
+            "{\"a\":\"\\udc00\"}",
+        ] {
+            assert!(
+                loads(refused).is_ok() && loads_strict(refused).is_err(),
+                "{refused}"
+            );
+        }
+        for accepted in [
+            "{\"a\":1e400}",
+            "{\"a\":\"\\ud83d\\ude00\"}",
+            "{\"a\":-0}",
+            "{\"a\":1,\"a\":2}",
+            " {\"a\":1}\r",
+        ] {
+            assert!(loads_strict(accepted).is_ok(), "{accepted}");
+        }
     }
 
     #[test]
