@@ -2,6 +2,7 @@
 //! script the doctrine driver registers, which stays as a shim over it.
 
 pub mod contract_encoding;
+pub mod corpus_frontier;
 pub mod doctrine_tables;
 pub mod ownership_citations;
 pub mod published_assertions;
@@ -70,6 +71,11 @@ pub const CHECKS: &[Check] = &[
         name: "residual-actionability",
         replaces: "scripts/validate_residual_actionability_contract.py",
         run: residual_actionability::run,
+    },
+    Check {
+        name: "corpus-frontier",
+        replaces: "scripts/check_corpus_frontier.sh",
+        run: corpus_frontier::run,
     },
 ];
 

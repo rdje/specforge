@@ -15,7 +15,7 @@ answers:
 date: 2026-08-11
 status: current
 tags: [corpus-coverage, census, task-tree, continuity, chain-currency, project-data-locality]
-evidence: scripts/check_corpus_frontier_census.pl; doctrine/corpus_frontier/census.json; docs/tasks/corpus-coverage/frontier-census-integrity.md; docs/tasks/CORPUS-COVERAGE.md
+evidence: scripts/check_corpus_frontier_census.pl; xtask/src/checks/corpus_frontier.rs (native since RUSTDOC-AND-XTASK.14.a); doctrine/corpus_frontier/census.json; docs/tasks/corpus-coverage/frontier-census-integrity.md; docs/tasks/CORPUS-COVERAGE.md
 reverify: "bash scripts/check_corpus_frontier.sh && perl scripts/check_corpus_frontier_census.pl --report"
 ---
 

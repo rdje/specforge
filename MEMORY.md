@@ -9,9 +9,9 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: `RUSTDOC-AND-XTASK` `.14` (wave 3: open a leaf per doctrine, CORPUS-FRONTIER first), `.15`. Then ERG
+- Next action: `RUSTDOC-AND-XTASK` `.14.b` (CONSTRAINT-PART-SPAN), `.14.c`-`.14.f`, `.15`. Then ERG
   `.67.b`, `.68`-`.73`, `.3.c.viii.a`; `.61.c`, `.3.c.v.v` wait on KG-ISF `.2a.vii.c.vi`; `.46.c` on FSMGEN-REQUESTS.12;
-  `.54.a.ii`, `.44`, SRC `.15`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF, TLIS, LDPH `.34c`/`.42`. Score 11 seeds per slice;
+  `.54.a.ii`, `.44`, SRC `.15`/`.19`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF, TLIS, LDPH `.34c`/`.42`. Score 11 seeds per slice;
   book regions: `adjudicate_book_quantity_regions.py`. Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for
   FSMGen's next exceptional push after it fixes our requests (don't poll); close `FSMGEN-REQUESTS.7`-`.10`, `.12` on
   the first pin containing each. Compare FSMGen revisions on complete, known-good exports.

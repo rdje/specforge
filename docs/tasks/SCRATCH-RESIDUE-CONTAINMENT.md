@@ -518,6 +518,20 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   sha256 re-derived 4a05ec3d…, equal`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.18 — the daily sweep: 8.4 GiB of scratch and 2.7 GiB of rustc sessions`
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.19`
+  State: `pending` (`2026-10-23`; found by `RUSTDOC-AND-XTASK.14.a`)
+  Goal: **no generator's working file is ever tracked.** **Reproduce:** `git ls-files docs/knowledge-map/` lists three
+  files `knowledge-map/scripts/gen_knowledge_map.sh` writes as its working set and removes on exit
+  (`.questions-identity.72627.tmp` 5,918 bytes, `.questions-part.72627.tmp` 7 lines, `.questions-rows.72627.tmp`
+  509 lines), all three added by `be58b45bf` (`EXTRACTION-REPRESENTATION-GAPS.39`, `2026-09-29 04:20:04 +0200`); their
+  mtimes are `04:19`, so run 72627 was still alive or had been killed when `git add -A` staged the tree. The
+  generator writes them beside the shards it publishes (`$output_shard_dir/.${KM_SHARD_PREFIX}*.$pid.tmp`) and its
+  `trap cleanup EXIT HUP INT TERM` cannot run under SIGKILL, and nothing refuses a tracked `*.tmp`. **Impact:** a
+  stale copy of the question rows travels with every clone, and the next leaked run is committed the same way.
+  Acceptance: remove the three from the index and disk; give the generator a remedy `.4` names (stale-sibling
+  reclamation at startup, or working files outside the tracked shard directory), fixed in the kit in place as
+  `RUSTDOC-AND-XTASK.16` rules; and a mechanical refusal of a tracked generator working file, with a RED control.
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability

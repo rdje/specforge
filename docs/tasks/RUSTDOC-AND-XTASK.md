@@ -414,13 +414,75 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
-  Status: `pending` (container; wave 3)
+  Status: `in_progress` (container; wave 3; `.14.a` done)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
   `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
   `scripts/report_self_test_totals.pl` reads the declared self-test totals of `check_chain_currency.sh`,
   `check_proof_seal_currency.sh` and `rebuild_stage_cascade.sh` from their source and fails closed when it cannot,
   so a port that moves a total out of its script updates that producer in the same leaf.
+  **Opened `2026-10-23` with `.14.a`.** None of the six is a portable kit's script (`.16`). A doctrine whose adapter
+  calls a core script ports both into one module; each script stays a shim at its path, since the records cite the
+  core and the driver runs the adapter.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.14.a`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
+  Goal: `cargo xtask check corpus-frontier` replaces `scripts/check_corpus_frontier.sh` and its core
+  `scripts/check_corpus_frontier_census.pl`
+  Acceptance: `.6`'s parity evidence, its self-test ported; both scripts shims.
+  **Done `2026-10-23`.** `xtask/src/checks/corpus_frontier.rs` derives the cohort from each persisted SourceIR's
+  `source` object (sliced from the file's first 8 KiB, the window growing to 4 MiB, by a brace scan that skips
+  strings, then read as `JSON::PP` reads it), diffs it against the declared refreshed and remaining sets, the
+  retained bundles and the root task's sentences, and prints `--report` as `JSON::PP`'s canonical pretty output
+  (indent 3, ` : `, sorted keys). Its 13 self-test cases keep their verdicts. On this repository the adapter runs the
+  self-test, then the census; on another root it runs that root's own core, as the script did. The shell shim keeps
+  the usage refusal and the project-data activation; the Perl shim keeps the argument loop, the usage line and exit
+  2, the `SPECFORGE_CORPUS_FRONTIER_CONTRACT` default and the root resolution, and passes the directory it was run
+  from, so a relative `--root` or contract resolves where the script resolved it. **Parity**: HEAD's two scripts
+  beside the shims on 49 inputs (the real corpus, `57 cohort = 52 refreshed + 5 remaining`; fifteen argument and
+  environment forms; 17 fixture trees, each with one broken input per refusal, through both entry points), identical
+  stdout, stderr and exit code on all 49, and on a relative root and refusal run from another directory. **Cost:**
+  0.15 s for the script, 0.18 s for the shim; `--report` 0.04 s and 0.15 s.
+  Verification: `cargo test -p xtask --lib` 67/67; parity and RED in `.project-data/tmp/rdx-14a/`
+  Commit: `RUSTDOC-AND-XTASK.14.a — cargo xtask check corpus-frontier replaces the CORPUS-FRONTIER gate's scripts`
+
+- ID: `RUSTDOC-AND-XTASK.14.b`
+  Status: `pending`
+  Goal: `cargo xtask check constraint-part-span` replaces the `CONSTRAINT-PART-SPAN` gate's script
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.14.c`
+  Status: `pending`
+  Goal: `cargo xtask check project-data-locality` replaces the `PROJECT-DATA-LOCALITY` gate's script
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; `scripts/project_data_env.sh` stays
+  the shared shell library the other scripts source.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.14.d`
+  Status: `pending`
+  Goal: `cargo xtask check chain-currency` replaces the `CHAIN-CURRENCY` gate's script
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; `report_self_test_totals.pl` still
+  reads its declared total.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.14.e`
+  Status: `pending`
+  Goal: `cargo xtask check proof-seal-currency` replaces the `PROOF-SEAL-CURRENCY` gate's script
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; `report_self_test_totals.pl` still
+  reads its declared total.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.14.f`
+  Status: `pending`
+  Goal: `cargo xtask check proof-seal-total` replaces the `PROOF-SEAL-TOTAL` gate's script
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
   Verification: `pending`
   Commit: `pending`
 
@@ -574,6 +636,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.a` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `CORPUS-FRONTIER` doctrine ran only as shell and Perl
+  (`scripts/check_corpus_frontier.sh` over `scripts/check_corpus_frontier_census.pl`); HEAD's copies are the parity
+  baseline in `.project-data/tmp/rdx-14a/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 9 checks. RED 6/6, the file
+  restored byte-identically with a fresh mtime: a remaining key's retained bundle accepted, a cohort member missing
+  from the partition accepted, the cohort count never compared, a duplicate remaining key accepted, the declared
+  total 13 -> 12, the root task's sentences never read; each turns `scripts/check_corpus_frontier.sh` red (exit 1,
+  naming the case).
+- [x] **ADDRESSED (verified)** — ported gates 8 -> 9; identical output on 49 of 49 inputs; self-test 13/13.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 67
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `.14` and its six leaves; `docs/DOCTRINE_INSTANCE.md`'s row; the falsification control
+  `corpus-frontier-retention-red-matrix`'s region; book `getting-started.md`; KM cards
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask` and `corpus-refresh-frontier-derivation`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.f` (CODE) — DONE `2026-10-23`
 
@@ -745,9 +826,9 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.14` | `pending` | wave 3, opening one leaf per doctrine (`CORPUS-FRONTIER` first) |
-| 2 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, then the driver |
-| 3 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
+| 1 | `RUSTDOC-AND-XTASK.14.b` | `pending` | wave 3's second gate, `CONSTRAINT-PART-SPAN` |
+| 2 | `RUSTDOC-AND-XTASK.14.c`-`.14.f` | `pending` | the rest of wave 3, in `.14`'s order |
+| 3 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
 
 ## Decisions
 

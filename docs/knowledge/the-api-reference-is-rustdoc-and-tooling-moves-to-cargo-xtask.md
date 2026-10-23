@@ -9,7 +9,7 @@ answers:
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "in what order do the doctrine gates move to cargo xtask"
-  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability)"
+  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier)"
   - "which crates may xtask depend on (serde_json, sha2)"
   - "how do the xtask ports read JSON like Python (pyjson)"
   - "what checks that the doctrine tables match the driver registry (DOCTRINE-TABLES)"
@@ -22,7 +22,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -55,11 +55,12 @@ cases (`.17`), and see Perl's view of values through `xtask/src/perl.rs`; since 
 gates move one leaf each as `cargo xtask check <doctrine>` (`xtask/src/checks/`; `rustdoc` since `.8`, `readme-policy`
 since `.12`, `section-anchors` since `.13.a`, `task-node-retention` since `.13.b`, `contract-encoding` since `.13.c`,
 `ownership-citations` since `.13.d`, `published-assertions` since `.13.e`, `residual-actionability` since `.13.f`,
-which completes wave 2; `doctrine-tables`, the `DOCTRINE-TABLES` doctrine `.18` added after both doctrine tables were
-found to have drifted from the driver's registry, was written natively), in `.6`'s four waves: the small shell gates
-(`.8`-`.12`), the single-file Perl and Python gates, the multi-file gates and corpus oracles, then the composites and
-the driver; a port proves parity on the current tree, every self-test case and a broken input per refusal, and from
-wave 2 may use crates the workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
+which completes wave 2, and `corpus-frontier` since `.14.a`, its adapter and Perl core one module; `doctrine-tables`,
+the `DOCTRINE-TABLES` doctrine `.18` added after both doctrine tables were found to have drifted from the driver's
+registry, was written natively), in `.6`'s four waves: the small shell gates (`.8`-`.12`), the single-file Perl and
+Python gates, the multi-file gates and corpus oracles, then the composites and the driver; a port proves parity on
+the current tree, every self-test case and a broken input per refusal, and from wave 2 may use crates the workspace
+already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
 kit artifacts of the five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle,
 `check_task_acceptance.sh`, `check_claim_verification.pl`, the driver and the hooks) stay in their portable language,
 because other repositories copy them. The `readme-policy` port fixed two fail-opens in the script it replaced: its

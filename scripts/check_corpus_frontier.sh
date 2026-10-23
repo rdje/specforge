@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# SpecForge adapter for the CORPUS-FRONTIER doctrine (CORPUS-COVERAGE.4.1).
+# SpecForge adapter for the CORPUS-FRONTIER doctrine (CORPUS-COVERAGE.4.1), native since RUSTDOC-AND-XTASK.14.a in
+# `cargo xtask check corpus-frontier` (xtask/src/checks/corpus_frontier.rs).
 #
-# The refresh frontier must be DERIVED from persisted corpus evidence and diffed against an exact
-# declaration, never carried as a number each slice decrements. The core, its rationale, and its
-# four checks live in scripts/check_corpus_frontier_census.pl.
-#
-# Runs the core's self-test first when checking this repository, so the gate is never trusted on a
-# day its own negatives have not been re-proven.
+# The refresh frontier must be DERIVED from persisted corpus evidence and diffed against an exact declaration,
+# never carried as a number each slice decrements. The native check runs the core's self-test first when checking
+# this repository, so the gate is never trusted on a day its own negatives have not been re-proven. This shim keeps
+# the doctrine's registered path, its argument refusal and the project-data activation.
 set -uo pipefail
 
 ADAPTER_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -20,15 +19,5 @@ if [ "$#" -gt 0 ]; then
   fi
   ROOT="$(cd "$2" && pwd)"
 fi
-
-fail=0
-if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
-  perl "$ROOT/scripts/check_corpus_frontier_census.pl" --self-test || fail=1
-fi
-
-perl "$ROOT/scripts/check_corpus_frontier_census.pl" \
-  --root "$ROOT" \
-  --contract doctrine/corpus_frontier/census.json \
-  --check || fail=1
-
-exit "$fail"
+cd "$ADAPTER_ROOT"
+exec cargo xtask check corpus-frontier --root "$ROOT"
