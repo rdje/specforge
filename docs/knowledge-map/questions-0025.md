@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why does my visual asset have no interior_texts key
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why does narrowing the dynamic subject lose NVMe register-row constraints
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -296,5 +298,3 @@
   > why is AxSNOOP's absent value bound to AWSNOOP and ARSNOOP now
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)

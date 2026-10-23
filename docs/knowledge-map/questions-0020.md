@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > which behavioral genericity transforms cover rich PDF capture
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which binary does check_proof_seal_currency.sh probe with
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
@@ -295,5 +297,3 @@
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > which signal is a conditional rule's consequent signal
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > which signal tables have per-row column drift

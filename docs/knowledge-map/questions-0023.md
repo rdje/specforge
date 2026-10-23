@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -296,5 +298,3 @@
   > why does PPROT publish members named 0 and 1
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why does QDENY output absent or tied low not bind a constraint

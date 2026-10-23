@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
+  > why did 102 invariants leave the USB4 connection-manager guide and ADIv6 (withhold_software_rules, software_statement_ids)
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did 64 AArch64 External Debug interfaces disappear
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -295,5 +297,3 @@
   > why did the Knowledge Map bundle's 512-fact and 4,096-key caps move
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence

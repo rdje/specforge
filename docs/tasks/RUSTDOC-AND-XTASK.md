@@ -90,12 +90,18 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.2 — rustdoc builds warning-free, and a commit that breaks it is refused`
 
 - ID: `RUSTDOC-AND-XTASK.3`
-  Status: `pending`
+  Status: `done` (`2026-10-23`)
   Goal: the API reference is published beside the mdBook
   Acceptance: the docs build writes the four crates' rustdoc into `generated/mdbook/specforge/api/`; a book
   reference page links each crate's index; `mdbook build` and the link targets are verified.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `scripts/run_docs_ci.sh` now builds the rustdoc after the book, under the `RUSTDOC`
+  doctrine's `-D warnings`, copies `target/doc` into `generated/mdbook/specforge/api/` and fails if any of the four
+  crates' `index.html` is missing. The book's new chapter `reference/api-reference.md` (listed in `SUMMARY.md` under
+  Reference) says what each crate is, `specforge_core` first, and links each index. Measured: the docs build passes;
+  the four links on the built page resolve to real files; the API reference is 196 MiB under the gitignored
+  `generated/`.
+  Verification: `bash scripts/run_docs_ci.sh` PASS; the built page's four `../api/<crate>/index.html` links resolve
+  Commit: `RUSTDOC-AND-XTASK.3 — the API reference is published beside the mdBook`
 
 - ID: `RUSTDOC-AND-XTASK.4`
   Status: `pending`
@@ -152,11 +158,10 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.3` | `pending` | the API reference, now that rustdoc is green |
-| 2 | `RUSTDOC-AND-XTASK.4` | `pending` | the dispatcher, with no behaviour change |
-| 3 | `RUSTDOC-AND-XTASK.5` | `pending` | the first native command |
-| 4 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
-| 5 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 1 | `RUSTDOC-AND-XTASK.4` | `pending` | the dispatcher, with no behaviour change |
+| 2 | `RUSTDOC-AND-XTASK.5` | `pending` | the first native command |
+| 3 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
+| 4 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
 
 ## Decisions
 
@@ -177,6 +182,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | --- | --- | --- | --- |
 | `2026-10-23` | `.1` | rustdoc build under `-D warnings`; `missing_docs` per crate; scripts inventory | fails on one link; counts and inventory recorded |
 | `2026-10-23` | `.2` | `RUSTDOC` doctrine; RED with the link restored; oracles | PASS; RED fails as it must |
+| `2026-10-23` | `.3` | `run_docs_ci.sh`; the built page's API links | PASS; four links resolve |
 
 ## Commit Log
 
@@ -184,6 +190,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | --- | --- | --- |
 | `.1` | `RUSTDOC-AND-XTASK.1 — measure rustdoc and the scripts, decide the API reference and xtask (DESIGN)` | measurement and decisions |
 | `.2` | `RUSTDOC-AND-XTASK.2 — rustdoc builds warning-free, and a commit that breaks it is refused` | the link escaped; the `RUSTDOC` gate |
+| `.3` | `RUSTDOC-AND-XTASK.3 — the API reference is published beside the mdBook` | the docs build and the book chapter |
 
 ## Changelog
 

@@ -3,6 +3,7 @@ id: the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask
 title: The API reference is the workspace's rustdoc beside the mdBook, and repository tooling moves to cargo xtask one command at a time
 answers:
   - "how is the SpecForge API reference built (cargo doc, rustdoc)"
+  - "where is the API reference (generated/mdbook/specforge/api, reference/api-reference.md)"
   - "does cargo doc pass with -D warnings (CLK_I unresolved link)"
   - "what is the RUSTDOC doctrine / check_rustdoc.sh"
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
@@ -27,9 +28,11 @@ so it is the library API. Undocumented public items (`clippy -W missing_docs`): 
 2,922, `specforge-conformance` 2,883, `specforge-production-graph` 33. Coverage is ratcheted (`.7`), not switched on.
 
 **Decided (`.1`).** The rustdoc of the four crates is built into `generated/mdbook/specforge/api/` beside the book and
-linked from a reference page (`.3`). `cargo xtask` is a workspace member `xtask`, not a default member, standard
-library only, aliased in `.cargo/config.toml`. It starts as a dispatcher to the scripts (`.4`); its first native
-command builds the docs (`.5`); the gates move one leaf each, in an order `.6` sets.
+linked from a reference page: since `.3`, `scripts/run_docs_ci.sh` does both, and the book's
+`reference/api-reference.md` links each crate's index (196 MiB under the gitignored `generated/`). `cargo xtask` is a
+workspace member `xtask`, not a default member, standard library only, aliased in `.cargo/config.toml`. It starts as a
+dispatcher to the scripts (`.4`); its first native command builds the docs (`.5`); the gates move one leaf each, in an
+order `.6` sets.
 
 **Scripts.** 123 under `scripts/`: 64 Python (23,831 lines), 32 Perl (26,723), 27 shell (4,694). The doctrine driver
 calls 23, CI 5, the hooks only the driver; 53 are maintenance tools run by hand. Records cite them 8,089 times, so a

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why does QDENY output absent or tied low not bind a constraint
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
@@ -295,5 +297,3 @@
   > why does my census of backend.json tables find only 477
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why does my visual asset have no interior_texts key

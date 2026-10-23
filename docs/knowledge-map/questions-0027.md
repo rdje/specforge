@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why is signal direction hard to lower faithfully to a single .isf module
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why is source_ref ambiguous
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)

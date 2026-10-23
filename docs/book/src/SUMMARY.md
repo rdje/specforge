@@ -39,6 +39,7 @@
   - [Extraction Architecture Contract](reference/extraction-architecture.md)
   - [IntentIR Product Contract](reference/intentir-contract.md)
   - [Generated Artifacts](reference/generated-artifacts.md)
+  - [API Reference](reference/api-reference.md)
   - [Documentation Scope And Continuity](reference/documentation-scope.md)
   - [Live Docs And Continuity](reference/live-docs.md)
   - [Containment Adoption, Surface By Surface](reference/containment-adoption.md)

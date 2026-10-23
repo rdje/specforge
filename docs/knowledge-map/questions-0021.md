@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > which signal tables have per-row column drift
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > which source modalities and IntentIR surfaces are required per chip-spec category
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -295,5 +297,3 @@
   > why could the 262-table upper bound not be reproduced
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
-- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
-  > why did 102 invariants leave the USB4 connection-manager guide and ADIv6 (withhold_software_rules, software_statement_ids)

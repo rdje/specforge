@@ -136,6 +136,8 @@
   > where is the AHB normalized bundle
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > where is the APB normalized bundle after WIRE-BASED-100.9b
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > where is the API reference (generated/mdbook/specforge/api, reference/api-reference.md)
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > where is the AXI normalized bundle
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -296,5 +298,3 @@
   > which arrow spellings does the declaration reader accept
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > which banded registries are coherent
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > which behavioral genericity transforms cover rich PDF capture

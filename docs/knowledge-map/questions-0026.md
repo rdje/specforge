@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > why is DATA_WIDTH declared as 8 in the AXI isf
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -296,5 +298,3 @@
   > why is section-title boilerplate filtering insufficient
 - [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
   > why is seed_swd's CSYSPWRUPACK gold must_be_high and not must_be_asserted
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why is signal direction hard to lower faithfully to a single .isf module
