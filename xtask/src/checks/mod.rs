@@ -3,6 +3,7 @@
 
 pub mod readme_policy;
 pub mod rustdoc;
+pub mod section_anchors;
 
 use std::path::Path;
 
@@ -28,6 +29,11 @@ pub const CHECKS: &[Check] = &[
         name: "readme-policy",
         replaces: "scripts/check_readme_policy.sh",
         run: readme_policy::run,
+    },
+    Check {
+        name: "section-anchors",
+        replaces: "scripts/check_section_anchors.pl",
+        run: section_anchors::run,
     },
 ];
 

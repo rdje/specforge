@@ -174,9 +174,11 @@ mod tests {
                     .map(|check| (check.replaces, format!("check {}", check.name))),
             );
         for (replaces, command) in shims {
+            // A shell shim names the command in its `exec` line, a Perl one in the `exec` list it builds.
             let shim = std::fs::read_to_string(root.join(replaces)).expect("the shim exists");
             assert!(
-                shim.contains(&format!("exec cargo xtask {command}")),
+                shim.contains(&format!("exec cargo xtask {command}"))
+                    || shim.contains(&format!("qw(cargo xtask {command})")),
                 "{replaces} is not a shim over cargo xtask {command}"
             );
         }

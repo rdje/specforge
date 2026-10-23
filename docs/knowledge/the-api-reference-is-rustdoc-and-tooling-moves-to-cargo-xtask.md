@@ -9,7 +9,7 @@ answers:
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "in what order do the doctrine gates move to cargo xtask"
-  - "what is cargo xtask check (rustdoc, readme-policy)"
+  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors)"
   - "can a claim's RED region live outside its producer (source_region.path)"
   - "which scripts are not ported to xtask (portable architecture kits)"
   - "how many scripts does SpecForge have and who calls them"
@@ -19,7 +19,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -47,11 +47,12 @@ dispatches `doctrines`, `ci` and `docs` to their scripts, byte-identical in outp
 `TASKS`), and the production-genericity `DEPENDENCIES` check keeps it dependency-free and disconnected from the
 product; since `.5` `docs` is native (`xtask/src/docs.rs`, with `project_data.rs` for the project-data roots) and
 `scripts/run_docs_ci.sh` is its shim; the gates move one leaf each as `cargo xtask check <doctrine>`
-(`xtask/src/checks/`; `rustdoc` since `.8`, `readme-policy` since `.12`), in `.6`'s four waves: the small shell gates (`.8`-`.12`), the
-single-file Perl and Python gates, the multi-file gates and corpus oracles, then the composites and the driver; a port
-proves parity on the current tree, every self-test case and a broken input per refusal, and from wave 2 may use crates
-the workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the kit artifacts of the
-five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle, `check_task_acceptance.sh`,
+(`xtask/src/checks/`; `rustdoc` since `.8`, `readme-policy` since `.12`, `section-anchors` since `.13.a`), in `.6`'s
+four waves: the small shell gates (`.8`-`.12`), the single-file Perl and Python gates, the multi-file gates and corpus
+oracles, then the composites and the driver; a port proves parity on the current tree, every self-test case and a
+broken input per refusal, and from wave 2 may use crates the workspace already locks. Since `.16` the port covers
+SpecForge's own 16 doctrines only: the kit artifacts of the five portable architectures
+(`check_memory_architecture.sh`, the `knowledge-map/` bundle, `check_task_acceptance.sh`,
 `check_claim_verification.pl`, the driver and the hooks) stay in their portable language, because other repositories
 copy them. The `readme-policy` port fixed two fail-opens in the script it replaced: its `while read` loop skipped a
 last registry row without its newline, and `IFS=$'\t'` merged runs of tabs, so a row with an empty extra column read
