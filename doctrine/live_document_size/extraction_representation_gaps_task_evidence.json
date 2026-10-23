@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65",
-      "literal" : "`.65` — a note printed as a numbered list keeps its number.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65.a",
+      "literal" : "`.65.a` — an enumerated list item keeps its marker.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -181,13 +181,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
-               "bytes" : 34115,
+               "bytes" : 37905,
                "line_bytes" : 119,
-               "lines" : 373
+               "lines" : 414
             },
             "part_id" : "table-reading-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-            "sha256" : "c3a40a5700f5060b262a5ab64403e3237056e0f6e8133420b27d59eda3c0e46f",
+            "sha256" : "bd38a70c6eb1f80061a4a159b9c794b2059b9f9c1ae015c26d491a20a5d89b0a",
             "state" : "active"
          },
          {
@@ -1617,7 +1617,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1701,6 +1701,24 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.71",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
@@ -1831,7 +1849,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.65` — a note printed as a numbered list keeps its number.",
+         "`.65.a` — an enumerated list item keeps its marker.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1864,13 +1882,15 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.65`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.67`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.68`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.70`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.70`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.65.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.65.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.71`"
       ]
    },
    "migration_metadata" : {

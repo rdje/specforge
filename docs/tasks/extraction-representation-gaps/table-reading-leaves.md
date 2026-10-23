@@ -29,13 +29,54 @@ here whole.
   are labels (`.63` binds them), and a marked cell may carry a note that narrows it (`Y 2`: *Not Exclusive write*,
   `.64`); the lowering states both.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.65`
-  Status: `open` (`2026-10-22`; CODE; opened by `.64`)
+  Status: `done` (`2026-10-23`; DESIGN, re-typed from CODE when split; opened by `.64`; opened `.65.a`, `.65.b`, `.71`)
   Goal: **a note printed as a numbered list keeps its number.** **Reproduce:** I2C *Table 3* marks `Target [1]`, `O
   [2]` and `O [3]`, and prints the notes after its continuation as three `list_item` elements on `page_0008` (*Also
   refers to a controller acting as a target.*, *Clock stretching is a feature of some targets …*, *'Bit banging' …
   should consider a START byte.*) with no number, so no mark reaches its note. Acceptance: find where the number is
   lost (the conversion or SourceIR's list reading), keep it so the note is read as note 1-3, never bind by position
   alone, and measure every chain's numbered notes.
+  **Measured `2026-10-23`** (31 chains; `.project-data/tmp/erg-65/markers.py`, `notes.py`). The conversion keeps the
+  number: each retained converter document gives the `list_item` `enumerated: true` and `marker: "[1]"`. The ingest
+  helper copies only `text`, so `ContentElementRecord` drops it. 1,256 enumerated list items in 23 chains: 974 numbered
+  `1.`, 48 bracketed `[1]` (I2C 30, CoreSight BSA 12, I2S 6) and 234 lettered or other. Beside a table whose title or
+  cell closes with the same number (a page either side):
+  - I2C's bracketed items are the notes of *Table 3* (page 8), of the general call table (page 16) and of the timing
+    tables (pages 44-49); I2S's six are its timing table's notes (page 7). CoreSight BSA's twelve are a reference list
+    that no table cites.
+  - Numbered `1.` items are mostly procedure steps: I2C page 7 (*Suppose microcontroller A wants to send …*) sits
+    beside `Target [1]`, and the USB4 guide's steps beside `NA 1`. A number alone would bind by position.
+  - OpenCAPI's two PHY specifications print the notes of a table whose cells say `Note 1` … `Note 3` as a `1.` list
+    after it (9 and 8 items). There the cell names a note, which is another shape (`.71`).
+  **Decided.**
+  - **SourceIR keeps the marker** (`.65.a`). An enumerated list item keeps the converter's marker as written, as
+    `ContentElementRecord.list_marker`, which is omitted when absent. Persisted artifacts recapture it from their
+    retained converter document, as `recapture_tables_from_retained_converter` does tables, and the stages below
+    re-seal content-identically.
+  - **A bracketed marker is a note** (`.65.b`). A list item marked `[N]` prints note `N` on its page. It binds only a
+    mark written the same way (`O [2]`, `general call address [1]`), on the pages beside the table, as a footnote binds
+    a plain mark. A `1.` marker binds nothing, and a mark no note explains, or two notes do, still cites nothing.
+    Today's two note readers (matrix notes, combination key notes) take it; a timing table's notes have no reader yet,
+    which `.65.b` measures and owns.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.65.a`
+  Status: `open` (`2026-10-23`; CODE; opened by `.65`)
+  Goal: **an enumerated list item keeps its marker.** Acceptance: the ingest helper writes the converter's marker of an
+  enumerated `list_item` into `ContentElementRecord.list_marker`; a recapture path fills it for persisted SourceIR from
+  the retained converter document and refreshes the proof; re-seal the 23 chains' stages below content-identically
+  (`rebuild_stage_cascade.sh`); measure every chain (1,256 markers expected).
+- ID: `EXTRACTION-REPRESENTATION-GAPS.65.b`
+  Status: `open` (`2026-10-23`; CODE; opened by `.65`; waits for `.65.a`)
+  Goal: **a bracketed list note binds a bracketed mark.** Acceptance: a list item marked `[N]` is note `N` for a title
+  or cell mark written `[N]` on the pages beside the table, in the matrix and combination note readers; I2C *Table 3*
+  cites its notes 1-3; measure every chain, and own the timing-table notes (I2C pages 44-49, I2S page 7) no reader
+  takes.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.71`
+  Status: `open` (`2026-10-23`; DESIGN; opened by `.65`)
+  Goal: **a cell that names a note reaches the note.** **Reproduce:** OpenCAPI's 25 Gbps and 32 Gbps PHY signaling
+  specifications put `Note 1` … `Note 3` in table cells and print the notes as a `1.` list after the table (pages
+  20-21 and 29-30), and nothing reads them. Acceptance: census cells naming a note and the lists that follow their
+  tables, decide the binding (a `Note N` cell and an `N.` list item after the same table, never a step list) and the
+  carrier, and measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
   Goal: **a table listing the signals a rule names is the rule's operands.** **Reproduce:** AXI *Table A6.5 Signals

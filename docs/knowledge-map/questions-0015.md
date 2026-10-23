@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
+  > what is ContentElementRecord.list_marker
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > what is DOC-INTENT-TAXONOMY.4c.ii
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
@@ -62,6 +66,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.60 and .60.a
 - [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.61 / .61.a / .61.b / .61.c
+- [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.65 / .65.a / .65.b / .71
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > what is EvidenceIR value_combinations (ValueCombinationRecord, CombinationKey, CombinationRow)
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -292,9 +298,3 @@
   > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
 - [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
   > what is is_storage_or_value_phrase
-- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
-  > what is is_verb_shaped
-- [a-keyword-definition-is-typed-with-the-obligations-it-states](../knowledge/a-keyword-definition-is-typed-with-the-obligations-it-states.md)
-  > what is isf_keyword_obligations_not_bound
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > what is isf_obligations_not_lowered
