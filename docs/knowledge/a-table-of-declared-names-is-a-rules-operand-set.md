@@ -26,10 +26,11 @@ whose cells are declared names are parity check tables (AXI *A16.4*), which `che
 citing a table by number is common (43 in 5 chains), but the others cite encodings and field layouts.
 
 **Decided (`.67`).**
-- **The record:** EvidenceIR `signal_sets`, one per table (continuations joined by caption) whose every non-empty
-  cell names a declared signal, collective or slice of one, with at least four cells. It holds the caption, the
-  members in reading order (as written, with name and bits) and `citing_statement_ids`: the statements naming the
-  table by its caption number (`.67.a`).
+- **The record (read since `.67.a`):** EvidenceIR `signal_sets` (`read_signal_sets`, `signal_set_surface`), one per
+  table (continuations joined by caption) whose every non-empty cell names a declared signal, collective or slice of
+  one, with at least four cells. It holds the caption, the members in reading order (as written, with name and bits)
+  and `citing_statement_ids`: the statements naming the table by its caption number (`names_table`). AXI's is
+  `signal_set_0001`, citing `statement_1958`; it reaches IntentIR unchanged.
 - **The rule stays as written:** the caption and citing sentences state it; the record gives them their operands. An
   equality between two transactions' values has no SemanticIR rule form and no `.isf` form.
 - **Not lowered:** one adapter residual per set (`.67.b`).

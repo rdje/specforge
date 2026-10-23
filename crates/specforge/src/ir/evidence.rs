@@ -445,6 +445,10 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents with none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub message_signal_layouts: Vec<MessageSignalLayoutRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.67.a: the tables whose every cell names a declared signal, one set each, with the
+    /// statements citing them. Empty (serde-skipped) for documents with none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_sets: Vec<SignalSetRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.i: the two-way tables whose cells are marks or modal words. Empty
     /// (serde-skipped) for documents with none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -1155,6 +1159,40 @@ pub enum MessageBitSource {
     },
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.67.a` — a table whose every cell names a declared signal or collective, or a slice of
+/// one: the operands of a rule its caption and the sentences citing it state (AXI *A6.5 Signals that should be the
+/// same in an exclusive sequence*, cited by *If any of the signals shown in Table A6.5 are different …*). The rule
+/// stays as written in those sentences; the record gives it its operands. One record per table and its continuations.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalSetRecord {
+    /// Stable id, e.g. `signal_set_0001`.
+    pub signal_set_id: String,
+    /// The table and, in order, each continuation of it.
+    pub table_ids: Vec<String>,
+    /// The table's caption, as written, when it has one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub caption: Option<String>,
+    /// The cells, in reading order.
+    pub members: Vec<SignalSetMember>,
+    /// The statements that name the table by its caption's number (*Table A6.5*), the caption and the rows aside.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub citing_statement_ids: Vec<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.67.a` — one cell of a [`SignalSetRecord`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalSetMember {
+    /// The table (page fragment) the cell sits in.
+    pub table_id: String,
+    /// The cell as written (`AxCACHE[1:0]`).
+    pub text: String,
+    /// The declared signal or collective it names (`AxCACHE`).
+    pub name: String,
+    /// The slice it selects, as written (`[1:0]`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bits: Option<String>,
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a two-way table: a row per item (*Opcode*, *Feature*, *Parameter*), a
 /// column per mode, configuration, version or event, and each cell a mark (`Y`, `-`, `X`, `M`, `O`, `N/A`) or a modal
 /// word (*Required*, *Permitted*, *Compatible*, *May be off*) for that pair. One record per table and its
@@ -1711,6 +1749,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("value_combinations", "evidence.protocol_structure"),
     ("signal_layouts", "evidence.protocol_structure"),
     ("message_signal_layouts", "evidence.protocol_structure"),
+    ("signal_sets", "evidence.protocol_structure"),
     ("matrix_tables", "evidence.protocol_structure"),
     ("protocol_transitions", "evidence.protocol_structure"),
     ("protocol_actors", "evidence.protocol_structure"),
@@ -2126,6 +2165,7 @@ impl EvidenceIr {
         insert_field!(value_combinations);
         insert_field!(signal_layouts);
         insert_field!(message_signal_layouts);
+        insert_field!(signal_sets);
         insert_field!(matrix_tables);
         insert_field!(protocol_transitions);
         insert_field!(protocol_actors);
@@ -2810,6 +2850,7 @@ impl EvidenceIr {
             value_combinations,
             signal_layouts,
             message_signal_layouts,
+            signal_sets,
         ) = converge_evidence_extractions(
             source_ir,
             extracted_statements,
@@ -3055,6 +3096,7 @@ impl EvidenceIr {
             value_combinations,
             signal_layouts,
             message_signal_layouts,
+            signal_sets,
             matrix_tables,
             protocol_transitions,
             protocol_actors,
@@ -32918,6 +32960,132 @@ fn message_signal_layout_surface(
     records
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.67.a` — the tables whose every cell names a declared signal or collective, or a slice
+/// of one, and how many tables of that shape there were. A table of the shape holds at least four non-empty cells,
+/// header and body alike (AXI *A6.5* prints its first row as a header), each `NAME` or `NAME[bits]` for a declared
+/// name; any other non-empty cell refuses it. A continuation joins the nearest preceding table of the shape its
+/// caption names.
+fn read_signal_sets(
+    source_ir: &SourceIr,
+    signal_titles: &HashSet<String>,
+) -> (Vec<SignalSetRecord>, usize) {
+    let member = |table_id: &str, cell: &str| -> Option<SignalSetMember> {
+        let text = cell.trim();
+        let (name, bits) = match parse_name_slice(text) {
+            Some((name, bits, _, _)) => (name, Some(bits.to_string())),
+            None => (text, None),
+        };
+        signal_titles.contains(name).then(|| SignalSetMember {
+            table_id: table_id.to_string(),
+            text: text.to_string(),
+            name: name.to_string(),
+            bits,
+        })
+    };
+    let mut records: Vec<(Option<String>, SignalSetRecord)> = Vec::new();
+    let mut candidates = 0;
+    for table in &source_ir.structured_tables {
+        let cells: Vec<&str> = table
+            .header_rows
+            .iter()
+            .chain(&table.body_rows)
+            .flatten()
+            .map(|cell| cell.text.trim())
+            .filter(|text| !text.is_empty())
+            .collect();
+        let members: Option<Vec<SignalSetMember>> = cells
+            .iter()
+            .map(|cell| member(&table.table_id, cell))
+            .collect();
+        let caption = caption_table_ref(table.caption_text.as_deref());
+        let head = match &caption {
+            Some((reference, true)) => records.iter().rposition(|(head_reference, _)| {
+                head_reference.as_deref() == Some(reference.as_str())
+            }),
+            _ => None,
+        };
+        match (members, head) {
+            (Some(members), Some(index)) if !members.is_empty() => {
+                let record = &mut records[index].1;
+                record.table_ids.push(table.table_id.clone());
+                record.members.extend(members);
+            }
+            (Some(members), None) if members.len() >= 4 => {
+                candidates += 1;
+                records.push((
+                    caption.map(|(reference, _)| reference),
+                    SignalSetRecord {
+                        signal_set_id: format!("signal_set_{:04}", records.len() + 1),
+                        table_ids: vec![table.table_id.clone()],
+                        caption: table.caption_text.clone(),
+                        members,
+                        citing_statement_ids: Vec::new(),
+                    },
+                ));
+            }
+            _ => {}
+        }
+    }
+    (
+        records.into_iter().map(|(_, record)| record).collect(),
+        candidates,
+    )
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.67.a` — whether `text` names table `reference` (`Table A6.5`), the number not running
+/// on into a longer one (`Table A6.50`, `Table A6.5.1`).
+fn names_table(text: &str, reference: &str) -> bool {
+    let needle = format!("Table {reference}");
+    text.match_indices(&needle).any(|(at, _)| {
+        let rest = &text[at + needle.len()..];
+        let mut chars = rest.chars();
+        match chars.next() {
+            Some(c) if c.is_ascii_alphanumeric() => false,
+            Some('.' | '-') => !chars.next().is_some_and(|c| c.is_ascii_digit()),
+            _ => true,
+        }
+    })
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.67.a` — the signal sets the last convergence pass read, each joined to the statements
+/// that name its table by number (neither its caption nor a row of it), recorded as the `signal_sets` surface only when
+/// a table had the shape, so a document without one keeps its manifest.
+fn signal_set_surface(
+    (mut records, candidates): (Vec<SignalSetRecord>, usize),
+    statements: &[ExtractedStatement],
+    manifest: &mut ExtractionManifest,
+) -> Vec<SignalSetRecord> {
+    for record in &mut records {
+        let Some((reference, _)) = caption_table_ref(record.caption.as_deref()) else {
+            continue;
+        };
+        record.citing_statement_ids = statements
+            .iter()
+            .filter(|statement| {
+                let text = statement.text.trim_start();
+                !text.starts_with('|')
+                    && !text.starts_with(&format!("Table {reference}"))
+                    && names_table(text, &reference)
+            })
+            .map(|statement| statement.statement_id.clone())
+            .collect();
+    }
+    if candidates > 0 {
+        manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
+            surface: "signal_sets".to_string(),
+            eligible: 1,
+            entries: vec![crate::ir::extractor::ExtractorRunEntry {
+                name: "declared_name_tables".to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced: candidates,
+                kept: records.len(),
+            }],
+        });
+    }
+    records
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — what a matrix cell is: a mark (`Y`, `-`, `X`, `M`, `O`, `N/A`, a check
 /// mark), a modal word, or a cell that opens with one (*Compatible. Tie AWAKEUP LOW*), once a footnote mark (`O [2]`,
 /// `Y 2`, `On*`) is dropped. These are closed grammatical classes, not a document's vocabulary (ADR 0006).
@@ -34600,6 +34768,7 @@ fn converge_evidence_extractions(
     Vec<ValueCombinationRecord>,
     Vec<SignalLayoutRecord>,
     Vec<MessageSignalLayoutRecord>,
+    Vec<SignalSetRecord>,
 ) {
     let mut signal_names_from_tables = collect_signal_names_from_tables(source_ir, prior_guidance);
     let mut signal_widths_from_tables =
@@ -34646,6 +34815,7 @@ fn converge_evidence_extractions(
     let mut final_value_combinations = (Vec::new(), 0);
     let mut final_signal_layouts = (Vec::new(), 0);
     let mut final_message_signal_layouts = (Vec::new(), 0);
+    let mut final_signal_sets = (Vec::new(), 0);
     let max_passes = source_ir.structured_tables.len().max(1) + 4;
     let mut new_facts_per_pass: Vec<usize> = Vec::new();
     let mut converged = false;
@@ -34738,6 +34908,8 @@ fn converge_evidence_extractions(
         let signal_layouts = read_signal_layouts(source_ir, &signal_titles);
         // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i — a column of signal slices beside a column per message kind.
         let message_signal_layouts = read_message_signal_layouts(source_ir, &signal_titles);
+        // EXTRACTION-REPRESENTATION-GAPS.67.a — a table whose every cell names a declared signal: a rule's operands.
+        let signal_sets = read_signal_sets(source_ir, &signal_titles);
         // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.c.i — a channel code table is read by its own reader, so neither
         // other encoding reader takes it.
         let (channel_tables, channel_statements) = read_channel_code_tables(
@@ -34823,6 +34995,7 @@ fn converge_evidence_extractions(
         final_value_combinations = value_combinations;
         final_signal_layouts = signal_layouts;
         final_message_signal_layouts = message_signal_layouts;
+        final_signal_sets = signal_sets;
 
         new_facts_per_pass.push(new_dynamic_statements.len());
         if new_dynamic_statements.is_empty() {
@@ -34840,6 +35013,11 @@ fn converge_evidence_extractions(
         converged,
     };
 
+    let signal_sets = signal_set_surface(
+        final_signal_sets,
+        &final_extracted_statements,
+        extraction_manifest,
+    );
     (
         final_extracted_statements,
         final_signal_constraints,
@@ -34851,6 +35029,7 @@ fn converge_evidence_extractions(
         value_combination_surface(final_value_combinations, extraction_manifest),
         signal_layout_surface(final_signal_layouts, extraction_manifest),
         message_signal_layout_surface(final_message_signal_layouts, extraction_manifest),
+        signal_sets,
     )
 }
 
@@ -46004,7 +46183,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 52);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 53);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -52320,6 +52499,117 @@ The control register.
         );
         assert_eq!(matrices[1].cell_class, super::MatrixCellClass::Modal);
         assert!(matrices[1].legend.is_empty());
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.67.a` — a table whose every cell names a declared signal, collective or slice of
+    /// one is a signal set, its continuation joined and the sentences naming its number cited; a table with any other
+    /// cell, or fewer than four cells, is none.
+    #[test]
+    fn a_table_of_declared_names_is_a_signal_set() -> Result<()> {
+        assert!(super::names_table(
+            "the signals shown in Table A6.5 are different",
+            "A6.5"
+        ));
+        assert!(super::names_table("as listed in Table A6.5.", "A6.5"));
+        assert!(!super::names_table("see Table A6.50", "A6.5"));
+        assert!(!super::names_table("see Table A6.5.1", "A6.5"));
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("sets.md");
+        fs::write(&source, "# Sets\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, caption: Option<&str>, header: &[&str], body: &[&[&str]]| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                row_count: (1 + body.len()) as u32,
+                col_count: header.len() as u32,
+                header_rows: rows(&[header]),
+                body_rows: rows(body),
+            }
+        };
+        source_ir.structured_tables.extend([
+            table(
+                "table_set",
+                Some("Table A6.5: Signals that should be the same"),
+                &["AxID", "AxADDR"],
+                &[&["AxLEN", "AxCACHE[1:0]"]],
+            ),
+            table(
+                "table_set_continued",
+                Some("Table A6.5 Continued from previous page"),
+                &["AxPROT", ""],
+                &[],
+            ),
+            table(
+                "table_mixed",
+                Some("Table A6.6: Mixed"),
+                &["AxID", "Description"],
+                &[&["AxLEN", "AxPROT"]],
+            ),
+            table("table_small", None, &["AxID", "AxLEN"], &[&["AxPROT"]]),
+        ]);
+        let titles: std::collections::HashSet<String> =
+            ["AxID", "AxADDR", "AxLEN", "AxCACHE", "AxPROT"]
+                .into_iter()
+                .map(str::to_string)
+                .collect();
+        let read = super::read_signal_sets(&source_ir, &titles);
+        assert_eq!(read.1, 1, "one table of the shape");
+        let statement = |id: &str, text: &str| super::ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class: super::StatementClass::SourceFact,
+            modality: super::EvidenceModality::Text,
+            evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        };
+        let statements = [
+            statement(
+                "statement_0001",
+                "If any of the signals shown in Table A6.5 are different, the write fails.",
+            ),
+            statement(
+                "statement_0002",
+                "Table A6.5: Signals that should be the same",
+            ),
+            statement("statement_0003", "| AxID | AxADDR | Table A6.5 |"),
+            statement("statement_0004", "See Table A6.50 for more."),
+        ];
+        let mut manifest = super::ExtractionManifest::default();
+        let sets = super::signal_set_surface(read, &statements, &mut manifest);
+        assert_eq!(sets.len(), 1);
+        assert_eq!(sets[0].table_ids, ["table_set", "table_set_continued"]);
+        assert_eq!(
+            sets[0]
+                .members
+                .iter()
+                .map(|member| member.name.as_str())
+                .collect::<Vec<_>>(),
+            ["AxID", "AxADDR", "AxLEN", "AxCACHE", "AxPROT"]
+        );
+        assert_eq!(sets[0].members[3].text, "AxCACHE[1:0]");
+        assert_eq!(sets[0].members[3].bits.as_deref(), Some("[1:0]"));
+        assert_eq!(sets[0].members[4].table_id, "table_set_continued");
+        assert_eq!(sets[0].citing_statement_ids, ["statement_0001"]);
+        assert_eq!(manifest.surfaces.len(), 1);
         Ok(())
     }
 

@@ -154,11 +154,26 @@ here whole.
   - **Not lowered.** Carried to IntentIR typed, with one adapter residual per set (`.67.b`), as for signal layouts.
     ADR 0033 §4 files no FSMGen request until a rule needs it.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67.a`
-  Status: `open` (`2026-10-23`; CODE; opened by `.67`)
+  Status: `done` (`2026-10-23`; CODE; opened by `.67`; checklist below)
   Goal: **a table of declared names is EvidenceIR's `signal_sets`.** Acceptance: read `.67`'s record (every cell a
   declared signal, collective or slice of one; continuations joined by caption; members as written with name and
   bits; the statements citing the table by number), register the field (rule fields, inventories), re-seal what the
   ruleset hash moves, carry it to IntentIR, and measure every chain (AXI *A6.5*, 25 members, one citing sentence).
+  **Done `2026-10-23`.**
+  - **Record.** EvidenceIR `signal_sets` (`SignalSetRecord`: the tables, the caption, `SignalSetMember` per cell with
+    its text, name and bits, and `citing_statement_ids`), carried unchanged to SemanticIR and IntentIR.
+  - **Reader.** `read_signal_sets` runs in each convergence pass beside the layout readers: every non-empty cell,
+    header and body, names a declared signal or collective (`NAME` or `NAME[bits]`), at least four; a continuation
+    joins the nearest preceding set its caption names. `signal_set_surface` then cites, from the final statements,
+    each that names the table by number (`names_table`: *Table A6.5*, not *A6.50* or *A6.5.1*), the caption and rows
+    aside, and records the manifest only for a document with a candidate. Registered in the EvidenceIR, SemanticIR and
+    IntentIR rule fields and both production-genericity inventories.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI gains `signal_set_0001` (`table_0092`, 25 members,
+    citing `statement_1958`) and its manifest entry. Rebuilt stage by stage, AXI moved only in `signal_sets` and,
+    in SemanticIR and IntentIR, `captured_region_residuals` (181 -> 180: `table_0092` is now cited by a record); its
+    adapter (117 residuals) and `manager.isf` are unchanged.
+  - **Re-sealed.** The new field moved every stage's ruleset hash; `rebuild_stage_cascade.sh --write` re-sealed all
+    31 chains, content-identical at every stage.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67.b`
   Status: `open` (`2026-10-23`; CODE; opened by `.67`; waits for `.67.a`)
   Goal: **the adapter names each signal set it does not lower.** Acceptance: one residual per `signal_sets` record,
@@ -534,3 +549,25 @@ here whole.
   beside the table; no document, table or mark list.
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (I2C *Table 3* cites its notes); KM card
   `a-list-items-number-is-the-converters-marker`; `.72` and `.73` opened.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.67.a` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `.67`'s census: one table of declared names, AXI *A6.5*, read by no record.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` had no reader or record for a table of
+  names, and nothing joined a sentence to the table it cites. RED 7/7, the file restored byte-identically: a cell
+  naming no declared signal accepted, fewer than four cells accepted, a continuation not joined, a slice's bits
+  dropped, a longer table number cited, the caption cited, a row cited; each fails
+  `a_table_of_declared_names_is_a_signal_set`. The IntentIR carriage is pinned by
+  `projects_protocol_surfaces_exactly_across_all_three_stages`.
+- [x] **ADDRESSED (verified)** — AXI's set above, carried to IntentIR.
+- [x] **NO REGRESSION** — `rebuild_stage_cascade.sh --write` 31 chains content-identical at all four stages;
+  `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seed reports byte-identical to `.65.b`'s (temp
+  paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D
+  warnings` clean. `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 passed; the
+  stage field-count pins moved by one each (EvidenceIR 53, SemanticIR 67, IntentIR 66 and 46 carried) and the rule
+  count 214 -> 217. `flow_census.json` rolled (+3 functions, +16 decision sites, +55 helper edges, +2 semantic
+  macros); the boundary moved by the new producer, rule roots 137 and grammar declassifiers 78.
+- [x] **GENERICITY (ADR 0006)** — declared names, slice syntax, caption numbers and their citation in prose; no
+  document, signal or vendor vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A table of signal names a rule cites*), `pipeline/semanticir.md`,
+  `pipeline/intentir.md`; KM card `a-table-of-declared-names-is-a-rules-operand-set`.

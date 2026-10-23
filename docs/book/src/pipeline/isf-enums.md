@@ -621,6 +621,19 @@ three tables are read, 56 rows each; no other chain has the shape. The message k
 IntentIR unchanged, and the adapter states one `isf_protocol_message_signal_layout_*` residual per record naming its
 signals and message kinds: no `.isf` port takes a per-message bit mapping (FSMGen ladder F29, *anticipated*).
 
+### A table of signal names a rule cites
+
+AXI's table *Signals that should be the same in an exclusive sequence* (*A6.5*) is a grid of declared names (`AxID`,
+`AxADDR` … `AxCACHE[1:0]` … `AxMMUSSIDV`). The rule is in its caption and in the sentence before it, which cites it
+by number: *If any of the signals shown in Table A6.5 are different between the read and write requests in an
+exclusive sequence, the exclusive write might fail*. Since `EXTRACTION-REPRESENTATION-GAPS.67.a` such a table is an
+EvidenceIR `signal_sets` record: every non-empty cell names a declared signal or collective, or a slice of one, and
+there are at least four. It keeps the caption, each member as written with its name and bits, and
+`citing_statement_ids`, the statements that name the table by its number (not the caption or a row). The rule itself
+stays as written; nothing turns *should be the same* into a constraint, since an equality between two transactions'
+values has no SemanticIR or `.isf` form. On `2026-10-23` AXI's is the only one, with one citing sentence. It reaches
+IntentIR unchanged, and `.67.b` adds the adapter's residual.
+
 ### A table of marks per pair of keys
 
 AXI *Table A12.11* says which tag operation each read opcode may carry under each `MTE_Support` value (`Y` or `-`).

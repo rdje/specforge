@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.a",
-      "literal" : "`.67.a` — a table of declared names is EvidenceIR's `signal_sets`.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.b",
+      "literal" : "`.67.b` — the adapter names each signal set it does not lower.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -181,13 +181,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
-               "bytes" : 49306,
+               "bytes" : 52795,
                "line_bytes" : 119,
-               "lines" : 536
+               "lines" : 573
             },
             "part_id" : "table-reading-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-            "sha256" : "59a428a0521735330f85c22688fe58fa02a98fcd0eb058783f97403670ebdd47",
+            "sha256" : "6e11dd71d0133ec109327360ca5e7f8ebd3e9b9157ef6d71328d0fd63596691e",
             "state" : "active"
          },
          {
@@ -1737,7 +1737,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1873,7 +1873,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.67.a` — a table of declared names is EvidenceIR's `signal_sets`.",
+         "`.67.b` — the adapter names each signal set it does not lower.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1914,7 +1914,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.71`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.72`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.73`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.67.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.67.b`"
       ]
    },

@@ -605,6 +605,8 @@ Nine evidence-grounded protocol collections, and the signal-presence records, cr
 - `signal_layouts` — the tables naming a signal's bit sub-fields, one layout each (`.3.c.iv.b.ii`)
 - `message_signal_layouts` — the tables giving a signal's bits per message kind, each bit's source per message
   (`.3.c.iv.c.ii`)
+- `signal_sets` — the tables whose every cell names a declared signal, each with the sentences citing it by number
+  (`.67.a`)
 - `matrix_tables` — the two-way tables of marks or modal words, with their legends and notes (`.3.c.v.ii`)
 - `interface_edge_timings`
 - `signal_presence_records` — which signals exist per variant, under what condition, and the value an absent one

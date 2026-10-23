@@ -18,7 +18,7 @@ use crate::ir::evidence::{
     MessageSignalLayoutRecord, OptionalFeatureRecord, PermissionRuleRecord,
     ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
     SignalLayoutRecord, SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
-    SignalSemanticConflictRecord, SoftwareIntentRecord, ValueCombinationRecord,
+    SignalSemanticConflictRecord, SignalSetRecord, SoftwareIntentRecord, ValueCombinationRecord,
 };
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
@@ -192,6 +192,10 @@ pub struct IntentIr {
     /// SemanticIR unchanged.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub message_signal_layouts: Vec<MessageSignalLayoutRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.67.a — the tables whose every cell names a declared signal, carried from
+    /// SemanticIR unchanged.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_sets: Vec<SignalSetRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — the two-way tables of marks or modal words, carried losslessly from
     /// SemanticIR (ADR 0016). The adapter lowers none of them and keeps one residual per matrix.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -363,6 +367,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("value_combinations", "intent.carried_semantics"),
     ("signal_layouts", "intent.carried_semantics"),
     ("message_signal_layouts", "intent.carried_semantics"),
+    ("signal_sets", "intent.carried_semantics"),
     ("matrix_tables", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
     ("signal_presence_records", "intent.carried_semantics"),
@@ -426,6 +431,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "value_combinations",
     "signal_layouts",
     "message_signal_layouts",
+    "signal_sets",
     "matrix_tables",
     "interface_edge_timings",
     "signal_presence_records",
@@ -804,6 +810,7 @@ impl IntentIr {
             value_combinations: semantic_ir.value_combinations.clone(),
             signal_layouts: semantic_ir.signal_layouts.clone(),
             message_signal_layouts: semantic_ir.message_signal_layouts.clone(),
+            signal_sets: semantic_ir.signal_sets.clone(),
             matrix_tables: semantic_ir.matrix_tables.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             signal_presence_records: semantic_ir.signal_presence_records.clone(),
@@ -890,6 +897,7 @@ impl IntentIr {
         insert_field!(value_combinations);
         insert_field!(signal_layouts);
         insert_field!(message_signal_layouts);
+        insert_field!(signal_sets);
         insert_field!(matrix_tables);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
@@ -1481,6 +1489,7 @@ impl IntentIr {
             value_combinations: Vec::new(),
             signal_layouts: Vec::new(),
             message_signal_layouts: Vec::new(),
+            signal_sets: Vec::new(),
             matrix_tables: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_presence_records: Vec::new(),
@@ -3943,6 +3952,14 @@ mod tests {
                       "sources": [{"kind": "field", "name": "VA", "bits": "[56]", "msb": 56, "lsb": 56}]}]
         }]))?;
         let expected_message_layouts = evidence_ir.message_signal_layouts.clone();
+        // EXTRACTION-REPRESENTATION-GAPS.67.a — a signal set is carried as it is.
+        evidence_ir.signal_sets = serde_json::from_value(serde_json::json!([{
+            "signal_set_id": "signal_set_0001", "table_ids": ["table_0092"],
+            "caption": "Table A6.5: Signals that should be the same in an exclusive sequence",
+            "members": [{"table_id": "table_0092", "text": "AxCACHE[1:0]", "name": "AxCACHE", "bits": "[1:0]"}],
+            "citing_statement_ids": ["statement_1958"]
+        }]))?;
+        let expected_signal_sets = evidence_ir.signal_sets.clone();
         // EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — a matrix table is carried as it is.
         evidence_ir.matrix_tables = vec![crate::ir::evidence::MatrixTableRecord {
             matrix_id: "matrix_table_0001".to_string(),
@@ -3976,6 +3993,7 @@ mod tests {
         assert_eq!(semantic_ir.value_combinations, expected_combinations);
         assert_eq!(semantic_ir.signal_layouts, expected_layouts);
         assert_eq!(semantic_ir.message_signal_layouts, expected_message_layouts);
+        assert_eq!(semantic_ir.signal_sets, expected_signal_sets);
         assert_eq!(semantic_ir.matrix_tables, expected_matrices);
         semantic_ir.write_to_disk()?;
 
@@ -3990,6 +4008,7 @@ mod tests {
         assert_eq!(intent_ir.value_combinations, expected_combinations);
         assert_eq!(intent_ir.signal_layouts, expected_layouts);
         assert_eq!(intent_ir.message_signal_layouts, expected_message_layouts);
+        assert_eq!(intent_ir.signal_sets, expected_signal_sets);
         assert_eq!(intent_ir.matrix_tables, expected_matrices);
 
         let encoded = serde_json::to_value(&intent_ir)?;
@@ -4018,6 +4037,7 @@ mod tests {
         empty.value_combinations.clear();
         empty.signal_layouts.clear();
         empty.message_signal_layouts.clear();
+        empty.signal_sets.clear();
         empty.matrix_tables.clear();
         let legacy_shape = serde_json::to_value(&empty)?;
         for field in [
@@ -4028,6 +4048,7 @@ mod tests {
             "value_combinations",
             "signal_layouts",
             "message_signal_layouts",
+            "signal_sets",
             "matrix_tables",
         ] {
             assert!(
@@ -6946,8 +6967,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 65);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 45);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 66);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 46);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()
