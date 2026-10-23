@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65.b",
-      "literal" : "`.65.b` — a bracketed list note binds a bracketed mark.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67",
+      "literal" : "`.67` — a table listing the signals a rule names is the rule's operands.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -1431,12 +1431,24 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.71",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.72",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.73",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
@@ -1614,13 +1626,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 41829,
+            "bytes" : 46433,
             "line_bytes" : 119,
-            "lines" : 455
+            "lines" : 506
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "3bcb4cf2e52f9fb64ea1156eb2e54a961c73b85ab0b4c0b9d6611fea3986b2a5",
+         "sha256" : "e24e2103c7466eb6126354375a910168d4678dd4d57b455d4aa780f2f27197d1",
          "state" : "active"
       },
       {

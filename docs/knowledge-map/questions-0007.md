@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how does SpecForge decide signal direction (input/output) in the emitted .isf
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > how does SpecForge decide the radix of an unquoted encoding cell
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -296,5 +298,3 @@
   > how does validate know an intent_ir is stale relative to its semantic_ir
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables

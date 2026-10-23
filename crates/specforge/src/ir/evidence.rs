@@ -19999,13 +19999,12 @@ fn footnote_marks_by_page(source_ir: &SourceIr) -> HashMap<u32, BTreeSet<char>> 
 
 /// EXTRACTION-REPRESENTATION-GAPS.63 — each page's footnotes by mark: a `footnote` element that opens with a note
 /// number or a lowercase letter and then a space or a period, and the text after it (`1 NSH is Non-shareable ( 0b00
-/// ), …` is note `1`), keyed by page number.
+/// ), …` is note `1`), keyed by page number. `.65.b`: a list item marked with a bracketed number prints that note,
+/// its mark kept bracketed (I2C's `[2]` *Clock stretching is a feature of some targets …* is note `[2]`), so it
+/// answers only a mark written the same way; a list item marked `1.` is a step, not a note.
 fn footnote_texts_by_page(source_ir: &SourceIr) -> HashMap<u32, Vec<(String, String)>> {
     let mut notes: HashMap<u32, Vec<(String, String)>> = HashMap::new();
     for element in &source_ir.content_elements {
-        if element.kind != crate::ir::source::ContentElementKind::Footnote {
-            continue;
-        }
         let Some(page) = element
             .page_id
             .as_deref()
@@ -20013,6 +20012,23 @@ fn footnote_texts_by_page(source_ir: &SourceIr) -> HashMap<u32, Vec<(String, Str
         else {
             continue;
         };
+        if element.kind == crate::ir::source::ContentElementKind::ListItem {
+            if let Some(mark) = element
+                .list_marker
+                .as_deref()
+                .filter(|marker| bracketed_note_number(marker).is_some())
+                && !element.text.trim().is_empty()
+            {
+                notes
+                    .entry(page)
+                    .or_default()
+                    .push((mark.to_string(), element.text.trim().to_string()));
+            }
+            continue;
+        }
+        if element.kind != crate::ir::source::ContentElementKind::Footnote {
+            continue;
+        }
         let text = element.text.trim_start();
         let digits = text.chars().take_while(char::is_ascii_digit).count();
         let mark_len = match text.chars().next() {
@@ -31909,9 +31925,22 @@ fn read_value_combinations(
     // pages prints its notes after its last fragment (AXI *A7.3*'s note 1 is two pages after its head).
     let notes = note_numbers_by_page(source_ir);
     let letters_by_page = footnote_marks_by_page(source_ir);
+    // EXTRACTION-REPRESENTATION-GAPS.65.b — and the bracketed marks of list items printed as notes (`[1]`)
+    let list_notes: HashMap<u32, BTreeSet<String>> = footnote_texts_by_page(source_ir)
+        .into_iter()
+        .map(|(page, notes)| {
+            let marks = notes
+                .into_iter()
+                .map(|(mark, _)| mark)
+                .filter(|mark| bracketed_note_number(mark).is_some())
+                .collect();
+            (page, marks)
+        })
+        .collect();
     let table_marks = |table: &StructuredTableRecord| -> BTreeSet<String> {
         printed_note_marks(&notes, table)
             .into_iter()
+            .chain(printed_note_marks(&list_notes, table))
             .map(str::to_string)
             .chain(
                 table_footnote_marks(&letters_by_page, table)
@@ -33206,19 +33235,24 @@ fn read_matrix_tables(
     (records, candidates)
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.65.b` — the note number a bracketed mark holds (`[2]` -> `2`): one or two digits
+/// between square brackets.
+fn bracketed_note_number(text: &str) -> Option<&str> {
+    let inner = text.trim().strip_prefix('[')?.strip_suffix(']')?;
+    ((1..=2).contains(&inner.len()) && inner.bytes().all(|b| b.is_ascii_digit())).then_some(inner)
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.64` — the marks a cell or title closes with, in order: the words after its last
 /// other word, each a note number, a bracketed one or a lowercase letter (`Y 2`, `O [2]`, `State 1, 2`). A text of
-/// marks alone (`2, 3`) closes with none.
+/// marks alone (`2, 3`) closes with none. `.65.b`: a bracketed mark stays bracketed (`[2]`), so it cites only a note
+/// printed the same way.
 fn trailing_note_marks(text: &str) -> Vec<String> {
     let mark = |word: &str| -> Option<String> {
         let word = word.trim_end_matches(',');
         let number =
             |text: &str| (1..=2).contains(&text.len()) && text.bytes().all(|b| b.is_ascii_digit());
-        match word
-            .strip_prefix('[')
-            .and_then(|inner| inner.strip_suffix(']'))
-        {
-            Some(inner) => number(inner).then(|| inner.to_string()),
+        match bracketed_note_number(word) {
+            Some(_) => Some(word.to_string()),
             None => (number(word)
                 || (word.len() == 1 && word.bytes().all(|b| b.is_ascii_lowercase())))
             .then(|| word.to_string()),
@@ -51890,7 +51924,7 @@ The control register.
             super::trailing_note_marks("Suspended USB Device State 1, 2"),
             ["1", "2"]
         );
-        assert_eq!(super::trailing_note_marks("O [2]"), ["2"]);
+        assert_eq!(super::trailing_note_marks("O [2]"), ["[2]"]);
         assert!(super::trailing_note_marks("2, 3").is_empty());
         assert!(super::trailing_note_marks("Y").is_empty());
         let tempdir = tempdir()?;
@@ -51979,6 +52013,165 @@ The control register.
         assert_eq!(
             matrices[0].rows[0].cells[1], "Y 2",
             "a cell stays as written"
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.65.b` — a list item marked `[N]` prints note `[N]` and answers only a mark
+    /// written `[N]`; a plain mark keeps answering a footnote, and a step numbered `1.` answers nothing.
+    #[test]
+    fn a_bracketed_list_note_binds_a_bracketed_mark() -> Result<()> {
+        assert_eq!(super::bracketed_note_number("[12]"), Some("12"));
+        assert_eq!(super::bracketed_note_number("1."), None);
+        assert_eq!(super::bracketed_note_number("[a]"), None);
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("listed.md");
+        fs::write(&source, "# Listed\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_features".to_string(),
+            asset_id: "asset_table_features".to_string(),
+            page_id: Some("page_0007".to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: 0,
+            col_count: 0,
+            header_rows: Vec::new(),
+            body_rows: Vec::new(),
+        });
+        let element = |id: &str,
+                       kind: crate::ir::source::ContentElementKind,
+                       page: &str,
+                       marker: Option<&str>,
+                       text: &str| crate::ir::source::ContentElementRecord {
+            element_id: id.to_string(),
+            kind,
+            text: text.to_string(),
+            heading_level: None,
+            page_id: Some(page.to_string()),
+            source_ref: None,
+            source_batch: None,
+            reading_order: 1,
+            list_marker: marker.map(str::to_string),
+        };
+        use crate::ir::source::ContentElementKind::{Footnote, ListItem};
+        source_ir.content_elements.extend([
+            element(
+                "step_1",
+                ListItem,
+                "page_0007",
+                Some("1."),
+                "Send the address.",
+            ),
+            element(
+                "note_1",
+                ListItem,
+                "page_0008",
+                Some("[1]"),
+                "Also refers to a target.",
+            ),
+            element(
+                "note_2",
+                ListItem,
+                "page_0008",
+                Some("[2]"),
+                "Clock stretching is optional.",
+            ),
+            element("fn_1", Footnote, "page_0008", None, "1 A plain footnote."),
+            element(
+                "far_3",
+                ListItem,
+                "page_0020",
+                Some("[3]"),
+                "Printed far away.",
+            ),
+        ]);
+        let row = |feature: &str, cells: [&str; 2]| super::MatrixRow {
+            table_id: "table_features".to_string(),
+            keys: vec![feature.to_string()],
+            cells: cells.iter().map(|cell| cell.to_string()).collect(),
+        };
+        let mut matrices = vec![super::MatrixTableRecord {
+            matrix_id: "matrix_table_0001".to_string(),
+            table_ids: vec!["table_features".to_string()],
+            caption: None,
+            row_key_titles: vec!["Feature".to_string()],
+            column_keys: vec![
+                vec!["Controller".to_string()],
+                vec!["Target [1]".to_string()],
+            ],
+            rows: vec![
+                row("Clock stretching", ["O [2]", "O"]),
+                row("START byte", ["O 1", "O [3]"]),
+            ],
+            cell_class: super::MatrixCellClass::Mark,
+            legend: Vec::new(),
+            notes: Vec::new(),
+        }];
+        super::bind_matrix_notes(&mut matrices, &source_ir);
+        let cell = |row: usize, column: usize| super::MatrixCellPosition { row, column };
+        assert_eq!(
+            matrices[0].notes,
+            [
+                super::MatrixNote {
+                    mark: "[1]".to_string(),
+                    text: "Also refers to a target.".to_string(),
+                    columns: vec![1],
+                    cells: Vec::new(),
+                },
+                super::MatrixNote {
+                    mark: "[2]".to_string(),
+                    text: "Clock stretching is optional.".to_string(),
+                    columns: Vec::new(),
+                    cells: vec![cell(0, 0)],
+                },
+                super::MatrixNote {
+                    mark: "1".to_string(),
+                    text: "A plain footnote.".to_string(),
+                    columns: Vec::new(),
+                    cells: vec![cell(1, 0)],
+                },
+            ],
+            "the step `1.` and the far `[3]` answer nothing"
+        );
+
+        // a combination key titled with a bracketed mark: the mark is no part of its name, and the key keeps its note
+        let cells = |texts: &[&str]| -> Vec<StructuredTableCellRecord> {
+            texts
+                .iter()
+                .map(|text| make_table_cell(text, false))
+                .collect()
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_spaces".to_string(),
+            asset_id: "asset_table_spaces".to_string(),
+            page_id: Some("page_0007".to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: 3,
+            col_count: 3,
+            header_rows: vec![cells(&["PNSE", "PPROT [1]", "Space"])],
+            body_rows: vec![
+                cells(&["0", "0", "Secure"]),
+                cells(&["0", "1", "Non-secure"]),
+            ],
+        });
+        let titles: std::collections::HashSet<String> =
+            ["PNSE", "PPROT"].into_iter().map(str::to_string).collect();
+        let (combinations, _) = super::read_value_combinations(&source_ir, &titles, &[], &[]);
+        let spaces = combinations
+            .iter()
+            .find(|combination| combination.table_ids == ["table_spaces"])
+            .expect("the spaces table is a value combination");
+        assert_eq!(spaces.keys[1].name, "PPROT");
+        assert_eq!(
+            spaces.keys[1].note.as_deref(),
+            Some("Also refers to a target.")
         );
         Ok(())
     }

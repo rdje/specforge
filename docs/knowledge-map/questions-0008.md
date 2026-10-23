@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -295,5 +297,3 @@
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > how many Signal statements does the corpus carry
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > how many SpecForge mdBook doctests currently fail

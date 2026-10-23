@@ -6,6 +6,7 @@ answers:
   - "where is a list item's number (marker, enumerated) in the converter output and in SourceIR"
   - "what is EXTRACTION-REPRESENTATION-GAPS.65 / .65.a / .65.b / .71"
   - "is a numbered list item beside a table a note"
+  - "does I2C Table 3 cite its notes (matrix_table_0001 [1] [2] [3])"
   - "what is ContentElementRecord.list_marker / list_marker_of / source_table_recapture --list-markers"
   - "how is a pre-coordinate batched record placed (page, source_ref)"
 date: 2026-10-23
@@ -38,3 +39,9 @@ whose title or cell closes with the same number:
 **Decided (`.65`).** SourceIR keeps the marker as written (`ContentElementRecord.list_marker`), recaptured for persisted
 artifacts from the retained converter document (`.65.a`). A list item marked `[N]` is note `N` and binds only a mark
 written `[N]` on the pages beside the table, as a footnote binds a plain mark (`.65.b`).
+
+**Bound (`.65.b`, `2026-10-23`).** `footnote_texts_by_page` takes a list item marked `[N]` as note `[N]`, and
+`trailing_note_marks` keeps a bracketed mark bracketed, so I2C *Table 3* cites `[1]`, `[2]` and `[3]` and nothing else
+moved in 31 chains. A combination key titled `PPROT [1]` reads as `PPROT` with its note. I2C's address and timing
+tables cite such notes too, but no reader binds a note there (`.72`), and *Table 3*'s continuation, its header rows
+inverted, never joins the matrix (`.73`).

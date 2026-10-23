@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-61-B-ENABLED-MEMBER-RESIDUALS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-65-B-BRACKETED-LIST-NOTES",
    "baseline": {
-    "analyzed_functions": 2888,
-    "decision_sites": 16383,
-    "helper_edges": 20929,
+    "analyzed_functions": 2890,
+    "decision_sites": 16387,
+    "helper_edges": 20965,
     "semantic_macros": 1650
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 4,
-    "helper_edges": 36,
+    "analyzed_functions": 1,
+    "decision_sites": 7,
+    "helper_edges": 5,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.61.b",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.61.b: the ISF adapter states one residual per enum with a member a property enables, naming each and whether the .isf declares the enum."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.65.b",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.65.b: a list item marked [N] prints note [N], and a bracketed title or cell mark, or a combination key's, answers only it."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

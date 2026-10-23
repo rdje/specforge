@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > does a collective name's sentence have to name declared signals (no, the sentence declares them)
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > does a conditional rule's consequent end at its sentence (yes, since .39.a)
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
@@ -296,5 +298,3 @@
   > does the SourceIR classifier type a bus-mode matrix as a signal table
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
-- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
-  > does the WIRE-BASED-100 temporal key score exceptions

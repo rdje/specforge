@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why were register names synthetic register_table_NNNN and how is the heading association done
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > why were the rows of AXI Table A15.23 DVM Complete request constraints driven unconditionally
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)

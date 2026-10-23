@@ -83,11 +83,42 @@ here whole.
   - **Found.** A record written before `source_batch` existed is addressable after all, by its page:
     `SOURCE-IR-REPRODUCIBILITY.17`.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.65.b`
-  Status: `open` (`2026-10-23`; CODE; opened by `.65`; waits for `.65.a`)
+  Status: `done` (`2026-10-23`; CODE; opened by `.65`; checklist below; opened `.72`, `.73`)
   Goal: **a bracketed list note binds a bracketed mark.** Acceptance: a list item marked `[N]` is note `N` for a title
   or cell mark written `[N]` on the pages beside the table, in the matrix and combination note readers; I2C *Table 3*
   cites its notes 1-3; measure every chain, and own the timing-table notes (I2C pages 44-49, I2S page 7) no reader
   takes.
+  **Done `2026-10-23`.**
+  - **Notes.** `footnote_texts_by_page` also takes a list item whose `list_marker` is a bracketed number, keeping the
+    mark bracketed (`[2]`); a `1.` item stays a step. `trailing_note_marks` keeps a bracketed mark bracketed, so a
+    matrix's `O [2]` cites only note `[2]` and a plain `Y 2` only footnote `2`. The combination reader's marks gain the
+    bracketed list notes beside the table, so a key titled `PPROT [1]` is `PPROT` and keeps note `[1]`.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. I2C *Table 3* (`matrix_table_0001`) cites `[1]` on
+    `Target [1]`, `[2]` on two cells and `[3]` on one; nothing else moved, and no combination key in any chain carries
+    a bracketed mark. AXI's and CoreSight BSA's reference lists sit beside no table that cites them. Rebuilt stage by
+    stage: only `matrix_tables` moved, in EvidenceIR, SemanticIR and IntentIR; I2C's adapter (9 residuals, no `.isf`)
+    is unchanged.
+  - **Owned elsewhere.** I2C's address tables (pages 16, 27) and its timing tables (pages 43-49) cite bracketed notes
+    that no reader binds, and I2S's timing table (page 7) cites its notes in cells that are a mark alone (`[1]`, `[2]`)
+    (`.72`). *Table 3*'s continuation
+    (`table_0005`, `...continued`, its header rows inverted) never joined the matrix, so its `Device ID` row and its
+    `Target [1]` are read by nothing (`.73`).
+- ID: `EXTRACTION-REPRESENTATION-GAPS.72`
+  Status: `open` (`2026-10-23`; DESIGN; opened by `.65.b`)
+  Goal: **a note an address or timing table cites reaches its record.** **Reproduce:** I2C's address table (page 16:
+  `general call address [1]`, `CBUS address [3]`; page 27) and its timing tables (pages 43-49: `data hold time [1]`,
+  `C b = 400 pF [2]`, a cell of `[1]` alone) cite list notes `[1]`-`[11]` printed beside them, which `.65.b` reads,
+  and I2S's timing table (page 7) cites its notes in cells that are a mark alone; only matrices and combination keys
+  bind a note. Acceptance: census the tables, outside matrices and
+  combinations, whose title or cell closes with a mark a nearby note explains, decide each record's carrier (a timing
+  constraint's condition, a reserved address's note) and measure every chain.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.73`
+  Status: `open` (`2026-10-23`; DESIGN; opened by `.65.b`)
+  Goal: **a matrix's continuation joins it.** **Reproduce:** I2C *Table 3* continues on page 8 (`table_0005`, caption
+  `... ...continued`), but the converter put its column titles in the first header row (`| Single controller |
+  Multi-controller | Target [1]`) and the `Feature | Configuration` row second, so the matrix reader neither joins it
+  to `matrix_table_0001` nor reads it, and its `Device ID` row is lost. Acceptance: census matrix continuations
+  refused or unjoined, decide when an inverted header still names the same columns, and measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.71`
   Status: `open` (`2026-10-23`; DESIGN; opened by `.65`)
   Goal: **a cell that names a note reaches the note.** **Reproduce:** OpenCAPI's 25 Gbps and 32 Gbps PHY signaling
@@ -453,3 +484,23 @@ here whole.
 - [x] **LOCKSTEP** — book `pipeline/sourceir.md` (*A numbered list item's marker*; a pre-coordinate record's page
   names its part), `pipeline/isf-enums.md`; KM card `a-list-items-number-is-the-converters-marker` (corrected census);
   `SOURCE-IR-REPRODUCIBILITY.17` opened.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.65.b` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — after `.65.a`, I2C *Table 3*'s `Target [1]`, `O [2]` and `O [3]` still cited nothing,
+  since no note reader took a list item.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `footnote_texts_by_page` read only
+  `footnote` elements, and `trailing_note_marks` dropped a mark's brackets. RED 4/4, the file restored
+  byte-identically: a bracketed mark losing its brackets, a bracketed list item taken as no note, a bracketed letter
+  read as a number, a combination key's bracketed mark unknown; each fails
+  `a_bracketed_list_note_binds_a_bracketed_mark`.
+- [x] **ADDRESSED (verified)** — I2C's three notes above, in the dry-run and the rebuilt chain.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current (I2C rebuilt; a nested field, so no cascade).
+  WIRE-BASED-100: all 11 seed reports byte-identical to `.65.a`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt
+  --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib
+  --exclude specforge-production-graph` 475 / 171 / 1,942 passed. `flow_census.json` rolled (+1 function, +7 decision
+  sites, +5 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a bracketed number on the converter's marker and on a title or cell, and the pages
+  beside the table; no document, table or mark list.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (I2C *Table 3* cites its notes); KM card
+  `a-list-items-number-is-the-converters-marker`; `.72` and `.73` opened.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > does the WIRE-BASED-100 temporal key score exceptions
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > does the actor-relation reader read a Continued from previous page fragment's Source column
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -296,5 +298,3 @@
   > how can one compound sentence contain two independent signal facts
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how complete is a document's extracted intent / what is the per-doc completeness gauge
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > how complete is register-IP / platform-IP / CPU-ISA ISF lowering

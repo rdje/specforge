@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > what is CombinationRow.value_encodings / CombinationValueEncoding / bind_combination_value_encodings
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > what is Condition::Ne
 - [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
@@ -296,5 +298,3 @@
   > what is is_condition_only_subject / conditional_clause_spans
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > what is is_nominal_verb_occurrence
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > why is RACK must be LOW published without during reset
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is RUSERCHK missing from the AXI catalog
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -296,5 +298,3 @@
   > why is the PSEL antecedent dropped in a temporal rule
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why is the SpecForge fact-card catalog almost out of capacity

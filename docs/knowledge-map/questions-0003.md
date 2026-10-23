@@ -204,6 +204,8 @@
   > does GateRecord remain schema compatible
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > does GitHub CI run the full doctrine gate
+- [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
+  > does I2C Table 3 cite its notes (matrix_table_0001 [1] [2] [3])
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > does I2C extraction remain invariant under opaque signal renaming
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
@@ -296,5 +298,3 @@
   > does a citation like TOOLBOX.md section 7.7 still resolve after the toolbox partition (yes - section numbers were deliberately preserved and every cited number is still named in the landing, which routes it to its part in one hop; 26 such citations exist and several sit in sealed archive segments whose source end can never be repaired)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > does a clean checkout or a CI runner pay for the corpus replay build
-- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
-  > does a collective name's sentence have to name declared signals (no, the sentence declares them)

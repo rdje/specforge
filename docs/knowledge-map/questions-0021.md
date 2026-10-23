@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > which table minted Clock and Reset as AHB signals
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > which table wins when two tables list the same field's values
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
@@ -295,5 +297,3 @@
   > why did AXI have 134 actors when APB has 8 and AHB has 25
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why did AXI have 71 registers (signal and property tables with a Default column)
-- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
-  > why did AXI have a BTAGMATCH, SYSCOACK or AxPROT enum with repeated codes (the single-column reader read a jointly keyed table)

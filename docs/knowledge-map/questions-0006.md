@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -295,5 +297,3 @@
   > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how does SpecForge combine confidence across modalities or sources
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how does SpecForge decide signal direction (input/output) in the emitted .isf
