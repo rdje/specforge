@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > where does a question to an upstream project go
+- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
+  > where does a register field bound to a wire go
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > where does a register's byte offset come from when only the caption states it
+- [a-table-of-declared-names-is-a-rules-operand-set](../knowledge/a-table-of-declared-names-is-a-rules-operand-set.md)
+  > where does a rule that cites a table by number (signals shown in Table A6.5) get its operands
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > where does a rule that needs document order belong if SourceIR cannot hold it (EvidenceIR, which reads the whole SourceIR as its input)
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > where does an .isf register var width come from when the document states none
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > where does an active relation verb's object end (at but, and at an infinitive with its own subject: for the Manager to drive)
 - [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
@@ -286,15 +298,3 @@
   > which behavioral genericity transforms cover rich PDF capture
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which binary does check_proof_seal_currency.sh probe with
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > which bit-position columns must a radix repair leave alone
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > which block of the live-docs book chapter was moved out and why
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > which boot-volume Rust directories are allowed
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > which canonical Markdown collections still rely only on git query
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > which caption additions are table-reading descriptions rather than requirements
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > which caption does arm B1 lose that arm A admitted

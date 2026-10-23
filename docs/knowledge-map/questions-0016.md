@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
+  > what is field_sub_table_header / read_field_sub_table / sub_row_cells / raw_column_index / cite_reserved_values
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is figure_region_provenance_id for
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > what is fill_field_signal_bindings
+- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
+  > what is from_to_signal_relations
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > what is fronted_condition_end
+- [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
+  > what is fronted_condition_split
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > what is heading_above_table
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -285,15 +297,3 @@
   > what is the constraint-subject-must-be-declared filter
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > what is the control for a persisted-versus-reader comparison
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what is the corpus impact of the authority empty interface fallback
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is the corpus task evidence writer transaction after migration
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)

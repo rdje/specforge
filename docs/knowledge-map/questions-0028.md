@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > why was the production-genericity pipeline audit partitioned
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > why was the spike's 'manager Reads ARID' direction error not in production
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > why was the task-tree count in live-docs.md wrong
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > why was validate_canonical_recovery_contract.py deleted
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why was was-not-permitted dropped from the negated permission form
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why were ADIv6's CTRL/STAT fields read into ABORT
 - [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)

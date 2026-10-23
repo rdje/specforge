@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why does no live chain emit an isf file
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why does obligation_subject_part look after the comma
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why does one appositive never establish a signal alias
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why does one register appear as several RegisterRecords / how are split register-field tables merged
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > why does reading only [hi:lo] bias a recall census toward wide buses
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > why does recover-register-bits still recover 0 bits after the plumbing is complete
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -286,15 +298,3 @@
   > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > why is DATA_WIDTH declared as 8 in the AXI isf
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is DTI DOWNSTREAM not preserved as a heuristic only wire
-- [a-width-offset-packet-layout-reaches-message-field-records](../knowledge/a-width-offset-packet-layout-reaches-message-field-records.md)
-  > why is Delayed (DL) named DL
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > why is FAST_EXCLUDE membership quoted but never a share
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > why is HPROT bit not an actor
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why is HPROT constrained to 0 in the persisted AHB evidence

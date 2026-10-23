@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how many signals does each AXI channel have
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > how many signals have a parameterised width and how many a derived width
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > how many statements and captions does the persisted corpus hold
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
@@ -287,13 +295,5 @@
   > is a persisted llm_sigcon_ record with a subject the catalog refuses necessarily wrong (no — APB llm_sigcon_0000 PSEL|must_be_asserted is the canonical fact SPEC-TO-INTENT-ALIGNMENT.7a exists to recover, refused by an asymmetry between the two paths rather than by ADR 0037's principle)
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > is a persisted table_kind evidence about the current classifier
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > is a red validator that no gate runs a defect
-- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
-  > is a refused constraint reading still visible somewhere
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > is a remote decision provider still worth running after arm B
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > is a repeated leading token enough to tell a split identifier from a phrase
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > is a sentence opening with the word signal and no attribute a lost declaration
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > is a ported script deleted

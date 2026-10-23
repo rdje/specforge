@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why does ROADMAP.md have per-section line bounds
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does RRESP get no signal constraint from its own table row
+- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
+  > why does SPEC-TO-INTENT-ALIGNMENT.9a stay in its root's owner registry although it is closed
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why does SpecForge keep normalized bundles instead of reclaiming them
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > why does SpecForge not read GIC-600's Distributor / Redistributor / ITS / SPI Collator arrow rows (they are product block names - ADR 0006 - and the document heads those tables Interblock / Interdomain / Interchip signals, so the flow is between two peer blocks and has no port sense without a chosen subject)
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
@@ -285,15 +297,3 @@
   > why does my visual asset have no interior_texts key
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why does narrowing the dynamic subject lose NVMe register-row constraints
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why does no live chain emit an isf file
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does obligation_subject_part look after the comma
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why does one appositive never establish a signal alias
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why does one register appear as several RegisterRecords / how are split register-field tables merged
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > why does reading only [hi:lo] bias a recall census toward wide buses
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)

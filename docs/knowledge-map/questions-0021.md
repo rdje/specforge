@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which source modalities are represented in the first vertical population
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > which source-to-IntentIR categories are supported incomplete or unmeasurable
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a dyn_sigcon record read its parts from
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a sigcon record read its subject condition negation and kind from
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > which specforge documents carry an eval gold and which of them are measurable
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > which stage has no read-only canonical probe
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
 - [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
@@ -285,15 +297,3 @@
   > why did 102 invariants leave the USB4 connection-manager guide and ADIv6 (withhold_software_rules, software_statement_ids)
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did 64 AArch64 External Debug interfaces disappear
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why did 88 CoreSight Base System interfaces disappear
-- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
-  > why did ADIv6 CSW.AddrInc have no values
-- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
-  > why did ADIv6 have an enum named In
-- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
-  > why did ADIv6 have relations like Your reads In
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > why did ADIv6 publish IR register drives DBGTDI or number reads TDI
-- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
-  > why did ADIv6 publish system power drives CSYSPWRUPACK

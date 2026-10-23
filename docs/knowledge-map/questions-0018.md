@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > what refuses a table whose headers are Mode Name and Bus Width
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what remains before the repaired reviewed population can be published
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what remains under-extracted in OpenCAPI Discovery Configuration
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what replaced ProtocolFamily in CorpusMemory schema 7
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > what replaced logic_level_binding_kind_from_text
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > what replaced the SWD-specific EvidenceIR carrier
 - [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
   > what replaced validate_canonical_recovery_contract.py
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -285,15 +297,3 @@
   > where does a minted enum value come from
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > where does a minted enum's name actually come from
-- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
-  > where does a question to an upstream project go
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > where does a register field bound to a wire go
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > where does a register's byte offset come from when only the caption states it
-- [a-table-of-declared-names-is-a-rules-operand-set](../knowledge/a-table-of-declared-names-is-a-rules-operand-set.md)
-  > where does a rule that cites a table by number (signals shown in Table A6.5) get its operands
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > where does a rule that needs document order belong if SourceIR cannot hold it (EvidenceIR, which reads the whole SourceIR as its input)
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > where does an .isf register var width come from when the document states none

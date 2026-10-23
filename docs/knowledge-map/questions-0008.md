@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate know an intent_ir is stale relative to its semantic_ir
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
@@ -209,6 +211,8 @@
   > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal) — four deterministic eval-extraction tasks read the EvidenceIR surfaces directly: serial_frame_field, protocol_operation (once named swd_operation), protocol_state, interface_edge_timing
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > how is the SWDIO sampling and drive-change edge scored
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > how is the SpecForge API reference built (cargo doc, rustdoc)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -293,7 +297,3 @@
   > how many OpenCAPI AFU address note page paths are repository relative
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how many OpenCAPI Certified Definition paths are repository relative
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many OpenCAPI Ready Definition paths are repository relative
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many OpenCAPI Ready page paths are repository relative

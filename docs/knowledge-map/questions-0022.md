@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why did 88 CoreSight Base System interfaces disappear
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > why did ADIv6 CSW.AddrInc have no values
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did ADIv6 have an enum named In
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did ADIv6 have relations like Your reads In
+- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
+  > why did ADIv6 publish IR register drives DBGTDI or number reads TDI
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > why did ADIv6 publish system power drives CSYSPWRUPACK
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
 - [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
@@ -285,15 +297,3 @@
   > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Certified DL signal disappear
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Ready DL signal disappear
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > why did the SWD serial_frame_field score go from 11/11 to 0/11 (because SPEC-TO-INTENT-ALIGNMENT.6d.ii.c at 89d8dee7 on 2026-08-12 retired the protocol-name-bound frame extractor and its fixed phase enum on ADR 0006 genericity grounds; its own ledger entry says the exact comparison retires 22 fixed-phase frame and four named-operation records)
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > why did the bit-range census miss lavalid and lrvalid
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > why did the book quantitative checker separate record and array bounds
-- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
-  > why did the book quantitative-claim census report full coverage while published counts went ungated (its unit vocabulary is a closed alternation assembled from nouns that had already produced a loud miss, and SpecForge's own output nouns had never produced one — a miss there is a silent zero rather than an error, so nothing looked)

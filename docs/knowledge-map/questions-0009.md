@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how many OpenCAPI Ready Definition paths are repository relative
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many OpenCAPI Ready page paths are repository relative
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -246,6 +250,8 @@
   > how many protocol states carry a machine name corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many public fields do SemanticIR and IntentIR declare
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > how many public items lack documentation (missing_docs)
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how many quantitative prose candidates are in the SpecForge book
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -278,6 +284,8 @@
   > how many rows must arm C correct to clear C1
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > how many runs does a doctrine timing need before it can be published
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > how many scripts does SpecForge have and who calls them
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
@@ -290,11 +298,3 @@
   > how many signal_description rows are dropped corpus-wide
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > how many signals did the per-row drift rule add
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how many signals does each AXI channel have
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > how many signals have a parameterised width and how many a derived width
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)

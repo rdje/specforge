@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > does the SourceIR classifier type a bus-mode matrix as a signal table
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -296,5 +298,3 @@
   > how can a prose signal spelling bind to a declared one without a suffix inference
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how can a script ask the SpecForge canonical loader without mutating the artifact
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > how can one compound sentence contain two independent signal facts

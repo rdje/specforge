@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
+  > what is ADR 0057
+- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
+  > what is ADR 0058
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > what is ANALYSIS_TARGET in the production graph
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is AppError::IngestAbortedForDisk
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is AppError::IngestAbortedForMemory
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > what is AppError::IngestTerminatedBySignal
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -222,6 +232,8 @@
   > what is capture_signal_presence_rows and who shares it
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is captured_region_residuals
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > what is check_signal_records / CheckSignalRecord and where does it come from
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -286,15 +298,3 @@
   > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
-- [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
-  > what is field_sub_table_header / read_field_sub_table / sub_row_cells / raw_column_index / cite_reserved_values
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is figure_region_provenance_id for
-- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
-  > what is fill_field_signal_bindings
-- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
-  > what is from_to_signal_relations
-- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
-  > what is fronted_condition_end
-- [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
-  > what is fronted_condition_split

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how does SpecForge combine confidence across modalities or sources
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -296,5 +298,3 @@
   > how does the value slot tell a state from a relation without an adjective list
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate classify a document / what is document_class
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate know an intent_ir is stale relative to its semantic_ir

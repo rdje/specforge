@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > what does drop_unconditional_overlap_conflicts / unconditional_overlap_residual_packet do in ir/isf_ir.rs
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > what does drop_ungrounded_rule_transaction_conflicts do
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what does drop_unrenderable_rule_values / unrenderable_rule_value_residual_packet do in ir/isf_ir.rs
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > what does fill_field_values_from_value_tables do
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > what does intent --nli-verify do
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > what does is_dotted_cross_reference_subject do in evidence.rs
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -288,13 +298,3 @@
   > what is ADR 0051
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > what is ADR 0052
-- [a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed](../decisions/0057-a-sharded-trees-root-owner-registry-declares-the-leaves-not-yet-closed.md)
-  > what is ADR 0057
-- [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
-  > what is ADR 0058
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > what is ANALYSIS_TARGET in the production graph
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is AppError::IngestAbortedForDisk
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is AppError::IngestAbortedForMemory

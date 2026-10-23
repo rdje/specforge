@@ -40,6 +40,7 @@ Complete membership for this range. The bounded landing is
 | `RETAINED-BUNDLE-POPULATION-FROZEN` | `done` | the retained normalized-bundle set can neither grow nor shrink | [open](../tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md) |
 | `ROADMAP-TASKTREE-COVERAGE` | `done` | every roadmap milestone task-tree-owned + audited + locked to code & mdBook | [open](../tasks/ROADMAP-TASKTREE-COVERAGE.md) |
 | `ROOT-ROLLING-LEDGER-PRESSURE` | `done` | restore bounded headroom in current continuity ledgers | [open](../tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) |
+| `RUSTDOC-AND-XTASK` | `active` | publish the rustdoc API reference, and move the repository's tooling to cargo xtask | [open](../tasks/RUSTDOC-AND-XTASK.md) |
 | `SCRATCH-RESIDUE-CONTAINMENT` | `active` | reclaim repository scratch that nothing can reach | [open](../tasks/SCRATCH-RESIDUE-CONTAINMENT.md) |
 | `SEMANTIC-EMPTY-CATALOG-FILTER` | `done` | stop disabling the grounding filter on documents with no grounding | [open](../tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md) |
 | `SIGNAL-CATALOG-CAPTURE-GAP` | `done` | protocol specifications that declare no signals at all | [open](../tasks/SIGNAL-CATALOG-CAPTURE-GAP.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `TEMPORAL-RULE-LTL-RENDER` | `done` | render mined temporal rules in standard LTL/MTL notation | [open](../tasks/TEMPORAL-RULE-LTL-RENDER.md) |
 | `TEMPORAL-RULE-SVA-RENDER` | `superseded` | render mined temporal rules as SystemVerilog Assertions (SVA) | [open](../tasks/TEMPORAL-RULE-SVA-RENDER.md) |
 | `TEXT-LAYER-IDENTIFIER-SPLIT` | `active` | a name cell holds one identifier and the reader sees two words | [open](../tasks/TEXT-LAYER-IDENTIFIER-SPLIT.md) |
-| `TRACE-SEVERITY-GATING-AUDIT` | `done` | warnings/errors/fatals must never be masked by a trace/verbosity level | [open](../tasks/TRACE-SEVERITY-GATING-AUDIT.md) |
 

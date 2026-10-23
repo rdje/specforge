@@ -106,6 +106,8 @@
   > does archiving parts contradict ADR 0045 (no tree is archived for capacity; the tree stays live)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > does cargo doc pass with -D warnings (CLK_I unresolved link)
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > does cargo test need TMPDIR set manually
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
@@ -296,5 +298,3 @@
   > does the Layer D grounding filter need to be weakened
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > does the NLI verifier actually catch real extraction errors
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > does the SourceIR classifier type a bus-mode matrix as a signal table

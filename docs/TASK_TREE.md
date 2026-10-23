@@ -63,6 +63,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](tasks/PURE-NLP-INTENT-EXTRACTION.md) |
 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
+| `RUSTDOC-AND-XTASK` | `active` | publish the rustdoc API reference, and move the repository's tooling to cargo xtask | [open](tasks/RUSTDOC-AND-XTASK.md) |
 | `SCRATCH-RESIDUE-CONTAINMENT` | `active` | reclaim repository scratch that nothing can reach | [open](tasks/SCRATCH-RESIDUE-CONTAINMENT.md) |
 | `SIGNAL-DECLARATION-ROW-DROP` | `active` | the authoritative declaration reader silently discards 18.3% of the rows it was given | [open](tasks/SIGNAL-DECLARATION-ROW-DROP.md) |
 | `SOURCE-IR-REPRODUCIBILITY` | `active` | make SourceIR ingest reproducible, and gate it | [open](tasks/SOURCE-IR-REPRODUCIBILITY.md) |
@@ -76,14 +77,14 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 171 trees route through 4 derived part(s); open a range to find an id.
+All 172 trees route through 4 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-3` |
 | [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-4` | `PROVENANCE-HARDENING` |
-| [0003](task-catalog/catalog-0003.md) | 56 | `PROVIDER-MODEL-STORE-LOCALITY` | `TRACE-SEVERITY-GATING-AUDIT` |
-| [0004](task-catalog/catalog-0004.md) | 3 | `UPSTREAM-CHANNEL-UNIFICATION` | `WIRE-BASED-100` |
+| [0003](task-catalog/catalog-0003.md) | 56 | `PROVIDER-MODEL-STORE-LOCALITY` | `TEXT-LAYER-IDENTIFIER-SPLIT` |
+| [0004](task-catalog/catalog-0004.md) | 4 | `TRACE-SEVERITY-GATING-AUDIT` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

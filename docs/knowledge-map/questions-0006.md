@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > how can one compound sentence contain two independent signal facts
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -295,5 +297,3 @@
   > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
