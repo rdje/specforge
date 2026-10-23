@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > why did the APB WIRE gold for PWAKEUP change to must_remain_until
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -296,5 +298,3 @@
   > why does Instruction group not count as an ns unit and why does SMIN not count as min
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
   > why does IntentIR carry so many assumptions that are not design intent
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > why does LIVE-DOC-SIZE say tracked Markdown docs/tasks/... is not classified

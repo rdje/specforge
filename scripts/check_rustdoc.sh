@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # SpecForge adapter for the RUSTDOC doctrine (RUSTDOC-AND-XTASK.2), native since RUSTDOC-AND-XTASK.8 in
-# `cargo xtask check rustdoc` (xtask/src/checks/rustdoc.rs): the workspace documents with no rustdoc warning under
-# `-D warnings`, after a self-test that requires a scratch crate with an unresolved link to fail. This shim keeps
+# `cargo xtask check rustdoc` (xtask/src/checks/rustdoc.rs): the workspace documents with no rustdoc warning but
+# `missing_docs`, whose count per package must equal its ceiling in doctrine/rustdoc/coverage_ceilings.tsv (.7),
+# after a self-test that requires a scratch crate's unresolved link and undocumented item to be seen. This shim keeps
 # the doctrine's registered path; it activates the project-data roots and refuses arguments itself, so its usage
 # line names it as the driver invoked it.
 set -uo pipefail

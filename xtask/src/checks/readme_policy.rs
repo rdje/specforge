@@ -7,12 +7,15 @@ use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
 
-/// The reviewed README ceilings, which `README_POLICY.md`'s adoption note records as `POLICY_CEILINGS`.
+/// The reviewed README line ceiling, which `README_POLICY.md`'s adoption note records as `POLICY_CEILINGS`.
 pub const LINE_CAP: usize = 150;
+/// The reviewed README byte ceiling, recorded beside [`LINE_CAP`].
 pub const BYTE_CAP: usize = 5800;
-/// The route registry's ceilings: records after the header, bytes, and bytes in its widest raw record.
+/// The route registry's ceiling on records after its header.
 pub const ROUTE_RECORD_CAP: usize = 40;
+/// The route registry's ceiling on bytes.
 pub const ROUTE_BYTE_CAP: usize = 5000;
+/// The route registry's ceiling on bytes in its widest raw record.
 pub const ROUTE_RECORD_BYTE_CAP: usize = 192;
 
 const README: &str = "README.md";
@@ -291,6 +294,7 @@ fn is_script_control(control: &str) -> bool {
         && control.ends_with(".sh")
 }
 
+/// Whether a route's lifecycle is one of the reviewed kinds.
 pub fn lifecycle_is_known(lifecycle: &str) -> bool {
     LIFECYCLES.contains(&lifecycle)
 }

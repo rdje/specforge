@@ -46,6 +46,8 @@
   > what is the difference between validate persistence and stage write_to_disk
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what is the document_class distribution across the corpus
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > what is the documentation coverage ratchet (coverage_ceilings.tsv)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > what is the exact CORPUS-COVERAGE task evidence boundary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -295,5 +297,3 @@
   > what prevents the word while in a license notice from becoming a gate
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > what produces the backslash in an EvidenceIR statement text
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over

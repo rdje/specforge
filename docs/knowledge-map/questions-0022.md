@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why can't extract-constraints-llm run inside a converge pass
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -295,5 +297,3 @@
   > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why did the AMD IOMMU packed layout false register disappear
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them

@@ -20,7 +20,9 @@ pub enum Runner {
     /// Native Rust, given the repository root and the arguments; its return value is the exit code. The script
     /// it replaced is now a shim over it.
     Native {
+        /// The repository-relative script the port replaced, now its shim.
         replaces: &'static str,
+        /// The native entry point: the repository root and the arguments in, the exit code out.
         run: fn(&Path, &[String]) -> i32,
     },
     /// The ported doctrine checks, each replacing the script its doctrine registers (`checks::CHECKS`).
@@ -30,8 +32,11 @@ pub enum Runner {
 /// One `cargo xtask` command: its name, how it runs, and what it does.
 #[derive(Debug, Clone, Copy)]
 pub struct Task {
+    /// The command's name, as `cargo xtask <name>` takes it.
     pub name: &'static str,
+    /// How the command runs.
     pub runner: Runner,
+    /// The one line `cargo xtask help` prints for it.
     pub summary: &'static str,
 }
 

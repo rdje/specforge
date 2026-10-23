@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > which admissibility routes run before the relational test
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > which architecture owns work and which one verifies published claims
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
@@ -295,5 +297,3 @@
   > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > which root rolling ledger is currently above its rollover signal
-- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
-  > which scripts are not ported to xtask (portable architecture kits)

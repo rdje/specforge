@@ -9,8 +9,11 @@ use std::path::Path;
 /// One ported doctrine check: its name, the script it replaced, and its entry point.
 #[derive(Debug, Clone, Copy)]
 pub struct Check {
+    /// The doctrine's name in lower case, as `cargo xtask check <name>` takes it.
     pub name: &'static str,
+    /// The repository-relative script the doctrine driver registers, now a shim over this check.
     pub replaces: &'static str,
+    /// The check: the repository root and the arguments in, the exit code out.
     pub run: fn(&Path, &[String]) -> i32,
 }
 

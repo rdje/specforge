@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
+  > why is AXI AWAKEUP's hold guard unchanged (the condition already excludes the release)
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
@@ -296,5 +298,3 @@
   > why is placing a table by its page wrong
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is plural-rejection unsafe for phase names (access ends in ss)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > why is repeating the same check not independent verification

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > what proved that analysis commands can violate project data locality
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
@@ -295,5 +297,3 @@
   > where does SpecForge withhold template declarations
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > where does TileLink spell a_opcode
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)

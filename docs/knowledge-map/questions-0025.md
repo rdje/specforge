@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > why does max_question_keys land on 4096 exactly
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > why does mdbook test interpret ISF and console examples as Rust
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
@@ -295,5 +297,3 @@
   > why is AWSNOOP[3] not resolved to AWSNOOP
 - [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
   > why is AXI 'Pseudocode description of the transfers' not apparatus (pseudocode put to use)
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > why is AXI AWAKEUP's hold guard unchanged (the condition already excludes the release)

@@ -53,7 +53,9 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
     sat for four weeks. The build takes 45 s cold and writes 161 MiB to `target/doc` for the four crates.
   - **Coverage.** `cargo clippy --lib -- -W missing_docs` counts undocumented public items: `specforge-core`
     2,119, `specforge` 2,922, `specforge-conformance` 2,883, `specforge-production-graph` 33. `specforge-core`
-    compiles the `ir` sources through `#[path]`, so it is the library API.
+    compiles the `ir` sources through `#[path]`, so it is the library API. **Corrected by `.7`:** `specforge` has 39
+    and `specforge-conformance` 758; each `-p` run also linted the workspace crates the package depends on, and the
+    text grep summed them (2,922 = 39 + 758 + 2,125).
   - **Scripts.** 123 under `scripts/`: 64 Python (23,831 lines), 32 Perl (26,723), 27 shell (4,694). The doctrine
     driver (`check_doctrines.sh`) calls 23 of them, CI 5, the hooks 1 (the driver), and 53 have no scripted caller
     (maintenance tools run by hand). Docs, doctrine and task records cite them 8,089 times, 2,564 of those
@@ -181,12 +183,24 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.6 — the order the doctrine gates move to cargo xtask (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.7`
-  Status: `pending`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: documentation coverage is a ratchet
   Acceptance: record each crate's undocumented public item count and refuse an increase at commit; the counts in
   `.1` are the baseline.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** **Measured.** rustdoc runs the `missing_docs` lint, and cargo replays a fresh crate's
+  rustdoc warnings (`.project-data/tmp/rdx-7/probe`), so the `RUSTDOC` gate's own build can count coverage at no
+  extra cost; under `-D warnings` the count is impossible, since `missing_docs` then becomes an error whatever the
+  flag order. Per package (`package_id`), the gate's build finds `specforge-core` 2,124, `specforge-conformance`
+  758, `specforge` 39, `specforge-production-graph` 33, `xtask` 12. **`.1`'s baseline was wrong** for two crates
+  (2,922 and 2,883): a per-package clippy run also lints the workspace crates it depends on (`specforge` = 39 + 758 +
+  2,125), and the text grep summed them; corrected in `.1` and the KM card. **Decided.** The check runs `cargo doc
+  --message-format=json` under `-W missing_docs`, refuses every other diagnostic (the old `-D warnings` verdict),
+  and requires each package's count to equal its ceiling in `doctrine/rustdoc/coverage_ceilings.tsv` (an unlisted
+  package has 0): above it the new item must be documented, below it the ceiling comes down in the same commit, so
+  slack is never banked. `xtask`'s 12 items are documented here, so it starts at 0. The self-test crate gains one
+  undocumented item and must count it once, beside the unresolved link it must report.
+  Verification: `cargo test -p xtask --lib` 20/20; `scripts/check_rustdoc.sh` PASS; RED in `.project-data/tmp/rdx-7/`
+  Commit: `RUSTDOC-AND-XTASK.7 — documentation coverage is a ratchet in the RUSTDOC gate`
 
 - ID: `RUSTDOC-AND-XTASK.8`
   Status: `done` (`2026-10-23`; CODE; wave 1; checklist below)
@@ -384,12 +398,32 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.7` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — no coverage gate: a new undocumented public item passed every check, and `.1`'s
+  published baseline summed workspace dependencies (`specforge` 2,922, really 39; `specforge-conformance` 2,883,
+  really 758).
+- [x] **ROOT CAUSE (WHY + WHERE)** — HEAD's `xtask/src/checks/rustdoc.rs:12` documented under `-D warnings` with no
+  `missing_docs`, and `-D warnings` turns that lint into an error whatever the order, so the gate's build could not
+  count; `.1` counted with `clippy -p` and a text grep. RED 6/6, every file restored byte-identically with a fresh
+  mtime: `missing_docs` unrecognised, an increase allowed, a decrease banked, the lint switched off (each fails
+  `cargo test -p xtask --lib`); a ceiling raised by one and an undocumented `xtask` item (each refused by
+  `scripts/check_rustdoc.sh`, exit 1).
+- [x] **ADDRESSED (verified)** — ratcheted packages 0 -> 5; undocumented `xtask` items 12 -> 0; the gate's verdict
+  on the current tree PASS, 72 s once after the flag change and 1 s warm.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 20
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `.1`'s coverage bullet corrected; the driver's `RUSTDOC` entry; `docs/DOCTRINE_INSTANCE.md` and
+  the book's `reference/doctrine-enforcement.md` rows; `scripts/check_rustdoc.sh`; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
-| 2 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4 |
+| 1 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4, opening one leaf per doctrine as each wave starts |
 
 ## Decisions
 

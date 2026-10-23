@@ -14,11 +14,12 @@ answers:
   - "which scripts are not ported to xtask (portable architecture kits)"
   - "how many scripts does SpecForge have and who calls them"
   - "how many public items lack documentation (missing_docs)"
+  - "what is the documentation coverage ratchet (coverage_ceilings.tsv)"
   - "is a ported script deleted"
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .12); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -29,8 +30,14 @@ break went unseen for four weeks. Since `RUSTDOC-AND-XTASK.2` the quotation is e
 (`scripts/check_rustdoc.sh`, gate tier) runs CI's command at every commit, after a self-test that requires a scratch
 crate with an unresolved link to fail; 0.3 s unchanged, about 75 s when `specforge-core` is re-documented. The four
 crates build in 45 s cold into 161 MiB of `target/doc`. `specforge-core` compiles the `ir` sources through `#[path]`,
-so it is the library API. Undocumented public items (`clippy -W missing_docs`): `specforge-core` 2,119, `specforge`
-2,922, `specforge-conformance` 2,883, `specforge-production-graph` 33. Coverage is ratcheted (`.7`), not switched on.
+so it is the library API. **Coverage (`.7`, corrected).** Undocumented public items, counted per package from the
+rustdoc gate's own build: `specforge-core` 2,124, `specforge-conformance` 758, `specforge` 39,
+`specforge-production-graph` 33, `xtask` 0. `.1` had published 2,922 for `specforge` and 2,883 for
+`specforge-conformance`: `cargo clippy -p <crate> -- -W missing_docs` also lints the workspace crates a package
+depends on, and a text grep summed them (2,922 = 39 + 758 + 2,125). The counts are a ratchet, not a lint switched on:
+the `RUSTDOC` gate refuses any package whose count differs from its ceiling in
+`doctrine/rustdoc/coverage_ceilings.tsv`, so an undocumented item cannot be added and a documented one lowers the
+ceiling.
 
 **Decided (`.1`).** The rustdoc of the four crates is built into `generated/mdbook/specforge/api/` beside the book and
 linked from a reference page: since `.3`, `scripts/run_docs_ci.sh` does both, and the book's

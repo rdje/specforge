@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > why is repeating the same check not independent verification
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why is residual actionability 8 of 16 in the current reviewed result
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
@@ -296,5 +298,3 @@
   > why was raising max_bytes alone not the remedy for the claim registry
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > why was table_0004|toc_non_contract changed
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
