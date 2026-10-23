@@ -4,6 +4,7 @@
 pub mod contract_encoding;
 pub mod doctrine_tables;
 pub mod ownership_citations;
+pub mod published_assertions;
 pub mod readme_policy;
 pub mod rustdoc;
 pub mod section_anchors;
@@ -58,6 +59,11 @@ pub const CHECKS: &[Check] = &[
         name: "doctrine-tables",
         replaces: "scripts/check_doctrine_tables.sh",
         run: doctrine_tables::run,
+    },
+    Check {
+        name: "published-assertions",
+        replaces: "scripts/check_published_assertions.pl",
+        run: published_assertions::run,
     },
 ];
 

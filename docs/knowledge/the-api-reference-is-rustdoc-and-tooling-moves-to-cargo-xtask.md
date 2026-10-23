@@ -9,7 +9,7 @@ answers:
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "in what order do the doctrine gates move to cargo xtask"
-  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations)"
+  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions)"
   - "which crates may xtask depend on (serde_json, sha2)"
   - "how do the xtask ports read JSON like Python (pyjson)"
   - "what checks that the doctrine tables match the driver registry (DOCTRINE-TABLES)"
@@ -22,7 +22,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.d, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.e, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -48,12 +48,13 @@ linked from a reference page: since `.3`, `scripts/run_docs_ci.sh` does both, an
 workspace member `xtask`, not a default member, aliased in `.cargo/config.toml`. Since `.4` it dispatches `doctrines`,
 `ci` and `docs` to their scripts, byte-identical in output and exit code (`xtask/src/lib.rs`, `TASKS`), and the
 production-genericity `DEPENDENCIES` check keeps it disconnected from the product and limited to crates the workspace
-already locks (since `.13.b`), though since `.17` it uses none: the ports read and write JSON through
-`xtask/src/pyjson.rs`, a reproduction of Python's `json` module proven against Python on 14,964 cases; since `.5`
-`docs` is native (`xtask/src/docs.rs`, with `project_data.rs` for the project-data roots) and `scripts/run_docs_ci.sh`
-is its shim; the gates move one leaf each as `cargo xtask check <doctrine>` (`xtask/src/checks/`; `rustdoc` since
-`.8`, `readme-policy` since `.12`, `section-anchors` since `.13.a`, `task-node-retention` since `.13.b`,
-`contract-encoding` since `.13.c`, `ownership-citations` since `.13.d`; `doctrine-tables`, the `DOCTRINE-TABLES`
+already locks (since `.13.b`): only `sha2`, for the claim registries' exact digests (`.13.e`), since the ports read
+and write JSON through `xtask/src/pyjson.rs`, a reproduction of Python's `json` module proven against Python on 14,964
+cases (`.17`), and see Perl's view of values through `xtask/src/perl.rs`; since `.5` `docs` is native
+(`xtask/src/docs.rs`, with `project_data.rs` for the project-data roots) and `scripts/run_docs_ci.sh` is its shim; the
+gates move one leaf each as `cargo xtask check <doctrine>` (`xtask/src/checks/`; `rustdoc` since `.8`, `readme-policy`
+since `.12`, `section-anchors` since `.13.a`, `task-node-retention` since `.13.b`, `contract-encoding` since `.13.c`,
+`ownership-citations` since `.13.d`, `published-assertions` since `.13.e`; `doctrine-tables`, the `DOCTRINE-TABLES`
 doctrine `.18` added after both doctrine tables were found to have drifted from the driver's registry, was written
 natively), in `.6`'s four waves: the small shell gates (`.8`-`.12`), the single-file Perl and Python gates, the
 multi-file gates and corpus oracles, then the composites and the driver; a port proves parity on the current tree,

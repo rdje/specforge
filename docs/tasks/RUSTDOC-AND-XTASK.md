@@ -20,8 +20,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - Rewriting historical records. Verification logs, commit logs and closed leaves cite the scripts they ran; they
   stay as written, and a ported script stays as a shim that forwards to `cargo xtask`.
 - A big-bang port. Each gate moves in its own leaf, with parity evidence, or not at all.
-- New crates. `xtask` uses the standard library only (`serde_json` from `.13.b` to `.17`, when `pyjson` replaced
-  it), so it builds offline; the `DEPENDENCIES` check would admit only crates the workspace already locks.
+- New crates. `xtask` uses the standard library and `sha2` (since `.13.e`; `serde_json` from `.13.b` to `.17`, when
+  `pyjson` replaced it), both locked for the product, so it builds offline and brings nothing new into the build.
 - Porting a portable architecture's kit (`.16`): the scripts other repositories copy stay in their portable language.
 - Requiring documentation on every public item now. Coverage is measured and ratcheted, never switched on blind.
 
@@ -269,7 +269,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.12 — cargo xtask check readme-policy replaces the README-POLICY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.13`
-  Status: `in_progress` (container; wave 2; `.13.a`-`.13.d` done)
+  Status: `in_progress` (container; wave 2; `.13.a`-`.13.e` done)
   Goal: the single-file Perl and Python gates move to xtask
   Acceptance: one leaf per doctrine, in order: `SECTION-ANCHORS`, `TASK-NODE-RETENTION`, `CONTRACT-ENCODING`,
   `OWNERSHIP-CITATIONS`, `PUBLISHED-ASSERTIONS`, `RESIDUAL-ACTIONABILITY`; the `DEPENDENCIES` change for locked
@@ -370,11 +370,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   script`
 
 - ID: `RUSTDOC-AND-XTASK.13.e`
-  Status: `pending` (CODE; wave 2)
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: `cargo xtask check published-assertions` replaces `scripts/check_published_assertions.pl`
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/src/checks/published_assertions.rs` validates the bounded registry, re-executes each
+  `derived` producer and membership enumerator and resolves each `dated` revision, checks each exact region
+  (`sha2`, already locked and admitted by `DEPENDENCIES`), derives the governed population from the live-document
+  surface registry, and scans each claim-tagged paragraph with the script's numeral grammar, its backtracking
+  reproduced (`1,9224` publishes `1` and `9224`, `5%a` publishes `5`). Perl's view of values comes from a shared
+  `xtask/src/perl.rs`: `%.15g` numbers, booleans as references, truthiness, and `encode_utf8`'s double count of each
+  raw non-ASCII byte. Its 25 self-test cases run on the same fixture repository the script built and keep their
+  verdicts. The Perl shim keeps the argument loop, its usage line and exit 2, and the root resolution. **Parity**:
+  HEAD's script beside the shim on 23 inputs (the current tree's 33 assertions, `--report`, `--produce`, the
+  self-test, four argument forms, and fourteen broken inputs from the real registry and two documents, among them
+  an unlisted value in `TOOLBOX.md` and a phase switched to `inventory` so `--produce` lists one), identical stdout,
+  stderr and exit code on all 23. **Cost:** 0.59 s for the script, 0.68 s for the shim (both re-run every
+  producer).
+  Verification: `cargo test -p xtask --lib` 61/61; parity and RED in `.project-data/tmp/rdx-13e/`
+  Commit: `RUSTDOC-AND-XTASK.13.e — cargo xtask check published-assertions replaces the PUBLISHED-ASSERTIONS gate's
+  script`
 
 - ID: `RUSTDOC-AND-XTASK.13.f`
   Status: `pending` (CODE; wave 2)
@@ -388,7 +402,10 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Status: `pending` (container; wave 3)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
-  `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`.
+  `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
+  `scripts/report_self_test_totals.pl` reads the declared self-test totals of `check_chain_currency.sh`,
+  `check_proof_seal_currency.sh` and `rebuild_stage_cascade.sh` from their source and fails closed when it cannot,
+  so a port that moves a total out of its script updates that producer in the same leaf.
   Verification: `pending`
   Commit: `pending`
 
@@ -543,6 +560,22 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.e` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `PUBLISHED-ASSERTIONS` doctrine ran only as Perl
+  (`scripts/check_published_assertions.pl`); HEAD's copy is the parity baseline in `.project-data/tmp/rdx-13e/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 7 checks, and xtask had no
+  SHA-256. RED 6/6, every file restored byte-identically with a fresh mtime: a hyphenated identifier taken as a
+  value, commas kept when values are compared, a boolean leaf taken for a field, inline code scanned for values, a
+  cross-surface disagreement accepted, the shim running another check; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 6 -> 7; identical output on 23 of 23 inputs; self-test 25/25.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 61
+  passed; `Cargo.lock` changes only by xtask's `sha2` edge; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — the tree's Non-Goals and `.14`; `docs/DOCTRINE_INSTANCE.md`'s row; the profile comment in
+  `Cargo.toml`; book `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.18` (CODE) — DONE `2026-10-23`
 
 - [x] **REPRODUCE / MEASURE** — before `.13.c`, `docs/DOCTRINE_INSTANCE.md` §10 lacked 1 of the driver's 20
@@ -679,8 +712,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.13.e` | `pending` | wave 2's next gate (`PUBLISHED-ASSERTIONS`) |
-| 2 | `RUSTDOC-AND-XTASK.13.f` | `pending` | the rest of wave 2 |
+| 1 | `RUSTDOC-AND-XTASK.13.f` | `pending` | wave 2's last gate (`RESIDUAL-ACTIONABILITY`) |
+| 2 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
 | 3 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
 
 ## Decisions

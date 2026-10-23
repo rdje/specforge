@@ -6,7 +6,8 @@ rust-version.workspace = true
 publish = false
 description = "Repository tooling entry point: `cargo xtask <command>` (RUSTDOC-AND-XTASK.4)."
 
-# Standard library only: the ported gates read JSON through `pyjson`, which reproduces Python's own reader
-# (RUSTDOC-AND-XTASK.17). The production-genericity DEPENDENCIES check would admit only crates the workspace already
-# locks (serde_json, sha2) and refuses every product crate.
+# Only crates the workspace already locks for the product (RUSTDOC-AND-XTASK.6): sha2 for the exact line-range
+# digests the claim registries pin (.13.e). JSON is read through `pyjson`, which reproduces Python's own reader (.17).
+# The production-genericity DEPENDENCIES check admits only serde_json and sha2 and refuses every product crate.
 [dependencies]
+sha2 = { workspace = true }

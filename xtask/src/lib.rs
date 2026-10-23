@@ -7,6 +7,7 @@
 
 pub mod checks;
 pub mod docs;
+pub mod perl;
 pub mod project_data;
 pub mod pyjson;
 
