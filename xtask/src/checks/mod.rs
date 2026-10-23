@@ -1,6 +1,7 @@
 //! `cargo xtask check <doctrine>`: the doctrine gates ported to Rust (`RUSTDOC-AND-XTASK.6`). Each replaces the
 //! script the doctrine driver registers, which stays as a shim over it.
 
+pub mod contract_encoding;
 pub mod readme_policy;
 pub mod rustdoc;
 pub mod section_anchors;
@@ -40,6 +41,11 @@ pub const CHECKS: &[Check] = &[
         name: "task-node-retention",
         replaces: "scripts/check_task_node_retention.py",
         run: task_node_retention::run,
+    },
+    Check {
+        name: "contract-encoding",
+        replaces: "scripts/check_contract_encoding.py",
+        run: contract_encoding::run,
     },
 ];
 

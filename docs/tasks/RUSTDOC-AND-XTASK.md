@@ -269,7 +269,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.12 — cargo xtask check readme-policy replaces the README-POLICY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.13`
-  Status: `in_progress` (container; wave 2; `.13.a`-`.13.b` done)
+  Status: `in_progress` (container; wave 2; `.13.a`-`.13.c` done)
   Goal: the single-file Perl and Python gates move to xtask
   Acceptance: one leaf per doctrine, in order: `SECTION-ANCHORS`, `TASK-NODE-RETENTION`, `CONTRACT-ENCODING`,
   `OWNERSHIP-CITATIONS`, `PUBLISHED-ASSERTIONS`, `RESIDUAL-ACTIONABILITY`; the `DEPENDENCIES` change for locked
@@ -328,11 +328,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   script`
 
 - ID: `RUSTDOC-AND-XTASK.13.c`
-  Status: `pending` (CODE; wave 2)
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: `cargo xtask check contract-encoding` replaces `scripts/check_contract_encoding.py`
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/src/checks/contract_encoding.rs`, on `.17`'s `pyjson`: each contract under `doctrine/`
+  is matched against the script's 80 `json.dumps` option sets in its order, the registry read and `--write`
+  re-derived, the findings and refusals worded as before, and `--report`'s churn table read from git history (the
+  last commit to touch each contract, its changed lines, its changed leaf fields under Python's `==`); its seven
+  self-test cases run on a scratch tree under `generated/`. The Python shim keeps the `argparse` front end and passes
+  the flags through. **Parity** with HEAD's script through the driver's absolute-path invocation, on 23 inputs (the
+  current tree's 32 contracts, nine argument forms including `--write`, `--write --report` and `--wr`, every
+  contract and registry refusal): identical stdout, stderr and exit code on all 23, and `--write` writes the
+  registry byte for byte as the script does. **Cost:** 0.09 s for the script, 0.22 s for the shim.
+  **Found while documenting it:** of the 20 doctrines the driver registers, `docs/DOCTRINE_INSTANCE.md` had no row
+  for `CONTRACT-ENCODING`, and the book's `reference/doctrine-enforcement.md` none for five (`CONTRACT-ENCODING`,
+  `SECTION-ANCHORS`, `TASK-NODE-RETENTION`, `OWNERSHIP-CITATIONS`, `CONSTRAINT-PART-SPAN`); the rows are added here,
+  and `.18` makes the coverage mechanical.
+  Verification: `cargo test -p xtask --lib` 43/43; parity and RED in `.project-data/tmp/rdx-13c/`
+  Commit: `RUSTDOC-AND-XTASK.13.c — cargo xtask check contract-encoding replaces the CONTRACT-ENCODING gate's
+  script`
 
 - ID: `RUSTDOC-AND-XTASK.13.d`
   Status: `pending` (CODE; wave 2)
@@ -414,6 +428,14 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   depends on nothing again.
   Verification: `cargo test -p xtask --lib` 38/38; the corpus test (`--ignored`) 14,964/14,964
   Commit: `RUSTDOC-AND-XTASK.17 — pyjson: the ports read and write JSON exactly as Python does`
+
+- ID: `RUSTDOC-AND-XTASK.18`
+  Status: `pending` (CODE; found by `.13.c`)
+  Goal: every doctrine the driver registers is documented in both doctrine tables, mechanically
+  Acceptance: a check refuses a registered doctrine with no row in `docs/DOCTRINE_INSTANCE.md` or in the book's
+  `reference/doctrine-enforcement.md` table, and a row naming no registered doctrine; RED on each.
+  Verification: `pending`
+  Commit: `pending`
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
 
@@ -498,6 +520,24 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.c` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `CONTRACT-ENCODING` doctrine ran only as Python
+  (`scripts/check_contract_encoding.py`); baseline on 23 inputs in `.project-data/tmp/rdx-13c/old/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 4 ported gates. RED 6/6,
+  every file restored byte-identically with a fresh mtime: the option order changed, separators labelled without a
+  space, a re-encoded hand-authored contract accepted, a vanished declaration ignored, a repeated flattened path
+  counted twice, the shim running another check; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 4 -> 5; identical output on 23 of 23 inputs; `--write` byte-identical;
+  doctrine-table rows missing 1 + 5 -> 0.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 43
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s new `CONTRACT-ENCODING` row; the book's
+  `reference/doctrine-enforcement.md` (five rows) and `getting-started.md`; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.17` (CODE) — DONE `2026-10-23`
 
 - [x] **REPRODUCE / MEASURE** — `serde_json` reworded Python's JSON errors (`.13.b`'s one divergence, 26 of 27
@@ -578,8 +618,9 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.13.c` | `pending` | wave 2's next gate (`CONTRACT-ENCODING`) |
-| 2 | `RUSTDOC-AND-XTASK.13.d`-`.13.f` | `pending` | the rest of wave 2, in order |
+| 1 | `RUSTDOC-AND-XTASK.13.d` | `pending` | wave 2's next gate (`OWNERSHIP-CITATIONS`) |
+| 2 | `RUSTDOC-AND-XTASK.18` | `pending` | the doctrine tables drifted from the registry unseen (`.13.c`) |
+| 3 | `RUSTDOC-AND-XTASK.13.e`-`.13.f` | `pending` | the rest of wave 2, in order |
 | 3 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
 
 ## Decisions
