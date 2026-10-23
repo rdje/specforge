@@ -31,7 +31,7 @@ syn = { version = "2", features = ["full", "visit", "visit-mut"] }
 tempfile = "3"
 
 # RUSTDOC-AND-XTASK.13.a — `cargo xtask` runs the dev profile, where the unoptimized SECTION-ANCHORS scan of the
-# tree's 24.7 MB of Markdown took 0.88 s against the Perl script's 0.11 s. Optimizing the one tooling crate, which
-# has no dependencies, brings it to 0.11 s and leaves every product crate's build as it was.
+# tree's 24.7 MB of Markdown took 0.88 s against the Perl script's 0.11 s. Optimizing the tooling crate alone (not
+# the serde_json it shares with the product) brings it to 0.11 s and leaves every product crate's build as it was.
 [profile.dev.package.xtask]
 opt-level = 3

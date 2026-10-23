@@ -13,14 +13,15 @@
 
 SpecForge publishes a rustdoc API reference of its workspace crates beside the mdBook, kept warning-free at
 commit cadence, and its repository tooling moves to `cargo xtask` one command at a time: a Rust entry point that
-needs nothing but the toolchain, with each port proven to behave exactly as the script it replaces.
+adds no crate to the build, with each port proven to behave exactly as the script it replaces.
 
 ## Non-Goals
 
 - Rewriting historical records. Verification logs, commit logs and closed leaves cite the scripts they ran; they
   stay as written, and a ported script stays as a shim that forwards to `cargo xtask`.
 - A big-bang port. Each gate moves in its own leaf, with parity evidence, or not at all.
-- New dependencies. The `xtask` crate uses the standard library only, so it builds offline.
+- New crates. `xtask` uses the standard library and only crates the workspace already locks (`serde_json` since
+  `.13.b`), so it builds offline and brings nothing new into the build.
 - Porting a portable architecture's kit (`.16`): the scripts other repositories copy stay in their portable language.
 - Requiring documentation on every public item now. Coverage is measured and ratcheted, never switched on blind.
 
@@ -268,7 +269,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.12 — cargo xtask check readme-policy replaces the README-POLICY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.13`
-  Status: `in_progress` (container; wave 2; `.13.a` done)
+  Status: `in_progress` (container; wave 2; `.13.a`-`.13.b` done)
   Goal: the single-file Perl and Python gates move to xtask
   Acceptance: one leaf per doctrine, in order: `SECTION-ANCHORS`, `TASK-NODE-RETENTION`, `CONTRACT-ENCODING`,
   `OWNERSHIP-CITATIONS`, `PUBLISHED-ASSERTIONS`, `RESIDUAL-ACTIONABILITY`; the `DEPENDENCIES` change for locked
@@ -278,7 +279,9 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   callers run it with `perl` or `python3`; it changes to the repository root, where the `cargo xtask` alias
   resolves, after making any path argument absolute, then `exec`s the native check. **xtask is optimized in the dev
   profile** (`[profile.dev.package.xtask]`, `.13.a`): unoptimized, a scan of the tree's 24.7 MB of Markdown took
-  0.88 s against Perl's 0.11 s.
+  0.88 s against Perl's 0.11 s. **`DEPENDENCIES` changed with `.13.b`**, the first port to read JSON: xtask may depend
+  only on `serde_json` or `sha2`, both already locked for the product, and never on a product crate (self-test 9 ->
+  11).
   Verification: per child
   Commit: per child
 
@@ -301,11 +304,26 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.13.a — cargo xtask check section-anchors replaces the SECTION-ANCHORS gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.13.b`
-  Status: `pending` (CODE; wave 2)
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: `cargo xtask check task-node-retention` replaces `scripts/check_task_node_retention.py`
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/src/checks/task_node_retention.rs` reads `HEAD`'s node ids through `git grep`, the
+  working tree's from the three task roots, and the removals registry, reproducing Python where its output shows:
+  the multi-line id pattern (an id may run past a newline), text-mode line reading, `repr` of lists and values,
+  `str` of the declared total and Python's `==` against it (a string `"1"` is not 1, `1.0` and `true` are), and
+  `json.dump(indent=2, sort_keys=True)` with non-ASCII escaped for `--report`; its six self-test cases keep their
+  verdicts. The Python shim keeps the `argparse` front end and the module docstring, so help, abbreviations such as
+  `--self` and refusals are unchanged, then `exec`s the native check with one mode. **Parity** with HEAD's script
+  through the driver's absolute-path invocation, on 27 inputs (the current tree's 1,701 nodes, nine argument forms
+  including `-h`, a deletion, two deletions under `--report`, a split, a longer sibling, an id spanning a newline,
+  a declared removal, and every registry refusal): identical stdout, stderr and exit code on 26. The other is the
+  wording inside an invalid-JSON refusal, serde's `expected value at line 1 column 17` for Python's `Expecting
+  value: line 1 column 17 (char 16)`; the refusal, line and column agree. A non-UTF-8 task file or a non-object
+  registry line, which crash the script with a traceback, are refusals naming the file or line. **Cost:** 0.14 s
+  for the script, 0.16 s for the shim.
+  Verification: `cargo test -p xtask --lib` 34/34; parity and RED in `.project-data/tmp/rdx-13b/`
+  Commit: `RUSTDOC-AND-XTASK.13.b — cargo xtask check task-node-retention replaces the TASK-NODE-RETENTION gate's
+  script`
 
 - ID: `RUSTDOC-AND-XTASK.13.c`
   Status: `pending` (CODE; wave 2)
@@ -458,6 +476,26 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.b` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `TASK-NODE-RETENTION` doctrine ran only as Python
+  (`scripts/check_task_node_retention.py`); baseline on 27 inputs in `.project-data/tmp/rdx-13b/old/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 3 ported gates, and HEAD's
+  `scripts/check_production_genericity_dependencies.pl:115` refused any xtask dependency, so no port could read
+  JSON. RED 5/5, every file restored byte-identically with a fresh mtime: a descendant matched without its dot
+  boundary, a declared removal ignored, an id stopped at a newline, missing fields left unsorted, the shim running
+  another check; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 3 -> 4; identical output on 26 of 27 inputs, the other only serde's
+  wording of a JSON error; `DEPENDENCIES` self-test 9 -> 11 (a new crate refused, `serde_json` admitted).
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 34
+  passed; `Cargo.lock` changes only by xtask's `serde_json` edge; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes, and the product's dependency graph is
+  unchanged.
+- [x] **LOCKSTEP** — the tree's Goal and Non-Goals; `docs/DOCTRINE_INSTANCE.md`'s `TASK-NODE-RETENTION` row; book
+  `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`; the profile
+  comment in `Cargo.toml`.
+
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.a` (CODE) — DONE `2026-10-23`
 
 - [x] **REPRODUCE / MEASURE** — the `SECTION-ANCHORS` doctrine ran only as Perl (`scripts/check_section_anchors.pl`);
@@ -501,8 +539,8 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.13.b` | `pending` | wave 2's next gate (`TASK-NODE-RETENTION`) |
-| 2 | `RUSTDOC-AND-XTASK.13.c`-`.13.f` | `pending` | the rest of wave 2, in order |
+| 1 | `RUSTDOC-AND-XTASK.13.c` | `pending` | wave 2's next gate (`CONTRACT-ENCODING`) |
+| 2 | `RUSTDOC-AND-XTASK.13.d`-`.13.f` | `pending` | the rest of wave 2, in order |
 | 3 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
 
 ## Decisions

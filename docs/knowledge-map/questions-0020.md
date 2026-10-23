@@ -80,6 +80,8 @@
   > which corpus stages are measurable without re-ingesting a document
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which crate owns the source-to-intent vertical evaluator tests
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > which crates may xtask depend on (serde_json, sha2)
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts are stable and which ones move
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -295,5 +297,3 @@
   > which reviewed cells still need a typed actionable residual
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal

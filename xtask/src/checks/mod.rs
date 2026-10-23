@@ -4,6 +4,7 @@
 pub mod readme_policy;
 pub mod rustdoc;
 pub mod section_anchors;
+pub mod task_node_retention;
 
 use std::path::Path;
 
@@ -34,6 +35,11 @@ pub const CHECKS: &[Check] = &[
         name: "section-anchors",
         replaces: "scripts/check_section_anchors.pl",
         run: section_anchors::run,
+    },
+    Check {
+        name: "task-node-retention",
+        replaces: "scripts/check_task_node_retention.py",
+        run: task_node_retention::run,
     },
 ];
 

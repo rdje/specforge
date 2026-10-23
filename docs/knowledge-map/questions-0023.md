@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why did the AMD IOMMU packed layout false register disappear
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
@@ -296,5 +298,3 @@
   > why does IDCODE.DESIGNER have sub-fields (Continuation code, Identity code)
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > why does Instruction group not count as an ns unit and why does SMIN not count as min
-- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
-  > why does IntentIR carry so many assumptions that are not design intent

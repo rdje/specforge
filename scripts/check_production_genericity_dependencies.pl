@@ -109,10 +109,14 @@ sub inspect_boundary {
         push @problems, "the enforcement graph tool must not depend on $product"
             if $deps{'specforge-production-graph'}{$product};
     }
-    # RUSTDOC-AND-XTASK.4 — the tooling entry point is disconnected from the product both ways and depends on
-    # nothing at all, so `cargo xtask` builds offline with the toolchain alone.
+    # RUSTDOC-AND-XTASK.4, .13.b — the tooling entry point is disconnected from the product both ways, and it may
+    # use only crates the workspace already locks for the product (`.6`), so `cargo xtask` never brings a new crate
+    # into the build: serde_json for the JSON registries the ported gates read, and sha2 for digests.
+    my %xtask_allowed = map { $_ => 1 } qw(serde_json sha2);
     my @xtask_names = dependency_names(File::Spec->catfile($project_root, qw(xtask Cargo.toml)));
-    push @problems, "the xtask tooling crate must depend on nothing, but names: @xtask_names" if @xtask_names;
+    my @xtask_refused = grep { !$xtask_allowed{$_} } @xtask_names;
+    push @problems, "the xtask tooling crate may depend only on the already-locked serde_json or sha2, but names: "
+        . "@xtask_refused" if @xtask_refused;
     for my $package (qw(specforge specforge-core specforge-conformance specforge-production-graph)) {
         push @problems, "$package must not depend on the xtask tooling crate" if $deps{$package}{xtask};
     }
@@ -252,8 +256,20 @@ sub run_self_tests {
         my $xtask_manifest = File::Spec->catfile($fixture, qw(xtask Cargo.toml));
         write_text($xtask_manifest, slurp($xtask_manifest) . "specforge-core = { path = \"../crates/specforge-core\" }\n");
         my ($xtask_uses_product) = inspect_boundary($fixture);
-        die "self-test did not reject a dependency of the xtask tooling crate\n"
-            if !grep { /xtask tooling crate must depend on nothing/ } @{$xtask_uses_product};
+        die "self-test did not reject a product dependency of the xtask tooling crate\n"
+            if !grep { /xtask tooling crate may depend only on the already-locked serde_json or sha2, but names: specforge-core/ } @{$xtask_uses_product};
+        write_fixture($fixture);
+
+        write_text($xtask_manifest, slurp($xtask_manifest) . "regex = \"1\"\n");
+        my ($xtask_uses_new_crate) = inspect_boundary($fixture);
+        die "self-test did not reject a new crate in the xtask tooling crate\n"
+            if !grep { /xtask tooling crate may depend only on .* but names: regex/ } @{$xtask_uses_new_crate};
+        write_fixture($fixture);
+
+        write_text($xtask_manifest, slurp($xtask_manifest) . "serde_json = { workspace = true }\n");
+        my ($xtask_uses_locked) = inspect_boundary($fixture);
+        die "self-test rejected an already-locked crate in the xtask tooling crate: @{$xtask_uses_locked}\n"
+            if @{$xtask_uses_locked};
         write_fixture($fixture);
 
         write_text($core_manifest, slurp($core_manifest) . "xtask = { path = \"../../xtask\" }\n");
@@ -265,7 +281,7 @@ sub run_self_tests {
     remove_tree($fixture) if -e $fixture;
     die "self-test residue remains at $fixture\n" if -e $fixture;
     die $failure if $failure;
-    print "production-genericity-dependencies self-test: 9/9 pass\n";
+    print "production-genericity-dependencies self-test: 11/11 pass\n";
 }
 
 $root //= abs_path(File::Spec->catdir($Bin, '..'));
@@ -283,4 +299,5 @@ if (@{$problems}) {
 }
 print "production-genericity-dependencies: core -> conformance absent; "
     . "conformance -> core and application -> {core, conformance} present; "
-    . "enforcement graph tool disconnected from all product packages; xtask depends on nothing and nothing on it\n";
+    . "enforcement graph tool disconnected from all product packages; xtask uses only already-locked crates and "
+    . "nothing depends on it\n";

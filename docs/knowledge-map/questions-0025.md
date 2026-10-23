@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
   > why does max_question_keys land on 4096 exactly
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -295,5 +297,3 @@
   > why is AWSNOOP Table A7.3 not published as an enum
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > why is AWSNOOP[3] not resolved to AWSNOOP
-- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
-  > why is AXI 'Pseudocode description of the transfers' not apparatus (pseudocode put to use)

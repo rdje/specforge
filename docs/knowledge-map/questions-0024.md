@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
+  > why does IntentIR carry so many assumptions that are not design intent
 - [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
   > why does LIVE-DOC-SIZE say tracked Markdown docs/tasks/... is not classified
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -296,5 +298,3 @@
   > why does is_post_passive_binding_only_subject exempt a table row
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does is_post_passive_binding_only_subject need to be told which obligation it judges
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records

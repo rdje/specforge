@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
+  > why is AXI 'Pseudocode description of the transfers' not apparatus (pseudocode put to use)
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > why is AXI AWAKEUP's hold guard unchanged (the condition already excludes the release)
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -296,5 +298,3 @@
   > why is page_image_path null / None for a large document
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > why is placing a table by its page wrong
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is plural-rejection unsafe for phase names (access ends in ss)
