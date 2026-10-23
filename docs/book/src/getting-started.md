@@ -97,8 +97,8 @@ cargo xtask docs              # the mdBook and the rustdoc API reference beside 
 (`xtask/src/docs.rs`), and `scripts/run_docs_ci.sh` is now a shim over it. SpecForge's own commands and doctrine
 checks move to native Rust one at a time (`cargo xtask check rustdoc`, `readme-policy`, `section-anchors`,
 `task-node-retention`, `contract-encoding`, `ownership-citations`, `published-assertions`,
-`residual-actionability` and `corpus-frontier` so far, and `doctrine-tables` was written natively), and a script stays
-behind as a shim
+`residual-actionability`, `corpus-frontier` and `constraint-part-span` so far, and `doctrine-tables` was written
+natively), and a script stays behind as a shim
 once its port reproduces it. The scripts of the portable architectures SpecForge adopts, such as the doctrine driver
 and the knowledge-map bundle, stay as they are, because other repositories copy them (`RUSTDOC-AND-XTASK`).
 

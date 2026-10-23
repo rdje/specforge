@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# SpecForge adapter for the CONSTRAINT-PART-SPAN doctrine (EXTRACTION-QUALITY-GAUGE.3k.2j).
+# SpecForge adapter for the CONSTRAINT-PART-SPAN doctrine (EXTRACTION-QUALITY-GAUGE.3k.2j), native since
+# RUSTDOC-AND-XTASK.14.b in `cargo xtask check constraint-part-span` (xtask/src/checks/constraint_part_span.rs).
 #
 # `scripts/measure_constraint_part_span.py` stratifies the published constraint surface by the
 # PRODUCER that minted each record, and its `--check` mode fails closed when the kind classifier's
@@ -15,7 +16,8 @@
 # Self-test first, then the check, for the reason CORPUS-FRONTIER states: a gate is not trusted on a
 # day its own negatives have not been re-proven. Read-only, offline, no provider, sub-second — so it
 # belongs at `gate` tier despite reading the persisted corpus, which it only opens for the census
-# path and never for `--check`.
+# path and never for `--check`. This shim keeps the doctrine's registered path, its argument refusal and the
+# project-data activation.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -25,8 +27,4 @@ specforge_activate_project_data "$ROOT"
 # A wrong flag must be loud: a silently-ignored argument is how a hand-run check becomes a no-op.
 [ "$#" -eq 0 ] || { printf 'Usage: %s   (this gate takes no arguments)\n' "$0" >&2; exit 2; }
 cd "$ROOT"
-
-fail=0
-python3 -B scripts/measure_constraint_part_span.py --self-test || fail=1
-python3 -B scripts/measure_constraint_part_span.py --check || fail=1
-exit "$fail"
+exec cargo xtask check constraint-part-span

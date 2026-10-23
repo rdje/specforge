@@ -414,7 +414,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
-  Status: `in_progress` (container; wave 3; `.14.a` done)
+  Status: `in_progress` (container; wave 3; `.14.a`-`.14.b` done)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
   `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
@@ -449,11 +449,34 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.14.a — cargo xtask check corpus-frontier replaces the CORPUS-FRONTIER gate's scripts`
 
 - ID: `RUSTDOC-AND-XTASK.14.b`
-  Status: `pending`
-  Goal: `cargo xtask check constraint-part-span` replaces the `CONSTRAINT-PART-SPAN` gate's script
-  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
+  Goal: `cargo xtask check constraint-part-span` replaces `scripts/check_constraint_part_span.sh` and its census
+  `scripts/measure_constraint_part_span.py`
+  Acceptance: `.6`'s parity evidence, its self-test ported; both scripts shims.
+  **Done `2026-10-23`.** `xtask/src/checks/constraint_part_span.rs` scans `crates/specforge/src/ir/evidence.rs` as the
+  script did (its definition regex, the `#[cfg(test)]` item bounds, the span read from each call's argument and the
+  `let lowered` binding before it, Python's white space and universal newlines) and holds the topology to its
+  declaration: three producers through the typed gateway, one of them over the whole statement, and the gateway the
+  only way into the untyped arm. The census mirrors the extractor's grammar (clause split, the six kind arms in
+  order, the value binder, negators, reference magnitudes) over the 78 persisted `evidence_ir.json`, read through
+  `pyjson`, and prints the report and `--json` as the script did; its 10 mirror cases keep their verdicts. Two unit
+  tests add what the script's self-test never covered: the check's refusals on a fixture source (a new producer, a
+  second way into the untyped arm, a test helper's call admitted) and the census's strata. The shell shim keeps the
+  usage refusal and the project-data activation; the Python shim keeps the `argparse` front end and passes
+  `--measure` with the flags set. **Parity**: HEAD's two scripts beside the shims on 68 inputs (the real tree through
+  both registered paths in eleven argument forms; 19 fixture roots, each with HEAD's census copied in, in three
+  modes: a census corpus with every stratum, unknown prefixes, non-ASCII case mappings, Python-only white space and a
+  clause past 200 characters; eight topology moves; two unreadable sources; seven broken artifacts): 48 identical in
+  full; 18 identical in stdout and exit code where the script stops with a traceback and the port names the input;
+  and two by design: `--help`, whose description no longer says the mirror is written in Python, and a two-member
+  set the port prints sorted where Python follows string hashes. **Cost:** the gate 0.18 s for the scripts, 0.19 s
+  for the shim; the census 2.37 s and 2.04 s.
+  **Found:** the census's KM card `constraint-record-producer-strata` still described four producers and two call
+  sites, and its reverify expected `2 callers`, true before `.3k.2a`'s gateway and `EXTRACTION-GAP-FIX.5b`'s keyed-row
+  producer; re-derived here from the port's census (364 records: 21 differ by span, 6 in the classifier's reach).
+  Verification: `cargo test -p xtask --lib` 72/72; parity and RED in `.project-data/tmp/rdx-14b/`
+  Commit: `RUSTDOC-AND-XTASK.14.b — cargo xtask check constraint-part-span replaces the CONSTRAINT-PART-SPAN gate's
+  scripts`
 
 - ID: `RUSTDOC-AND-XTASK.14.c`
   Status: `pending`
@@ -636,6 +659,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.b` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `CONSTRAINT-PART-SPAN` doctrine ran only as shell and Python
+  (`scripts/check_constraint_part_span.sh` over `scripts/measure_constraint_part_span.py`); HEAD's copies are the
+  parity baseline in `.project-data/tmp/rdx-14b/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 10 checks. RED 6/6, the file
+  restored byte-identically with a fresh mtime: a test module's caller counted, the `clause` span unread, a negated
+  spelling dropped from the arms, the declared total 10 -> 9, the untyped-arm guard disabled, `#[cfg(test)]` bounding
+  only modules; each fails `cargo test -p xtask --lib`, and all but the disabled guard, which the clean tree cannot
+  show, also turn `scripts/check_constraint_part_span.sh` red.
+- [x] **ADDRESSED (verified)** — ported gates 9 -> 10; 48 of 68 inputs identical in full, 18 in stdout and exit
+  code, two different by design; self-test 10/10.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 72
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s row; book `getting-started.md`; KM cards
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask` and `constraint-record-producer-strata`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.a` (CODE) — DONE `2026-10-23`
 
@@ -826,8 +868,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.14.b` | `pending` | wave 3's second gate, `CONSTRAINT-PART-SPAN` |
-| 2 | `RUSTDOC-AND-XTASK.14.c`-`.14.f` | `pending` | the rest of wave 3, in `.14`'s order |
+| 1 | `RUSTDOC-AND-XTASK.14.c` | `pending` | wave 3's third gate, `PROJECT-DATA-LOCALITY` |
+| 2 | `RUSTDOC-AND-XTASK.14.d`-`.14.f` | `pending` | the rest of wave 3, in `.14`'s order |
 | 3 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
 
 ## Decisions

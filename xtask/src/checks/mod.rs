@@ -1,6 +1,7 @@
 //! `cargo xtask check <doctrine>`: the doctrine gates ported to Rust (`RUSTDOC-AND-XTASK.6`). Each replaces the
 //! script the doctrine driver registers, which stays as a shim over it.
 
+pub mod constraint_part_span;
 pub mod contract_encoding;
 pub mod corpus_frontier;
 pub mod doctrine_tables;
@@ -76,6 +77,11 @@ pub const CHECKS: &[Check] = &[
         name: "corpus-frontier",
         replaces: "scripts/check_corpus_frontier.sh",
         run: corpus_frontier::run,
+    },
+    Check {
+        name: "constraint-part-span",
+        replaces: "scripts/check_constraint_part_span.sh",
+        run: constraint_part_span::run,
     },
 ];
 

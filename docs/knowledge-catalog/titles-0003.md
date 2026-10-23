@@ -23,7 +23,7 @@
 | [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md) | 2026-08-15 | `current` | Clarification planning groups exact governed needs and withholds autonomous work |
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
 | [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |
-| [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md) | 2026-09-12 | `current` | Four producers mint a SignalConstraintRecord and only two reach the kind classifier, so a census of the const… |
+| [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md) | 2026-10-23 | `current` | Five producers mint a SignalConstraintRecord and only three reach the kind classifier, so a census of the con… |
 | [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md) | 2026-09-23 | `current` | A signal constraint read from a list item or table row drops the scope its lead-in or caption states — 186… |
 | [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md) | 2026-09-23 | `current` | A containment registry's numbers must be JSON numbers, and the type is checked once at decode because Perl ca… |
 | [contested-priors](../knowledge/contested-priors.md) | 2026-06-04 | `current` | SpecForge detects contested priors (same key, conflicting values across docs) — read-only |

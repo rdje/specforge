@@ -171,7 +171,7 @@
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > what do the rows the declaration reader drops actually offer
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean
+  > what do the sigcon dyn_sigcon row_sigcon keyed_row_sigcon llm_sigcon id prefixes mean
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what document class is a chip-spec PDF (protocol / register / interface / guide)
 - [a-channel-code-column-is-an-aliasing-enum](../knowledge/a-channel-code-column-is-an-aliasing-enum.md)
