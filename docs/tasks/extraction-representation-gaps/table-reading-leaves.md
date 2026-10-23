@@ -69,11 +69,65 @@ here whole.
   clock evidence, decide per role whether a bus clock is the actor's `.isf` clock (and what reset then applies, given
   `FSMGEN-REQUESTS.9.a`'s refusal of an invented reset), and measure every chain's adapter.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.v`)
+  Status: `done` (`2026-10-23`; DESIGN; opened by `.3.c.v`; opened `.61.a`, `.61.b`, `.61.c`, `.70`)
   Goal: **an encoding member enabled by a property says so.** **Reproduce:** AXI's untitled `AWCMO` table gives
   `CleanSharedPersist` the enabling property `Persist_CMO` and `CleanInvalidPoPA` `RME_Support`; the members are read
   (`Enum AWCMO …`) and the property is not. Acceptance: census encoding tables with such a column, decide the carrier
   (a member's enabling property, joined to the property's own record), and measure every chain.
+  **Measured `2026-10-23`** (31 chains; `.project-data/tmp/erg-61/census.py`, `heads.py`, `count.py`). Of the 48
+  tables that mint an enum symbol or a value combination, five AXI tables (eight fragments) give each row an enabling
+  property in a column headed `Enable property`, `Enable` or `Property`. Each cell is `-`, one property, or properties
+  joined by one connective:
+  - two enum tables: *A9.4* `AWSNOOP` (3 members, each gated: `CMO_On_Write`, `Write_Plus_CMO` twice) and the untitled
+    `AWCMO` table (4 of its 6 members: `Persist_CMO` twice, `RME_Support`, `Storage_CMO`);
+  - three combination tables, whose cells `value_combinations` already keeps as written among `meanings`: *A7.3*
+    (`AWSNOOP` x `AWDOMAIN`, 25 rows: 15 one property, 5 `and`, 1 `or`, 4 `-`), *A7.4* (`ARSNOOP` x `ARDOMAIN`, 19
+    rows: 7 one, 5 `and`, 7 `-`) and *A4.7* (physical address spaces, 6 rows: 4 one, 2 `-`).
+  The cells name 22 properties, each with its own *`<Name>` property* table, and every one boolean, so none is a record
+  yet: SemanticIR mints `param` symbols for integer properties only, and a boolean property is
+  `KG-ISF-COMPLETENESS.2a.vii.c.vi`'s to read. The other matches are other shapes, each owned: a signal's presence
+  property (APB, AHB; `signal_presence_records.presence_condition`, joined by `.2a.vii.c.vi`), a parity check's enable
+  (`check_signal_records.check_enable`) and CHI C2C's register property bits. ADIv6 *C2-3*'s `Support required?` on
+  `CSW.Size`'s members is a conformance requirement, not a property, and nothing reads it (`.70`).
+  **Decided.**
+  - **The column.** In a table that mints an enum or a value combination, a column other than the code and name
+    columns whose title has the word *enable*, *enabled* or *property* (document grammar, as the presence matrix's
+    *property* column, ADR 0006), and whose every cell is `-`, empty, one identifier, or identifiers joined by one
+    connective (`and` or `or`). Any other cell refuses the column.
+  - **The carrier.** One enabling condition, kept as the cell writes it, with its property names and its connective
+    (`all` for `and` or a single name, `any` for `or`). `-` or an empty cell enables unconditionally, so it states
+    nothing. An enum member exists in EvidenceIR only as the reader's statement, so the reader states the condition
+    the same way (`Enum AWCMO CLEANSHAREDPERSIST is enabled by Persist_CMO.`, citing its table), as it states `also
+    takes` and `shares a code between members`. SemanticIR reads it into `SymbolEnumMemberRecord.enabled_by`. A
+    combination row gains `ValueCombinationRow.enabled_by` beside its `meanings`, which stay as written. IntentIR
+    carries both with the symbols and combinations (`.61.a`).
+  - **Not lowered.** An `.isf` enum declares its members unconditionally and has no boolean property; an optional
+    port or member is FSMGen's half of `.2a.vii.c.vi`. The adapter keeps each gated member declared, since the full set
+    is what the interface carries when every property is True, and states one residual per gated enum naming its
+    members and conditions (`.61.b`). ADR 0033 §4 files no FSMGen request until a rule needs a gated member.
+  - **The join.** Each named property joins the property's own record once boolean properties are records (`.61.c`,
+    after `.2a.vii.c.vi`). Until then the names stay as written, never resolved by spelling alone.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.61.a`
+  Status: `open` (`2026-10-23`; CODE; opened by `.61`)
+  Goal: **an encoding member's enabling property is read.** Acceptance: read `.61`'s column into the enum reader's
+  `is enabled by` statements and `SymbolEnumMemberRecord.enabled_by` (*A9.4* `AWSNOOP` 3 members, `AWCMO` 4) and into
+  `ValueCombinationRow.enabled_by` (*A7.3* 21 rows, *A7.4* 12, *A4.7* 4), carry both to IntentIR, and measure every
+  chain.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.61.b`
+  Status: `open` (`2026-10-23`; CODE; opened by `.61`)
+  Goal: **the adapter names each enum member a property enables.** Acceptance: state one residual per enum with a
+  gated member, naming each member and its condition; the `.isf` enum keeps every member; measure every chain.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`
+  Status: `open` (`2026-10-23`; CODE; opened by `.61`; waits for `KG-ISF-COMPLETENESS.2a.vii.c.vi`)
+  Goal: **a member's enabling property joins the property's own record.** Acceptance: once boolean properties are
+  records, join each name in an `enabled_by` to its record, leave a name no record declares unjoined, and measure AXI's
+  22 properties.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.70`
+  Status: `open` (`2026-10-23`; DESIGN; opened by `.61`)
+  Goal: **an encoding member's support requirement is read.** **Reproduce:** ADIv6 *C2-3* (`Size value, CSW.Size |
+  Memory access size | Support required?`) states `Yes a` for `Word` and `No` for the other sizes; the `Size` enum
+  keeps the codes and drops the column. Acceptance: census encoding tables with a support-requirement column, decide
+  the carrier (and how the footnote mark joins its note), and measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c`
   Status: `done` (`2026-10-22`; DESIGN; opened by `.3.c.iv.b`; opened `.3.c.iv.c.i`, `.3.c.iv.c.ii`)
   Goal: **a signal laid out per message kind is read.** **Reproduce:** AXI-L *A15.20*-*A15.22* and their continuations

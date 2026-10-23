@@ -24,6 +24,8 @@
   > does a footnote element prove a note number
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > does a freshly built EvidenceIR carry a document_class
+- [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
+  > does a gated enum member reach the .isf
 - [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
   > does a keyed row with a second sentence yield a constraint
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
@@ -296,5 +298,3 @@
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > does the WIRE-BASED-100 temporal key score exceptions
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > does the actor-relation reader read a Continued from previous page fragment's Source column

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > how does SpecForge decide the radix of an unquoted encoding cell
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > how does SpecForge decide which signal a logic level belongs to
 - [contested-priors](../knowledge/contested-priors.md)
   > how does SpecForge detect contradicting or conflicting priors
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -294,7 +298,3 @@
   > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how expensive is reading the proof seal from the whole persisted corpus

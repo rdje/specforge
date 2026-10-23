@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61",
-      "literal" : "`.61` — an encoding member enabled by a property says so.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.a",
+      "literal" : "`.61.a` — an encoding member's enabling property is read.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -1305,7 +1305,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1396,6 +1396,30 @@
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60.a",
          "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.c",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70",
+         "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       }
@@ -1572,13 +1596,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 23202,
+            "bytes" : 28368,
             "line_bytes" : 119,
-            "lines" : 257
+            "lines" : 311
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "bae680777089f0ff6f50af1cbf95497ee590d480c2ed7f1e32d213379daa4a49",
+         "sha256" : "6b48a1bcba4cdd852c31f76d51ec946f05cf50f2a0dd0488b701907eb5d0a47f",
          "state" : "active"
       },
       {
