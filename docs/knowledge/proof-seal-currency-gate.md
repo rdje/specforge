@@ -13,10 +13,11 @@ answers:
   - "how is the proof seal read from a large stage artifact"
   - "how expensive is reading the proof seal from the whole persisted corpus"
   - "what is the difference between PROOF-SEAL-CURRENCY and CHAIN-CURRENCY"
+  - "where is the proof-seal reader defined (cargo xtask check proof-seal-currency)"
 date: 2026-08-29
 status: current
 tags: [doctrine, proof, seal, chain-currency, corpus, gate, read-only]
-evidence: scripts/check_proof_seal_currency.sh; scripts/lib/proof_seal_scan.sh; scripts/check_doctrines.sh; docs/tasks/SOURCE-IR-REPRODUCIBILITY.md (.14, .15, .16); DOCTRINE_ENFORCEMENT.md §10
+evidence: scripts/check_proof_seal_currency.sh; xtask/src/checks/proof_seal_currency.rs; scripts/lib/proof_seal_scan.sh; docs/tasks/RUSTDOC-AND-XTASK.md (.14.e); scripts/check_doctrines.sh; docs/tasks/SOURCE-IR-REPRODUCIBILITY.md (.14, .15, .16); DOCTRINE_ENFORCEMENT.md §10
 reverify: bash scripts/check_proof_seal_currency.sh --self-test && bash scripts/check_proof_seal_currency.sh && bash scripts/rebuild_stage_cascade.sh --self-test
 ---
 
@@ -43,11 +44,14 @@ leave the artifact byte-identical. The terminal `adapters/isf` stage has no cons
 canonical probe at all — and `CHAIN-CURRENCY` does not close that gap either, because its content comparison
 excludes the proof surface by construction. That stage is censused and reported as unprobed.
 
-Reading the seal is the composition of two predicates in `scripts/lib/proof_seal_scan.sh`, shared with the
-remedy (`scripts/rebuild_stage_cascade.sh`) so a gate and a remedy cannot disagree about scope. A
-necessary-condition prefilter (`index()` for the `"proof_ledger"` key, one process for a whole list) costs
-0.24 s over all 78 `source_ir.json`; the exact depth-aware streaming scan then decides each candidate and costs
-1.23 s over the 24 that carry a ledger. Proving absence still reads every byte — what the prefilter removes is
+Reading the seal is the composition of two predicates, native since `RUSTDOC-AND-XTASK.14.e` in
+`cargo xtask check proof-seal-currency` and reached through `scripts/lib/proof_seal_scan.sh`, which the remedy
+(`scripts/rebuild_stage_cascade.sh`) shares so a gate and a remedy cannot disagree about scope; the stage table
+and the read-only probe stay defined in that library. A necessary-condition prefilter (a search for the
+`"proof_ledger"` key, one process for a whole list) runs first, and the exact depth-aware streaming scan then
+decides each candidate. For the Perl reader that measured 0.24 s and 1.23 s (`2026-08-29`, 24 sealed); the
+composition over all 78 `source_ir.json` is 0.30 s native against 2.12 s for the Perl library (`2026-10-24`,
+31 sealed, identical rows). Proving absence still reads every byte — what the prefilter removes is
 the parser, not the read. The prefilter is never an authority: a nested `proof_ledger` is a candidate the exact
 scan rejects.
 

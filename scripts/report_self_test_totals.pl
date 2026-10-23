@@ -42,7 +42,8 @@ my $ROOT  = File::Spec->rel2abs(File::Spec->catdir(dirname(__FILE__), File::Spec
 # The scripts whose self-test count a document may publish. A key is a stable slug, so a published
 # assertion's `field` never has to carry a path with dots and slashes in it.
 my %SCRIPTS = (
-    proof_seal_currency  => 'scripts/check_proof_seal_currency.sh',
+    # RUSTDOC-AND-XTASK.14.e — native, so its total is declared in the Rust module the shim runs.
+    proof_seal_currency  => 'xtask/src/checks/proof_seal_currency.rs',
     # RUSTDOC-AND-XTASK.14.d — native, so its total is declared in the Rust module the shim runs.
     chain_currency       => 'xtask/src/checks/chain_currency.rs',
     rebuild_stage_cascade => 'scripts/rebuild_stage_cascade.sh',

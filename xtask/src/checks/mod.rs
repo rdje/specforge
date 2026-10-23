@@ -8,6 +8,7 @@ pub mod corpus_frontier;
 pub mod doctrine_tables;
 pub mod ownership_citations;
 pub mod project_data_locality;
+pub mod proof_seal_currency;
 pub mod published_assertions;
 pub mod readme_policy;
 pub mod residual_actionability;
@@ -94,6 +95,11 @@ pub const CHECKS: &[Check] = &[
         name: "chain-currency",
         replaces: "scripts/check_chain_currency.sh",
         run: chain_currency::run,
+    },
+    Check {
+        name: "proof-seal-currency",
+        replaces: "scripts/check_proof_seal_currency.sh",
+        run: proof_seal_currency::run,
     },
 ];
 

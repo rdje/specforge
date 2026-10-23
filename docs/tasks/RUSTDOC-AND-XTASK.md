@@ -414,7 +414,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
-  Status: `in_progress` (container; wave 3; `.14.a`-`.14.d` done)
+  Status: `in_progress` (container; wave 3; `.14.a`-`.14.e` done)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
   `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
@@ -542,17 +542,43 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.14.d — cargo xtask check chain-currency replaces the CHAIN-CURRENCY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14.e`
-  Status: `pending`
-  Goal: `cargo xtask check proof-seal-currency` replaces the `PROOF-SEAL-CURRENCY` gate's script
+  Status: `done` (`2026-10-24`; CODE; checklist below)
+  Goal: `cargo xtask check proof-seal-currency` replaces `scripts/check_proof_seal_currency.sh`, and holds the one
+  seal reader `scripts/lib/proof_seal_scan.sh` defined
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; `report_self_test_totals.pl` still
-  reads its declared total.
-  Verification: `pending`
-  Commit: `pending`
+  reads its declared total; the seal read still defined once for the gate and the rebuild remedy.
+  **Done `2026-10-24`.** `xtask/src/checks/proof_seal_currency.rs` reads each persisted artifact's seal as the
+  library did: the necessary-condition prefilter (the `"proof_ledger"` key, a needle carried across 1 MiB reads),
+  then the depth-aware scan of the top-level ledger's direct `ruleset_sha256`, string literals consumed whole and
+  taken raw, the depth signed as Perl's was, and the batched composition dropping an empty seal as `[ -n "$seal" ]`
+  did. It censuses every in-scope artifact at every stage, probes per stage (total at `semantic` and `intent` unless
+  `SPECFORGE_PROOF_SEAL_TOTAL_STAGES` says otherwise, one per distinct seal elsewhere, everything under `--total`),
+  and classifies each refusal as the script did (the stale-seal diagnostic with its remedy, an absent precondition
+  with no verdict, anything else unclassified), the diagnostic flattened and cut to 200 bytes as `tr`, `sed` and
+  `cut` left it; its 21 self-test cases keep their verdicts, the end-to-end ones through the registered script with
+  recording stubs. **The seal read stays single** (`.11`): `scripts/lib/proof_seal_scan.sh` now calls
+  `--proof-ledger-candidates`, `--scan-proof-ledger` and `--sealed-artifacts`, passing the caller's directory; the
+  chain stage table and the read-only probe stay defined in that library, which the check reads and calls, and
+  which build answers stays `corpus_replay_binary.sh`. `report_self_test_totals.pl` reads the declaration from the
+  Rust module. The shim keeps the argument loop, `LC_ALL=C`, the three knobs and the activation. **Parity**: HEAD's
+  script, library and reporter beside the shims on 55 inputs (the self-test and three argument forms; the TOTAL
+  wrapper's self-test; the cascade's; the reporter; 15 crafted artifacts through `scan_proof_ledger`, from a
+  compact ledger to an unterminated literal and a key straddling the first 1 MiB read; both batch readers over all
+  of them and over none; the two stratum helpers; nine stub-binary fixture corpora in both tiers, from an accepted
+  corpus to a stale seal, an unclassified refusal, an absent input, a terminal stage, a lost seal and a binary that
+  is not executable; the stage set emptied and replaced; an absent corpus; and the persisted corpus in both tiers,
+  31 in scope and 47 proofless): identical on all 55. **Cost** on the persisted corpus: `--check` 91 s for the
+  script and 85 s for the shim, `--total` 141 s and 140 s, the loader probes dominating; the seal read over all 78
+  `source_ir.json` is 2.12 s for the Perl library and 0.30 s native.
+  Verification: `cargo test -p xtask --lib` 82/82; parity and RED in `.project-data/tmp/rdx-14e/`
+  Commit: `RUSTDOC-AND-XTASK.14.e — cargo xtask check proof-seal-currency replaces the PROOF-SEAL-CURRENCY gate's
+  script`
 
 - ID: `RUSTDOC-AND-XTASK.14.f`
   Status: `pending`
   Goal: `cargo xtask check proof-seal-total` replaces the `PROOF-SEAL-TOTAL` gate's script
-  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim. **Found by `.14.e`:** the wrapper's
+  header says `--self-test` reaches "the same 19 controls"; the owning check declares 21. Correct it with the port.
   Verification: `pending`
   Commit: `pending`
 
@@ -718,6 +744,24 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.e` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — the `PROOF-SEAL-CURRENCY` doctrine and its seal reader ran only as shell and Perl
+  (`scripts/check_proof_seal_currency.sh`, `scripts/lib/proof_seal_scan.sh`); HEAD's copies, with the totals
+  reporter's, are the parity baseline in `.project-data/tmp/rdx-14e/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 13 checks. RED 7/7, every
+  file restored byte-identically with a fresh mtime: the prefilter's carry dropped, the ledger's depth relaxed, the
+  seal read at any depth, an empty seal kept, the diagnostic unsqueezed, the default total stages emptied, the
+  library calling the wrong reader; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 12 -> 13; identical output on 55 of 55 inputs, both tiers of the
+  persisted corpus among them; self-test 21/21; the cascade's 14/14 through the library.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 82
+  passed; `report_self_test_totals.pl --check` unchanged (22 / 21 / 14); `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `.14.f`; `docs/DOCTRINE_INSTANCE.md`'s row; book `getting-started.md`; KM cards
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask` and `proof-seal-currency-gate`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.d` (CODE) — DONE `2026-10-24`
 
@@ -968,8 +1012,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.14.e` | `pending` | wave 3's fifth gate, `PROOF-SEAL-CURRENCY`, and its seal-read library |
-| 2 | `RUSTDOC-AND-XTASK.14.f`-`.14.g` | `pending` | the rest of wave 3, in `.14`'s order |
+| 1 | `RUSTDOC-AND-XTASK.14.f` | `pending` | wave 3's sixth gate, `PROOF-SEAL-TOTAL`, the CI-tier wrapper |
+| 2 | `RUSTDOC-AND-XTASK.14.g` | `pending` | the persisted-artifact path tool `PROJECT-DATA-LOCALITY` composes |
 | 3 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
 
 ## Decisions

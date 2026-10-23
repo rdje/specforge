@@ -9,11 +9,11 @@
 #   - and, transitively, anything that later needs the same question answered the same way.
 #
 # `.11` established the lesson this file exists to obey, and `.15` paid for it once already: a
-# second copy of a predicate is a predicate that can drift. So the seal read lives here ONCE and
-# every caller sources it. `scripts/lib/stage_artifact_identity.sh` is its sibling and owns the
-# other shared predicate — CONTENT identity. This file owns SEAL identity; they are deliberately
-# separate questions, because the whole premise of a re-seal is that the seal moves and the content
-# does not.
+# second copy of a predicate is a predicate that can drift. So the seal read lives ONCE (in `cargo xtask
+# check proof-seal-currency` since RUSTDOC-AND-XTASK.14.e) and every caller reaches it through this file.
+# `scripts/lib/stage_artifact_identity.sh` is its sibling and owns the other shared predicate — CONTENT
+# identity. This file owns SEAL identity; they are deliberately separate questions, because the whole premise
+# of a re-seal is that the seal moves and the content does not.
 #
 # ── Why the reader is shaped the way it is ─────────────────────────────────────────────────────
 # A stage artifact reaches 87 MB, so it is never parsed whole. `.15` shipped a depth-aware streaming
@@ -53,128 +53,43 @@
 # Bash-3.2-safe (no associative arrays, no mapfile), matching every entrypoint that sources it.
 
 # ── The seal read ───────────────────────────────────────────────────────────
+# Native since RUSTDOC-AND-XTASK.14.e: the reader is defined once, in `cargo xtask check proof-seal-currency`
+# (xtask/src/checks/proof_seal_currency.rs), and these functions call it, so the gate and the remedy still read
+# the seal with the same code. The properties above are the native reader's: the necessary-condition prefilter
+# (one pass, a needle carried across read boundaries), the depth-aware streaming scan of the TOP-LEVEL ledger's
+# DIRECT `ruleset_sha256`, string literals consumed whole so a structural byte inside one is never structure, and
+# the batched composition that runs the prefilter once for the whole list. Each call runs in a subshell at the
+# repository root, where the `cargo xtask` alias resolves, passing the caller's directory so relative paths
+# resolve, and print, as given; the caller's directory, options and traps are untouched.
+
 # proof_ledger_candidates <artifact.json>...
-# Prints, one per line and in argument order, those inputs whose bytes contain the `"proof_ledger"`
-# key. An input that is unreadable or absent is simply not a candidate. ONE process for the whole
-# list — the point is to spend one cheap pass instead of N parser passes.
+# Prints, one per line and in argument order, those inputs whose bytes contain the `"proof_ledger"` key. An input
+# that is unreadable or absent is simply not a candidate.
 proof_ledger_candidates() {
   [ "$#" -gt 0 ] || return 0
-  perl - "$@" <<'PERL'
-use strict;
-use warnings;
-
-my $NEEDLE = '"proof_ledger"';
-my $KEEP   = length($NEEDLE) - 1;   # the most a needle can straddle a read boundary
-
-FILE: for my $path (@ARGV) {
-    open my $handle, '<:raw', $path or next FILE;
-    my $carry = '';
-    my $chunk;
-    while (read($handle, $chunk, 1 << 20)) {
-        my $window = $carry . $chunk;   # carry the tail so a needle cannot straddle a read boundary
-        if (index($window, $NEEDLE) >= 0) {
-            close $handle;
-            print "$path\n";
-            next FILE;
-        }
-        $carry = length($window) > $KEEP ? substr($window, -$KEEP) : $window;
-    }
-    close $handle;
-}
-PERL
+  _proof_seal_scan_native --proof-ledger-candidates "$@"
 }
 
 # scan_proof_ledger <artifact.json>
-# Prints the recorded seal, `none` when the ledger has no `ruleset_sha256`, or nothing at all when
-# there is no top-level proof ledger. Exits 0 when a top-level `proof_ledger` object exists, 1
-# otherwise. Streaming and depth-aware: it reads the TOP-LEVEL `proof_ledger` object's DIRECT
-# `ruleset_sha256` member and cannot be fooled by a digest-shaped field elsewhere in the artifact.
+# Prints the recorded seal, `none` when the ledger has no `ruleset_sha256`, or nothing at all when there is no
+# top-level proof ledger. Exits 0 when a top-level `proof_ledger` object exists, 1 otherwise.
 scan_proof_ledger() {
-  perl - "$1" <<'PERL'
-use strict;
-use warnings;
-
-open my $handle, '<:raw', $ARGV[0] or exit 1;
-binmode $handle;
-
-my $BLOCK = 1 << 20;
-my $buf   = '';
-my $eof   = 0;
-
-my $depth        = 0;      # brace/bracket depth; top-level object members sit at depth 1
-my $pending_key  = undef;  # the most recent string seen in key position
-my $in_ledger    = 0;      # depth at which the proof_ledger object's members live, or 0
-my $found_ledger = 0;
-my $expect_value = 0;      # the next string literal closes `"ruleset_sha256":`
-my $seal;
-
-# One match consumes either a whole string literal (so structural bytes INSIDE a string can never
-# be read as structure) or one structural byte, after skipping the run of bytes that are neither.
-# Possessive quantifiers keep an unterminated literal at a read boundary from backtracking: the
-# match simply fails, pos() is preserved by /c, and the next read appends the rest.
-OUTER: while (1) {
-    if (!$eof) {
-        my $chunk;
-        my $bytes = read($handle, $chunk, $BLOCK);
-        if (!defined $bytes || $bytes == 0) { $eof = 1 } else { $buf .= $chunk }
-    }
-    pos($buf) = 0;
-    while ($buf =~ /\G[^"{}\[\],:]*+(?:"((?:[^"\\]++|\\.)*+)"|([{}\[\],:]))/gcs) {
-        if (defined $1) {
-            if ($expect_value) { $seal = $1; last OUTER }
-            $pending_key = $1;
-            next;
-        }
-        my $ch = $2;
-        if ($ch eq '{' || $ch eq '[') {
-            $depth++;
-            if (!$found_ledger && $ch eq '{' && $depth == 2
-                && defined $pending_key && $pending_key eq 'proof_ledger') {
-                $found_ledger = 1;
-                $in_ledger    = $depth;
-            }
-            $pending_key = undef;
-            next;
-        }
-        if ($ch eq '}' || $ch eq ']') {
-            last OUTER if $in_ledger && $depth == $in_ledger;
-            $depth--;
-            $pending_key = undef;
-            next;
-        }
-        if ($ch eq ':') {
-            $expect_value = ($in_ledger && $depth == $in_ledger
-                             && defined $pending_key && $pending_key eq 'ruleset_sha256') ? 1 : 0;
-            next;
-        }
-        $pending_key = undef;   # ','
-    }
-    my $consumed = pos($buf) || 0;
-    substr($buf, 0, $consumed) = '' if $consumed;
-    last OUTER if $eof;
-}
-close $handle;
-
-exit 1 if !$found_ledger;
-print defined $seal ? "$seal\n" : "none\n";
-exit 0;
-PERL
+  _proof_seal_scan_native --scan-proof-ledger "$1"
 }
 
 # sealed_artifacts <artifact.json>...
-# THE composition of the two readers above, and the only place they are composed: prints one
-# `<path>\t<seal>` line per input that carries a top-level proof ledger, in argument order. The
-# prefilter runs ONCE for the whole list — batching is the whole point, because a per-file prefilter
-# would spend a process to save a parse. `<seal>` is `none` for a ledger that records no
-# `ruleset_sha256`; an input with no top-level ledger produces no line at all.
+# THE composition of the two readers above, and the only place they are composed: prints one `<path>\t<seal>`
+# line per input that carries a top-level proof ledger, in argument order. `<seal>` is `none` for a ledger that
+# records no `ruleset_sha256`; an input with no top-level ledger produces no line at all.
 sealed_artifacts() {
   [ "$#" -gt 0 ] || return 0
-  local candidate seal
-  proof_ledger_candidates "$@" | while IFS= read -r candidate; do
-    if seal="$(scan_proof_ledger "$candidate" 2>/dev/null)" && [ -n "$seal" ]; then
-      printf '%s\t%s\n' "$candidate" "$seal"
-    fi
-  done
+  _proof_seal_scan_native --sealed-artifacts "$@"
+}
+
+_proof_seal_scan_native() {
+  local caller="$PWD" root
+  root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  (cd "$root" && cargo xtask check proof-seal-currency --caller-dir "$caller" "$@")
 }
 
 # carries_proof_ledger <artifact.json> — stratum membership.
