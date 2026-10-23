@@ -414,13 +414,14 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
-  Status: `in_progress` (container; wave 3; `.14.a`-`.14.b` done)
+  Status: `in_progress` (container; wave 3; `.14.a`-`.14.c` done)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
   `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
   `scripts/report_self_test_totals.pl` reads the declared self-test totals of `check_chain_currency.sh`,
   `check_proof_seal_currency.sh` and `rebuild_stage_cascade.sh` from their source and fails closed when it cannot,
-  so a port that moves a total out of its script updates that producer in the same leaf.
+  so a port that moves a total out of its script updates that producer in the same leaf. **Added by `.14.c`:**
+  `.14.g`, the persisted-artifact path tool `PROJECT-DATA-LOCALITY` composes.
   **Opened `2026-10-23` with `.14.a`.** None of the six is a portable kit's script (`.16`). A doctrine whose adapter
   calls a core script ports both into one module; each script stays a shim at its path, since the records cite the
   core and the driver runs the adapter.
@@ -479,12 +480,35 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   scripts`
 
 - ID: `RUSTDOC-AND-XTASK.14.c`
-  Status: `pending`
-  Goal: `cargo xtask check project-data-locality` replaces the `PROJECT-DATA-LOCALITY` gate's script
-  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; `scripts/project_data_env.sh` stays
-  the shared shell library the other scripts source.
-  Verification: `pending`
-  Commit: `pending`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
+  Goal: `cargo xtask check project-data-locality` replaces `scripts/check_project_data_locality.sh`
+  Acceptance: `.6`'s parity evidence; the script a shim; `scripts/project_data_env.sh` stays the shared shell
+  library the other scripts source.
+  **Done `2026-10-23`.** `xtask/src/checks/project_data_locality.rs` activates the roots through `project_data`,
+  requires each seam's contract text in the script's order (`.cargo/config.toml`'s ten forced variables, every
+  `scripts/*.sh` entry point's activation, the native commands, both hooks, the product's twelve temporary and
+  subprocess seams), checks the two locks and any present Python environment's prefix and launchers, refuses
+  `.fsm`/`.log` residue and a user-home path in the post-compact hook, and runs the two tools it composes with the
+  activated environment, their output discarded and their errors shown: `check_persisted_artifact_paths.pl`
+  (`--self-test`, then `--check`; ported by `.14.g`) and `test_project_data_locality.sh`, which tests the shell
+  library and stays shell with it. The shim keeps the argument refusal and the shell activation. `--root DIR`
+  checks another tree. A unit test runs the whole gate on a copied tree, one broken input per case.
+  **Found: the stale-launcher check never fired.** The script ran `rg` over each environment's `bin/` and
+  `pyvenv.cfg` and kept only lines without the root, but every `rg` line begins with its file's absolute path under
+  the root, so the filter dropped all of them: a launcher written `#!/Users/someone/old/specforge/.venv-docling/...`
+  was matched, then discarded. The port compares each line's own text; on the real environments it finds 69
+  matching lines and none stale. The book's claims that the gate detects a stale launcher
+  (`reference/troubleshooting.md`, `reference/doctrine-enforcement.md`) were false until now; the latter's "three
+  focused shell cases" is five.
+  **Parity**: HEAD's script beside the shim on 21 inputs (the real tree and an argument through the registered
+  path; 19 fixture roots holding every file the gate reads, HEAD's script inside each: clean, and one break per
+  refusal, from a missing `.gitkeep` to a non-repository root): 19 identical, one in stdout and exit code alone (a
+  missing hook, where `grep` also printed its own error), and one by design, the stale launcher the script missed.
+  **Cost:** about two minutes either way (112 s for the script, 119 s for the shim, one run each), nearly all of it
+  `check_persisted_artifact_paths.pl --check` over the persisted corpus.
+  Verification: `cargo test -p xtask --lib` 75/75; parity and RED in `.project-data/tmp/rdx-14c/`
+  Commit: `RUSTDOC-AND-XTASK.14.c — cargo xtask check project-data-locality replaces the PROJECT-DATA-LOCALITY
+  gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14.d`
   Status: `pending`
@@ -506,6 +530,18 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Status: `pending`
   Goal: `cargo xtask check proof-seal-total` replaces the `PROOF-SEAL-TOTAL` gate's script
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.14.g`
+  Status: `pending` (opened `2026-10-23` by `.14.c`)
+  Goal: the persisted-artifact path tool `PROJECT-DATA-LOCALITY` composes,
+  `scripts/check_persisted_artifact_paths.pl`, moves to xtask
+  Acceptance: `.6`'s parity evidence on all four modes (`--check`, `--report`, `--self-test` with its 18 declared
+  assertions, and `--migrate-legacy-root`, dry run and `--execute` on a scratch copy only); the script a shim; the
+  native locality gate calls it natively. The book's `reference/project-data-locality.md` says the doctrine runs "12
+  scanner self-tests" and "pins eleven producer/consumer files", where the tool declares 18 assertions (12 cases and
+  six standalone checks) over 12 contract files: re-derive both and correct the book in the same leaf.
   Verification: `pending`
   Commit: `pending`
 
@@ -659,6 +695,27 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.c` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `PROJECT-DATA-LOCALITY` doctrine ran only as shell
+  (`scripts/check_project_data_locality.sh`); HEAD's copy is the parity baseline in `.project-data/tmp/rdx-14c/`. A
+  launcher into another repository copy, written into a probe environment, is matched by the script's `rg` and then
+  dropped by its own filter.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 11 checks; and HEAD's
+  `scripts/check_project_data_locality.sh:94-95` filtered `rg`'s path-prefixed lines with `grep -Fv "$ROOT"`. RED
+  5/5, the file restored byte-identically with a fresh mtime: the required-text test inverted, the stale filter made
+  vacuous again, `.log` residue ignored, the composed tools' verdicts ignored, hidden entry points skipped; each
+  fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 10 -> 11; 19 of 21 inputs identical, one in stdout and exit code, one
+  different by design; a stale launcher now fails the gate.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 75
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `.14` and `.14.g`; `docs/DOCTRINE_INSTANCE.md`'s row; book `getting-started.md` and
+  `reference/doctrine-enforcement.md`; KM cards `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask` and
+  `project-data-locality-enforcement`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.b` (CODE) — DONE `2026-10-23`
 
@@ -868,8 +925,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.14.c` | `pending` | wave 3's third gate, `PROJECT-DATA-LOCALITY` |
-| 2 | `RUSTDOC-AND-XTASK.14.d`-`.14.f` | `pending` | the rest of wave 3, in `.14`'s order |
+| 1 | `RUSTDOC-AND-XTASK.14.d` | `pending` | wave 3's fourth gate, `CHAIN-CURRENCY` |
+| 2 | `RUSTDOC-AND-XTASK.14.e`-`.14.g` | `pending` | the rest of wave 3, in `.14`'s order |
 | 3 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
 
 ## Decisions

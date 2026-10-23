@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how does SpecForge bind a protocol state to its state machine
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -296,5 +298,3 @@
   > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable

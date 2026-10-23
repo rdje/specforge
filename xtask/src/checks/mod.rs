@@ -6,6 +6,7 @@ pub mod contract_encoding;
 pub mod corpus_frontier;
 pub mod doctrine_tables;
 pub mod ownership_citations;
+pub mod project_data_locality;
 pub mod published_assertions;
 pub mod readme_policy;
 pub mod residual_actionability;
@@ -82,6 +83,11 @@ pub const CHECKS: &[Check] = &[
         name: "constraint-part-span",
         replaces: "scripts/check_constraint_part_span.sh",
         run: constraint_part_span::run,
+    },
+    Check {
+        name: "project-data-locality",
+        replaces: "scripts/check_project_data_locality.sh",
+        run: project_data_locality::run,
     },
 ];
 

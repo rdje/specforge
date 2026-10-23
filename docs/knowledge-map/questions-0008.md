@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > how does the value slot tell a state from a relation without an adjective list
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -295,5 +297,3 @@
   > how many CoreSight Base System page sidecars are repository relative
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > how many Docling tables does the persisted corpus have
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how many Introducing CoreSight page paths are repository relative

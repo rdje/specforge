@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Enforce repository-derived roots for every project-owned temp/cache/artifact seam.
+# Enforce repository-derived roots for every project-owned temp/cache/artifact seam: the PROJECT-DATA-LOCALITY
+# doctrine, native since RUSTDOC-AND-XTASK.14.c in `cargo xtask check project-data-locality`
+# (xtask/src/checks/project_data_locality.rs). This shim keeps the doctrine's registered path, its argument refusal
+# and the shell activation every entry point performs; the native gate activates the same roots itself and reports
+# a failure once, so the shell's own message is not repeated here.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -7,121 +11,6 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # A wrong flag must be loud: a silently-ignored argument is how a hand-run check becomes a no-op.
 [ "$#" -eq 0 ] || { printf 'Usage: %s   (this gate takes no arguments)\n' "$0" >&2; exit 2; }
 source "$ROOT/scripts/project_data_env.sh"
-
-fail=0
-note() {
-  printf 'project-data-locality: %s\n' "$1" >&2
-  fail=1
-}
-
-require_text() {
-  local file="$1"
-  local text="$2"
-  if ! grep -Fq -- "$text" "$ROOT/$file"; then
-    note "$file is missing required contract text: $text"
-  fi
-}
-
-if ! specforge_activate_project_data "$ROOT"; then
-  note "canonical project-data roots failed validation"
-fi
-
-if [[ ! -f "$ROOT/.project-data/tmp/.gitkeep" ]]; then
-  note ".project-data/tmp must exist in a fresh checkout"
-fi
-
-for variable in \
-  SPECFORGE_REPO_ROOT TMPDIR TMP TEMP XDG_CACHE_HOME HF_HOME HUGGINGFACE_HUB_CACHE \
-  PIP_CACHE_DIR TORCH_HOME MPLCONFIGDIR; do
-  require_text ".cargo/config.toml" "$variable = { value ="
-  require_text ".cargo/config.toml" "relative = true, force = true"
-done
-
-while IFS= read -r script; do
-  [[ "$script" == "scripts/project_data_env.sh" ]] && continue
-  require_text "$script" 'scripts/project_data_env.sh"'
-  require_text "$script" "specforge_activate_project_data"
-done < <(cd "$ROOT" && find scripts -maxdepth 1 -type f -name '*.sh' -print | sort)
-
-# RUSTDOC-AND-XTASK.5 — a script ported to `cargo xtask` keeps its seam: the native command activates the same
-# roots before it spawns anything.
-require_text "xtask/src/docs.rs" "project_data::activate(root)"
-require_text "xtask/src/project_data.rs" "is off the repository filesystem"
-require_text ".githooks/pre-commit" 'source "$ROOT/scripts/project_data_env.sh"'
-require_text ".githooks/pre-commit" 'specforge_activate_project_data "$ROOT"'
-require_text ".claude/hooks/post-compact.sh" 'source "$PROJECT_DIR/scripts/project_data_env.sh"'
-require_text ".claude/hooks/post-compact.sh" 'specforge_activate_project_data "$PROJECT_DIR"'
-require_text ".claude/hooks/post-compact.sh" 'SPECFORGE_FSMGEN_MAIN_DIR'
-require_text "crates/specforge/src/lib.rs" "project_data::prepare()?;"
-require_text "crates/specforge/src/project_data.rs" ".tempdir_in(roots.temporary)?"
-require_text "crates/specforge/src/project_data.rs" "ensure_same_filesystem"
-
-for seam in \
-  crates/specforge/src/commands/doctor.rs \
-  crates/specforge/src/commands/enrich.rs \
-  crates/specforge/src/commands/llm_text.rs \
-  crates/specforge/src/commands/eval_extraction.rs \
-  crates/specforge/src/commands/kg_bench.rs \
-  crates/specforge/src/ir/source/docling_backend.rs; do
-  require_text "$seam" "crate::project_data::tempdir()?"
-done
-
-for seam in \
-  crates/specforge/src/commands/doctor.rs \
-  crates/specforge/src/commands/enrich.rs \
-  crates/specforge/src/commands/llm_text.rs \
-  crates/specforge/src/commands/recover_register_bits.rs \
-  crates/specforge/src/ir/mod.rs \
-  crates/specforge/src/ir/source/docling_backend.rs; do
-  require_text "$seam" "crate::project_data::configure_command"
-done
-
-for lock in requirements/docling-macos-arm64.lock.txt requirements/eval-macos-arm64.lock.txt; do
-  if [[ ! -s "$ROOT/$lock" ]]; then
-    note "missing non-empty Python environment authority: $lock"
-  fi
-done
-
-for environment in .venv-docling .venv-eval; do
-  [[ -d "$ROOT/$environment" ]] || continue
-  prefix="$($ROOT/$environment/bin/python -c 'import sys; print(sys.prefix)' 2>/dev/null)" || {
-    note "$environment/bin/python is not executable"
-    continue
-  }
-  if [[ "$prefix" != "$ROOT/$environment" ]]; then
-    note "$environment resolves outside the repository: $prefix"
-  fi
-  stale="$({ rg -n '/[^ ]*/specforge/\.venv' "$ROOT/$environment/bin" \
-      "$ROOT/$environment/pyvenv.cfg" 2>/dev/null || true; } | grep -Fv "$ROOT" || true)"
-  if [[ -n "$stale" ]]; then
-    note "$environment retains a launcher or activation path into another repository copy"
-  fi
-done
-
-temporary_residue="$(find "$ROOT/.project-data/tmp" -mindepth 1 -maxdepth 1 -type f \
-  \( -name '*.fsm' -o -name '*.log' \) -print | sort)"
-if [[ -n "$temporary_residue" ]]; then
-  note "disposable FSM/log residue remains in .project-data/tmp: $temporary_residue"
-fi
-
-if grep -Fq '/Users/' "$ROOT/.claude/hooks/post-compact.sh"; then
-  note ".claude/hooks/post-compact.sh retains an absolute user-home path"
-fi
-
-if ! "$ROOT/scripts/check_persisted_artifact_paths.pl" --self-test >/dev/null; then
-  note "persisted-artifact path gate self-test failed"
-fi
-if ! "$ROOT/scripts/check_persisted_artifact_paths.pl" --check >/dev/null; then
-  note "canonical artifacts or their producer seams violate the persisted-path contract"
-fi
-
-if ! "$ROOT/scripts/test_project_data_locality.sh" >/dev/null; then
-  note "focused project-data locality cases failed"
-fi
-
-if [[ "$fail" -eq 0 ]]; then
-  printf 'project-data-locality: PASS — repository-derived roots and producer seams are enforced\n' >&2
-else
-  printf 'project-data-locality: FAIL\n' >&2
-fi
-exit "$fail"
+specforge_activate_project_data "$ROOT" 2>/dev/null
+cd "$ROOT"
+exec cargo xtask check project-data-locality

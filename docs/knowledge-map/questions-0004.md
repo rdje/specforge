@@ -116,6 +116,8 @@
   > does changing a source path mean a corpus document was refreshed
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > does check_chain_currency re-run ingest
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > does check_project_data_locality detect a stale venv launcher into another repository copy
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > does claim verification replace task trees or doctrine enforcement
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -296,5 +298,3 @@
   > does the LLM constraint path apply positional subject gates
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > does the LLM constraint path use classify_signal_constraint_kind
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > does the Layer D grounding filter need to be weakened

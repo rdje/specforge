@@ -8,10 +8,11 @@ answers:
   - "why did the moved Python virtual environments still access the old repository"
   - "where are Docling models stored for SpecForge"
   - "which boot-volume Rust directories are allowed"
+  - "does check_project_data_locality detect a stale venv launcher into another repository copy"
 date: 2026-08-08
 status: current
 tags: [locality, portability, cache, tempfile, docling, python, cargo]
-evidence: PROJECT_DATA_LOCALITY.md; .cargo/config.toml; scripts/project_data_env.sh; scripts/check_project_data_locality.sh; crates/specforge/src/project_data.rs; docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md
+evidence: PROJECT_DATA_LOCALITY.md; .cargo/config.toml; scripts/project_data_env.sh; scripts/check_project_data_locality.sh; xtask/src/checks/project_data_locality.rs; docs/tasks/RUSTDOC-AND-XTASK.md (.14.c); crates/specforge/src/project_data.rs; docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md
 reverify: "bash scripts/check_project_data_locality.sh && test ! -e \"$HOME/Documents/github/specforge\""
 ---
 
@@ -29,6 +30,12 @@ real 2.9 GiB repository rather than a symlink, invoking an SSD console script st
 interpreter even though invoking SSD `bin/python` directly used SSD packages. Exact locks and
 rollback-safe bootstrap scripts now rebuild both venvs at their final current path; the stale-reference
 count is zero.
+
+Until `RUSTDOC-AND-XTASK.14.c` (`2026-10-23`) the locality gate could not have caught that: it searched each
+venv's `bin/` and `pyvenv.cfg` with `rg` and kept only lines without the repository root, but every `rg` line
+begins with its file's absolute path under that root, so every match was dropped. The native gate compares each
+line's own text, so a launcher into another repository copy now fails it; the current venvs have 69 matching
+lines and none stale.
 
 The two Docling model repositories (342 MiB and 164 MiB) were copied byte-for-byte from the ambiguous
 shared Hugging Face cache into `.cache/huggingface/hub`. Counts, allocated bytes, rsync checksums,

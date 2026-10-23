@@ -184,7 +184,7 @@ hold the live values, and the checker refuses any one of them that disagrees wit
 was forbidden before migration and is exact now; the canonical card surface declares `routed_membership` through
 that record, so the generic gate proves every card through exactly one hop.
 
-The project-data gate also runs three focused shell cases. It checks the tracked Cargo environment,
+The project-data gate also runs five focused shell cases. It checks the tracked Cargo environment,
 the common shell initializer, Rust production temp/subprocess boundaries, exact Python environment
 locks, and any present venv's interpreter/launcher roots. A caller does not need to remember a
 `TMPDIR`; the gate rejects missing roots and cache symlinks that escape the repository.
