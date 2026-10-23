@@ -17,7 +17,7 @@ use crate::ir::evidence::{
 };
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
-use crate::ir::semantic::SystemResetPolarity;
+use crate::ir::semantic::{SymbolDefinitionKind, SystemResetPolarity};
 use crate::ir::source::{AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket};
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
@@ -1396,6 +1396,66 @@ fn signal_layout_residuals(intent_ir: &IntentIr, isf_model: &IsfIr) -> Vec<Resid
         .collect()
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.61.b` — one residual per enum with a member a property enables (AXI `AWCMO`'s
+/// `CleanSharedPersist`: `Persist_CMO`). An `.isf` enum declares every member unconditionally and an actor has no
+/// boolean property, so the `.isf` keeps every member, the set the interface carries when every property holds, and the
+/// residual names each gated member and its condition. ADR 0033 §4 files no FSMGen request until a rule needs one.
+fn enabled_member_residuals(
+    intent_ir: &IntentIr,
+    isf_model: &IsfIr,
+) -> Vec<ResidualDecisionPacket> {
+    intent_ir
+        .symbol_definitions
+        .iter()
+        .filter(|symbol| matches!(symbol.kind, SymbolDefinitionKind::Enum))
+        .filter_map(|symbol| {
+            let gated: Vec<(&str, &str, &[String])> = symbol
+                .members
+                .iter()
+                .filter_map(|member| {
+                    let condition = member.enabled_by.as_ref()?;
+                    Some((
+                        member.member_name.as_str(),
+                        condition.text.as_str(),
+                        member.supporting_statement_ids.as_slice(),
+                    ))
+                })
+                .collect();
+            if gated.is_empty() {
+                return None;
+            }
+            let members: Vec<String> = gated
+                .iter()
+                .map(|(name, condition, _)| format!("`{name}` ({condition})"))
+                .collect();
+            let statements: Vec<String> = gated
+                .iter()
+                .flat_map(|(_, _, statements)| statements.iter().cloned())
+                .collect::<BTreeSet<_>>()
+                .into_iter()
+                .collect();
+            let kept = if isf_model.emits_enum(&symbol.symbol_name) {
+                "the `.isf` enum keeps every member, the set the interface carries when every property holds"
+            } else {
+                "the `.isf` declares no enum of this name"
+            };
+            Some(protocol_residual_packet(
+                "enum_enabled_members",
+                "enum",
+                &symbol.symbol_name,
+                &statements,
+                &symbol.supporting_table_ids,
+                &format!(
+                    "an `.isf` form for an enum member that exists only under a property: an enum declares every \
+                     member unconditionally, and an actor has no boolean property (FSMGen's half of \
+                     `KG-ISF-COMPLETENESS.2a.vii.c.vi`); {kept}; members a property enables: {}",
+                    members.join(", ")
+                ),
+            ))
+        })
+        .collect()
+}
+
 fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPacket> {
     // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a / .3.d.ii.b.iii.a — every stated absent value, the signal's own and
     // each class-scoped one, in record order.
@@ -1662,6 +1722,8 @@ fn build_isf_adapter_artifact(
     residual_decisions.extend(protocol_residual_decisions(intent_ir));
     // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.ii — a signal's sub-field layout has no `.isf` port form.
     residual_decisions.extend(signal_layout_residuals(intent_ir, &isf_model));
+    // EXTRACTION-REPRESENTATION-GAPS.61.b — an enum member a property enables has no `.isf` form.
+    residual_decisions.extend(enabled_member_residuals(intent_ir, &isf_model));
     residual_decisions.extend(isf_model.temporal_residuals().iter().cloned());
     // Register resets that could not be lowered to a storage `(reset V)`
     // (ISF-REGISTER-RESET-EMIT.2) are surfaced the same way, so an un-lowered reset is
@@ -3003,6 +3065,118 @@ mod tests {
                 .contains("`DATA_IN` (its width 8) leaves TOP [8] past it"),
             "{}",
             packets[2].why_unresolved
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.61.b` — an enum with a member a property enables reaches the adapter as one
+    /// residual naming each such member and its condition, whether or not the `.isf` declares the enum; an enum with no
+    /// such member states none, and the rendered `.isf` keeps every member.
+    #[test]
+    fn isf_adapter_residualizes_an_enums_property_enabled_members() -> Result<()> {
+        use crate::ir::evidence::{EnablingCondition, EnablingConnective};
+        use crate::ir::semantic::{
+            ControlExpressionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
+            SymbolEnumMemberRecord,
+        };
+        use crate::ir::source::AutomationConfidence;
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_enabled_members.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let member = |name: &str, value: &str, enabled_by: Option<&str>| SymbolEnumMemberRecord {
+            member_name: name.to_string(),
+            value: ControlExpressionRecord::Literal {
+                literal: value.to_string(),
+            },
+            declaration_order: 0,
+            supporting_statement_ids: vec![format!("statement_{name}")],
+            automation_confidence: AutomationConfidence::High,
+            enabled_by: enabled_by.map(|text| EnablingCondition {
+                text: text.to_string(),
+                connective: EnablingConnective::All,
+                properties: vec![text.to_string()],
+            }),
+        };
+        let symbol = |name: &str, order: u32, members| SymbolDefinitionRecord {
+            symbol_id: format!("symbol_{name}"),
+            symbol_name: name.to_string(),
+            kind: SymbolDefinitionKind::Enum,
+            value: None,
+            members,
+            legal_values: Vec::new(),
+            recommended_values: Vec::new(),
+            declaration_order: order,
+            supporting_statement_ids: Vec::new(),
+            supporting_table_ids: vec!["table_0001".to_string()],
+            automation_confidence: AutomationConfidence::High,
+        };
+        intent_ir.symbol_definitions = vec![
+            symbol(
+                "CMO",
+                0,
+                vec![
+                    member("CLEAN", "0", None),
+                    member("PERSIST", "1", Some("Persist_CMO")),
+                ],
+            ),
+            symbol(
+                "MODE",
+                1,
+                vec![member("IDLE", "0", None), member("RUN", "1", None)],
+            ),
+            symbol("WIDE", 2, vec![member("ODD", "1 + 1", Some("Odd_Support"))]),
+        ];
+        intent_ir.write_to_disk()?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("enabled_adapter"),
+        )?;
+        let isf = artifact.isf.clone().expect("ISF artifact");
+        assert!(
+            isf.source_text.contains("(CMO (CLEAN 0) (PERSIST 1))"),
+            "{}",
+            isf.source_text
+        );
+        let packets = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| {
+                packet
+                    .packet_id
+                    .starts_with("isf_protocol_enum_enabled_members_")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            packets
+                .iter()
+                .map(|packet| packet.packet_id.as_str())
+                .collect::<Vec<_>>(),
+            [
+                "isf_protocol_enum_enabled_members_cmo",
+                "isf_protocol_enum_enabled_members_wide"
+            ]
+        );
+        let cmo = &packets[0].why_unresolved;
+        assert!(
+            cmo.contains("members a property enables: `PERSIST` (Persist_CMO)"),
+            "{cmo}"
+        );
+        assert!(!cmo.contains("`CLEAN`"), "{cmo}");
+        assert!(cmo.contains("the `.isf` enum keeps every member"), "{cmo}");
+        assert!(
+            cmo.contains("supporting statements: statement_PERSIST; supporting tables: table_0001"),
+            "{cmo}"
+        );
+        assert!(
+            packets[1]
+                .why_unresolved
+                .contains("the `.isf` declares no enum of this name"),
+            "{}",
+            packets[1].why_unresolved
         );
         Ok(())
     }

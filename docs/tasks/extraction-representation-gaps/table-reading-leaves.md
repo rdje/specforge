@@ -129,9 +129,15 @@ here whole.
     the rows `.61` counted (*A7.3* 21 of 25: 15 one property, 5 `and`, 1 `or`; *A7.4* 12 of 19; *A4.7* 4 of 6).
     Rebuilt stage by stage: past the new fields only statement ids moved; `manager.isf` byte-identical.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.b`
-  Status: `open` (`2026-10-23`; CODE; opened by `.61`)
+  Status: `done` (`2026-10-23`; CODE; opened by `.61`; checklist below)
   Goal: **the adapter names each enum member a property enables.** Acceptance: state one residual per enum with a
   gated member, naming each member and its condition; the `.isf` enum keeps every member; measure every chain.
+  **Done `2026-10-23`.** The ISF adapter states `isf_protocol_enum_enabled_members_<name>` for each IntentIR enum with
+  a member whose `enabled_by` is set: each gated member with its condition as written, whether the `.isf` keeps every
+  member or declares no enum of that name (`IsfIr::emits_enum`), and the gated members' statements and the enum's
+  tables. **Measured:** adapter dry-run of the 31 chains, 30 identical; AXI's residuals 114 -> 117 (`AWSNOOP` 3
+  members, `AWCMO` 4, `AxPAS` 4, each enum declared), `manager.isf` byte-identical. ADR 0033 §4: no FSMGen request
+  until a rule needs a gated member.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`
   Status: `open` (`2026-10-23`; CODE; opened by `.61`; waits for `KG-ISF-COMPLETENESS.2a.vii.c.vi`)
   Goal: **a member's enabling property joins the property's own record.** Acceptance: once boolean properties are
@@ -346,3 +352,22 @@ here whole.
   readers' own name, code and key columns; no document, property or vendor vocabulary.
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A member a property enables*), `pipeline/semanticir.md`; KM card
   `an-encoding-members-enabling-property` (the `AxPAS` correction).
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.61.b` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — after `.61.a`, AXI's 11 gated members reached IntentIR with their conditions, and the
+  adapter declared them in the `.isf` without a word.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/adapters.rs` had no residual for an enum member's
+  condition. RED 5/5, both files restored byte-identically: an enum with no gated member residualized, an undeclared
+  enum said to be kept, the enum's tables not cited, any other enum counted as this one (`IsfIr::emits_enum`), the
+  residual not wired; each fails `isf_adapter_residualizes_an_enums_property_enabled_members`.
+- [x] **ADDRESSED (verified)** — AXI's three residuals above; the `.isf` keeps every member.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current (AXI's adapter rewritten). WIRE-BASED-100: all
+  11 seed reports byte-identical to `.61.a`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo
+  clippy --offline --workspace --all-targets -- -D warnings` clean. `cargo test --workspace --lib --exclude
+  specforge-production-graph` 475 / 171 / 1,940 passed. `flow_census.json` rolled (+2 functions, +4 decision sites,
+  +36 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — reads only IntentIR's `enabled_by` and the adapter's own emitted enums; no
+  document, property or vendor vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the residual), `pipeline/isf-enums.md`; KM card
+  `an-encoding-members-enabling-property`.

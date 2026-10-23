@@ -573,7 +573,7 @@ Measured on `2026-10-23`: 3 enums and 3 combinations, all in AXI. `AWSNOOP` has 
 `AxPAS` 4 of 6, from *A4.7*'s `Property` column. Rows: *A7.3* 21 of 25, *A7.4* 12 of 19, *A4.7* 4 of 6
 (`2026-10-23`). The other 30 chains are unchanged. The property names are not yet joined to their records: all 22 are
 boolean properties, which SemanticIR does not read yet (`.61.c`, after `KG-ISF-COMPLETENESS.2a.vii.c.vi`). The `.isf`
-enum keeps every member (`.61.b` adds the adapter's residual).
+enum keeps every member, and the adapter names the gated ones in one residual per enum (`.61.b`).
 
 ### A signal's bit sub-fields
 

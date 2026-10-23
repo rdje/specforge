@@ -646,6 +646,13 @@ artifact — an honest "this enum could not be lowered faithfully", never a fabr
 enum — any value containing a `2`–`9` digit (`999`, `1020`, `69152`), a short binary value (`0`, `1`, `111`),
 or an already-qualified literal (`4'b1000`) — is always emitted unchanged.
 
+An enum member that exists only when an interface property holds (AXI `AWCMO`'s `CleanSharedPersist` needs
+`Persist_CMO`; its `enabled_by`, `EXTRACTION-REPRESENTATION-GAPS.61.a`) is declared like every other member. An `.isf`
+enum has no conditional member and an actor has no boolean property, so the full set is the one the interface carries
+when every property holds. Since `.61.b` the adapter states one `isf_protocol_enum_enabled_members_<name>` residual
+per such enum, naming each gated member and its condition, or saying that the `.isf` declares no enum of that name.
+AXI has three on `2026-10-23` (`AWSNOOP`, `AWCMO`, `AxPAS`), and its `manager.isf` is unchanged.
+
 ### Enums: which codes reach the `.isf`
 
 Which table codes become an `(enums …)` family, how each member is named, and where its value comes

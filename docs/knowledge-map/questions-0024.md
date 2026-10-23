@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > why does a SemanticIR residual packet list only some undeclared signal names
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -295,5 +297,3 @@
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
   > why does split_conditional_sentence not cut at the first comma
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > why does stripping quotes give the wrong enum value

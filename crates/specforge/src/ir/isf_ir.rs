@@ -390,6 +390,11 @@ impl IsfIr {
             .collect()
     }
 
+    /// EXTRACTION-REPRESENTATION-GAPS.61.b — whether the `.isf` declares the enum `name`.
+    pub(crate) fn emits_enum(&self, name: &str) -> bool {
+        self.emitted_enums().iter().any(|e| e.type_name == name)
+    }
+
     /// Number of `(constants …)` entries the emitter actually renders
     /// (metric == emitted content; mirrors `emitted_rule_count`).
     pub(crate) fn emitted_constant_count(&self) -> usize {

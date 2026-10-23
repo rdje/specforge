@@ -9,6 +9,7 @@ answers:
   - "which AXI enums have property-gated members (AWSNOOP, AWCMO, AxPAS)"
   - "why is a member's enabling property not joined to the property's record yet (boolean properties, KG-ISF .2a.vii.c.vi)"
   - "does a gated enum member reach the .isf"
+  - "what is isf_protocol_enum_enabled_members"
 date: 2026-10-23
 status: current
 tags: [evidence-ir, semantic-ir, encodings, enums, value-combinations, properties, extraction-representation-gaps, measured]
@@ -40,7 +41,9 @@ none of the 22 is a record.
   table, as they state `also takes`; SemanticIR reads only a cited one into `SymbolEnumMemberRecord.enabled_by`, which
   the member and its symbol cite. A combination row carries `CombinationRow.enabled_by`, and the record names its
   `enabling_column`. All three reach IntentIR unchanged; `manager.isf` did not move.
-- **Not lowered:** the `.isf` enum keeps every member, and the adapter names the gated ones in a residual (`.61.b`).
+- **Not lowered:** the `.isf` enum keeps every member, and since `.61.b` the adapter states one
+  `isf_protocol_enum_enabled_members_<name>` residual per gated enum, naming each member and its condition (AXI: 3,
+  residuals 114 -> 117, `manager.isf` unchanged, `2026-10-23`).
 - **The join:** each name joins its property's record once `KG-ISF-COMPLETENESS.2a.vii.c.vi` reads boolean
   properties (`.61.c`), never by spelling alone before then.
 
