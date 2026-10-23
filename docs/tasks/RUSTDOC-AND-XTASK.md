@@ -126,12 +126,25 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.4 — cargo xtask dispatches to the current tooling`
 
 - ID: `RUSTDOC-AND-XTASK.5`
-  Status: `pending`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: `cargo xtask docs` builds the mdBook and the API reference natively
   Acceptance: the first native command reproduces `run_docs_ci.sh`'s behaviour and output tree; the script becomes
   a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/src/project_data.rs` activates the project-data roots as `project_data_env.sh` does
+  (the exported variables, the created directories, and the refusals: no SpecForge repository, a path escaping the
+  repository, a path on another filesystem, by device id where the shell used `df`). `xtask/src/docs.rs` is the docs
+  build: the `mdbook` presence check, `mdbook test` and `mdbook build`, the rustdoc under `-D warnings`, the copy into
+  `generated/mdbook/specforge/api/` and the four-crate index check, each step printing the script's line and
+  returning the failing step's exit code. A command is now a `Runner`, a script or native code naming the script it
+  replaced; `docs` is native, and `scripts/run_docs_ci.sh` is a shim (`exec cargo xtask docs "$@"`), which a test
+  requires of every native command's script. The shim still activates the project-data roots first, as
+  `PROJECT-DATA-LOCALITY` requires of every `scripts/*.sh`, so cargo's own process resolves them; the doctrine now
+  also requires the native seam (`project_data::activate(root)` in `docs.rs`, the filesystem refusal in
+  `project_data.rs`), RED with the call removed. **Parity** with HEAD's script: on success both exit 0 with identical
+  stdout, stderr (timings masked) and API file list; with `mdbook` off `PATH` both print *mdbook is required but
+  not installed* and exit 1, byte-identically.
+  Verification: `cargo test -p xtask --lib` 7/7; parity runs in `.project-data/tmp/rdx-5/`
+  Commit: `RUSTDOC-AND-XTASK.5 — cargo xtask docs builds the book and the API reference natively`
 
 - ID: `RUSTDOC-AND-XTASK.6`
   Status: `pending` (DESIGN)
@@ -182,13 +195,29 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 - [x] **LOCKSTEP** — book `getting-started.md` (*Local verification*); KM card
   `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.5` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `cargo xtask docs` ran `scripts/run_docs_ci.sh` (`.4`); no command was native.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the docs build lived only in shell (`scripts/run_docs_ci.sh`, sourcing
+  `scripts/project_data_env.sh`). RED 4/4, every file restored byte-identically: a non-executable file found on
+  `PATH`, a nested directory not copied, a non-repository accepted, the shim no longer running the native command;
+  each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — native commands 0 -> 1, byte-identical to the script on success and on the
+  missing-`mdbook` path.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 7 passed;
+  `check_doctrines.sh --only PRODUCTION-GENERICITY,RUSTDOC,PROJECT-DATA-LOCALITY` PASS; the shim `bash
+  scripts/run_docs_ci.sh` passes.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — book `getting-started.md` and `reference/api-reference.md`; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.5` | `pending` | the first native command |
-| 2 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
-| 3 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 1 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
+| 2 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
 
 ## Decisions
 
@@ -211,6 +240,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `2026-10-23` | `.2` | `RUSTDOC` doctrine; RED with the link restored; oracles | PASS; RED fails as it must |
 | `2026-10-23` | `.3` | `run_docs_ci.sh`; the built page's API links | PASS; four links resolve |
 | `2026-10-23` | `.4` | xtask tests; dispatcher parity with the scripts | 3/3; identical output and exit codes |
+| `2026-10-23` | `.5` | xtask tests; native docs parity with HEAD's script | 7/7; identical on success and with mdbook absent |
 
 ## Commit Log
 
@@ -220,6 +250,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `.2` | `RUSTDOC-AND-XTASK.2 — rustdoc builds warning-free, and a commit that breaks it is refused` | the link escaped; the `RUSTDOC` gate |
 | `.3` | `RUSTDOC-AND-XTASK.3 — the API reference is published beside the mdBook` | the docs build and the book chapter |
 | `.4` | `RUSTDOC-AND-XTASK.4 — cargo xtask dispatches to the current tooling` | the `xtask` crate and alias |
+| `.5` | `RUSTDOC-AND-XTASK.5 — cargo xtask docs builds the book and the API reference natively` | the first native command; the docs script a shim |
 
 ## Changelog
 

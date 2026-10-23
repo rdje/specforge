@@ -1,36 +1,67 @@
 //! `cargo xtask` — the repository's tooling entry point (`RUSTDOC-AND-XTASK.4`).
 //!
-//! Each command runs the script that implements it today, passing its arguments through and returning
-//! its exit code, so `cargo xtask <command>` and the script behave the same. Commands move to native Rust
-//! one at a time (`RUSTDOC-AND-XTASK.5`, `.6`); once a port reproduces its script, the script becomes a
-//! shim, so every command a record cites keeps working.
+//! A command either runs the script that implements it, passing its arguments through and returning its
+//! exit code, or is native Rust. Commands move to native Rust one at a time (`RUSTDOC-AND-XTASK.5`, `.6`);
+//! once a port reproduces its script, the script becomes a shim over `cargo xtask`, so every command a
+//! record cites keeps working.
+
+pub mod docs;
+pub mod project_data;
 
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitStatus};
 
-/// One `cargo xtask` command: its name, the script that implements it, and what it does.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// How a command runs.
+#[derive(Debug, Clone, Copy)]
+pub enum Runner {
+    /// The script at this repository-relative path.
+    Script(&'static str),
+    /// Native Rust, given the repository root and the arguments; its return value is the exit code. The script
+    /// it replaced is now a shim over it.
+    Native {
+        replaces: &'static str,
+        run: fn(&Path, &[String]) -> i32,
+    },
+}
+
+/// One `cargo xtask` command: its name, how it runs, and what it does.
+#[derive(Debug, Clone, Copy)]
 pub struct Task {
     pub name: &'static str,
-    pub script: &'static str,
+    pub runner: Runner,
     pub summary: &'static str,
+}
+
+impl Task {
+    /// The script that implements the command, or that its native port replaced.
+    pub fn script(&self) -> &'static str {
+        match self.runner {
+            Runner::Script(script)
+            | Runner::Native {
+                replaces: script, ..
+            } => script,
+        }
+    }
 }
 
 /// Every command, in the order `cargo xtask help` lists them.
 pub const TASKS: &[Task] = &[
     Task {
         name: "doctrines",
-        script: "scripts/check_doctrines.sh",
+        runner: Runner::Script("scripts/check_doctrines.sh"),
         summary: "run the doctrine gates (pass --fast, --only ID, --all, --list)",
     },
     Task {
         name: "ci",
-        script: "scripts/run_ci.sh",
+        runner: Runner::Script("scripts/run_ci.sh"),
         summary: "run the full local CI",
     },
     Task {
         name: "docs",
-        script: "scripts/run_docs_ci.sh",
+        runner: Runner::Native {
+            replaces: "scripts/run_docs_ci.sh",
+            run: docs::run,
+        },
         summary: "build the mdBook and the rustdoc API reference beside it",
     },
 ];
@@ -59,16 +90,22 @@ pub fn usage() -> String {
     text
 }
 
-/// Run `task`'s script from the repository root with `arguments`, and return its exit code. The script is
-/// named by its repository-relative path, as the documented `bash scripts/...` form names it, so whatever it
-/// prints about itself is byte-identical.
+/// Run `task` from the repository root with `arguments`, and return its exit code. A script is named by its
+/// repository-relative path, as the documented `bash scripts/...` form names it, so whatever it prints about
+/// itself is byte-identical.
 pub fn run(task: &Task, arguments: &[String]) -> std::io::Result<i32> {
-    let status = Command::new("bash")
-        .arg(task.script)
-        .args(arguments)
-        .current_dir(repository_root())
-        .status()?;
-    Ok(exit_code(status))
+    let root = repository_root();
+    match task.runner {
+        Runner::Script(script) => {
+            let status = Command::new("bash")
+                .arg(script)
+                .args(arguments)
+                .current_dir(&root)
+                .status()?;
+            Ok(exit_code(status))
+        }
+        Runner::Native { run, .. } => Ok(run(&root, arguments)),
+    }
 }
 
 /// A process's exit code as a shell reports it: its own code, or 128 plus the signal that ended it.
@@ -92,11 +129,26 @@ mod tests {
         let root = repository_root();
         for task in TASKS {
             assert!(
-                root.join(task.script).is_file(),
-                "{} runs {}, which does not exist",
+                root.join(task.script()).is_file(),
+                "{} names {}, which does not exist",
                 task.name,
-                task.script
+                task.script()
             );
+        }
+    }
+
+    #[test]
+    fn a_ported_scripts_shim_runs_its_native_command() {
+        let root = repository_root();
+        for task in TASKS {
+            if let Runner::Native { replaces, .. } = task.runner {
+                let shim = std::fs::read_to_string(root.join(replaces)).expect("the shim exists");
+                assert!(
+                    shim.contains(&format!("exec cargo xtask {}", task.name)),
+                    "{replaces} is not a shim over cargo xtask {}",
+                    task.name
+                );
+            }
         }
     }
 
@@ -112,9 +164,9 @@ mod tests {
                 task.name
             );
             assert!(help.contains(task.name) && help.contains(task.summary));
-            assert_eq!(find(task.name), Some(task));
+            assert_eq!(find(task.name).map(|found| found.name), Some(task.name));
         }
-        assert_eq!(find("no-such-command"), None);
+        assert!(find("no-such-command").is_none());
     }
 
     #[test]

@@ -43,6 +43,10 @@ while IFS= read -r script; do
   require_text "$script" "specforge_activate_project_data"
 done < <(cd "$ROOT" && find scripts -maxdepth 1 -type f -name '*.sh' -print | sort)
 
+# RUSTDOC-AND-XTASK.5 — a script ported to `cargo xtask` keeps its seam: the native command activates the same
+# roots before it spawns anything.
+require_text "xtask/src/docs.rs" "project_data::activate(root)"
+require_text "xtask/src/project_data.rs" "is off the repository filesystem"
 require_text ".githooks/pre-commit" 'source "$ROOT/scripts/project_data_env.sh"'
 require_text ".githooks/pre-commit" 'specforge_activate_project_data "$ROOT"'
 require_text ".claude/hooks/post-compact.sh" 'source "$PROJECT_DIR/scripts/project_data_env.sh"'

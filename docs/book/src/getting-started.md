@@ -93,9 +93,9 @@ cargo xtask doctrines --fast  # scripts/check_doctrines.sh --fast
 cargo xtask docs              # the mdBook and the rustdoc API reference beside it
 ```
 
-Each command runs its script with the same arguments and returns its exit code. Commands move to native
-Rust one at a time, and a script stays behind as a shim once its port reproduces it
-(`RUSTDOC-AND-XTASK`).
+`doctrines` and `ci` run their scripts with the same arguments and return their exit codes. `docs` is native
+Rust (`xtask/src/docs.rs`), and `scripts/run_docs_ci.sh` is now a shim over it. Commands move to native Rust
+one at a time, and a script stays behind as a shim once its port reproduces it (`RUSTDOC-AND-XTASK`).
 
 ## Where the outputs go
 

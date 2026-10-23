@@ -34,7 +34,8 @@ linked from a reference page: since `.3`, `scripts/run_docs_ci.sh` does both, an
 workspace member `xtask`, not a default member, standard library only, aliased in `.cargo/config.toml`. Since `.4` it
 dispatches `doctrines`, `ci` and `docs` to their scripts, byte-identical in output and exit code (`xtask/src/lib.rs`,
 `TASKS`), and the production-genericity `DEPENDENCIES` check keeps it dependency-free and disconnected from the
-product; its first native command builds the docs (`.5`); the gates move one leaf each, in an order `.6` sets.
+product; since `.5` `docs` is native (`xtask/src/docs.rs`, with `project_data.rs` for the project-data roots) and
+`scripts/run_docs_ci.sh` is its shim; the gates move one leaf each, in an order `.6` sets.
 
 **Scripts.** 123 under `scripts/`: 64 Python (23,831 lines), 32 Perl (26,723), 27 shell (4,694). The doctrine driver
 calls 23, CI 5, the hooks only the driver; 53 are maintenance tools run by hand. Records cite them 8,089 times, so a
