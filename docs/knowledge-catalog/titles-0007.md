@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md) | 2026-09-18 | `current` | An obligation minted from a compatibility-matrix cell loses BOTH axes — 7 records in the whole corpus, and… |
 | [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md) | 2026-09-29 | `current` | A slice must score all eleven WIRE-BASED-100 seeds; .17 scored six and seed_swd fell from 1.000 to 0 unseen f… |
 | [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md) | 2026-06-17 | `current` | DTI-class message fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not tables — read them into mes… |
 | [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md) | 2026-06-24 | `current` | A genuinely-different register reused under one mnemonic (MEM-AP CSW vs JTAG-AP CSW) is recovered by BLOCK-QU… |
@@ -60,4 +61,3 @@
 | [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md) | 2026-10-22 | `current` | Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max… |
 | [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md) | 2026-06-09 | `current` | Timing-table data rows trapped in header_rows (row-label cell is_header=true) are recovered structurally, not… |
 | [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md) | 2026-09-16 | `current` | TOOLBOX.md is a bounded landing over docs/toolbox parts, so a new tool entry costs the landing nothing |
-| [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md) | 2026-08-12 | `current` | The trajectory engine keeps nine exact dimensions and can only propose task-tree-owned work |

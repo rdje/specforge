@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.b.i
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.b.ii
 - [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f
 - [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
@@ -50,6 +54,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.55.b.iv.b.ii
 - [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.56, .56.a and .56.b
+- [a-register-fields-sub-field-table-is-its-layout](../knowledge/a-register-fields-sub-field-table-is-its-layout.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.60 and .60.a
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > what is EvidenceIR value_combinations (ValueCombinationRecord, CombinationKey, CombinationRow)
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -100,6 +106,8 @@
   > what is REPLAY_PROJECTION_SHA256
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
   > what is RegisterFieldRecord.signal_bindings
+- [a-register-fields-sub-field-table-is-its-layout](../knowledge/a-register-fields-sub-field-table-is-its-layout.md)
+  > what is RegisterFieldRecord.sub_fields / RegisterSubField / RegisterSubFieldCell (.60.a)
 - [a-section-headed-by-a-declared-fields-name-describes-that-field](../knowledge/a-section-headed-by-a-declared-fields-name-describes-that-field.md)
   > what is ReservedSpanRecord.supporting_statement_ids
 - [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
@@ -290,11 +298,3 @@
   > what is isf_protocol_permission_rules
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > what is isf_protocol_signal_qualified_absent_value_
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > what is isf_register_width_not_stated
-- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
-  > what is isf_software_intent_not_applicable
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > what is isf_stated_register_reset_not_lowered
-- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
-  > what is keyed_row_value_predicate

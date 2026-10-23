@@ -762,3 +762,27 @@ register. Two such headings, or one naming other bits, bind nothing, so a senten
 position alone. `CSW@MEM-AP.Prot` gains `PPROT[2:0]` from bits 30-28, scoped
 `E1.7 AMBA APB4 / E1.7.1 CSW register implementation`; no other chain moves.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.41`, `.41.a`, `.41.e`, `.41.h`).
+
+### A field laid out in sub-fields
+
+A field can be made of parts. ADIv6 gives `IDCODE`'s `DESIGNER` (`bits[11:1]`) as ARM's JEP106 code and lays that code
+out in a table of its own:
+
+```text
+Table B3-10 JEDEC JEP106 manufacturer ID code, with ARM values
+JEP106 field      | Width (bits) | Bits in IDCODE | ARM registered value
+Continuation code | 4            | Bits[11:8]     | 0b0100 ( 0x4 )
+Identity code     | 7            | Bits[7:1]      | 0b0111011 ( 0x3B )
+```
+
+Since `.60.a` (`2026-10-23`) such a table fills the field's `sub_fields`. A column of bit ranges is read when its
+title (*Bits in IDCODE*), or the table's caption, names a declared register. The ranges must be disjoint and all sit
+inside one field of that register, so none covers the whole field. The first other column of distinct cells names each
+sub-field. A column of numbers must restate each range's width, or the table is refused. Each sub-field keeps the
+register's bit numbering, the table it came from, and its other cells as written (`Width (bits)` `4`, `ARM registered
+value` `0b0100 ( 0x4 )`). A field that a table has already laid out keeps that layout.
+
+On the 31 chains, measured `2026-10-23`, only ADIv6's `IDCODE.DESIGNER` gains sub-fields. Register records reach
+IntentIR whole, so the sub-fields travel with them. `.isf` declares one level of fields, and no rule names a
+sub-field, so `.isf` does not change (ADR 0033 §6).
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.60`, `.60.a`).

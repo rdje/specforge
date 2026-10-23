@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
@@ -20,6 +22,8 @@
   > how is 'not present and assumed to be 0b000' read / what is bind_stated_absent_values
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > how is 'the missing signals are assumed to be LOW' (signals covered by a check signal) bound now
+- [a-register-fields-sub-field-table-is-its-layout](../knowledge/a-register-fields-sub-field-table-is-its-layout.md)
+  > how is ADIv6 Table B3-10 (JEP106 field, Bits in IDCODE) read
 - [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
   > how is AHB Table 3-6 Meaning of the HPROT bits read
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
@@ -293,7 +297,3 @@
   > how many USB4 Connection Manager page sidecars are repository relative
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how many USB4 Inter-Domain page sidecars are repository relative
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > how many Wishbone wires does the heading rule recover
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > how many adapter residuals are SpecForge gaps and how many FSMGen gaps

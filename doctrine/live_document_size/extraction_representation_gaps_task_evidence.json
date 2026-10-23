@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60.a",
-      "literal" : "`.60.a` — a register field's sub-field table is read into its sub-fields.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61",
+      "literal" : "`.61` — an encoding member enabled by a property says so.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -181,13 +181,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
-               "bytes" : 19794,
+               "bytes" : 23202,
                "line_bytes" : 119,
-               "lines" : 221
+               "lines" : 257
             },
             "part_id" : "table-reading-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-            "sha256" : "1b851c77406f48da957e599b96fbd045c8e1278e3136613300f340e652a0a8fc",
+            "sha256" : "bae680777089f0ff6f50af1cbf95497ee590d480c2ed7f1e32d213379daa4a49",
             "state" : "active"
          },
          {
@@ -1677,7 +1677,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       }
@@ -1807,7 +1807,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.60.a` — a register field's sub-field table is read into its sub-fields.",
+         "`.61` — an encoding member enabled by a property says so.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1845,8 +1845,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.67`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.68`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.60.a`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`"
       ]
    },
    "migration_metadata" : {

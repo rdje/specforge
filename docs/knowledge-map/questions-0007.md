@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > how does SpecForge detect contradicting or conflicting priors
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does SpecForge detect two surfaces disagreeing about one quantity
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -296,5 +298,3 @@
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how expensive is reading the proof seal from the whole persisted corpus
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how flexible is the register model / what register-table shapes are handled

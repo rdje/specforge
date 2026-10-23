@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > does the administrative classifier name OpenCAPI or a vendor
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -296,5 +298,3 @@
   > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how did APB temporal reach 100% (WIRE-BASED-100.4)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how did the AHB decoder become connected (Subordinate and decoder read HADDR)

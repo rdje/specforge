@@ -396,6 +396,7 @@ mod tests {
             description: None,
             enumerated_values: Vec::new(),
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         }
     }
 

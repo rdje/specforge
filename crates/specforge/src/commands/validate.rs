@@ -8675,6 +8675,7 @@ mod tests {
             description: None,
             enumerated_values: vec![],
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         };
         // STATUS: fields [3:0] + [5:2] overlap on bits 2-3.
         evidence_ir.register_records = vec![RegisterRecord {

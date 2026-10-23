@@ -724,7 +724,8 @@ MSB first). The access notation is normalized to FSMGen's vocabulary
 (`ro|rw|wo|w1c|w0c|rc|rs|warl|wpri|reserved`, plus unambiguous synonyms like `R/W → rw`). A field's
 `(reset)` is the corresponding slice of the register's composed reset, so it always matches the
 parent value. Enumerated values keep the encodings that fit the field width, with the meaning as the
-member name.
+member name. A field's sub-fields (`sub_fields`, `EXTRACTION-REPRESENTATION-GAPS.60.a`) are not lowered:
+`(fields …)` has one level, and the field is declared whole.
 
 **Honest by default — never a fabricated bit.** A field is lowered **only** when it carries a
 concrete bit range, its name is unique within the register, and the register's fields do not

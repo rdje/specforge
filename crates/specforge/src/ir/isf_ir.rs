@@ -5320,6 +5320,7 @@ mod tests {
             description: None,
             enumerated_values: vec![],
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         }
     }
 
@@ -5414,6 +5415,7 @@ mod tests {
             description: None,
             enumerated_values: vec![],
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         }];
         assert!(matches!(
             classify_register_reset(&unlocated, 8),
@@ -6885,6 +6887,7 @@ mod tests {
                 })
                 .collect(),
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         }
     }
 

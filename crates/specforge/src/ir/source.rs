@@ -1327,6 +1327,31 @@ pub struct RegisterFieldRecord {
     /// nSRSTOUT signal*). Empty when the document states none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_bindings: Vec<RegisterFieldSignalBinding>,
+    /// EXTRACTION-REPRESENTATION-GAPS.60.a — the sub-fields a table lays this field out in (ADIv6 *B3-10*:
+    /// `IDCODE.DESIGNER` as *Continuation code* `Bits[11:8]` and *Identity code* `Bits[7:1]`). Empty when none does.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub sub_fields: Vec<RegisterSubField>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.60.a — one sub-field of a register field: its name, its bits as the register numbers
+/// them, and the table row's other cells as written (`ARM registered value`: `0b0100 ( 0x4 )`).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RegisterSubField {
+    pub name: String,
+    pub bits_high: u32,
+    pub bits_low: u32,
+    /// The table the row is read from.
+    pub table_id: String,
+    /// Each other cell of the row, with its column title, as written.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub cells: Vec<RegisterSubFieldCell>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.60.a — a cell of a sub-field's row, with its column title, as written.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RegisterSubFieldCell {
+    pub column: String,
+    pub text: String,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.41 — a wire a register field is bound to, and which way.

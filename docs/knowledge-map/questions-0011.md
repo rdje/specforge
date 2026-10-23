@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > is an _IN/_OUT suffix universal digital-design grammar
+- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
+  > is an absent value interpreted against the signal's polarity
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > is an empty result from a table-kind-keyed pass an answer or a blind spot
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -293,7 +297,3 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > is until an exception (no — it releases a persistence)
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > is upstream extraction or ISF expressiveness the next measured blocker
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > is validation_report.json current after specforge evidence

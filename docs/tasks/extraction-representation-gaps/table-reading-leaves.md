@@ -215,7 +215,43 @@ here whole.
   - **Not lowered.** Register records already cross SemanticIR and IntentIR whole, so the sub-fields travel with
     them; `.isf` storage fields are one level, and no rule names a sub-field, so they stay typed (ADR 0033 §6).
 - ID: `EXTRACTION-REPRESENTATION-GAPS.60.a`
-  Status: `open` (`2026-10-22`; CODE; opened by `.60`)
+  Status: `done` (`2026-10-23`; CODE; opened by `.60`; checklist below)
   Goal: **a register field's sub-field table is read into its sub-fields.** Acceptance: read `.60`'s shape into
   `RegisterFieldRecord.sub_fields` (ADIv6 *B3-10* into `IDCODE.DESIGNER`), keep every cell as written, and measure
   every chain's register records.
+  **Done `2026-10-23`.**
+  - **The reader.** `fill_field_sub_fields` runs last in the register pipeline (after the signal-binding readers). A
+    table with at least two rows has a column of bit ranges (`sub_field_bit_range`: `Bits[11:8]`, `Bit[3]`, `[7:1]`,
+    `11:8`; a bare number is a width, not a range) whose title, or else the table's caption, names a declared register
+    as a word. The ranges are disjoint and all sit inside one field of that register, so none is the whole field; a
+    column of numbers restates each range's width, or the table is refused. The first other non-numeric column of
+    distinct, non-empty cells names each sub-field, and every other cell is kept with its column title
+    (`RegisterSubField`, `RegisterSubFieldCell`). A field already laid out keeps its first table.
+  - **Two rules `.60` left implicit.** Disjointness, as `signal_layouts` requires: overlapping ranges are no layout,
+    and with two or more disjoint ranges none can be the whole field. And the caption: `.60`'s census matched the
+    title or the caption, so the reader does too, title first.
+  - **Measured.** A dry run of all 31 chains: ADIv6's `IDCODE.DESIGNER` (`bits[11:1]`) gains *Continuation code*
+    `11:8` and *Identity code* `7:1` from `table_0050`, with `Width (bits)` and `ARM registered value` (`0b0100 ( 0x4
+    )`, `0b0111011 ( 0x3B )`); the other 30 chains' EvidenceIR is identical (`sub_fields` is skipped when empty).
+    ADIv6 rebuilt stage by stage: `register_records` moved in EvidenceIR, SemanticIR and IntentIR (records cross
+    whole); the adapter's content is identical (only its proof fields moved), so `.isf` does not change.
+
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.60.a` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `.60`'s census: one qualifying table, ADIv6 *B3-10*, and `RegisterFieldRecord` had no
+  sub-fields.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs` had no sub-field carrier and
+  `crates/specforge/src/ir/evidence.rs` no reader. RED 5/5, the file restored byte-identically: a bare number read as
+  a range, overlapping ranges allowed, the caption ignored, a range's low bound ignored, the width column unchecked;
+  each fails `a_register_fields_sub_field_table_lays_it_out`. The pipeline call is measured by the ADIv6 rebuild.
+- [x] **ADDRESSED (verified)** — `IDCODE.DESIGNER`'s two sub-fields above, carried to IntentIR.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current (ADIv6 rebuilt; no new top-level field, so no
+  cascade). WIRE-BASED-100: all 11 seed reports byte-identical to `.3.c.iv.c.ii`'s (temp paths masked). `kg-bench`
+  158/158. `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings` clean. `cargo test
+  --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,937 passed. `flow_census.json` rolled (+2
+  functions, +36 decision sites, +12 helper edges); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — bit ranges, a register named by a column title or caption, field containment and
+  width restatement; no document, register or vendor vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field laid out in sub-fields*), `pipeline/isf-adapter.md`
+  (sub-fields are not lowered); KM card `a-register-fields-sub-field-table-is-its-layout`.

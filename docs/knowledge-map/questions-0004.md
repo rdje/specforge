@@ -44,6 +44,8 @@
   > does a presence record say what an absent signal is assumed to be (since 2026-10-03, absent_value — see a-signals-stated-absent-value-rides-its-presence-record)
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > does a refresh need specforge validate
+- [a-register-fields-sub-field-table-is-its-layout](../knowledge/a-register-fields-sub-field-table-is-its-layout.md)
+  > does a register field's sub-field reach the .isf
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -296,5 +298,3 @@
   > does the WIRE-BASED-100 temporal key score exceptions
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > does the actor-relation reader read a Continued from previous page fragment's Source column
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > does the administrative classifier name OpenCAPI or a vendor

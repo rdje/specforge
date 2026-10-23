@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > how many synthetic behaviors came from generic section phases
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > how many tables corpus-wide are base-name templates
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how many tables declare themselves a continuation
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -293,7 +297,3 @@
   > is a width-only declaration with a fabricated width worth keeping
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
-- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
-  > is an _IN/_OUT suffix universal digital-design grammar
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > is an absent value interpreted against the signal's polarity

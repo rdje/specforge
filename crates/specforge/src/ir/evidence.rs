@@ -21719,6 +21719,7 @@ fn extract_bit_assignment_registers(
                     description,
                     enumerated_values,
                     signal_bindings: Vec::new(),
+                    sub_fields: Vec::new(),
                 });
             }
         }
@@ -22294,6 +22295,7 @@ fn push_section_header_register(
             description: None,
             enumerated_values: Vec::new(),
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         })
         .collect();
     records.push(RegisterRecord {
@@ -27311,7 +27313,162 @@ fn register_record_surface(
     fill_field_signal_bindings(source_ir, &mut records);
     fill_field_signal_bit_bindings(source_ir, &mut records);
     fill_field_signal_prose_bit_bindings(source_ir, &mut records);
+    // EXTRACTION-REPRESENTATION-GAPS.60.a — a table laying one field out in sub-fields.
+    fill_field_sub_fields(source_ir, &mut records);
     records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.60.a — the bits a cell names: `Bits[11:8]`, `Bit[3]`, `[7:1]`, `11:8`, with
+/// `Bit`/`Bits` and the brackets optional and the high bit first. A bare number is no range here, since a width
+/// column holds the same cells.
+fn sub_field_bit_range(cell: &str) -> Option<(u32, u32)> {
+    let compact: String = cell.split_whitespace().collect();
+    let lowered = compact.to_ascii_lowercase();
+    let rest = lowered
+        .strip_prefix("bits")
+        .or_else(|| lowered.strip_prefix("bit"))
+        .unwrap_or(&lowered);
+    let bracketed = rest
+        .strip_prefix('[')
+        .and_then(|inner| inner.strip_suffix(']'));
+    let inner = bracketed.unwrap_or(rest);
+    let number = |text: &str| {
+        (!text.is_empty() && text.bytes().all(|b| b.is_ascii_digit()))
+            .then(|| text.parse::<u32>().ok())
+            .flatten()
+    };
+    match inner.split_once(':') {
+        Some((high, low)) => {
+            let (high, low) = (number(high)?, number(low)?);
+            (high >= low).then_some((high, low))
+        }
+        None if bracketed.is_some() || rest.len() < lowered.len() => {
+            number(inner).map(|bit| (bit, bit))
+        }
+        None => None,
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.60.a — each table that lays one register field out in sub-fields, read into that
+/// field's `sub_fields`. The table has a column of bit ranges ([`sub_field_bit_range`]) whose title names a declared
+/// register (*Bits in IDCODE*), or whose table's caption does, and the ranges, disjoint, all sit inside one field of
+/// that register, so none is the whole field. The sub-field's name is the first other column of distinct cells; a column of numbers must restate each
+/// range's width, as `signal_layouts` requires, or the table is refused. Every other cell is kept with its column
+/// title. A field another table already laid out keeps its first layout.
+fn fill_field_sub_fields(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
+    for table in &source_ir.structured_tables {
+        let Some(header) = table.header_rows.last() else {
+            continue;
+        };
+        if table.body_rows.len() < 2 {
+            continue;
+        }
+        let titles: Vec<String> = header
+            .iter()
+            .map(|cell| cell.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .collect();
+        let rows: Vec<Vec<&str>> = table
+            .body_rows
+            .iter()
+            .map(|row| row.iter().map(|cell| cell.text.trim()).collect())
+            .collect();
+        if rows.iter().any(|row| row.len() != titles.len()) {
+            continue;
+        }
+        let Some((range_column, ranges)) = (0..titles.len()).find_map(|column| {
+            let ranges: Option<Vec<(u32, u32)>> = rows
+                .iter()
+                .map(|row| sub_field_bit_range(row[column]))
+                .collect();
+            ranges.map(|ranges| (column, ranges))
+        }) else {
+            continue;
+        };
+        let mut ordered = ranges.clone();
+        ordered.sort_by_key(|&(_, bottom)| bottom);
+        if ordered.windows(2).any(|pair| pair[0].0 >= pair[1].1) {
+            continue;
+        }
+        let names_register = |text: &str, register: &RegisterRecord| {
+            text.split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+                .any(|word| word == register.register_name)
+        };
+        let caption = table.caption_text.as_deref().unwrap_or_default();
+        let Some(register_index) = registers
+            .iter()
+            .position(|register| names_register(&titles[range_column], register))
+            .or_else(|| {
+                registers
+                    .iter()
+                    .position(|register| names_register(caption, register))
+            })
+        else {
+            continue;
+        };
+        let fields = &registers[register_index].fields;
+        let Some(field_index) = fields.iter().position(|field| {
+            let (Some(high), Some(low)) = (field.bits_high, field.bits_low) else {
+                return false;
+            };
+            ranges
+                .iter()
+                .all(|&(top, bottom)| bottom >= low && top <= high)
+        }) else {
+            continue;
+        };
+        let numeric = |column: usize| {
+            rows.iter().all(|row| {
+                !row[column].is_empty() && row[column].bytes().all(|b| b.is_ascii_digit())
+            })
+        };
+        let width_mismatch = (0..titles.len())
+            .filter(|&column| column != range_column)
+            .any(|column| {
+                numeric(column)
+                    && rows.iter().zip(&ranges).any(|(row, &(top, bottom))| {
+                        row[column].parse::<u32>().ok() != Some(top - bottom + 1)
+                    })
+            });
+        if width_mismatch {
+            continue;
+        }
+        let Some(name_column) = (0..titles.len()).find(|&column| {
+            column != range_column
+                && !numeric(column)
+                && rows.iter().all(|row| !row[column].is_empty())
+                && rows
+                    .iter()
+                    .map(|row| row[column])
+                    .collect::<BTreeSet<_>>()
+                    .len()
+                    == rows.len()
+        }) else {
+            continue;
+        };
+        let field = &mut registers[register_index].fields[field_index];
+        if !field.sub_fields.is_empty() {
+            continue;
+        }
+        field.sub_fields = rows
+            .iter()
+            .zip(&ranges)
+            .map(
+                |(row, &(top, bottom))| crate::ir::source::RegisterSubField {
+                    name: row[name_column].to_string(),
+                    bits_high: top,
+                    bits_low: bottom,
+                    table_id: table.table_id.clone(),
+                    cells: (0..titles.len())
+                        .filter(|&column| column != range_column && column != name_column)
+                        .map(|column| crate::ir::source::RegisterSubFieldCell {
+                            column: titles[column].clone(),
+                            text: row[column].to_string(),
+                        })
+                        .collect(),
+                },
+            )
+            .collect();
+    }
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.41.c — one register a layout table lists.
@@ -28580,6 +28737,7 @@ fn synthesize_register_records(
                     description: desc,
                     enumerated_values,
                     signal_bindings: Vec::new(),
+                    sub_fields: Vec::new(),
                 });
             }
         }
@@ -29070,6 +29228,7 @@ fn synthesize_register_field_tables(
                 description,
                 enumerated_values,
                 signal_bindings: Vec::new(),
+                sub_fields: Vec::new(),
             });
         }
         if fields.is_empty() {
@@ -29255,6 +29414,7 @@ mod register_fragment_consolidation_4c {
             description: None,
             enumerated_values: vec![],
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         }
     }
     fn frag(id: &str, name: &str, fields: &[&str]) -> RegisterRecord {
@@ -36319,6 +36479,162 @@ mod tests {
         assert_eq!(named("Size value, IDR.Type"), None, "two different fields");
     }
 
+    /// `EXTRACTION-REPRESENTATION-GAPS.60.a` — a table whose bit column a register titles or captions, every range inside
+    /// one of its fields, lays that field out in sub-fields; a width column that does not restate the ranges, ranges
+    /// across two fields, or overlapping ranges refuse the table.
+    #[test]
+    fn a_register_fields_sub_field_table_lays_it_out() -> Result<()> {
+        use crate::ir::source::{RegisterFieldRecord, RegisterRecord};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("subfields.md");
+        fs::write(&source, "# Sub-fields\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let cell = |text: &str| crate::ir::source::StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        };
+        let table = |id: &str, header: &[&str], body: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: (1 + body.len()) as u32,
+            col_count: header.len() as u32,
+            header_rows: vec![header.iter().map(|text| cell(text)).collect()],
+            body_rows: body
+                .iter()
+                .map(|row| row.iter().map(|text| cell(text)).collect())
+                .collect(),
+        };
+        let header = [
+            "Manufacturer field",
+            "Width (bits)",
+            "Bits in ZIDCODE",
+            "Registered value",
+        ];
+        source_ir.structured_tables.push(table(
+            "table_jep",
+            &header,
+            &[
+                &["Continuation code", "4", "Bits[11:8]", "0b0100 ( 0x4 )"],
+                &["Identity code", "7", "Bits[7:1]", "0b0111011 ( 0x3B )"],
+            ],
+        ));
+        // A width column that does not restate the ranges.
+        source_ir.structured_tables.push(table(
+            "table_widths",
+            &["Part", "Width", "Bits in ZOTHER"],
+            &[&["High", "5", "Bits[7:4]"], &["Low", "4", "Bits[3:0]"]],
+        ));
+        // Ranges across two fields.
+        source_ir.structured_tables.push(table(
+            "table_across",
+            &["Part", "Bits in ZSPLIT"],
+            &[&["Top", "Bits[7:4]"], &["Bottom", "Bits[3:0]"]],
+        ));
+        // A caption naming the register, its bit column untitled by it.
+        let mut captioned = table(
+            "table_captioned",
+            &["Part", "Bits"],
+            &[&["Upper", "Bits[15:8]"], &["Lower", "Bits[7:4]"]],
+        );
+        captioned.caption_text = Some("Table 3. Parts of ZCAP".to_string());
+        source_ir.structured_tables.push(captioned);
+        // Overlapping ranges.
+        source_ir.structured_tables.push(table(
+            "table_overlap",
+            &["Part", "Bits in ZWIDE"],
+            &[&["Most", "Bits[7:2]"], &["Least", "Bits[3:0]"]],
+        ));
+        let field = |name: &str, high: u32, low: u32| RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: Some(high),
+            bits_low: Some(low),
+            bit_width: Some(high - low + 1),
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: Vec::new(),
+            signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
+        };
+        let register = |name: &str, fields: Vec<RegisterFieldRecord>| RegisterRecord {
+            register_id: format!("reg_{name}"),
+            register_name: name.to_string(),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields,
+            supporting_table_ids: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut registers = vec![
+            register(
+                "ZIDCODE",
+                vec![field("ZVERSION", 31, 28), field("ZDESIGNER", 11, 1)],
+            ),
+            register("ZOTHER", vec![field("ZBYTE", 7, 0)]),
+            register("ZSPLIT", vec![field("ZHIGH", 7, 4), field("ZLOW", 3, 0)]),
+            register("ZCAP", vec![field("ZWORD", 15, 0)]),
+            register("ZWIDE", vec![field("ZALL", 7, 0)]),
+        ];
+        super::fill_field_sub_fields(&source_ir, &mut registers);
+        let designer = &registers[0].fields[1];
+        assert_eq!(
+            designer
+                .sub_fields
+                .iter()
+                .map(|sub| (sub.name.as_str(), sub.bits_high, sub.bits_low))
+                .collect::<Vec<_>>(),
+            [("Continuation code", 11, 8), ("Identity code", 7, 1)]
+        );
+        assert_eq!(designer.sub_fields[0].table_id, "table_jep");
+        assert_eq!(
+            designer.sub_fields[0]
+                .cells
+                .iter()
+                .map(|cell| (cell.column.as_str(), cell.text.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                ("Width (bits)", "4"),
+                ("Registered value", "0b0100 ( 0x4 )")
+            ]
+        );
+        assert!(registers[0].fields[0].sub_fields.is_empty());
+        assert!(
+            registers[1].fields[0].sub_fields.is_empty(),
+            "the widths do not restate the ranges"
+        );
+        assert!(
+            registers[2]
+                .fields
+                .iter()
+                .all(|field| field.sub_fields.is_empty()),
+            "the ranges sit in two fields"
+        );
+        assert_eq!(
+            registers[3].fields[0]
+                .sub_fields
+                .iter()
+                .map(|sub| (sub.name.as_str(), sub.bits_high, sub.bits_low))
+                .collect::<Vec<_>>(),
+            [("Upper", 15, 8), ("Lower", 7, 4)]
+        );
+        assert!(
+            registers[4].fields[0].sub_fields.is_empty(),
+            "the ranges overlap"
+        );
+        Ok(())
+    }
+
     #[test]
     fn a_field_heading_body_binds_the_field_to_its_wire() -> Result<()> {
         use crate::ir::source::{
@@ -36383,6 +36699,7 @@ mod tests {
             description: None,
             enumerated_values: Vec::new(),
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         };
         let register = |name: &str, fields: Vec<RegisterFieldRecord>| RegisterRecord {
             register_id: format!("reg_{name}"),
@@ -36552,6 +36869,7 @@ mod tests {
                     description: None,
                     enumerated_values: Vec::new(),
                     signal_bindings: Vec::new(),
+                    sub_fields: Vec::new(),
                 })
                 .collect(),
             supporting_table_ids: vec![table.to_string()],
@@ -36785,6 +37103,7 @@ mod tests {
             description: None,
             enumerated_values: Vec::new(),
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         };
         let register = |name: &str, fields: Vec<RegisterFieldRecord>| RegisterRecord {
             register_id: format!("reg_{name}"),
@@ -36978,6 +37297,7 @@ mod tests {
             description: None,
             enumerated_values: Vec::new(),
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         };
         let register = |name: &str, fields: Vec<RegisterFieldRecord>| RegisterRecord {
             register_id: format!("reg_{name}"),
@@ -37100,6 +37420,7 @@ mod tests {
                 description: None,
                 enumerated_values: Vec::new(),
                 signal_bindings: Vec::new(),
+                sub_fields: Vec::new(),
             };
             let mut registers = vec![RegisterRecord {
                 register_id: "reg_CSW".to_string(),
@@ -37410,6 +37731,7 @@ mod tests {
             description: None,
             enumerated_values: Vec::new(),
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         };
         let register = |name: &str, fields: &[&str]| crate::ir::source::RegisterRecord {
             register_id: format!("reg_{name}"),
@@ -43343,6 +43665,7 @@ The control register.
             description: None,
             enumerated_values: vec![],
             signal_bindings: Vec::new(),
+            sub_fields: Vec::new(),
         };
         let reg = |fields: Vec<RegisterFieldRecord>| RegisterRecord {
             register_id: "r".to_string(),
@@ -51354,6 +51677,7 @@ The control register.
                     description: None,
                     enumerated_values: Vec::new(),
                     signal_bindings: Vec::new(),
+                    sub_fields: Vec::new(),
                 })
                 .collect(),
             supporting_table_ids: Vec::new(),

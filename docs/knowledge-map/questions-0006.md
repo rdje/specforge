@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how do Continued from previous page fragments find their home
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -295,5 +297,3 @@
   > how does SpecForge decide the radix of an unquoted encoding cell
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > how does SpecForge decide which signal a logic level belongs to
-- [contested-priors](../knowledge/contested-priors.md)
-  > how does SpecForge detect contradicting or conflicting priors
