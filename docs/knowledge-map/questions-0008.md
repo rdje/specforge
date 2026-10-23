@@ -40,6 +40,8 @@
   > how is APB's PPROT table (Normal or Privileged, LOW indicates …) read
 - [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
   > how is AXI Table A12.11 Legal tag operations read
+- [a-table-of-declared-names-is-a-rules-operand-set](../knowledge/a-table-of-declared-names-is-a-rules-operand-set.md)
+  > how is AXI Table A6.5 Signals that should be the same in an exclusive sequence read
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -295,5 +297,3 @@
   > how many OpenCAPI Ready Definition paths are repository relative
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many OpenCAPI Ready page paths are repository relative
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)

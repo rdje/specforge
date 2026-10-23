@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why is that not in the nominal determiner list (the Manager that drives HTRANS)
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why is the AHB eval baseline wrong or stale
+- [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
+  > why is the Connection Manager software in the USB4 connection-manager guide but not in the inter-domain spec
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > why is the Docling table capture of a register diagram unreliable
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -287,13 +297,3 @@
   > why was was-not-permitted dropped from the negated permission form
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > why were ADIv6's CTRL/STAT fields read into ABORT
-- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
-  > why were ADIv6's power-up handshake wires declared nowhere
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why were BDF DL and VPD removed from OpenCAPI Discovery
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why were PWR and OPEN promoted as conditional-rule consequent signals

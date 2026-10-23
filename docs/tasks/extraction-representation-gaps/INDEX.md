@@ -63,7 +63,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.54.a.ii` | [Packet and memory leaves](packet-and-memory-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.67` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.68` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.69` | [Table reading leaves](table-reading-leaves.md) |
@@ -72,6 +71,8 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.71` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.72` | [Table reading leaves](table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.73` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.67.a` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.67.b` | [Table reading leaves](table-reading-leaves.md) |
 
 ## Complete route catalog
 

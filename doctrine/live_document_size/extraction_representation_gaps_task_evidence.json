@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67",
-      "literal" : "`.67` — a table listing the signals a rule names is the rule's operands.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.a",
+      "literal" : "`.67.a` — a table of declared names is EvidenceIR's `signal_sets`.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -181,13 +181,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
-               "bytes" : 46433,
+               "bytes" : 49306,
                "line_bytes" : 119,
-               "lines" : 506
+               "lines" : 536
             },
             "part_id" : "table-reading-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-            "sha256" : "e24e2103c7466eb6126354375a910168d4678dd4d57b455d4aa780f2f27197d1",
+            "sha256" : "59a428a0521735330f85c22688fe58fa02a98fcd0eb058783f97403670ebdd47",
             "state" : "active"
          },
          {
@@ -1635,7 +1635,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1731,6 +1731,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.73",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.b",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
@@ -1861,7 +1873,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.67` — a table listing the signals a rule names is the rule's operands.",
+         "`.67.a` — a table of declared names is EvidenceIR's `signal_sets`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1894,7 +1906,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.67`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.68`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`",
@@ -1902,7 +1913,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.70`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.71`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.72`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.73`"
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.73`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.67.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.67.b`"
       ]
    },
    "migration_metadata" : {

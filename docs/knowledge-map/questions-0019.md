@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > where does an active relation verb's object end (at but, and at an infinitive with its own subject: for the Manager to drive)
+- [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
+  > where does an enum member's enabling property go (AWCMO CleanSharedPersist needs Persist_CMO)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > where does declared_type come from in validate
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > where does figure interior text go now
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -290,11 +298,3 @@
   > which caption additions are table-reading descriptions rather than requirements
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > which caption does arm B1 lose that arm A admitted
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > which caption grammar can supply a unit to every timing row
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which cargo profile do the corpus replay checks build
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > which cell did the CoreSight TMC DATA phantom come from
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > which census measures escaped identifier fragments

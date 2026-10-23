@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > which stale roadmap statuses were found before migration
+- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
+  > which statement classes are obligations for the completeness count (timing_constraint and derived_rule are not)
+- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
+  > which statement classes do the obligations about declared signals carry (86 SignalValueConstraint, 195 NormativeStatement, 65 ConditionalRule, 24 TimingConstraint, 5 DerivedRule, 3 ExplicitAbstraction, 1 SourceFact)
+- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
+  > which statements does evidence_normative_residuals_remaining list
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > which strategy is message_fields.byte_location_table
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -20,6 +28,8 @@
   > which tables does the member name-column override refuse
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > which tables have a name column that scores zero under name_cell_is_read_whole
+- [a-table-of-declared-names-is-a-rules-operand-set](../knowledge/a-table-of-declared-names-is-a-rules-operand-set.md)
+  > which tables list only declared signal names
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > which tables would recover real signals if identity alone were enough
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
@@ -287,13 +297,3 @@
   > why did ADIv6 publish IR register drives DBGTDI or number reads TDI
 - [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
   > why did ADIv6 publish system power drives CSYSPWRUPACK
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
-- [a-signal-titled-code-column-determining-its-member-is-an-enum](../knowledge/a-signal-titled-code-column-determining-its-member-is-an-enum.md)
-  > why did AHB's HSIZE once read BYTE=0, HALFWORD=0, ... (one bit read alone)
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero
-- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
-  > why did APB-E PADDR PWDATA PSEL and AHB HEXOKAY lose their tinv_sc invariants
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did APB5 check signals carry variant labels OC/N (a flagged data row read as a header; .45 states_presence)

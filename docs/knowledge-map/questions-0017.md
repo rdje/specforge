@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the current corpus refresh frontier after refresh 48
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the declared-signal eval surface / EvalTask::DeclaredSignal
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > what is the difference between PROOF-SEAL-CURRENCY and CHAIN-CURRENCY
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > what is the difference between a census that OVER-fires and one that UNDER-reads (over-firing selects things that are not what you think, and the remedy is to read the selection; under-reading sees one spelling of a notation and misses the others, and the remedy is to census the spellings - both are 'a count is not an adjudication' but they fail in opposite directions)
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -291,9 +297,3 @@
   > what replaced logic_level_binding_kind_from_text
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > what replaced the SWD-specific EvidenceIR carrier
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > what replaced validate_canonical_recovery_contract.py
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > what reports that the persisted corpus is out of seal
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what research did SpecForge leave out and why

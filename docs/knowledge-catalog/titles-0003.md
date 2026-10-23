@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md) | 2026-09-21 | `current` | Only 2 of 550 minted enums are document-stated page-break continuations, so a span rule cannot be made FP-fre… |
 | [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md) | 2026-09-19 | `current` | The caption repair SHIPPED in .6b: the caption test moved before the modal route, -8/+15 on the proof stratum… |
 | [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-10-22 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
@@ -60,4 +61,3 @@
 | [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md) | 2026-09-20 | `current` | An _I/_O name suffix is one document's convention, not digital-design grammar — 1,202 independently declare… |
 | [docling-device-cpu](../knowledge/docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
-| [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |

@@ -127,12 +127,42 @@ here whole.
   tables, decide the binding (a `Note N` cell and an `N.` list item after the same table, never a step list) and the
   carrier, and measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
+  Status: `done` (`2026-10-23`; DESIGN; opened by `.3.c.vi`; opened `.67.a`, `.67.b`)
   Goal: **a table listing the signals a rule names is the rule's operands.** **Reproduce:** AXI *Table A6.5 Signals
   that should be the same in an exclusive sequence* lists 25 signals (`AxID`, `AxADDR`, … `AxMMUSSIDV`) in a grid of
   five columns; the rule (an exclusive read and its write *should* carry equal values) is in the caption and prose,
   and `.3.c` disposed of the table as navigation. Acceptance: census tables whose cells are all declared names under
   a caption stating a rule, decide the carrier (the rule's operand set) and measure every chain.
+  **Measured `2026-10-23`** (31 chains; `.project-data/tmp/erg-67/census.py`, `near.py`). One table has every cell a
+  declared name: AXI *A6.5* (`table_0092`, typed `signal_description`), 25 cells in five columns, each a collective
+  (`AxID` … `AxMMUSSIDV`) or a slice of one (`AxCACHE[1:0]`). Its caption states the expectation (*should be the
+  same*). The sentence before it states the consequence and cites it by number: *If any of the signals shown in Table
+  A6.5 are different between the read and write requests in an exclusive sequence, the exclusive write might fail
+  even if the location has not been updated by another agent.* No record carries the table, the caption or that
+  sentence. The tables most of whose cells are declared names are parity check tables (AXI *A16.4*), owned by
+  `check_signal_records`. A sentence citing a table by number is common (43 in 5 chains), but the others cite
+  encodings and field layouts.
+  **Decided.**
+  - **The record.** A new EvidenceIR surface, `signal_sets`: one record per table, with its continuations, whose every
+    non-empty cell names a declared signal or collective, or a slice of one, with at least four cells. It holds the
+    caption as written, the members in reading order (each as written, with its name and its bits), and
+    `citing_statement_ids`: the statements that name the table by its caption number (*Table A6.5*), not counting
+    the caption and the rows.
+  - **The rule stays as written.** The caption and the citing sentences state the rule; the record gives them their
+    operands. Nothing turns *should be the same* into a constraint yet: an equality between two transactions' values
+    (an exclusive read's and its write's) has no SemanticIR rule form and no `.isf` form.
+  - **Not lowered.** Carried to IntentIR typed, with one adapter residual per set (`.67.b`), as for signal layouts.
+    ADR 0033 §4 files no FSMGen request until a rule needs it.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.67.a`
+  Status: `open` (`2026-10-23`; CODE; opened by `.67`)
+  Goal: **a table of declared names is EvidenceIR's `signal_sets`.** Acceptance: read `.67`'s record (every cell a
+  declared signal, collective or slice of one; continuations joined by caption; members as written with name and
+  bits; the statements citing the table by number), register the field (rule fields, inventories), re-seal what the
+  ruleset hash moves, carry it to IntentIR, and measure every chain (AXI *A6.5*, 25 members, one citing sentence).
+- ID: `EXTRACTION-REPRESENTATION-GAPS.67.b`
+  Status: `open` (`2026-10-23`; CODE; opened by `.67`; waits for `.67.a`)
+  Goal: **the adapter names each signal set it does not lower.** Acceptance: one residual per `signal_sets` record,
+  naming its caption, its members and the sentences that cite it; the `.isf` is unchanged; measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.68`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
   Goal: **a cross-tab whose cells are prose is read.** **Reproduce:** USB 3.2 *Table 8-8 Port Type Selection Matrix*

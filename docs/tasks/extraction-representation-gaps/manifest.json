@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67",
-      "literal" : "`.67` — a table listing the signals a rule names is the rule's operands.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.a",
+      "literal" : "`.67.a` — a table of declared names is EvidenceIR's `signal_sets`.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -207,12 +207,6 @@
          "part_id" : "table-reading-leaves"
       },
       {
-         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67",
-         "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
-      },
-      {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68",
          "lifecycle" : "open",
          "origin" : "post_migration",
@@ -256,6 +250,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.73",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-reading-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.b",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
@@ -433,13 +439,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 46433,
+            "bytes" : 49306,
             "line_bytes" : 119,
-            "lines" : 506
+            "lines" : 536
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "e24e2103c7466eb6126354375a910168d4678dd4d57b455d4aa780f2f27197d1",
+         "sha256" : "59a428a0521735330f85c22688fe58fa02a98fcd0eb058783f97403670ebdd47",
          "state" : "active"
       },
       {
