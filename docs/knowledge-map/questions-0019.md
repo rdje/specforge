@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
   > where does specforge record that a register bit controls a signal
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -296,5 +298,3 @@
   > which claim control-audit fields are gated and which must be read from the report
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > which claim family owns captured_region_residuals
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > which collection order changes may the behavioral comparator normalize

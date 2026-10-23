@@ -312,6 +312,10 @@ pub struct ContentElementRecord {
     pub source_batch: Option<u32>,
     /// Position of this element in Docling's reading-order traversal.
     pub reading_order: u32,
+    /// EXTRACTION-REPRESENTATION-GAPS.65.a — the converter's marker of an enumerated list item, as written (`[1]`,
+    /// `2.`); `None` for every other element and for an unnumbered item, and then not serialised.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub list_marker: Option<String>,
 }
 
 /// Classification of a structured table's purpose, proven from generic structural roles at ingest
@@ -907,6 +911,62 @@ fn neutralize_legacy_source_classifications(source_ir: &mut SourceIr) {
     source_ir.normalization_plan.notes.push(format!(
         "loaded legacy SourceIR schema {previous_schema} for inspection only; semantic source classifications were neutralized because only schema {SOURCE_IR_SCHEMA_VERSION} plus a verified proof ledger carries canonical authority; re-ingest to reconstruct typed classifications"
     ));
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.65.a` — set each premise content element's `list_marker` to the marker the retained
+/// converter document gives the item it was captured from, and return the indices that changed. An element is matched
+/// by `(source_batch, source_ref)`. In a page-batched bundle an element written before `source_batch` existed carries
+/// no coordinate; the parts partition the pages, so it is matched by `(page, source_ref)`. A marker on an element that
+/// is no list item, or two markers for one item, is refused. A marked item the premise does not hold places nothing:
+/// the ingest leaves a figure's own lists out of the prose stream (I2C's figure legends).
+#[cfg(feature = "source-proof-migration")]
+fn apply_recaptured_list_markers(
+    elements: &mut [ContentElementRecord],
+    recaptured: &docling_backend::RecapturedListMarkers,
+) -> std::result::Result<Vec<usize>, String> {
+    let mut by_batch: BTreeMap<(Option<u32>, &str), &str> = BTreeMap::new();
+    let mut by_page: BTreeMap<(Option<u32>, &str), &str> = BTreeMap::new();
+    for marker in &recaptured.markers {
+        let text = marker.list_marker.as_str();
+        let source_ref = marker.source_ref.as_str();
+        if by_batch
+            .insert((marker.source_batch, source_ref), text)
+            .is_some()
+            || (recaptured.batched && by_page.insert((marker.page_no, source_ref), text).is_some())
+        {
+            return Err(format!(
+                "the converter document marks {source_ref} (batch {:?}, page {:?}) twice",
+                marker.source_batch, marker.page_no
+            ));
+        }
+    }
+    let mut changed = Vec::new();
+    for (index, element) in elements.iter_mut().enumerate() {
+        let fresh = element.source_ref.as_deref().and_then(|source_ref| {
+            if recaptured.batched && element.source_batch.is_none() {
+                let page = element
+                    .page_id
+                    .as_deref()
+                    .and_then(|page_id| page_id.strip_prefix("page_"))
+                    .and_then(|number| number.parse::<u32>().ok());
+                by_page.get(&(page, source_ref))
+            } else {
+                by_batch.get(&(element.source_batch, source_ref))
+            }
+            .map(|marker| (*marker).to_string())
+        });
+        if fresh.is_some() && element.kind != ContentElementKind::ListItem {
+            return Err(format!(
+                "element {} is marked {:?} but is no list item",
+                element.element_id, fresh
+            ));
+        }
+        if element.list_marker != fresh {
+            element.list_marker = fresh;
+            changed.push(index);
+        }
+    }
+    Ok(changed)
 }
 
 /// Pair each premise table record with the recaptured table it was captured from, as indices into
@@ -2979,6 +3039,63 @@ impl SourceIr {
         );
         let rebuilt = Self::refresh_from_retained_context(retained, context)?;
         Ok((rebuilt, changed))
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.65.a` — recapture every list item's marker of a current-schema SourceIR from its
+    /// retained converter document, then refresh the proof exactly as `recapture_tables_from_retained_converter`
+    /// does. Only the content-element premise changes, and only for the elements whose marker differs; an artifact
+    /// whose markers already read the same is returned unchanged. Returns the artifact and the changed element ids.
+    #[cfg(feature = "source-proof-migration")]
+    #[doc(hidden)]
+    pub fn recapture_list_markers_from_retained_converter(
+        path: &Path,
+    ) -> Result<(Self, Vec<String>)> {
+        let (path, mut retained) = Self::load_retained_capture(path)?;
+        if retained.schema_version != SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR at {} is schema {}; recapture its list markers only after migrating it to schema {SOURCE_IR_SCHEMA_VERSION}",
+                path.display(),
+                retained.schema_version
+            )));
+        }
+        let mut context = retained.retained_proof_context(&path)?;
+        let backend_json = retained.retained_converter_document_path()?;
+        let recaptured = docling_backend::recapture_retained_list_markers(&backend_json)?;
+        let premise = context
+            .field_premises
+            .get("content_elements")
+            .cloned()
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(format!(
+                    "SourceIR at {} has no content element capture premise",
+                    path.display()
+                ))
+            })?;
+        let mut elements: Vec<ContentElementRecord> = serde_json::from_value(premise)?;
+        let changed =
+            apply_recaptured_list_markers(&mut elements, &recaptured).map_err(|reason| {
+                AppError::InvalidStageArtifact(format!("{}: {reason}", path.display()))
+            })?;
+        if changed.is_empty() {
+            return Ok((retained, Vec::new()));
+        }
+        for &index in &changed {
+            context.field_premises.insert(
+                format!("content_elements[{index}]"),
+                serde_json::to_value(&elements[index])?,
+            );
+        }
+        context.field_premises.insert(
+            "content_elements".to_string(),
+            serde_json::to_value(&elements)?,
+        );
+        let ids = changed
+            .iter()
+            .map(|&index| elements[index].element_id.clone())
+            .collect();
+        retained.content_elements = elements;
+        let rebuilt = Self::refresh_from_retained_context(retained, context)?;
+        Ok((rebuilt, ids))
     }
 
     /// Open a persisted SourceIR for audited maintenance: repository-owned path, a schema this build
@@ -6707,6 +6824,128 @@ mod legacy_source_reclassification_1 {
             cell("First release.", false),
         ]];
         assert_eq!(current_table_classification(&table), TableKind::Unknown);
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.65.a` — a list item's marker is placed by its converter coordinates.
+#[cfg(all(test, feature = "source-proof-migration"))]
+mod list_marker_recapture_tests {
+    use super::docling_backend::{RecapturedListMarker, RecapturedListMarkers};
+    use super::*;
+
+    fn element(
+        id: &str,
+        kind: ContentElementKind,
+        source_ref: &str,
+        source_batch: Option<u32>,
+        page: u32,
+    ) -> ContentElementRecord {
+        ContentElementRecord {
+            element_id: id.to_string(),
+            kind,
+            text: "text".to_string(),
+            heading_level: None,
+            page_id: Some(format!("page_{page:04}")),
+            source_ref: Some(source_ref.to_string()),
+            source_batch,
+            reading_order: 0,
+            list_marker: None,
+        }
+    }
+
+    fn markers(batched: bool, entries: &[(Option<u32>, &str, u32, &str)]) -> RecapturedListMarkers {
+        RecapturedListMarkers {
+            batched,
+            markers: entries
+                .iter()
+                .map(
+                    |(source_batch, source_ref, page, marker)| RecapturedListMarker {
+                        source_batch: *source_batch,
+                        source_ref: (*source_ref).to_string(),
+                        page_no: Some(*page),
+                        list_marker: (*marker).to_string(),
+                    },
+                )
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn a_list_items_marker_is_placed_by_its_converter_coordinates() {
+        use ContentElementKind::{BodyText, ListItem};
+        // one converter document: by source_ref; a stale marker is cleared, an item the premise lacks places nothing
+        let mut elements = vec![
+            element("e1", ListItem, "#/texts/1", None, 8),
+            element("e2", BodyText, "#/texts/2", None, 8),
+            element("e3", ListItem, "#/texts/3", None, 8),
+        ];
+        elements[2].list_marker = Some("9.".to_string());
+        let single = markers(
+            false,
+            &[(None, "#/texts/1", 8, "[1]"), (None, "#/texts/9", 8, "[2]")],
+        );
+        assert_eq!(
+            apply_recaptured_list_markers(&mut elements, &single),
+            Ok(vec![0, 2])
+        );
+        assert_eq!(elements[0].list_marker.as_deref(), Some("[1]"));
+        assert_eq!(elements[1].list_marker, None);
+        assert_eq!(elements[2].list_marker, None);
+
+        // a batched bundle restarts self_ref in every part: by batch, or, without one, by page
+        let batched = markers(
+            true,
+            &[
+                (Some(0), "#/texts/0", 2, "1."),
+                (Some(1), "#/texts/0", 70, "2."),
+            ],
+        );
+        let mut coordinated = vec![
+            element("a", ListItem, "#/texts/0", Some(1), 70),
+            element("b", ListItem, "#/texts/0", Some(0), 2),
+        ];
+        assert_eq!(
+            apply_recaptured_list_markers(&mut coordinated, &batched),
+            Ok(vec![0, 1])
+        );
+        assert_eq!(coordinated[0].list_marker.as_deref(), Some("2."));
+        assert_eq!(coordinated[1].list_marker.as_deref(), Some("1."));
+        let mut legacy = vec![
+            element("a", ListItem, "#/texts/0", None, 70),
+            element("b", ListItem, "#/texts/0", None, 2),
+        ];
+        assert_eq!(
+            apply_recaptured_list_markers(&mut legacy, &batched),
+            Ok(vec![0, 1])
+        );
+        assert_eq!(legacy[0].list_marker.as_deref(), Some("2."));
+        assert_eq!(legacy[1].list_marker.as_deref(), Some("1."));
+    }
+
+    #[test]
+    fn a_marker_on_no_list_item_or_a_doubled_marker_is_refused() {
+        let mut body = vec![element(
+            "e2",
+            ContentElementKind::BodyText,
+            "#/texts/2",
+            None,
+            8,
+        )];
+        assert!(
+            apply_recaptured_list_markers(
+                &mut body,
+                &markers(false, &[(None, "#/texts/2", 8, "1.")])
+            )
+            .is_err_and(|reason| reason.contains("no list item"))
+        );
+        let doubled = markers(
+            false,
+            &[(None, "#/texts/1", 8, "1."), (None, "#/texts/1", 8, "2.")],
+        );
+        assert!(
+            apply_recaptured_list_markers(&mut [], &doubled)
+                .is_err_and(|reason| reason.contains("twice"))
+        );
     }
 }
 

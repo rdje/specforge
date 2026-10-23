@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
+  > what is is_storage_or_value_phrase
 - [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
   > what is is_verb_shaped
 - [a-keyword-definition-is-typed-with-the-obligations-it-states](../knowledge/a-keyword-definition-is-typed-with-the-obligations-it-states.md)
@@ -295,5 +297,3 @@
   > what is the difference between ingest batch activation and adaptive batch size
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > what is the difference between phases and transaction_phases

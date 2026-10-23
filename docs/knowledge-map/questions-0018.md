@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > what seeds EvidenceIR's known signal names
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
   > what shapes do the unread assumed_by_word records take (convention, diagram_convention, narrative, treated_as, stated_default, other)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -295,5 +297,3 @@
   > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > where does retired roadmap direction go
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > how many surface records does one migrated task tree add
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how many symbol_definitions reach IntentIR
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -295,5 +297,3 @@
   > is a subscript split the same defect as an underscore split
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
-- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
-  > is a treated-as sentence still an explicit abstraction (yes; the typed record cites it)

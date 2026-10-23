@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-equivalence-rule-is-a-typed-record](../knowledge/an-equivalence-rule-is-a-typed-record.md)
+  > is a treated-as sentence still an explicit abstraction (yes; the typed record cites it)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -295,5 +297,3 @@
   > is there a limit on the number of task trees
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > is there a lowering-completeness check for temporal rules
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > is there a second independent derivation of ADR 0048's 27/51 corpus split (yes — EvidenceIr::load_from_path accepting 27 of the 78 persisted evidence_ir.json artifacts, which reaches the same split through a different file, field and production function than ADR 0048's proof-ledger grep over source_ir.json)

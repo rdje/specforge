@@ -112,6 +112,8 @@
   > how is a parity check-signal table (Check signal | Signals covered) read
 - [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
   > how is a polarity stated as a rule over a class of signals read (All WISHBONE interface signals MUST use active high logic)
+- [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
+  > how is a pre-coordinate batched record placed (page, source_ref)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how is a promoted constraint surface visible in the extraction manifest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -295,5 +297,3 @@
   > how many Signal statements does the corpus carry
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > how many SpecForge mdBook doctests currently fail
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > how many TileLink name cells look like a split identifier

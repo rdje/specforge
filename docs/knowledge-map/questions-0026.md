@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is RUSERCHK missing from the AXI catalog
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > why is Reset value not a semantic phase
 - [a-layouts-reserved-space-is-a-typed-span-citing-the-keyword](../knowledge/a-layouts-reserved-space-is-a-typed-span-citing-the-keyword.md)
@@ -296,5 +298,3 @@
   > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > why is the SpecForge fact-card catalog almost out of capacity
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy

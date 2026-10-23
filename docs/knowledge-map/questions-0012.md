@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > is there a second independent derivation of ADR 0048's 27/51 corpus split (yes — EvidenceIr::load_from_path accepting 27 of the 78 persisted evidence_ir.json artifacts, which reaches the same split through a different file, field and production function than ADR 0048's proof-ledger grep over source_ir.json)
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > is there an AXLEN signal in the AMBA AXI specification
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
@@ -295,5 +297,3 @@
   > what are the isf_protocol residual packet prefixes
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what are the migrated alignment root index part and capsule metrics
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)

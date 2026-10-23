@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > what is the difference between phases and transaction_phases
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > what is the difference between source_proof_migrate and source_table_recapture
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -295,5 +297,3 @@
   > what reviewed paraphrase and layout calibrations currently pass
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > what scopes a cell of an ARM LTI compatibility matrix (both axes — the row key binds the Manager's properties and the column header binds the Subordinate's, so an obligation in a cell holds only under the conjunction; in the persisted LTI artifact the row is statement_1027 and the header is statement_1025)
-- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
-  > what seeds EvidenceIR's known signal names

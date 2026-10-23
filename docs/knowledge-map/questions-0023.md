@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did the host actor disappear from AArch64 External Debug
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why did the initial prospective behavioral held-out run fail
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
@@ -296,5 +298,3 @@
   > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why does USB 3.2 declare no signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals

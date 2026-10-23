@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the X interface strip gated on X being a connected agent in this doc
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -295,5 +297,3 @@
   > why were True and False known signal names in AXI
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why were register names synthetic register_table_NNNN and how is the heading association done
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > why were the rows of AXI Table A15.23 DVM Complete request constraints driven unconditionally

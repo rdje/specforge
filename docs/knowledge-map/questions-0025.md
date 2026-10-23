@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why does source_batch not appear on my artifact
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
@@ -296,5 +298,3 @@
   > why is ProtocolStateRecord machine_name always None
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > why is RACK must be LOW published without during reset
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why is RUSERCHK missing from the AXI catalog

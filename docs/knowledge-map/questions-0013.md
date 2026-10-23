@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > what are the two shapes a SpecForge task node uses to declare its status (indented on the continuation lines under the id, or inline on the id's own line after a separator)
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -295,5 +297,3 @@
   > what does it cost to partition a task tree under the active-task-evidence contract (four surfaces in surfaces.jsonl, one line in check_task_evidence_contracts.sh, two census records per CURRENT surface, expected_current_surfaces +3)
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > what does it cost to register a partitioned task tree
-- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
-  > what does it cost to wire a new deterministic constraint reader (a corpus rebuild in the same transaction — with the reader composed, AXI leaves the measured stratum and the corpus census falls from 5 documents to 4 and from 379 obligations to 144; the change cannot be committed without rebuilding the artifacts whose topology it moves)

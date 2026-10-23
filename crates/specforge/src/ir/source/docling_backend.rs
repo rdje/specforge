@@ -164,6 +164,14 @@ def normalize_text(value):
     return text or None
 
 
+def list_marker_of(element, kind):
+    # EXTRACTION-REPRESENTATION-GAPS.65.a: the converter's marker of an enumerated list item, as written ("[1]",
+    # "2."); None for any other element and for an unnumbered item, whose marker is a bullet.
+    if kind != "list_item" or not getattr(element, "enumerated", False):
+        return None
+    return normalize_text(getattr(element, "marker", None))
+
+
 def as_posix(path):
     return Path(path).as_posix()
 
@@ -882,6 +890,7 @@ def process_converted_document(
                 "source_ref": source_ref,
                 "source_batch": acc.batch_ref(),
                 "reading_order": acc.element_reading_order,
+                "list_marker": list_marker_of(element, kind),
             })
 
             # Capture the first document title.
@@ -2415,6 +2424,83 @@ pub(super) struct RecapturedTable {
 /// uses but none of its models.
 #[cfg(feature = "source-proof-migration")]
 pub(super) fn recapture_retained_tables(backend_json: &Path) -> Result<RecapturedTables> {
+    run_retained_recapture("table", RETAINED_TABLE_RECAPTURE_MAIN, backend_json)
+}
+
+/// Entry point appended to the helper's function prefix to read every list item's marker from a retained
+/// converter document with the helper's own `list_marker_of` (`EXTRACTION-REPRESENTATION-GAPS.65.a`), each
+/// `documents[]` part of a page-batched bundle in turn. It never runs a Docling model.
+#[cfg(feature = "source-proof-migration")]
+const RETAINED_LIST_MARKER_RECAPTURE_MAIN: &str = r#"
+def _recapture_retained_list_markers(bundle_path):
+    from docling_core.types.doc import DoclingDocument
+
+    with open(bundle_path, "r", encoding="utf-8") as handle:
+        bundle = json.load(handle)
+    batched = bool(bundle.get("batched"))
+    parts = bundle["documents"] if batched else [bundle]
+    markers = []
+    for batch_index, part in enumerate(parts):
+        document = DoclingDocument.model_validate(part)
+        for element in document.texts:
+            label = getattr(element, "label", None)
+            if label is None:
+                continue
+            marker = list_marker_of(element, docling_label_to_kind(label))
+            if marker is not None:
+                prov = getattr(element, "prov", None) or []
+                markers.append({
+                    "source_batch": batch_index if batched else None,
+                    "source_ref": element.self_ref,
+                    "page_no": prov[0].page_no if prov else None,
+                    "list_marker": marker,
+                })
+    json.dump({"batched": batched, "markers": markers}, sys.stdout)
+
+
+_recapture_retained_list_markers(sys.argv[1])
+"#;
+
+/// `EXTRACTION-REPRESENTATION-GAPS.65.a` — every enumerated list item's marker in one retained converter document.
+#[cfg(feature = "source-proof-migration")]
+#[derive(Debug, Deserialize)]
+pub(super) struct RecapturedListMarkers {
+    /// Whether the bundle is a page-batched envelope, where `source_ref` restarts in every part.
+    pub(super) batched: bool,
+    pub(super) markers: Vec<RecapturedListMarker>,
+}
+
+#[cfg(feature = "source-proof-migration")]
+#[derive(Debug, Deserialize)]
+pub(super) struct RecapturedListMarker {
+    pub(super) source_batch: Option<u32>,
+    pub(super) source_ref: String,
+    /// The page the item is printed on; a batched bundle's parts partition the pages, so it names the part too.
+    pub(super) page_no: Option<u32>,
+    pub(super) list_marker: String,
+}
+
+/// Read every list item's marker from a retained `backend.json`, with the Docling runtime ingest uses but none of
+/// its models.
+#[cfg(feature = "source-proof-migration")]
+pub(super) fn recapture_retained_list_markers(
+    backend_json: &Path,
+) -> Result<RecapturedListMarkers> {
+    run_retained_recapture(
+        "list marker",
+        RETAINED_LIST_MARKER_RECAPTURE_MAIN,
+        backend_json,
+    )
+}
+
+/// Run one recapture entry point after the embedded helper's function prefix over a retained `backend.json` and
+/// parse the JSON it prints.
+#[cfg(feature = "source-proof-migration")]
+fn run_retained_recapture<T: serde::de::DeserializeOwned>(
+    what: &str,
+    main: &str,
+    backend_json: &Path,
+) -> Result<T> {
     let helper_prefix = DOCLING_HELPER_SCRIPT
         .split("\ndef main():")
         .next()
@@ -2425,17 +2511,16 @@ pub(super) fn recapture_retained_tables(backend_json: &Path) -> Result<Recapture
         })?;
     let python = resolve_docling_python()?;
     let tempdir = crate::project_data::tempdir()?;
-    let script_path = tempdir.path().join("specforge_table_recapture.py");
-    fs::write(
-        &script_path,
-        format!("{helper_prefix}\n{RETAINED_TABLE_RECAPTURE_MAIN}"),
-    )?;
+    let script_path = tempdir
+        .path()
+        .join(format!("specforge_{}_recapture.py", what.replace(' ', "_")));
+    fs::write(&script_path, format!("{helper_prefix}\n{main}"))?;
     let mut command = Command::new(&python);
     crate::project_data::configure_command(&mut command)?;
     let output = command.arg(&script_path).arg(backend_json).output()?;
     if !output.status.success() {
         return Err(AppError::InvalidBackendOutput(format!(
-            "table recapture from {} failed: {}",
+            "{what} recapture from {} failed: {}",
             backend_json.display(),
             String::from_utf8_lossy(&output.stderr).trim()
         )));
@@ -3460,6 +3545,41 @@ payload = {
 }
 print(json.dumps(payload, sort_keys=True))
 "#;
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.65.a` — the helper keeps an enumerated list item's marker as written and gives
+    /// no other element, an unnumbered item or an empty marker one.
+    #[test]
+    fn an_enumerated_list_items_marker_is_kept_as_written() -> Result<()> {
+        let _env_lock = env_var_lock();
+        let observed = run_embedded_helper_probe(
+            "list-marker-probe",
+            r#"
+from types import SimpleNamespace as Item
+
+payload = {
+    "bracketed": list_marker_of(Item(enumerated=True, marker=" [1] "), "list_item"),
+    "numbered": list_marker_of(Item(enumerated=True, marker="2."), "list_item"),
+    "bullet": list_marker_of(Item(enumerated=False, marker="-"), "list_item"),
+    "empty": list_marker_of(Item(enumerated=True, marker=""), "list_item"),
+    "other_kind": list_marker_of(Item(enumerated=True, marker="1."), "body_text"),
+    "no_attributes": list_marker_of(Item(), "list_item"),
+}
+print(json.dumps(payload, sort_keys=True))
+"#,
+        )?;
+        assert_eq!(
+            observed,
+            serde_json::json!({
+                "bracketed": "[1]",
+                "numbered": "2.",
+                "bullet": null,
+                "empty": null,
+                "other_kind": null,
+                "no_attributes": null
+            })
+        );
+        Ok(())
+    }
 
     #[test]
     fn table_cells_are_rehomed_to_the_header_column_their_geometry_sits_under() -> Result<()> {

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why were the rows of AXI Table A15.23 DVM Complete request constraints driven unconditionally
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > will a new standalone extraction command fail if converge does not account for it
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)

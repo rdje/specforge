@@ -59,11 +59,29 @@ here whole.
     Today's two note readers (matrix notes, combination key notes) take it; a timing table's notes have no reader yet,
     which `.65.b` measures and owns.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.65.a`
-  Status: `open` (`2026-10-23`; CODE; opened by `.65`)
+  Status: `done` (`2026-10-23`; CODE; opened by `.65`; checklist below)
   Goal: **an enumerated list item keeps its marker.** Acceptance: the ingest helper writes the converter's marker of an
   enumerated `list_item` into `ContentElementRecord.list_marker`; a recapture path fills it for persisted SourceIR from
   the retained converter document and refreshes the proof; re-seal the 23 chains' stages below content-identically
   (`rebuild_stage_cascade.sh`); measure every chain (1,256 markers expected).
+  **Done `2026-10-23`.**
+  - **Ingest.** The helper's `list_marker_of` keeps an enumerated `list_item`'s marker as written; a bullet, an
+    unnumbered item and any other element give none. `ContentElementRecord.list_marker` holds it, omitted when absent.
+  - **Recapture.** `SourceIr::recapture_list_markers_from_retained_converter` re-runs `list_marker_of` over the
+    retained converter document, as `recapture_tables_from_retained_converter` re-runs the table grid, and refreshes
+    the proof; `source_table_recapture --list-markers` drives it. An element is placed by `(source_batch, source_ref)`.
+    One written before `source_batch` existed in a batched bundle (ADIv6, USB 3.2) is placed by `(page, source_ref)`,
+    since the parts partition the pages. A marker on no list item, or two for one item, is refused.
+  - **Correction to `.65`'s census.** It read only a bundle's top-level `texts`, missing batched bundles' parts: 1,937
+    marked items in 23 chains, not 1,256 (1,546 numbered, 55 bracketed, AXI's 7 among them, 336 other).
+  - **Measured.** 1,928 markers written in 23 chains; the other 9 are in lists inside I2C's figures, which ingest
+    leaves out of the prose stream. Only `content_elements` moved, by `list_marker` alone. I2C's *Table 3* notes are
+    `elem_00102`-`00104`, `[1]`-`[3]`.
+  - **Re-sealed.** The SourceIR ruleset digests its production source, so the change moved it: the 8 chains with no
+    marker were re-sealed proof-only (`source_proof_migrate --write`, content unchanged), and
+    `rebuild_stage_cascade.sh --write` rebuilt every stage below for the 31 chains, content-identical.
+  - **Found.** A record written before `source_batch` existed is addressable after all, by its page:
+    `SOURCE-IR-REPRODUCIBILITY.17`.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.65.b`
   Status: `open` (`2026-10-23`; CODE; opened by `.65`; waits for `.65.a`)
   Goal: **a bracketed list note binds a bracketed mark.** Acceptance: a list item marked `[N]` is note `N` for a title
@@ -412,3 +430,26 @@ here whole.
   document, property or vendor vocabulary.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the residual), `pipeline/isf-enums.md`; KM card
   `an-encoding-members-enabling-property`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.65.a` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `.65`'s finding: the converter's marker never reached `ContentElementRecord`; the
+  corrected census counts 1,937 marked list items in 23 chains.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source/docling_backend.rs`'s content element builder
+  copied only `text`, and `crates/specforge/src/ir/source.rs` had no field. RED 6/6, both files restored
+  byte-identically: an unnumbered item keeping its bullet, any element kind keeping a marker (each fails
+  `an_enumerated_list_items_marker_is_kept_as_written`); a pre-coordinate batched element not placed by page, a marker
+  on no list item accepted, a doubled marker accepted, a stale marker kept (each fails `list_marker_recapture_tests`,
+  run with `--features source-proof-migration`).
+- [x] **ADDRESSED (verified)** — 1,928 markers in 23 SourceIR artifacts, I2C's `[1]`-`[3]` among them.
+- [x] **NO REGRESSION** — `rebuild_stage_cascade.sh --write`: 31 chains rebuilt at all four stages, content-identical
+  and validated; `check_chain_currency.sh` 31 of 31 current at every stage. WIRE-BASED-100: all 11 seed reports
+  byte-identical to `.61.b`'s (temp paths masked). `kg-bench` 158/158. `cargo fmt --check` and `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean, and `cargo clippy -p specforge --features source-proof-migration
+  --all-targets` clean. `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,941 passed,
+  and `specforge-core` with the feature 1,951. `flow_census.json` unchanged (the new Rust path is feature-gated).
+- [x] **GENERICITY (ADR 0006)** — the converter's own `enumerated` and `marker`, placed by converter coordinates; no
+  document, marker or vendor vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/sourceir.md` (*A numbered list item's marker*; a pre-coordinate record's page
+  names its part), `pipeline/isf-enums.md`; KM card `a-list-items-number-is-the-converters-marker` (corrected census);
+  `SOURCE-IR-REPRODUCIBILITY.17` opened.

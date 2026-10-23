@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > how many TileLink name cells look like a split identifier
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many USB4 Connection Manager page sidecars are repository relative
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -296,5 +298,3 @@
   > how many statements does are-not-permitted newly admit
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > how many statements does the caption repair newly admit
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > how many surface records does one migrated task tree add

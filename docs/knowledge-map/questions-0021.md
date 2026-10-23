@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > which table wins when two tables list the same field's values
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > which tables are non-contract
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
@@ -295,5 +297,3 @@
   > why did AXI have 71 registers (signal and property tables with a Default column)
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > why did AXI have a BTAGMATCH, SYSCOACK or AxPROT enum with repeated codes (the single-column reader read a jointly keyed table)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4

@@ -786,14 +786,40 @@ Two properties are worth knowing before you join on it:
 - **It appears only when the run was batched.** A single-pass conversion produces one converter
   document, where `source_ref` is already unique, so no coordinate is written and the record is
   byte-identical to what earlier versions produced. Absence means "one document", not "unknown".
-- **An artifact written before the coordinate existed cannot gain one after the fact.** Those records
-  carry no `source_batch`, and no key can recover which batch they came from; they need a re-ingest.
-  A consumer should say which key it is using rather than treat both as exact —
+- **An artifact written before the coordinate existed carries none.** Its records have no
+  `source_batch`. The batch is still recoverable from the page: a batched bundle's parts partition the
+  pages, so a record's page names its part, and `(page, source_ref)` places a converter item.
+  `EXTRACTION-REPRESENTATION-GAPS.65.a` places list markers that way (`2026-10-23`), and
+  `SOURCE-IR-REPRODUCIBILITY.17` measures it for every record. A consumer should say which key it is
+  using rather than treat both as exact —
   `measure_ingest_content_loss.py` reports this as `source_ref_identity` alongside `converter_refs`,
   `converter_distinct_refs`, and `converter_refs_reused`.
 
 `element_id` and `reading_order` remain unique within an artifact regardless, and stay the right
 handle when you only need to address a record rather than the converter item behind it.
+
+### A numbered list item's marker: `list_marker`
+
+The converter reads a numbered list item's number as its marker (`enumerated: true`, `marker: "[1]"`) and
+takes it out of the item's text. Since `EXTRACTION-REPRESENTATION-GAPS.65.a` (`2026-10-23`) ingest keeps it
+as written on the content element:
+
+```json
+{
+  "element_id": "elem_00102",
+  "kind": "list_item",
+  "text": "Also refers to a controller acting as a target.",
+  "list_marker": "[1]"
+}
+```
+
+A bullet, an unnumbered item and every other element carry none, and then the key is absent. Persisted
+artifacts gained it from their retained converter documents (`source_table_recapture --list-markers`, which
+re-runs only the helper's own `list_marker_of` and refreshes the proof). A record is placed by `(source_batch,
+source_ref)`, or by its page for an artifact written before `source_batch` existed.
+Measured `2026-10-23`: 1,928 markers reached 23 of the 31 chains.
+Nine more sit in lists inside I2C's figures, which ingest leaves out of the prose stream (`2026-10-23`).
+The I2C notes after its *Table 3* (`[1]` to `[3]`) are what the marker is for.
 
 *Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md` (`.5`, `.8`, and `.9` done, `.6`,
 `.7`, and `.10` open), with the measured result in

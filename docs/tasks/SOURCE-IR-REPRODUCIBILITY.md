@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SOURCE-IR-REPRODUCIBILITY`
-- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12`, `.14`–`.16` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13` pending)
+- Status: `active` (`.0`–`.2`, `.5`, `.8`, `.9`, `.11`–`.12`, `.14`–`.16` done; `.3`, `.4`, `.6`, `.7`, `.9a`, `.10`, `.13`, `.17` pending)
 - Roadmap lane: repository durability and portability (sibling of `CORPUS-CHAIN-CURRENCY`)
 - Created: `2026-08-27`
-- Last updated: `2026-08-29`
+- Last updated: `2026-10-23`
 - Owner: repo-local workflow
 
 ## Goal
@@ -908,6 +908,18 @@ Full result, method, controls, and per-document table:
   would answer for it is `specforge validate`, which mutates. And a current seal is not content currency:
   this gate never says an artifact is what the current binary would reproduce, which stays
   `CHAIN-CURRENCY`'s question at CI tier.
+
+- ID: `SOURCE-IR-REPRODUCIBILITY.17`
+  State: `pending` (found `2026-10-23` by `EXTRACTION-REPRESENTATION-GAPS.65.a`)
+  Goal: a record written before `source_batch` existed is addressed by its page's part
+  Acceptance: `.9` holds that the artifacts written before the coordinate existed "stay ambiguous until
+  they are re-ingested". A page-batched bundle's parts partition the pages: each `documents[i]` holds one
+  contiguous page range, and an item's `prov` page number is the document's own (measured on ADIv6, AXI and
+  USB 3.2: 64 pages a part). So a record with a `page_id` names its part, and `(page, source_ref)` addresses
+  one converter item. `EXTRACTION-REPRESENTATION-GAPS.65.a` places ADIv6's 145 and USB 3.2's 495 list
+  markers that way, with no collision. Measure over the 14 artifacts how many records the page key
+  addresses uniquely and which carry no page, teach `measure_ingest_content_loss.py` the key, and correct
+  `.9`'s statement with the measurement
 
 ## Open Questions
 

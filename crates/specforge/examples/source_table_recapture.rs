@@ -1,6 +1,7 @@
 //! Recapture the table premise of persisted SourceIR artifacts from their retained converter
 //! documents, re-running only the ingest helper's table-grid extraction (no Docling model), then
 //! refresh each proof. Without `--write` it reports what would change and writes nothing.
+//! `--list-markers` recaptures each list item's marker instead (`EXTRACTION-REPRESENTATION-GAPS.65.a`).
 
 use std::env;
 use std::io::{self, Write};
@@ -24,6 +25,7 @@ fn repository_relative(path: PathBuf, what: &str) -> io::Result<PathBuf> {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut write = false;
+    let mut list_markers = false;
     let mut paths = Vec::new();
     let mut arguments = env::args_os().skip(1);
     while let Some(argument) = arguments.next() {
@@ -32,6 +34,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 return Err(invalid_input("--write may be supplied only once").into());
             }
             write = true;
+            continue;
+        }
+        if argument == "--list-markers" {
+            if list_markers {
+                return Err(invalid_input("--list-markers may be supplied only once").into());
+            }
+            list_markers = true;
             continue;
         }
         if argument == "--retained-manifest" {
@@ -70,7 +79,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if paths.is_empty() {
         return Err(invalid_input(
             "usage: cargo run -p specforge --features source-proof-migration \
-             --example source_table_recapture -- [--write] \
+             --example source_table_recapture -- [--write] [--list-markers] \
              [--retained-manifest <manifest.json>] <source_ir.json>...",
         )
         .into());
@@ -79,7 +88,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let stdout = io::stdout();
     let mut output = stdout.lock();
     for path in paths {
-        let (rebuilt, changed) = SourceIr::recapture_tables_from_retained_converter(&path)?;
+        let (rebuilt, changed) = if list_markers {
+            SourceIr::recapture_list_markers_from_retained_converter(&path)?
+        } else {
+            SourceIr::recapture_tables_from_retained_converter(&path)?
+        };
         let status = match (changed.is_empty(), write) {
             (true, _) => "unchanged",
             (false, true) => {

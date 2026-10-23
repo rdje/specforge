@@ -2,8 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > what is Condition::Ne
 - [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
-  > what is ContentElementRecord.list_marker
+  > what is ContentElementRecord.list_marker / list_marker_of / source_table_recapture --list-markers
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -296,5 +298,3 @@
   > what is is_nominal_verb_occurrence
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > what is is_storage_or_value_phrase

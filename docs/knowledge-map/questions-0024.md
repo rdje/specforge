@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why does Wishbone declare no signals
@@ -295,5 +297,3 @@
   > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why does shall be unique within the subsystem publish no constraint
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does slicing idx minus 2 before signal panic

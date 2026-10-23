@@ -661,9 +661,9 @@ and the record's `notes` give each note's text with the columns and cells that c
 *A12.13* cites three (`Update 1`: *Partial tag updates are not supported*; `Y 2`: *Not Exclusive write*, one cell; `Y
 3`: *Domain must be Non-shareable*, two), and USB 3.2 *9-2* two on both its columns. A mark no note explains cites
 nothing: ADIv6's `64 bits d` and USB's `Set Address 0`. I2C *Table 3* prints its notes as list items marked `[1]` to
-`[3]`. The converter keeps each marker, but SourceIR's ingest drops it (measured `2026-10-23`), so `O [2]` reaches no
-note yet. SourceIR will keep the marker (`.65.a`), and a list item marked `[N]` will bind a mark written `[N]`
-(`.65.b`); a step list numbered `1.` binds nothing.
+`[3]`. The converter keeps each marker, and since `.65.a` (`2026-10-23`) so does SourceIR, as the list item's
+`list_marker`. `O [2]` reaches no note yet: a list item marked `[N]` will bind a mark written `[N]` (`.65.b`), and a
+step list numbered `1.` binds nothing.
 
 Since `.3.c.v.iii` (`2026-10-22`) a matrix can be a legend. AXI *B2.1 Key to signals table* gives each presence code
 its meaning on a manager and on a subordinate (`YM`: *Mandatory*, *Optional*), and a presence table whose every code

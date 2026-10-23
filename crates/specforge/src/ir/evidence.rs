@@ -36893,6 +36893,7 @@ mod tests {
                 source_ref: None,
                 source_batch: None,
                 reading_order: index as u32 + 1,
+                list_marker: None,
             });
         }
         let field = |name: &str, bit: u32| RegisterFieldRecord {
@@ -36990,6 +36991,7 @@ mod tests {
                 source_ref: None,
                 source_batch: None,
                 reading_order: order,
+                list_marker: None,
             });
             if heading {
                 source_ir.document_sections.push(ContentSectionRecord {
@@ -37491,6 +37493,7 @@ mod tests {
                 source_ref: None,
                 source_batch: None,
                 reading_order: order,
+                list_marker: None,
             });
         }
         let field = |name: &str, high: u32, low: u32| RegisterFieldRecord {
@@ -37614,6 +37617,7 @@ mod tests {
                     source_ref: None,
                     source_batch: None,
                     reading_order: order,
+                    list_marker: None,
                 });
             }
             let field = |name: &str, high: u32, low: u32| RegisterFieldRecord {
@@ -38653,6 +38657,7 @@ mod tests {
                 source_ref: None,
                 source_batch: None,
                 reading_order: 1,
+                list_marker: None,
             });
 
         let records = super::synthesize_timing_constraints(&source_ir, None);
@@ -39192,6 +39197,7 @@ mod tests {
             source_ref: None,
             source_batch: None,
             reading_order: 1,
+            list_marker: None,
         };
         source_ir.content_elements.extend([
             element(
@@ -41001,6 +41007,7 @@ mod tests {
                     source_ref: None,
                     source_batch: None,
                     reading_order: last_order + offset,
+                    list_marker: None,
                 });
         }
         let mut manifest = super::ExtractionManifest::default();
@@ -41366,6 +41373,7 @@ The control register.
                     source_ref: None,
                     source_batch: None,
                     reading_order: *order,
+                    list_marker: None,
                 },
             )
             .collect();
@@ -43696,6 +43704,7 @@ The control register.
                 source_ref: None,
                 source_batch: None,
                 reading_order: order,
+                list_marker: None,
             });
             if heading {
                 source_ir.document_sections.push(ContentSectionRecord {
@@ -51514,6 +51523,7 @@ The control register.
             source_ref: None,
             source_batch: None,
             reading_order: 1,
+            list_marker: None,
         };
         source_ir.content_elements.extend([
             footnote(
@@ -51797,6 +51807,7 @@ The control register.
                 source_ref: None,
                 source_batch: None,
                 reading_order: order,
+                list_marker: None,
             }
         };
         source_ir.content_elements.extend([
@@ -51909,6 +51920,7 @@ The control register.
             source_ref: None,
             source_batch: None,
             reading_order: 1,
+            list_marker: None,
         };
         source_ir.content_elements.extend([
             footnote(
@@ -61354,6 +61366,7 @@ mod signal_catalog_capture_gap_3 {
                     source_ref: None,
                     source_batch: None,
                     reading_order: index as u32 + 1,
+                    list_marker: None,
                 });
         }
         source_ir

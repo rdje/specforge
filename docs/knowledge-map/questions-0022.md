@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -295,5 +297,3 @@
   > why did the first replay publish meaning drives HPROT
 - [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
   > why did the from/to reader land after .39, .3.c.ii.a, .3.c.ii.b, .42 and KG-ISF-COMPLETENESS.1g
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did the host actor disappear from AArch64 External Debug
