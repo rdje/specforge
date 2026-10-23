@@ -414,7 +414,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
-  Status: `in_progress` (container; wave 3; `.14.a`-`.14.c` done)
+  Status: `in_progress` (container; wave 3; `.14.a`-`.14.d` done)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
   `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
@@ -511,12 +511,35 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14.d`
-  Status: `pending`
-  Goal: `cargo xtask check chain-currency` replaces the `CHAIN-CURRENCY` gate's script
+  Status: `done` (`2026-10-24`; CODE; checklist below)
+  Goal: `cargo xtask check chain-currency` replaces `scripts/check_chain_currency.sh`, and holds the one
+  content-identity predicate `scripts/lib/stage_artifact_identity.sh` defined
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; `report_self_test_totals.pl` still
-  reads its declared total.
-  Verification: `pending`
-  Commit: `pending`
+  reads its declared total; the predicate still defined once for the oracle and the rebuild remedy.
+  **Done `2026-10-24`.** `xtask/src/checks/chain_currency.rs` replays every persisted artifact at its persisted
+  input with the release build `scripts/lib/corpus_replay_binary.sh` names (asked through that file, so "which
+  build answers" stays defined once), extracts the `*_json:` section as the script's `awk` did, and compares content
+  identity as `JSON::PP` decoded and canonically re-encoded it: `validation_reports`, `proof_context` and
+  `proof_ledger` excluded, numbers compared by Perl's text (`1.0` equals `1`, an integer past twenty characters is a
+  string, one past 64 bits a double), sections named `name(n->m)`. It counts unmeasurable, legacy-quarantined,
+  orphaned and stale artifacts and checked `.isf` states per stage as the script did, reads each SourceIR's bundle
+  line with the script's regex, and holds the retained bundles to their schema-closed declaration; its 22 self-test
+  cases keep their verdicts. **The predicate stays single** (`.11`): `scripts/lib/stage_artifact_identity.sh`, which
+  `scripts/rebuild_stage_cascade.sh` and the held-out probe source, now calls `--compare-stage-artifact` and
+  `--compare-emitted-isf`, passing the caller's directory so a relative path resolves and is named as the caller
+  wrote it, and exiting as Perl's `die` did (the failed call's `errno`). `report_self_test_totals.pl` reads the
+  declaration from the Rust module (`EXPECTED_SELF_TEST_CASES`, its sixth self-test case). The shim keeps the argument
+  loop, `LC_ALL=C`, the knobs and the activation. **Parity**: HEAD's script, library and reporter beside the shims on
+  54 inputs (the self-test and three argument forms; the cascade's self-test through the library; the reporter; 23
+  crafted pairs and 15 adapter/emission cases through the library; six fixture corpora through the knobs, from a
+  current chain to a drifted one, a broken chain and three broken declarations; an absent corpus and a missing
+  declaration; and the whole persisted corpus, 78 documents, 31 replayed and current at every stage): 49 identical;
+  three in stdout and exit code where Perl died with its own parser or `HASH` message; and two by design, the
+  reporter's sixth case and a non-ASCII top-level section name, which Perl printed as a Latin-1 byte and the port as
+  UTF-8 (sections are the product's serde field names, so no artifact has one). **Cost** on the persisted corpus:
+  933 s for the script, 151 s for the shim; `JSON::PP` decoding the largest artifacts dominated the script.
+  Verification: `cargo test -p xtask --lib` 79/79; parity and RED in `.project-data/tmp/rdx-14d/`
+  Commit: `RUSTDOC-AND-XTASK.14.d — cargo xtask check chain-currency replaces the CHAIN-CURRENCY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14.e`
   Status: `pending`
@@ -695,6 +718,26 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.d` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — the `CHAIN-CURRENCY` doctrine and its content-identity predicate ran only as shell
+  and Perl (`scripts/check_chain_currency.sh`, `scripts/lib/stage_artifact_identity.sh`); HEAD's copies, with the
+  totals reporter's, are the parity baseline in `.project-data/tmp/rdx-14d/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 12 checks. RED 7/7, every
+  file restored byte-identically with a fresh mtime: `proof_ledger` compared, a long integer kept numeric, a stale
+  `.isf` sibling admitted, a duplicate retained key admitted, a negative current count allowed, the `*_json:` marker
+  line kept, the library calling the other predicate; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 11 -> 12; 49 of 54 inputs identical, three in stdout and exit code,
+  two different by design; the persisted corpus identical in both phases; self-test 22/22; the cascade's 14/14
+  through the library.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 79
+  passed; `report_self_test_totals.pl --check` unchanged (22 / 21 / 14); `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s row; book `getting-started.md` and
+  `reference/doctrine-enforcement.md`; KM cards `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask` and
+  `chain-currency-doctrine`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.c` (CODE) — DONE `2026-10-23`
 
@@ -925,8 +968,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.14.d` | `pending` | wave 3's fourth gate, `CHAIN-CURRENCY` |
-| 2 | `RUSTDOC-AND-XTASK.14.e`-`.14.g` | `pending` | the rest of wave 3, in `.14`'s order |
+| 1 | `RUSTDOC-AND-XTASK.14.e` | `pending` | wave 3's fifth gate, `PROOF-SEAL-CURRENCY`, and its seal-read library |
+| 2 | `RUSTDOC-AND-XTASK.14.f`-`.14.g` | `pending` | the rest of wave 3, in `.14`'s order |
 | 3 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
 
 ## Decisions

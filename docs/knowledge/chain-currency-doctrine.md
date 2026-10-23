@@ -10,14 +10,17 @@ answers:
   - "how does chain currency distinguish a checked blocked adapter from an emitted ISF file"
   - "how is a CI-tier doctrine registered without slowing down the pre-commit hook"
   - "what does DEFER mean in the doctrine enforcement report"
+  - "where is the chain-currency content-identity predicate defined (cargo xtask check chain-currency)"
 date: 2026-08-10
 status: current
 tags: [doctrine-enforcement, corpus, currency, artifacts, ci]
-evidence: scripts/check_chain_currency.sh; scripts/check_doctrines.sh; docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md; docs/tasks/CORPUS-CHAIN-CURRENCY.md
+evidence: scripts/check_chain_currency.sh; xtask/src/checks/chain_currency.rs; scripts/lib/stage_artifact_identity.sh; docs/tasks/RUSTDOC-AND-XTASK.md (.14.d); scripts/check_doctrines.sh; docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md; docs/tasks/CORPUS-CHAIN-CURRENCY.md
 reverify: bash scripts/check_chain_currency.sh --self-test
 ---
 
-`CHAIN-CURRENCY` (`scripts/check_chain_currency.sh`) is the registered oracle for ADR 0025: a persisted
+`CHAIN-CURRENCY` (`scripts/check_chain_currency.sh`, native since `RUSTDOC-AND-XTASK.14.d` in
+`cargo xtask check chain-currency`, which also holds the content-identity predicate the rebuild remedy reaches
+through `scripts/lib/stage_artifact_identity.sh`) is the registered oracle for ADR 0025: a persisted
 corpus artifact must be exactly what the current binary reproduces from its persisted input. It replays
 `evidence`, `semantic`, `intent`, and `adapt --target isf` with `--dry-run` — writing nothing — and
 compares each result with the stored artifact, then compares each emitted `.isf` file with the replayed

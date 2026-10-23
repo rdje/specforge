@@ -321,10 +321,10 @@ documents, in that order, and proves two things per stage rather than assuming t
 artifact is content-identical to the one it replaced, and that it validates through the product's own
 loader afterward — which is what re-earns the seal and restores the `validation_reports`
 back-annotation the rebuild necessarily dropped. Content identity is decided by the *same* predicate the
-chain-currency oracle uses; both scripts share one definition
-(`scripts/lib/stage_artifact_identity.sh`) so a remedy can never certify itself with a comparison the
-gate would not make. A legacy proofless document has no current seal to restore and is reported as an
-explicit out-of-scope count, never silently skipped.
+chain-currency oracle uses; both reach one definition through `scripts/lib/stage_artifact_identity.sh`
+(native in `cargo xtask check chain-currency` since `RUSTDOC-AND-XTASK.14.d`) so a remedy can never certify
+itself with a comparison the gate would not make. A legacy proofless document has no current seal to
+restore and is reported as an explicit out-of-scope count, never silently skipped.
 
 A content delta is never absorbed. If a rebuilt artifact differs, the run names the differing top-level
 sections, stops at that stage so nothing is rebuilt on top of an unexplained change, and keeps its

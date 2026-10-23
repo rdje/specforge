@@ -176,6 +176,8 @@
   > where is the biggest register extraction gap across the corpus
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where is the canonical SpecForge user guide
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > where is the chain-currency content-identity predicate defined (cargo xtask check chain-currency)
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -296,5 +298,3 @@
   > which SemanticIR fields carry supporting_table_ids
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > which SourceIR and EvidenceIR paths serialize repository relative
-- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
-  > which WIRE-BASED-100 seeds does a slice have to score

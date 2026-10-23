@@ -43,7 +43,8 @@ my $ROOT  = File::Spec->rel2abs(File::Spec->catdir(dirname(__FILE__), File::Spec
 # assertion's `field` never has to carry a path with dots and slashes in it.
 my %SCRIPTS = (
     proof_seal_currency  => 'scripts/check_proof_seal_currency.sh',
-    chain_currency       => 'scripts/check_chain_currency.sh',
+    # RUSTDOC-AND-XTASK.14.d — native, so its total is declared in the Rust module the shim runs.
+    chain_currency       => 'xtask/src/checks/chain_currency.rs',
     rebuild_stage_cascade => 'scripts/rebuild_stage_cascade.sh',
 );
 
@@ -54,6 +55,7 @@ my @PATTERNS = (
     qr/\btotal=(\d+)\b/,                       # local work passed=0 total=21
     qr/self-test\s+\$passed\/(\d+)\b/,         # fail_note "self-test $passed/22 passed"
     qr/self-test\s+(\d+)\/\1\s+passed/,        # note 'self-test 14/14 passed.'
+    qr/EXPECTED_SELF_TEST_CASES:\s*usize\s*=\s*(\d+)/,  # const EXPECTED_SELF_TEST_CASES: usize = 22;
 );
 
 sub declared_total {
@@ -107,7 +109,7 @@ sub emit {
 
 sub run_self_test {
     my $passed = 0;
-    my $total  = 5;
+    my $total  = 6;
     my $work   = tempdir(CLEANUP => 1);
 
     my $write = sub {
@@ -144,6 +146,12 @@ sub run_self_test {
     ($value, $why) = declared_total($write->('e.sh', "--self-test\nrun_cases\n"));
     if (!defined $value && ($why // '') =~ /no declared self-test total/) { $passed++ }
     else { warn "$LABEL: self-test 5: an unreadable total did not fail closed\n" }
+
+    # 6) a native check's Rust declaration is read (`RUSTDOC-AND-XTASK.14.d`)
+    ($value, $why) = declared_total(
+        $write->('f.rs', "[\"--self-test\"]\nconst EXPECTED_SELF_TEST_CASES: usize = 22;\n"));
+    if (defined $value && $value == 22) { $passed++ }
+    else { warn "$LABEL: self-test 6: a Rust EXPECTED_SELF_TEST_CASES not read (" . ($why // 'wrong value') . ")\n" }
 
     if ($passed == $total) {
         print STDERR "$LABEL: self-test $total/$total passed.\n";

@@ -1,6 +1,7 @@
 //! `cargo xtask check <doctrine>`: the doctrine gates ported to Rust (`RUSTDOC-AND-XTASK.6`). Each replaces the
 //! script the doctrine driver registers, which stays as a shim over it.
 
+pub mod chain_currency;
 pub mod constraint_part_span;
 pub mod contract_encoding;
 pub mod corpus_frontier;
@@ -88,6 +89,11 @@ pub const CHECKS: &[Check] = &[
         name: "project-data-locality",
         replaces: "scripts/check_project_data_locality.sh",
         run: project_data_locality::run,
+    },
+    Check {
+        name: "chain-currency",
+        replaces: "scripts/check_chain_currency.sh",
+        run: chain_currency::run,
     },
 ];
 
