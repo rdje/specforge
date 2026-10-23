@@ -10,6 +10,7 @@ answers:
   - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "in what order do the doctrine gates move to cargo xtask"
   - "what is cargo xtask check (rustdoc)"
+  - "which scripts are not ported to xtask (portable architecture kits)"
   - "how many scripts does SpecForge have and who calls them"
   - "how many public items lack documentation (missing_docs)"
   - "is a ported script deleted"
@@ -41,7 +42,10 @@ product; since `.5` `docs` is native (`xtask/src/docs.rs`, with `project_data.rs
 (`xtask/src/checks/`; `rustdoc` first, since `.8`), in `.6`'s four waves: the small shell gates (`.8`-`.12`), the
 single-file Perl and Python gates, the multi-file gates and corpus oracles, then the composites and the driver; a port
 proves parity on the current tree, every self-test case and a broken input per refusal, and from wave 2 may use crates
-the workspace already locks.
+the workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the kit artifacts of the
+five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle, `check_task_acceptance.sh`,
+`check_claim_verification.pl`, the driver and the hooks) stay in their portable language, because other repositories
+copy them.
 
 **Scripts.** 123 under `scripts/`: 64 Python (23,831 lines), 32 Perl (26,723), 27 shell (4,694). The doctrine driver
 calls 23, CI 5, the hooks only the driver; 53 are maintenance tools run by hand. Records cite them 8,089 times, so a

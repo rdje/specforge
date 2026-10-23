@@ -21,6 +21,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   stay as written, and a ported script stays as a shim that forwards to `cargo xtask`.
 - A big-bang port. Each gate moves in its own leaf, with parity evidence, or not at all.
 - New dependencies. The `xtask` crate uses the standard library only, so it builds offline.
+- Porting a portable architecture's kit (`.16`): the scripts other repositories copy stay in their portable language.
 - Requiring documentation on every public item now. Coverage is measured and ratcheted, never switched on blind.
 
 ## Acceptance Criteria
@@ -36,8 +37,8 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 
 - ID: `RUSTDOC-AND-XTASK`
   Status: `active`
-  Goal: the rustdoc API reference, and the incremental move to `cargo xtask`
-  Children: `RUSTDOC-AND-XTASK.1`-`.15`
+  Goal: the rustdoc API reference, and the incremental move to `cargo xtask` of SpecForge's own tooling
+  Children: `RUSTDOC-AND-XTASK.1`-`.16`
 
 - ID: `RUSTDOC-AND-XTASK.1`
   Status: `done` (`2026-10-23`; DESIGN)
@@ -203,25 +204,32 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.8 — cargo xtask check rustdoc replaces the RUSTDOC gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.9`
-  Status: `pending` (CODE; wave 1)
+  Status: `done` (`2026-10-23`; not ported: retired by `.16`)
   Goal: `cargo xtask check knowledge-map` replaces `knowledge-map/scripts/check_knowledge_map.sh`
   Acceptance: `.6`'s parity evidence, with a new self-test; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Retired by `.16`.** The knowledge-map bundle is a portable architecture's kit, copied into any repository as
+  Bash 3.2 and POSIX awk (`knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`), so its check stays shell and
+  `cargo xtask doctrines` only runs it.
+  Verification: `.16`'s classification
+  Commit: `RUSTDOC-AND-XTASK.16 — a portable architecture's kit stays portable (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.10`
-  Status: `pending` (CODE; wave 1)
+  Status: `done` (`2026-10-23`; not ported: retired by `.16`)
   Goal: `cargo xtask check memory-arch` replaces `scripts/check_memory_architecture.sh`
   Acceptance: `.6`'s parity evidence, with a new self-test; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Retired by `.16`.** `MEMORY_ARCHITECTURE.md` §9 ships this script as the memory architecture's enforcement for
+  any repository, so it stays shell.
+  Verification: `.16`'s classification
+  Commit: `RUSTDOC-AND-XTASK.16 — a portable architecture's kit stays portable (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.11`
-  Status: `pending` (CODE; wave 1)
+  Status: `done` (`2026-10-23`; not ported: retired by `.16`)
   Goal: `cargo xtask check task-acceptance` replaces `scripts/check_task_acceptance.sh`
   Acceptance: `.6`'s parity evidence, with a new self-test; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Retired by `.16`.** `DOCTRINE_ENFORCEMENT.md` §8 lists this script in Group A, the core a project copies
+  verbatim, so it stays shell.
+  Verification: `.16`'s classification
+  Commit: `RUSTDOC-AND-XTASK.16 — a portable architecture's kit stays portable (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.12`
   Status: `pending` (CODE; wave 1)
@@ -249,11 +257,34 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 
 - ID: `RUSTDOC-AND-XTASK.15`
   Status: `pending` (container; wave 4)
-  Goal: the composite gates and the driver move to xtask
-  Acceptance: one leaf per doctrine, in order: `PRODUCTION-GENERICITY`, `LIVE-DOC-SIZE`, `CLAIM-VERIFICATION`; then
-  `check_doctrines.sh` itself.
+  Goal: the composite gates move to xtask
+  Acceptance: one leaf per doctrine, in order: `PRODUCTION-GENERICITY`, `LIVE-DOC-SIZE`. Since `.16`,
+  `CLAIM-VERIFICATION` and the driver (`check_doctrines.sh`) stay portable kit artifacts and are not ported.
   Verification: `pending`
   Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.16`
+  Status: `done` (`2026-10-23`; DESIGN; corrects `.6`; retired `.9`-`.11`)
+  Goal: a portable architecture's kit stays portable
+  Acceptance: classify every doctrine's script against the five portable architectures' kit manifests, and keep the
+  kit artifacts out of the port.
+  **Found.** Reading `knowledge-map/scripts/check_knowledge_map.sh` for `.9` showed its header, *Portable runtime:
+  Bash 3.2+*, and that it runs the generator by `$SCRIPT_DIR`, which `.6`'s ranking did not follow. SpecForge adopts
+  five portable architectures (`DOCTRINE_ENFORCEMENT.md`): task trees, memory architecture, knowledge map, doctrine
+  enforcement and claim verification, each a kit other repositories copy. A kit script ported to SpecForge's Rust
+  `xtask` would no longer be the kit, so `.6` ordered the wrong set.
+  **Measured `2026-10-23`** (`.project-data/tmp/rdx-16/kit.py`): naming each doctrine's script in the five standards,
+  four are kit artifacts: `MEMORY-ARCH` (`MEMORY_ARCHITECTURE.md` §9), `KNOWLEDGE-MAP` (the `knowledge-map/` bundle),
+  `TASK-ACCEPTANCE` (`DOCTRINE_ENFORCEMENT.md` §8 Group A) and `CLAIM-VERIFICATION` (`CLAIM_VERIFICATION.md`), and
+  the driver `check_doctrines.sh` and the git hooks are Group A too. The other 16 doctrines are SpecForge's own.
+  **Decided.**
+  - **A kit artifact is not ported.** It stays in its portable language, and `cargo xtask doctrines` runs it through
+    the driver; a fix to it is a fix to the kit, made in place.
+  - **The port set** is the 16 SpecForge doctrines: `RUSTDOC` (done, `.8`), `README-POLICY` (`.12`), wave 2's six
+    single-file gates (`.13`), wave 3's six multi-file gates and oracles (`.14`), and wave 4's two composites (`.15`).
+  - `.9`-`.11` are retired with this reason, their nodes kept as history.
+  Verification: `classification in .project-data/tmp/rdx-16/kit.txt; doctrine gates at commit`
+  Commit: `RUSTDOC-AND-XTASK.16 — a portable architecture's kit stays portable (DESIGN)`
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
 
@@ -323,7 +354,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.9`-`.12` | `pending` | wave 1, in order |
+| 1 | `RUSTDOC-AND-XTASK.12` | `pending` | wave 1's last SpecForge gate (`.9`-`.11` retired by `.16`) |
 | 2 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
 | 3 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4 |
 
@@ -351,6 +382,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `2026-10-23` | `.5` | xtask tests; native docs parity with HEAD's script | 7/7; identical on success and with mdbook absent |
 | `2026-10-23` | `.6` | the 20 doctrines' direct script trees | ranked; waves set |
 | `2026-10-23` | `.8` | xtask tests; RUSTDOC parity through the driver's invocation | 10/10; identical on three inputs |
+| `2026-10-23` | `.16` | each doctrine's script against the five kit manifests | 4 kit artifacts plus the driver and hooks; 16 to port |
 
 ## Commit Log
 
@@ -363,6 +395,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `.5` | `RUSTDOC-AND-XTASK.5 — cargo xtask docs builds the book and the API reference natively` | the first native command; the docs script a shim |
 | `.6` | `RUSTDOC-AND-XTASK.6 — the order the doctrine gates move to cargo xtask (DESIGN)` | four waves; parity rules |
 | `.8` | `RUSTDOC-AND-XTASK.8 — cargo xtask check rustdoc replaces the RUSTDOC gate's script` | the first ported gate |
+| `.16` | `RUSTDOC-AND-XTASK.16 — a portable architecture's kit stays portable (DESIGN)` | `.9`-`.11` retired; `.15` rescoped |
 
 ## Changelog
 
