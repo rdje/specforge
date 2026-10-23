@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > which conditional rules survive when a document declares no signals
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > which converter items earn no residual
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
@@ -295,5 +297,3 @@
   > which tables would recover real signals if identity alone were enough
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > which task does the trajectory controller recommend first
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > which task owns deterministic Rust tests under repository-local TMPDIR

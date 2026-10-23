@@ -204,6 +204,8 @@
   > which ADIv6 fields are bound to wires
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > which ADR 0026 decision was wrong and why
+- [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
+  > which AXI enums have property-gated members (AWSNOOP, AWCMO, AxPAS)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > which AXI signals belong to which channel (B1.1 write request / B1.2 write data / B1.3 write response / B1.4 read request / B1.5 read data / B1.6 B1.7 snoop)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -296,5 +298,3 @@
   > which command does CI use for clippy
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > which command produces the document_class metric
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > which conditional rules survive when a document declares no signals

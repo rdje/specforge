@@ -959,6 +959,10 @@ pub struct ValueCombinationRecord {
     /// The titles of the other columns, in column order.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub meaning_columns: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.61.a — the meaning column that gives each row its enabling condition (`Enable`,
+    /// `Property`), when one does; its cells stay among the meanings as written.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub enabling_column: Option<String>,
     /// The rows, in order.
     pub rows: Vec<CombinationRow>,
 }
@@ -998,6 +1002,10 @@ pub struct CombinationRow {
     /// defines (`NSH, SYS`) carries the codes of every label, in order.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub value_encodings: Vec<CombinationValueEncoding>,
+    /// EXTRACTION-REPRESENTATION-GAPS.61.a — the row's enabling condition, from the record's `enabling_column` (AXI
+    /// *A7.3* `WriteBackFull`: `Shareable_Transactions and Shareable_Cache_Support`); `None` for `-` or no such column.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub enabled_by: Option<EnablingCondition>,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii` — a key value of a [`CombinationRow`] that names a member of the key's
@@ -1008,6 +1016,27 @@ pub struct CombinationValueEncoding {
     pub key_index: usize,
     /// The encoding table and the codes it gives the label.
     pub encoding: StatedValueEncoding,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.61.a` — the condition under which an encoding member or a combination row exists, as a
+/// table's enable or property column states it (AXI `AWCMO` `CleanSharedPersist`: `Persist_CMO`). The properties are
+/// named as written; joining each to its own record is `.61.c`'s.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct EnablingCondition {
+    /// The cell as written, its whitespace collapsed.
+    pub text: String,
+    /// How the properties combine: `all` for `and` or a single property, `any` for `or`.
+    pub connective: EnablingConnective,
+    /// The properties, in the order written.
+    pub properties: Vec<String>,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.61.a` — how an [`EnablingCondition`]'s properties combine.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum EnablingConnective {
+    All,
+    Any,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.i` — a table naming a signal's sub-fields: one column of slices of one
@@ -9483,6 +9512,12 @@ fn synthesize_signal_column_encodings(
         }) else {
             continue;
         };
+        // EXTRACTION-REPRESENTATION-GAPS.61.a — a member's enabling condition (AXI *A4.7*'s `Property`)
+        let (titles, cells) = enabling_column_inputs(std::slice::from_ref(header), rows);
+        let taken: BTreeSet<usize> = (0..columns.len())
+            .filter(|&col| col == name_col || columns[col].is_some())
+            .collect();
+        let enabling_col = enabling_condition_column(&titles, &cells, &taken);
         // each signal's columns (index, bit), in table order
         type SignalColumns = (String, Vec<(usize, Option<u32>)>);
         let mut signals: Vec<SignalColumns> = Vec::new();
@@ -9515,23 +9550,28 @@ fn synthesize_signal_column_encodings(
                     parse_encoding_member_value(cell(row, cols[0].0), table, row, cols[0].0)
                 }
             };
-            let members: Vec<(String, u32)> = rows
+            let members: Vec<(String, u32, Option<EnablingCondition>)> = rows
                 .iter()
                 .filter_map(|row| {
                     let name = encoding_member_identifier(cell(row, name_col), &signal)?;
-                    Some((name, code(row)?))
+                    let condition = enabling_col.and_then(|col| enabling_condition(cell(row, col)));
+                    Some((name, code(row)?, condition))
                 })
                 .collect();
-            let codes: BTreeSet<u32> = members.iter().map(|(_, value)| *value).collect();
-            let names: BTreeSet<&str> = members.iter().map(|(name, _)| name.as_str()).collect();
+            let codes: BTreeSet<u32> = members.iter().map(|(_, value, _)| *value).collect();
+            let names: BTreeSet<&str> = members.iter().map(|(name, ..)| name.as_str()).collect();
             if members.len() < 2 || codes.len() != members.len() || names.len() != members.len() {
                 continue;
             }
-            for (member_name, value) in members {
+            let mut enabled: Vec<(String, String)> = Vec::new();
+            for (member_name, value, condition) in members {
                 if is_prose_fragment_member_name(&member_name)
                     || is_width_parameter_leak_member(&member_name, &signal, Some(signal_titles))
                 {
                     continue;
+                }
+                if let Some(condition) = condition {
+                    enabled.push((member_name.clone(), condition.text));
                 }
                 *statement_counter += 1;
                 statements.push(ExtractedStatement {
@@ -9544,6 +9584,12 @@ fn synthesize_signal_column_encodings(
                     related_visual_evidence_ids: vec![],
                 });
             }
+            statements.extend(enabled_member_statements(
+                &signal,
+                enabled,
+                &table.table_id,
+                statement_counter,
+            ));
         }
     }
     statements
@@ -26779,6 +26825,12 @@ fn synthesize_encoding_declarations_for_enum(
         MemberNameColumn::Document(col) => col,
         MemberNameColumn::MultiKey => return statements,
     };
+    // EXTRACTION-REPRESENTATION-GAPS.61.a — a member's enabling condition, stated after the members as
+    // `Enum AWCMO CLEANSHAREDPERSIST is enabled by Persist_CMO.`
+    let (titles, cells) = enabling_column_inputs(&table.header_rows, &table.body_rows);
+    let enabling_col =
+        enabling_condition_column(&titles, &cells, &BTreeSet::from([name_col, value_col]));
+    let mut enabled: Vec<(String, String)> = Vec::new();
 
     for row in table.body_rows.iter() {
         let Some(name_cell) = row.get(name_col) else {
@@ -26840,6 +26892,13 @@ fn synthesize_encoding_declarations_for_enum(
             continue;
         };
 
+        if let Some(condition) = enabling_col
+            .and_then(|col| row.get(col))
+            .and_then(|cell| enabling_condition(&cell.text))
+        {
+            enabled.push((member_name.clone(), condition.text));
+        }
+
         // Synthesize: "Enum HTRANS IDLE = 0."
         let text = format!("Enum {enum_name} {member_name} = {value}.");
 
@@ -26856,8 +26915,40 @@ fn synthesize_encoding_declarations_for_enum(
             related_visual_evidence_ids: vec![],
         });
     }
+    statements.extend(enabled_member_statements(
+        enum_name,
+        enabled,
+        &table.table_id,
+        statement_counter,
+    ));
 
     statements
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.61.a` — `Enum SIGNAL MEMBER is enabled by CONDITION.` for each member a table's
+/// enable or property column gates, citing the table. SemanticIR reads it into the member's `enabled_by`; like `also
+/// takes`, it defines no symbol.
+fn enabled_member_statements(
+    enum_name: &str,
+    enabled: Vec<(String, String)>,
+    table_id: &str,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    enabled
+        .into_iter()
+        .map(|(member_name, condition)| {
+            *statement_counter += 1;
+            ExtractedStatement {
+                statement_id: format!("statement_{statement_counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Enum {enum_name} {member_name} is enabled by {condition}."),
+                evidence_span_ids: vec![],
+                supporting_table_ids: vec![table_id.to_string()],
+                related_visual_evidence_ids: vec![],
+            }
+        })
+        .collect()
 }
 
 /// KG-ISF-COMPLETENESS.2a.vii.c.i — `Parameter NAME = D.` for each row of a parameter table.
@@ -31618,6 +31709,111 @@ fn is_combination_member_name(cell: &str) -> bool {
             .all(|b| b.is_ascii_digit() || b == b'_')
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.61.a` — what an enable or property cell states: nothing (`-` or empty), a condition
+/// (one identifier, or identifiers joined by one connective, `and` or `or`), or something else, which refuses the
+/// column.
+enum EnablingCell {
+    Unconditional,
+    Condition(EnablingCondition),
+    Other,
+}
+
+fn enabling_cell(cell: &str) -> EnablingCell {
+    let words: Vec<&str> = cell.split_whitespace().collect();
+    if words.is_empty() || words == ["-"] {
+        return EnablingCell::Unconditional;
+    }
+    let identifier = |word: &&str| {
+        word.starts_with(|c: char| c.is_ascii_alphabetic())
+            && word.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+            && !matches!(*word, "and" | "or")
+    };
+    let properties: Vec<&str> = words.iter().copied().step_by(2).collect();
+    let connectives: BTreeSet<&str> = words.iter().copied().skip(1).step_by(2).collect();
+    let connective = match connectives.iter().copied().collect::<Vec<_>>().as_slice() {
+        [] | ["and"] => EnablingConnective::All,
+        ["or"] => EnablingConnective::Any,
+        _ => return EnablingCell::Other,
+    };
+    if words.len().is_multiple_of(2) || !properties.iter().all(identifier) {
+        return EnablingCell::Other;
+    }
+    EnablingCell::Condition(EnablingCondition {
+        text: words.join(" "),
+        connective,
+        properties: properties.into_iter().map(str::to_string).collect(),
+    })
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.61.a` — the condition a cell states, if any.
+pub(crate) fn enabling_condition(cell: &str) -> Option<EnablingCondition> {
+    match enabling_cell(cell) {
+        EnablingCell::Condition(condition) => Some(condition),
+        EnablingCell::Unconditional | EnablingCell::Other => None,
+    }
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.61` — the column of an encoding or combination table that gives each row its
+/// enabling condition (AXI `AWCMO | Label | Enable property | Meaning`): the first column outside `taken` whose title
+/// has the word *enable*, *enabled* or *property*, whose every cell is `-`, empty or a condition ([`enabling_cell`]),
+/// and at least one a condition.
+fn enabling_condition_column(
+    titles: &[String],
+    rows: &[Vec<String>],
+    taken: &BTreeSet<usize>,
+) -> Option<usize> {
+    (0..titles.len()).find(|column| {
+        let titled = titles[*column]
+            .split(|c: char| !c.is_ascii_alphanumeric())
+            .any(|word| {
+                matches!(
+                    word.to_ascii_lowercase().as_str(),
+                    "enable" | "enabled" | "property"
+                )
+            });
+        let cells: Vec<EnablingCell> = rows
+            .iter()
+            .map(|row| enabling_cell(row.get(*column).map_or("", String::as_str)))
+            .collect();
+        !taken.contains(column)
+            && titled
+            && cells
+                .iter()
+                .all(|cell| !matches!(cell, EnablingCell::Other))
+            && cells
+                .iter()
+                .any(|cell| matches!(cell, EnablingCell::Condition(_)))
+    })
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.61.a` — an encoding table's column titles, each column's header cells joined, and its
+/// rows' cells, trimmed, for [`enabling_condition_column`].
+fn enabling_column_inputs(
+    header_rows: &[Vec<crate::ir::source::StructuredTableCellRecord>],
+    rows: &[Vec<crate::ir::source::StructuredTableCellRecord>],
+) -> (Vec<String>, Vec<Vec<String>>) {
+    let width = header_rows.iter().map(Vec::len).max().unwrap_or(0);
+    let titles = (0..width)
+        .map(|column| {
+            header_rows
+                .iter()
+                .filter_map(|row| row.get(column))
+                .map(|cell| cell.text.trim())
+                .collect::<Vec<_>>()
+                .join(" ")
+        })
+        .collect();
+    let cells = rows
+        .iter()
+        .map(|row| {
+            row.iter()
+                .map(|cell| cell.text.trim().to_string())
+                .collect()
+        })
+        .collect();
+    (titles, cells)
+}
+
 /// `.3.g.iii.b.i` — the key columns of a header that keys its rows jointly, or `None`. Every column must be titled and
 /// none only by a number. Two or more columns must name different declared names ([`combination_key_name`]), at least
 /// one column must not, and the names must not all be members of one collective, which is one key written per channel.
@@ -31884,6 +32080,14 @@ fn read_value_combinations(
                 .into_iter()
                 .filter(|&column| Some(column) != member)
                 .collect();
+            // EXTRACTION-REPRESENTATION-GAPS.61.a — a meaning column that gives each row its enabling condition.
+            let row_cells: Vec<Vec<String>> =
+                entry.rows.iter().map(|(_, cells)| cells.clone()).collect();
+            let enabling = enabling_condition_column(
+                &entry.titles,
+                &row_cells,
+                &key_columns.iter().copied().chain(member).collect(),
+            );
             ValueCombinationRecord {
                 combination_id: format!("value_combination_{:04}", index + 1),
                 table_ids: entry.table_ids,
@@ -31892,6 +32096,7 @@ fn read_value_combinations(
                     .iter()
                     .map(|&column| entry.titles[column].clone())
                     .collect(),
+                enabling_column: enabling.map(|column| entry.titles[column].clone()),
                 rows: entry
                     .rows
                     .iter()
@@ -31908,6 +32113,7 @@ fn read_value_combinations(
                             .map(|&column| cells[column].clone())
                             .collect(),
                         value_encodings: Vec::new(),
+                        enabled_by: enabling.and_then(|column| enabling_condition(&cells[column])),
                     })
                     .collect(),
                 keys: entry.keys.into_iter().map(|(_, key)| key).collect(),
@@ -50874,6 +51080,7 @@ The control register.
                 member: Some("Root".to_string()),
                 meanings: Vec::new(),
                 value_encodings: Vec::new(),
+                enabled_by: None,
             }
         );
         let states = &combinations[1];
@@ -51030,6 +51237,195 @@ The control register.
         assert_eq!(protection.member_column.as_deref(), Some("Description"));
         assert_eq!(protection.rows[1].values, ["-", "1"]);
         assert_eq!(protection.rows[1].member.as_deref(), Some("Data access"));
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.61.a` — an encoding or combination table's enable or property column gives each
+    /// member or row its enabling condition: the enum readers state it after the members, a combination row carries it,
+    /// and `-` states none. A column whose title lacks the word, a name or key column, or a column with a cell of
+    /// another shape gives none.
+    #[test]
+    fn an_encoding_members_enabling_property_is_read() -> Result<()> {
+        use super::{EnablingConnective, enabling_condition};
+        let read = |cell: &str| enabling_condition(cell).map(|c| (c.connective, c.properties));
+        let names = |names: &[&str]| {
+            names
+                .iter()
+                .map(|name| name.to_string())
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(read("-"), None);
+        assert_eq!(read(" "), None);
+        assert_eq!(
+            read("Persist_CMO"),
+            Some((EnablingConnective::All, names(&["Persist_CMO"])))
+        );
+        assert_eq!(
+            read("Shareable_Transactions and  Shareable_Cache_Support"),
+            Some((
+                EnablingConnective::All,
+                names(&["Shareable_Transactions", "Shareable_Cache_Support"])
+            ))
+        );
+        assert_eq!(
+            read("WriteNoSnoopFull_Transaction or Shareable_Cache_Support"),
+            Some((
+                EnablingConnective::Any,
+                names(&["WriteNoSnoopFull_Transaction", "Shareable_Cache_Support"])
+            ))
+        );
+        assert_eq!(read("A_Support and B_Support or C_Support"), None);
+        assert_eq!(read("Yes a"), None);
+        assert_eq!(read("0b1"), None);
+
+        // AXI's AWCMO table, read by the general enum reader
+        let awcmo = |property: &str, popa: &str| {
+            table_with_rows(
+                &["AWCMO", "Label", property, "Meaning"],
+                &[
+                    &["0b000", "CleanInvalid", "-", "Clean and invalidate"],
+                    &[
+                        "0b010",
+                        "CleanSharedPersist",
+                        "Persist_CMO",
+                        "Clean to persistence",
+                    ],
+                    &[
+                        "0b100",
+                        "CleanInvalidPoPA",
+                        popa,
+                        "Clean and invalidate to PoPA",
+                    ],
+                ],
+            )
+        };
+        let enabled = |table: &StructuredTableRecord| -> Vec<String> {
+            let mut counter = 0;
+            super::synthesize_encoding_declarations_for_enum(table, "AWCMO", None, &mut counter)
+                .into_iter()
+                .map(|statement| statement.text)
+                .filter(|text| text.contains(" is enabled by "))
+                .collect()
+        };
+        assert_eq!(
+            enabled(&awcmo("Enable property", "RME_Support or Storage_CMO")),
+            [
+                "Enum AWCMO CLEANSHAREDPERSIST is enabled by Persist_CMO.",
+                "Enum AWCMO CLEANINVALIDPOPA is enabled by RME_Support or Storage_CMO.",
+            ]
+        );
+        assert!(enabled(&awcmo("Requirement", "RME_Support")).is_empty());
+        assert!(
+            enabled(&awcmo("Enable property", "Yes a")).is_empty(),
+            "one cell of another shape refuses the column"
+        );
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("enabling.md");
+        fs::write(&source, "# Enabling\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table =
+            |id: &str, kind: TableKind, header: &[&str], body: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: None,
+                source_ref: None,
+                source_batch: None,
+                table_kind: kind,
+                row_count: (1 + body.len()) as u32,
+                col_count: header.len() as u32,
+                header_rows: rows(&[header]),
+                body_rows: rows(body),
+            };
+        // AXI A4.7's shape, the member column titled with the word: the signal-column reader
+        source_ir.structured_tables.push(table(
+            "table_spaces",
+            TableKind::Encoding,
+            &["Property", "AxPAS", "AxNSE", "Enable"],
+            &[
+                &["Secure", "0b000", "0b0", "-"],
+                &["Root", "0b010", "0b1", "RME_Support"],
+            ],
+        ));
+        let titles: std::collections::HashSet<String> = ["AxPAS", "AxNSE", "AWSNOOP", "AWDOMAIN"]
+            .into_iter()
+            .map(str::to_string)
+            .collect();
+        let mut counter = 0;
+        let texts: Vec<String> = super::synthesize_signal_column_encodings(
+            &source_ir,
+            &titles,
+            &std::collections::BTreeSet::new(),
+            &mut counter,
+            None,
+        )
+        .into_iter()
+        .map(|statement| statement.text)
+        .filter(|text| text.contains(" is enabled by "))
+        .collect();
+        assert_eq!(
+            texts,
+            [
+                "Enum AxPAS ROOT is enabled by RME_Support.",
+                "Enum AxNSE ROOT is enabled by RME_Support.",
+            ]
+        );
+
+        // AXI A7.3's shape: the value-combination reader
+        source_ir.structured_tables.push(table(
+            "table_snoop",
+            TableKind::Unknown,
+            &["AWSNOOP", "AWDOMAIN", "Opcode", "Enable", "Description"],
+            &[
+                &["0b0000", "NSH", "WriteNoSnoop", "-", "Write."],
+                &[
+                    "0b0000",
+                    "SH",
+                    "WriteUniquePtl",
+                    "Shareable_Transactions",
+                    "Write.",
+                ],
+                &[
+                    "0b0011",
+                    "SH",
+                    "WriteBackFull",
+                    "Shareable_Transactions and Shareable_Cache_Support",
+                    "Write back.",
+                ],
+            ],
+        ));
+        let (combinations, _) = super::read_value_combinations(&source_ir, &titles, &[], &[]);
+        let snoop = combinations
+            .iter()
+            .find(|combination| combination.table_ids == ["table_snoop"])
+            .expect("the snoop table is a value combination");
+        assert_eq!(snoop.enabling_column.as_deref(), Some("Enable"));
+        assert_eq!(snoop.meaning_columns, ["Enable", "Description"]);
+        assert_eq!(snoop.rows[0].enabled_by, None);
+        assert_eq!(
+            snoop.rows[2].meanings[0],
+            "Shareable_Transactions and Shareable_Cache_Support"
+        );
+        assert_eq!(
+            snoop.rows[2].enabled_by,
+            Some(super::EnablingCondition {
+                text: "Shareable_Transactions and Shareable_Cache_Support".to_string(),
+                connective: EnablingConnective::All,
+                properties: names(&["Shareable_Transactions", "Shareable_Cache_Support"]),
+            })
+        );
         Ok(())
     }
 
@@ -52270,6 +52666,9 @@ The control register.
                 "table_pas Enum AxPAS NON_SECURE__NS = 1.",
                 "table_pas Enum AxPAS ROOT = 2.",
                 "table_pas Enum AxPAS REALM = 3.",
+                // EXTRACTION-REPRESENTATION-GAPS.61.a — A4.7's `Property` column gates two members
+                "table_pas Enum AxPAS ROOT is enabled by RME_Support.",
+                "table_pas Enum AxPAS REALM is enabled by RME_Support.",
                 "table_size Enum HSIZE BYTE = 0.",
                 "table_size Enum HSIZE HALFWORD = 1.",
                 "table_size Enum HSIZE WORD = 2.",
@@ -69082,6 +69481,7 @@ mod labeled_absent_value_tests {
             member: None,
             meanings: vec!["meaning".to_string()],
             value_encodings: Vec::new(),
+            enabled_by: None,
         };
         let mut combinations = vec![super::ValueCombinationRecord {
             combination_id: "value_combination_0001".to_string(),
@@ -69097,6 +69497,7 @@ mod labeled_absent_value_tests {
                 .collect(),
             member_column: None,
             meaning_columns: vec!["Meaning".to_string()],
+            enabling_column: None,
             rows: vec![
                 row(["Shareable", "Device"]),
                 row(["0b11", "-"]),
@@ -69148,6 +69549,7 @@ mod labeled_absent_value_tests {
             member: None,
             meanings: Vec::new(),
             value_encodings: Vec::new(),
+            enabled_by: None,
         };
         let combination = |note: &str| super::ValueCombinationRecord {
             combination_id: "value_combination_0001".to_string(),
@@ -69168,6 +69570,7 @@ mod labeled_absent_value_tests {
             ],
             member_column: None,
             meaning_columns: Vec::new(),
+            enabling_column: None,
             rows: vec![row("NSH, SYS"), row("SH"), row("NSH, XSH"), row("-")],
         };
         let mut combinations = vec![

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why did AxLEN become an AXI interface port
 - [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
   > why did CLOCK GENERATION refuse Wishbone's contract (a heading parsed as a second clock; a clock is now declared only by a sentence)
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
@@ -295,5 +297,3 @@
   > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > why did the radix census report 0 replayable member slots
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned

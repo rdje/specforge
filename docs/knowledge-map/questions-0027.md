@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why is the behavioral population a subset of retained rather than equal to it
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > why is the block name not used to qualify the duplicate registers (heading levels flattened)
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
@@ -295,5 +297,3 @@
   > and statement_0813 is 702 statements away. Run the adversarial control in scripts/measure_swd_frame_phase_scope.py)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > would a table-column phase cue move AXI/SWD off empty per-phase grouping (no — .2j NO-GO; the cue is already captured where present and genuinely absent on AXI/SWD)
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > would a topology-bearing seal key separate a refusing document

@@ -552,6 +552,29 @@ member would resolve to its keys' values. No condition on the current chains nee
 physical address space name `AxPAS`'s own encoding, so it is built when a consumer appears. A state a combination keys
 says in its residual which combination states its encoding.
 
+### A member a property enables
+
+AXI gates some encoding members by an interface property, in a column of the encoding table. The untitled `AWCMO`
+table (`AWCMO | Label | Enable property | Meaning`) gives `CleanSharedPersist` the property `Persist_CMO`. *A7.3*'s
+`Enable` column gives `WriteBackFull` `Shareable_Transactions and Shareable_Cache_Support`. Since
+`EXTRACTION-REPRESENTATION-GAPS.61.a` such a column is read:
+
+- **The column.** In a table that mints an enum or a value combination, a column other than the code, name and key
+  columns, whose title has the word *enable*, *enabled* or *property*. Every cell must be `-`, empty, one name, or
+  names joined by one `and` or one `or`, and at least one cell must name a property.
+- **Enum members.** The reader states each gated member after the members, citing its table: *Enum AWCMO
+  CLEANSHAREDPERSIST is enabled by Persist_CMO.* SemanticIR reads that into the member's `enabled_by`: the cell as
+  written, its properties, and `all` (`and` or one name) or `any` (`or`). A prose sentence of the same form cites no
+  table and is ignored.
+- **Combination rows.** The record names its `enabling_column`, and each gated row carries `enabled_by`. The cell also
+  stays among the row's meanings, as written.
+
+Measured on `2026-10-23`: 3 enums and 3 combinations, all in AXI. `AWSNOOP` has 3 gated members, `AWCMO` 4 of 6, and
+`AxPAS` 4 of 6, from *A4.7*'s `Property` column. Rows: *A7.3* 21 of 25, *A7.4* 12 of 19, *A4.7* 4 of 6
+(`2026-10-23`). The other 30 chains are unchanged. The property names are not yet joined to their records: all 22 are
+boolean properties, which SemanticIR does not read yet (`.61.c`, after `KG-ISF-COMPLETENESS.2a.vii.c.vi`). The `.isf`
+enum keeps every member (`.61.b` adds the adapter's residual).
+
 ### A signal's bit sub-fields
 
 AHB's *Table 3-6 Meaning of the HPROT bits* gives each bit a row: `HPROT[1]` *Privileged*, *When asserted, this bit

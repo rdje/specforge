@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why does table_kind read Unknown when the persisted JSON says signal_description
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -296,5 +298,3 @@
   > why is SWD/ADI hard / different from APB AHB AXI
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > why is SWIO not captured as a third SWP signal
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > why is SpecForge called forward specification mining

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > why did the register-at-offset placement-map hypothesis get overturned
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why did the residual actionability denominator change from 24 to 16
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
@@ -296,5 +298,3 @@
   > why does a Function title spanning two columns lose rows
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why does a SemanticIR residual packet list only some undeclared signal names

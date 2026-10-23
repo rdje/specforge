@@ -601,7 +601,7 @@ Nine evidence-grounded protocol collections, and the signal-presence records, cr
 - `protocol_states`
 - `protocol_transitions`
 - `value_combinations` — tables whose rows several signals' or fields' values key together, each label value with its
-  key's encoding codes (`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`)
+  key's encoding codes (`EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.ii`) and each row's enabling condition (`.61.a`)
 - `signal_layouts` — the tables naming a signal's bit sub-fields, one layout each (`.3.c.iv.b.ii`)
 - `message_signal_layouts` — the tables giving a signal's bits per message kind, each bit's source per message
   (`.3.c.iv.c.ii`)

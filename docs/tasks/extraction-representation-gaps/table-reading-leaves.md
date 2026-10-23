@@ -108,11 +108,26 @@ here whole.
   - **The join.** Each named property joins the property's own record once boolean properties are records (`.61.c`,
     after `.2a.vii.c.vi`). Until then the names stay as written, never resolved by spelling alone.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.a`
-  Status: `open` (`2026-10-23`; CODE; opened by `.61`)
+  Status: `done` (`2026-10-23`; CODE; opened by `.61`; checklist below)
   Goal: **an encoding member's enabling property is read.** Acceptance: read `.61`'s column into the enum reader's
   `is enabled by` statements and `SymbolEnumMemberRecord.enabled_by` (*A9.4* `AWSNOOP` 3 members, `AWCMO` 4) and into
   `ValueCombinationRow.enabled_by` (*A7.3* 21 rows, *A7.4* 12, *A4.7* 4), carry both to IntentIR, and measure every
   chain.
+  **Done `2026-10-23`.**
+  - **Carrier.** EvidenceIR `EnablingCondition` (the cell as written, `connective` `all` or `any`, the `properties`).
+    The combination row is `CombinationRow.enabled_by`, the name the code gives `.61`'s `ValueCombinationRow`; the
+    record names its `enabling_column`, whose cells stay among the meanings. `SymbolEnumMemberRecord.enabled_by` holds
+    the member's condition, and the member and its symbol cite the statement.
+  - **Readers.** One cell grammar and column rule (`enabling_condition_column`) serve the general enum reader, the
+    signal-column reader and the value-combination reader; the code, name and key columns are excluded, and at least
+    one cell must name a property. The enum readers state `Enum S M is enabled by C.` after the members, citing the
+    table; SemanticIR reads only a cited one, so AXI's prose *stalling is enabled by software* is ignored.
+  - **Correction to `.61`'s census.** *A4.7* also mints `AxPAS` (the signal-column reader, `.3.g.iii.a`), so three
+    enums are gated, not two: `AxPAS` 4 of 6 (`Root`, `Realm`: `RME_Support`; `SA`, `NSP`: `GDI_Support`). `.61.b`
+    covers it.
+  - **Measured.** Dry-run of the 31 chains: 30 identical. AXI: 11 statements (`AWSNOOP` 3, `AWCMO` 4, `AxPAS` 4) and
+    the rows `.61` counted (*A7.3* 21 of 25: 15 one property, 5 `and`, 1 `or`; *A7.4* 12 of 19; *A4.7* 4 of 6).
+    Rebuilt stage by stage: past the new fields only statement ids moved; `manager.isf` byte-identical.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.b`
   Status: `open` (`2026-10-23`; CODE; opened by `.61`)
   Goal: **the adapter names each enum member a property enables.** Acceptance: state one residual per enum with a
@@ -309,3 +324,25 @@ here whole.
   width restatement; no document, register or vendor vocabulary.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field laid out in sub-fields*), `pipeline/isf-adapter.md`
   (sub-fields are not lowered); KM card `a-register-fields-sub-field-table-is-its-layout`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.61.a` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `.61`'s census: AXI's enable and property columns were kept as meanings at most,
+  and an enum member carried no condition.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` read no such column and
+  `crates/specforge/src/ir/semantic.rs` had no member carrier. RED 7/7, both files restored byte-identically: two
+  connectives read as `all`, `or` read as `all`, the title word not required, the name and key columns not excluded, a
+  cell of another shape accepted (each fails `an_encoding_members_enabling_property_is_read`); a sentence with no table
+  read, the member not citing its statement (each fails
+  `an_enum_members_enabling_condition_is_read_from_its_table_reader`).
+- [x] **ADDRESSED (verified)** — AXI's 3 enums (11 members) and 3 combinations (37 rows) above, carried to IntentIR.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` 31 of 31 current (AXI rebuilt; nested fields only, so no
+  cascade). WIRE-BASED-100: all 11 seed reports byte-identical to `.60.a`'s (temp paths masked). `kg-bench` 158/158.
+  `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings` clean. `cargo test
+  --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,939 passed; the signal-column test's A4.7
+  fixture now expects its two `is enabled by` statements. `flow_census.json` rolled (+5 functions, +23 decision sites,
+  +22 helper edges, +1 semantic macro); boundary unchanged.
+- [x] **GENERICITY (ADR 0006)** — a column title's words, a cell grammar of identifiers and one connective, and the
+  readers' own name, code and key columns; no document, property or vendor vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A member a property enables*), `pipeline/semanticir.md`; KM card
+  `an-encoding-members-enabling-property` (the `AxPAS` correction).

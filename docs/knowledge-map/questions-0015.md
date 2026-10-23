@@ -133,7 +133,7 @@
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > what is StatementClass::Apparatus / the apparatus statement class
 - [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
-  > what is SymbolEnumMemberRecord.enabled_by / ValueCombinationRow.enabled_by
+  > what is SymbolEnumMemberRecord.enabled_by / CombinationRow.enabled_by / EnablingCondition / enabling_column
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > what is SystemResetKind::NotStated / reset_kind not_stated
 - [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md)

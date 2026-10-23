@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why does a SemanticIR residual packet list only some undeclared signal names
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > why does a USB 3.2 tBurst tRepeat timing table produce no timing records
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -295,5 +297,3 @@
   > why does split_conditional_sentence not cut at the first comma
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > why does stripping quotes give the wrong enum value
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why does table_kind read Unknown when the persisted JSON says signal_description

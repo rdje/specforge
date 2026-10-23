@@ -3899,12 +3899,14 @@ mod tests {
             }],
             member_column: Some("Physical address space".to_string()),
             meaning_columns: Vec::new(),
+            enabling_column: None,
             rows: vec![crate::ir::evidence::CombinationRow {
                 table_id: "table_0010".to_string(),
                 values: vec!["0".to_string()],
                 member: Some("Secure".to_string()),
                 meanings: Vec::new(),
                 value_encodings: Vec::new(),
+                enabled_by: None,
             }],
         }];
         let expected_frame_fields = evidence_ir.serial_frame_fields.clone();

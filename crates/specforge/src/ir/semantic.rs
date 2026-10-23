@@ -14,15 +14,15 @@ use crate::ir::derivation::{
     production_semantic_implementation_digest,
 };
 use crate::ir::evidence::{
-    CheckSignalRecord, CollectiveSignalNameRecord, EquivalenceRuleRecord, EvidenceIr,
-    InterfaceEdgeTimingRecord, KeywordDefinitionRecord, MatrixTableRecord,
+    CheckSignalRecord, CollectiveSignalNameRecord, EnablingCondition, EquivalenceRuleRecord,
+    EvidenceIr, InterfaceEdgeTimingRecord, KeywordDefinitionRecord, MatrixTableRecord,
     MessageSignalLayoutRecord, OptionalFeatureRecord, PermissionRuleRecord,
     ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
     SignalLayoutRecord, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord,
     SignalPresenceRecord, SignalSemanticConflictRecord, SignalSemanticHintRecord,
     SignalSemanticHintSourceKind, SignalSemanticTag, SoftwareIntentRecord,
     SourceLocalInferenceConstraintGrounding, StatementClass, ValueCombinationRecord,
-    VisualEvidenceRole, VisualObservationKind, parse_visual_observation_json,
+    VisualEvidenceRole, VisualObservationKind, enabling_condition, parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
     CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
@@ -2636,6 +2636,11 @@ pub struct SymbolEnumMemberRecord {
     pub declaration_order: u32,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
+    /// EXTRACTION-REPRESENTATION-GAPS.61.a — the condition under which the member exists, as its table's enable or
+    /// property column states it (`Enum AWCMO CLEANSHAREDPERSIST is enabled by Persist_CMO.`, whose statement the
+    /// member then cites); `None` when it always does, and then not serialised.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub enabled_by: Option<EnablingCondition>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -4765,7 +4770,30 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
                 .map(str::to_string)
         })
         .collect();
-    records.extend(enum_accumulators.into_values().filter_map(|entry| {
+    // EXTRACTION-REPRESENTATION-GAPS.61.a — each member's enabling condition, from its table reader's `Enum SIGNAL
+    // MEMBER is enabled by CONDITION.`, which must cite its table, like the shared-code mark.
+    let enabled_members: BTreeMap<(String, String), (String, EnablingCondition)> = context
+        .statements
+        .iter()
+        .filter(|statement| !statement.supporting_table_ids.is_empty())
+        .filter_map(|statement| {
+            let (subject, condition) = statement
+                .text
+                .strip_prefix("Enum ")?
+                .strip_suffix('.')?
+                .split_once(" is enabled by ")?;
+            let (enum_name, member_name) = subject.split_once(' ')?;
+            (!member_name.contains(char::is_whitespace)).then_some(())?;
+            Some((
+                (enum_name.to_string(), member_name.to_string()),
+                (
+                    statement.statement_id.clone(),
+                    enabling_condition(condition)?,
+                ),
+            ))
+        })
+        .collect();
+    records.extend(enum_accumulators.into_values().filter_map(|mut entry| {
         let mut members = entry
             .members
             .into_values()
@@ -4780,6 +4808,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
                     declaration_order: member.declaration_order,
                     supporting_statement_ids: member.supporting_statement_ids.into_iter().collect(),
                     automation_confidence: AutomationConfidence::High,
+                    enabled_by: None,
                 })
             })
             .collect::<Vec<_>>();
@@ -4829,6 +4858,16 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             index += 1;
             keep
         });
+        for member in &mut members {
+            if let Some((statement_id, condition)) =
+                enabled_members.get(&(entry.enum_name.clone(), member.member_name.clone()))
+            {
+                member.enabled_by = Some(condition.clone());
+                member.supporting_statement_ids.push(statement_id.clone());
+                member.supporting_statement_ids.sort();
+                entry.supporting_statement_ids.insert(statement_id.clone());
+            }
+        }
 
         // An enum with no surviving member is not an enum, it is a name. The two per-member rules
         // above can both empty one — the older `conflicting_value` rule and `.5.xiv.a`'s collision
@@ -16410,6 +16449,108 @@ mod tests {
         assert!(
             members("TSIZE").is_empty(),
             "a sentence with no table is not the reader's, so TSIZE still collides"
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.61.a` — a member's enabling condition is read from its table reader's statement,
+    /// which the member then cites; the same sentence without a table, or naming no member, gives none.
+    #[test]
+    fn an_enum_members_enabling_condition_is_read_from_its_table_reader() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("enabled_enum.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Symbols\nSignal CLK is input width 1.\n\nEnum TCMO CLEAN = 0.\n\nEnum TCMO PERSIST = 1.\n\nEnum TCMO DEEP = 2.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        for (id, text, tables) in [
+            (
+                "statement_9001",
+                "Enum TCMO PERSIST is enabled by Persist_CMO or Deep_CMO.",
+                vec!["table_0001".to_string()],
+            ),
+            (
+                "statement_9002",
+                "Enum TCMO DEEP is enabled by Deep_CMO.",
+                Vec::new(),
+            ),
+            (
+                "statement_9003",
+                "Enum TCMO ABSENT is enabled by Deep_CMO.",
+                vec!["table_0001".to_string()],
+            ),
+        ] {
+            evidence_ir
+                .extracted_statements
+                .push(crate::ir::evidence::ExtractedStatement {
+                    statement_id: id.to_string(),
+                    class: crate::ir::evidence::StatementClass::SourceFact,
+                    modality: crate::ir::evidence::EvidenceModality::Text,
+                    text: text.to_string(),
+                    evidence_span_ids: Vec::new(),
+                    related_visual_evidence_ids: Vec::new(),
+                    supporting_table_ids: tables,
+                });
+        }
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let symbol = semantic_ir
+            .symbol_definitions
+            .iter()
+            .find(|definition| definition.symbol_name == "TCMO")
+            .expect("TCMO is minted");
+        let enabled: Vec<(&str, Option<&str>)> = symbol
+            .members
+            .iter()
+            .map(|member| {
+                (
+                    member.member_name.as_str(),
+                    member
+                        .enabled_by
+                        .as_ref()
+                        .map(|condition| condition.text.as_str()),
+                )
+            })
+            .collect();
+        assert_eq!(
+            enabled,
+            [
+                ("CLEAN", None),
+                ("PERSIST", Some("Persist_CMO or Deep_CMO")),
+                ("DEEP", None),
+            ],
+            "a sentence with no table is not the reader's"
+        );
+        let persist = &symbol.members[1];
+        assert_eq!(
+            persist
+                .enabled_by
+                .as_ref()
+                .map(|condition| condition.connective),
+            Some(crate::ir::evidence::EnablingConnective::Any)
+        );
+        assert!(
+            persist
+                .supporting_statement_ids
+                .contains(&"statement_9001".to_string())
+                && symbol
+                    .supporting_statement_ids
+                    .contains(&"statement_9001".to_string()),
+            "the member and its symbol cite the statement"
         );
         Ok(())
     }

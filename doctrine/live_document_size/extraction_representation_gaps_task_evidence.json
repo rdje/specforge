@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.a",
-      "literal" : "`.61.a` — an encoding member's enabling property is read.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.b",
+      "literal" : "`.61.b` — the adapter names each enum member a property enables.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -181,13 +181,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
-               "bytes" : 28368,
+               "bytes" : 31863,
                "line_bytes" : 119,
-               "lines" : 311
+               "lines" : 348
             },
             "part_id" : "table-reading-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-            "sha256" : "6b48a1bcba4cdd852c31f76d51ec946f05cf50f2a0dd0488b701907eb5d0a47f",
+            "sha256" : "8325c8c4570f90ad29f6a175c6138f0dd170e684b5cc34350a86edde06453baa",
             "state" : "active"
          },
          {
@@ -1683,7 +1683,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
       },
@@ -1831,7 +1831,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.61.a` — an encoding member's enabling property is read.",
+         "`.61.b` — the adapter names each enum member a property enables.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1869,7 +1869,6 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.68`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.61.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.61.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.70`"

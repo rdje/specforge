@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-60-A-REGISTER-SUB-FIELDS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-61-A-ENABLING-CONDITIONS",
    "baseline": {
-    "analyzed_functions": 2881,
-    "decision_sites": 16324,
-    "helper_edges": 20895,
+    "analyzed_functions": 2883,
+    "decision_sites": 16360,
+    "helper_edges": 20907,
     "semantic_macros": 1649
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 36,
-    "helper_edges": 12,
-    "semantic_macros": 0
+    "analyzed_functions": 5,
+    "decision_sites": 23,
+    "helper_edges": 22,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.60.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.60.a: a table whose bit column a declared register titles or captions, its disjoint ranges inside one field, fills that field's sub_fields."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.61.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.61.a: an encoding or combination table's enable or property column, its cells a name or names joined by one connective, gives each enum member and combination row its enabling condition."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > which task owns deterministic Rust tests under repository-local TMPDIR
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > which task owns fact-card catalog containment
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -295,5 +297,3 @@
   > why did Arm Debug lose twelve reviewed register facts
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > why did Arm Debug register access disappear before EvidenceIR
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why did AxLEN become an AXI interface port

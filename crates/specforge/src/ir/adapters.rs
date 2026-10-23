@@ -3037,12 +3037,14 @@ mod tests {
                 .collect(),
             member_column: Some("State".to_string()),
             meaning_columns: Vec::new(),
+            enabling_column: None,
             rows: vec![crate::ir::evidence::CombinationRow {
                 table_id: "table_0239".to_string(),
                 values: vec!["1".to_string(), "0".to_string()],
                 member: Some("Connect".to_string()),
                 meanings: Vec::new(),
                 value_encodings: Vec::new(),
+                enabled_by: None,
             }],
         }];
         // EXTRACTION-REPRESENTATION-GAPS.3.g.iii.b.iv — the state the combination keys says its encoding is stated.
