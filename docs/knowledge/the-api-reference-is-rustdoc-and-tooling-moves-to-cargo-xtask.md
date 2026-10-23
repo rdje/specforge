@@ -12,6 +12,7 @@ answers:
   - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations)"
   - "which crates may xtask depend on (serde_json, sha2)"
   - "how do the xtask ports read JSON like Python (pyjson)"
+  - "what checks that the doctrine tables match the driver registry (DOCTRINE-TABLES)"
   - "can a claim's RED region live outside its producer (source_region.path)"
   - "which scripts are not ported to xtask (portable architecture kits)"
   - "how many scripts does SpecForge have and who calls them"
@@ -21,7 +22,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.d, .17); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.d, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -52,16 +53,18 @@ already locks (since `.13.b`), though since `.17` it uses none: the ports read a
 `docs` is native (`xtask/src/docs.rs`, with `project_data.rs` for the project-data roots) and `scripts/run_docs_ci.sh`
 is its shim; the gates move one leaf each as `cargo xtask check <doctrine>` (`xtask/src/checks/`; `rustdoc` since
 `.8`, `readme-policy` since `.12`, `section-anchors` since `.13.a`, `task-node-retention` since `.13.b`,
-`contract-encoding` since `.13.c`, `ownership-citations` since `.13.d`), in `.6`'s four waves: the small shell gates
-(`.8`-`.12`), the single-file Perl and Python gates, the multi-file gates and corpus oracles, then the composites and
-the driver; a port proves parity on the current tree, every self-test case and a broken input per refusal, and from
-wave 2 may use crates the workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
-kit artifacts of the five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle,
-`check_task_acceptance.sh`, `check_claim_verification.pl`, the driver and the hooks) stay in their portable language,
-because other repositories copy them. The `readme-policy` port fixed two fail-opens in the script it replaced: its
-`while read` loop skipped a last registry row without its newline, and `IFS=$'\t'` merged runs of tabs, so a row with
-an empty extra column read as complete. A claim's RED region may now name the file its producer delegates to
-(`source_region.path`, one of the control's inputs), because a shim's RED case lives in the Rust it runs.
+`contract-encoding` since `.13.c`, `ownership-citations` since `.13.d`; `doctrine-tables`, the `DOCTRINE-TABLES`
+doctrine `.18` added after both doctrine tables were found to have drifted from the driver's registry, was written
+natively), in `.6`'s four waves: the small shell gates (`.8`-`.12`), the single-file Perl and Python gates, the
+multi-file gates and corpus oracles, then the composites and the driver; a port proves parity on the current tree,
+every self-test case and a broken input per refusal, and from wave 2 may use crates the workspace already locks. Since
+`.16` the port covers SpecForge's own 16 doctrines only: the kit artifacts of the five portable architectures
+(`check_memory_architecture.sh`, the `knowledge-map/` bundle, `check_task_acceptance.sh`,
+`check_claim_verification.pl`, the driver and the hooks) stay in their portable language, because other repositories
+copy them. The `readme-policy` port fixed two fail-opens in the script it replaced: its `while read` loop skipped a
+last registry row without its newline, and `IFS=$'\t'` merged runs of tabs, so a row with an empty extra column read
+as complete. A claim's RED region may now name the file its producer delegates to (`source_region.path`, one of the
+control's inputs), because a shim's RED case lives in the Rust it runs.
 
 **Scripts.** 123 under `scripts/`: 64 Python (23,831 lines), 32 Perl (26,723), 27 shell (4,694). The doctrine driver
 calls 23, CI 5, the hooks only the driver; 53 are maintenance tools run by hand. Records cite them 8,089 times, so a

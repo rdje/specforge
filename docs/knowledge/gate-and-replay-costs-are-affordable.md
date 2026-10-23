@@ -13,7 +13,7 @@ date: 2026-09-20
 status: current
 tags: [extraction-quality-gauge, doctrine-enforcement, measurement, cost, signal-catalog-capture-gap]
 evidence: scripts/check_doctrines.sh; crates/specforge/src/commands/replay_constraints.rs; docs/tasks/extraction-quality-gauge/kind-span-family.md (.3k.9); docs/tasks/SIGNAL-CATALOG-CAPTURE-GAP.md (.4)
-reverify: "/usr/bin/time -p bash scripts/check_doctrines.sh --all — expect ~1,150 s real and 'ALL 18 executed doctrines PASS'; /usr/bin/time -p specforge replay-constraints --evidence-root generated/evidence_ir — expect ~60 s."
+reverify: "/usr/bin/time -p bash scripts/check_doctrines.sh --all — expect ~1,150 s real and every registered doctrine executed and passing ('ALL N executed doctrines PASS', N = the registry's size, 18 when measured); /usr/bin/time -p specforge replay-constraints --evidence-root generated/evidence_ir — expect ~60 s."
 ---
 
 `EXTRACTION-QUALITY-GAUGE.3k.9` — the leaf its own tree calls *"where the next real work is"* on the

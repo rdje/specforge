@@ -444,12 +444,21 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.17 — pyjson: the ports read and write JSON exactly as Python does`
 
 - ID: `RUSTDOC-AND-XTASK.18`
-  Status: `pending` (CODE; found by `.13.c`)
+  Status: `done` (`2026-10-23`; CODE; found by `.13.c`; checklist below)
   Goal: every doctrine the driver registers is documented in both doctrine tables, mechanically
   Acceptance: a check refuses a registered doctrine with no row in `docs/DOCTRINE_INSTANCE.md` or in the book's
   `reference/doctrine-enforcement.md` table, and a row naming no registered doctrine; RED on each.
-  Verification: `pending`
-  Commit: `pending`
+  **Measured `2026-10-23`.** After `.13.c`'s added rows, the driver's 20 entries, §10's 20 rows and the book's 20
+  agree on every id, and §10 agrees with the driver on every tier and check and with the book on every kind, so all
+  three can be enforced. **Done.** A new gate-tier doctrine, `DOCTRINE-TABLES`, native from its first commit:
+  `xtask/src/checks/doctrine_tables.rs` reads the driver's `DOCTRINES` entries, §10's table and the book's, and
+  refuses a registered doctrine missing from either table, a row for an unregistered one, a repeated row, and a tier,
+  check or kind that differs; `scripts/check_doctrine_tables.sh` is its registered path (a shim that refuses
+  arguments and activates the project-data roots). It documents itself in both tables, so the registry is 21
+  doctrines. Not a change to the driver, a portable kit artifact (`.16`): it only gains the entry. The port set stays
+  `.16`'s 16 SpecForge doctrines that had scripts; this 17th was never a script.
+  Verification: `cargo test -p xtask --lib` 53/53; self-test 8/8; RED in `.project-data/tmp/rdx-18/`
+  Commit: `RUSTDOC-AND-XTASK.18 — DOCTRINE-TABLES: both doctrine tables match the driver's registry`
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
 
@@ -533,6 +542,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.18` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — before `.13.c`, `docs/DOCTRINE_INSTANCE.md` §10 lacked 1 of the driver's 20
+  doctrines and the book's table 5, under a fully green gate; after it, all three agree on ids, tiers, checks and
+  kinds.
+- [x] **ROOT CAUSE (WHY + WHERE)** — nothing compared the tables with the registry: HEAD's
+  `scripts/check_doctrines.sh` `DOCTRINES` array had no reader but the driver. RED 5/5, every file restored
+  byte-identically: a tier never compared, a kind never compared, an unregistered row accepted (each fails `cargo
+  test -p xtask --lib`), the new doctrine's book row renamed (refused end to end by
+  `scripts/check_doctrine_tables.sh`, exit 1, from both sides), the shim running another check.
+- [x] **ADDRESSED (verified)** — registered doctrines 20 -> 21, each held to both tables; self-test 8 cases.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 53
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — both doctrine tables' new row; book `getting-started.md`; KM cards
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask` and `gate-and-replay-costs-are-affordable` (its
+  `reverify` expected a fixed count of executed doctrines, already stale at 20).
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.d` (CODE) — DONE `2026-10-23`
 
@@ -651,8 +679,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.18` | `pending` | the doctrine tables drifted from the registry unseen (`.13.c`) |
-| 2 | `RUSTDOC-AND-XTASK.13.e`-`.13.f` | `pending` | the rest of wave 2, in order |
+| 1 | `RUSTDOC-AND-XTASK.13.e` | `pending` | wave 2's next gate (`PUBLISHED-ASSERTIONS`) |
+| 2 | `RUSTDOC-AND-XTASK.13.f` | `pending` | the rest of wave 2 |
 | 3 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
 
 ## Decisions

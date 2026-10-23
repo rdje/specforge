@@ -2,6 +2,7 @@
 //! script the doctrine driver registers, which stays as a shim over it.
 
 pub mod contract_encoding;
+pub mod doctrine_tables;
 pub mod ownership_citations;
 pub mod readme_policy;
 pub mod rustdoc;
@@ -52,6 +53,11 @@ pub const CHECKS: &[Check] = &[
         name: "ownership-citations",
         replaces: "scripts/check_ownership_citations.pl",
         run: ownership_citations::run,
+    },
+    Check {
+        name: "doctrine-tables",
+        replaces: "scripts/check_doctrine_tables.sh",
+        run: doctrine_tables::run,
     },
 ];
 
