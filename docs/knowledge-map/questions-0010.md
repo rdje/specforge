@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > how many statements does are-not-permitted newly admit
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > how many statements does the caption repair newly admit
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
@@ -295,5 +297,3 @@
   > is a sentence opening with the word signal and no attribute a lost declaration
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > is a single column label like Hs-mode a timing condition (timing_single_group_label, timing_label_restated, .3.f.ii)
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > is a subscript split the same defect as an underscore split

@@ -777,7 +777,7 @@ on; the complete set moves to a derived route catalog beside it:
 docs/tasks/spec-to-intent-alignment/
 ├── INDEX.md          # semantic parts, OPEN leaf routes, link to the catalog
 ├── routes-0001.md    # every leaf ever declared, with its lifecycle
-├── manifest.json
+├── manifest.json     # parts, regions, OPEN leaf routes
 └── <semantic parts>.md
 ```
 
@@ -806,10 +806,13 @@ a count of the same routes capped at 128 with no warning band; `EXTRACTION-REPRE
 126 of it. [ADR 0056](../../../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
 removes that count for sharded contracts behind a declared `leaf_route_exemption` (the decision, the work
 unit, the reason), which the checker requires of every sharded contract and refuses from an inline one;
-an inline catalog has no parts, so it keeps the count. The next stop is stated, not hidden: every route is
-also written into the tree's `manifest.json`, whose byte ceiling is 65,536, and at about 206 bytes a route
-the largest tree reaches it near 255 routes, again with no warning band
-(`LIVE-DOCUMENT-PRESSURE-HEADROOM.17a` owns it).
+an inline catalog has no parts, so it keeps the count. That moved the stop to the tree's `manifest.json`,
+which has a portable byte ceiling and no warning band, because it carried every route.
+On `2026-10-23` the largest tree reached that ceiling (65,536 bytes) at 228 routes.
+Since `LIVE-DOCUMENT-PRESSURE-HEADROOM.17a` a sharded manifest carries only the routes that are not closed, the
+cut ADR 0057 made for the root's owner registry; a closed route lives in its catalog part, and the manifest grows
+with open leaves only.
+Measured `2026-10-23`: the largest is 25,418 bytes at 38 open routes, binding near 190 more open leaves.
 
 The lifecycle a landing publishes is checked, not asserted. Where a leaf's primary semantic part declares
 it as a node, the contract's `open`/`closed` must agree with that part's own `State:`/`Status:` line; a

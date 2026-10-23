@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
+  > why did ARBURST have two identical constraints
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did AXI have 134 actors when APB has 8 and AHB has 25
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why did AXI have 71 registers (signal and property tables with a Default column)
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > why did AXI have a BTAGMATCH, SYSCOACK or AxPROT enum with repeated codes (the single-column reader read a jointly keyed table)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -289,11 +297,3 @@
   > why did the corpus KB size warning appear and how was it removed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why did the corpus task-evidence index verify the PDF contract
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why did the emitted AXI isf carry a type named False
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why did the emitted ISF count drop from 57 to 44
-- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
-  > why did the enum defects go undetected for so long
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > why did the first replay publish meaning drives HPROT

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > does the USB4 Inter-Domain adapter still emit a USB4 signal
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > does the WIRE-BASED-100 temporal key score exceptions
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -296,5 +298,3 @@
   > how can a script ask the SpecForge canonical loader without mutating the artifact
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > how can one compound sentence contain two independent signal facts
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how complete is a document's extracted intent / what is the per-doc completeness gauge

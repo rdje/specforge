@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -295,5 +297,3 @@
   > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how does SpecForge combine confidence across modalities or sources

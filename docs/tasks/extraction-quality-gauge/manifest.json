@@ -15,102 +15,11 @@
          "source_literal" : "EXTRACTION-QUALITY-GAUGE"
       },
       {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.0"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.1"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.2",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.2"
-      },
-      {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "constraint-precision-gates",
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3a"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3b"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3c",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3c"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3d",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3d"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3e",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3e"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3f",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3f"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3g",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3g"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3h",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3h"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3i",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "constraint-precision-gates",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3i"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "llm-path-sealed",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3j"
       },
       {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.1",
@@ -120,80 +29,11 @@
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3j.1"
       },
       {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.1.a",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "llm-path-sealed",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3j.1.a"
-      },
-      {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.1.b",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "llm-path-sealed",
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3j.1.b"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "llm-path-sealed",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3j.2"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.a.i",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.a.ii",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.b",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.b.i",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.c",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.c.i",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.3",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "llm-path-sealed",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3j.3"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.4",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "llm-path-family"
       },
       {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.4.a",
@@ -209,95 +49,11 @@
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k"
       },
       {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-scoping",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.1"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.10",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.10"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.11",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.11"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.12",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.12"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.13",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.13"
-      },
-      {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "untyped-default-family",
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2a"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2b"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2c",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2c"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2d",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2d"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2e",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2e"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2f",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2f"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2g",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2g"
       },
       {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2h",
@@ -314,62 +70,6 @@
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2i"
       },
       {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2j",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2j"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.2k",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "untyped-default-family",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.2k"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.3",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.3"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.4",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.4"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.5",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-scoping",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.5"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.6",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-scoping",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.6"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.7",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.7"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.8",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "kind-span-successors",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.8"
-      },
-      {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.9",
          "lifecycle" : "open",
          "origin" : "legacy",
@@ -377,87 +77,11 @@
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.9"
       },
       {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.9.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "kind-span-family"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.4",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.4"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.5",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.5"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.6",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.6"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.7",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.7"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.8",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.8"
-      },
-      {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.FIELD",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "field-ontology",
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.FIELD"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.FIELD.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "field-ontology",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.FIELD.1"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.FIELD.2",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "field-ontology",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.FIELD.2"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.FIELD.3",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "field-ontology",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.FIELD.3"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.FIELD.4",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "field-ontology",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.FIELD.4"
-      },
-      {
-         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.gauge",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "original-backlog-leaves",
-         "source_literal" : "EXTRACTION-QUALITY-GAUGE.gauge"
       }
    ],
    "marker_prefix" : "extraction-quality-gauge-task-source-region",

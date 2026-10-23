@@ -17,20 +17,6 @@
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.0"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.1"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.10",
          "lifecycle" : "open",
          "origin" : "structural",
@@ -66,13 +52,6 @@
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "pointer-index-and-ownership",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14a"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14b",
          "lifecycle" : "open",
          "origin" : "structural",
@@ -87,51 +66,11 @@
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14c"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14d",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14e",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "registry-bands-and-gates"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.15",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "pointer-index-and-ownership",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.15"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.16",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "pointer-index-and-ownership",
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.16"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.17",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "pointer-index-and-ownership",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.17"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.18",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.18"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.19",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "book-chapter-routing",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.19"
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2",
@@ -141,262 +80,6 @@
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.20",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "book-chapter-routing",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.20"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.21",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.21"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22a"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22b"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22c",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22c"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22d",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22d"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22e",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22e"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22f",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22f"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22g",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-bands-and-gates",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.22g"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.23",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.23"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.24",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.24"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.24a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.24a"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.24b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.24b"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.25",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.25"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.26",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.26"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.26a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "knowledge-and-fact-plane",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.26a"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.27",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "toolbox-and-census",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.27"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.27a",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "toolbox-and-census",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.27a"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.28",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "toolbox-and-census",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.28"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "toolbox-and-census",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "toolbox-and-census",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29a"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29b",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "toolbox-and-census",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29b"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29c",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "task-plane-cardinality",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2a"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "task-plane-cardinality",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2b"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2c",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "task-plane-cardinality",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.2c"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.3",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "warning-assignment",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.3"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.30",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "toolbox-and-census",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.30"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.30a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.30b",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.30c",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.31",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.32",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.32a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.33",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "book-chapter-routing"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.35",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4",
          "lifecycle" : "open",
          "origin" : "legacy",
@@ -404,88 +87,11 @@
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4a"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4b"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4c",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4c"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4e",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4e"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4f",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "research-and-snapshot",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.4f"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.5",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "pointer-index-and-ownership",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.5"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.6",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "task-plane-cardinality",
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.6"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.7",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "warning-assignment",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.7"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.8",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "warning-assignment",
-         "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.8"
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.9",
@@ -501,100 +107,10 @@
          "part_id" : "current-and-open-work"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36b",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36b.1",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36c",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36d",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "current-and-open-work"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.37",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "current-chronology"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "book-chapter-routing"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "book-chapter-routing"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "book-chapter-routing"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.38",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "book-chapter-routing"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14f",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "registry-bands-and-gates"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.39",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "contract-encoding"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.39a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "contract-encoding"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.40",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "contract-encoding"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.41",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "contract-encoding"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34b",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34c",
@@ -609,62 +125,14 @@
          "part_id" : "warning-assignment"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.43",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.44",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.43a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.45",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.17a",
-         "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "pointer-index-and-ownership"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34d",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34e",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "warning-assignment"
       },
       {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
-      },
-      {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.8.b",
          "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "warning-assignment"
-      },
-      {
-         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.8.a.i",
-         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "warning-assignment"
       }
@@ -736,13 +204,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — resume pointer, task index, and ownership",
          "metrics" : {
-            "bytes" : 23239,
+            "bytes" : 25198,
             "line_bytes" : 592,
-            "lines" : 265
+            "lines" : 282
          },
          "part_id" : "pointer-index-and-ownership",
          "path" : "docs/tasks/live-document-pressure-headroom/pointer-index-and-ownership.md",
-         "sha256" : "bd32423a24e6a94202d5c1dc1c60e76c6f874daee178d5e01c60a1a02a2cb9e9",
+         "sha256" : "5aa7de8d70333de9c0d55df95890f27a0ca2d8c8d8501d251ae3f091e5d092f6",
          "state" : "legacy"
       },
       {

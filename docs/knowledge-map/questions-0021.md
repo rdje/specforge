@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > which strategy is message_fields.byte_location_table
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > which subject does a signal-description row's description cell constrain
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > which surface bounds the number of task trees now
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > which surface does a dotted field obligation belong to
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > which table minted Clock and Reset as AHB signals
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
@@ -289,11 +297,3 @@
   > why did APB-E PADDR PWDATA PSEL and AHB HEXOKAY lose their tinv_sc invariants
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > why did APB5 check signals carry variant labels OC/N (a flagged data row read as a header; .45 states_presence)
-- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
-  > why did ARBURST have two identical constraints
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did AXI have 134 actors when APB has 8 and AHB has 25
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why did AXI have 71 registers (signal and property tables with a Default column)

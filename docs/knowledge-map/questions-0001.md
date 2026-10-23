@@ -280,6 +280,8 @@
   > a frozen contract validator is red, should I regenerate its witness
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > a numeric field must be a number everywhere
+- [a-sharded-task-manifest-carries-no-closed-route](../knowledge/a-sharded-task-manifest-carries-no-closed-route.md)
+  > active task manifest exceeds 65536 bytes
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are APB tables 0016 0017 0018 a real catalog miss
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
@@ -296,5 +298,3 @@
   > are SignalStable obligations representable in .isf
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > are SourceIR EvidenceIR SemanticIR and IntentIR pointers repository relative
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > are any SpecForge requests to FSMGen currently open

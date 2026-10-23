@@ -24,13 +24,6 @@
          "source_literal" : "KG-ISF-COMPLETENESS.1c"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1c.i",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-and-bar",
-         "source_literal" : "KG-ISF-COMPLETENESS.1c.i"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.1c.ii",
          "lifecycle" : "open",
          "origin" : "legacy",
@@ -44,56 +37,8 @@
          "part_id" : "relation-precision"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a",
          "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.i",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.b",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.c",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.d",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.e",
-         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -104,20 +49,8 @@
          "part_id" : "relation-precision"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1d.ii",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.ii.a",
          "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1e",
-         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -126,12 +59,6 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1g",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "actor-surface-leaves"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1h",
@@ -146,13 +73,6 @@
          "part_id" : "actor-surface-leaves"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.0"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.1",
          "lifecycle" : "open",
          "origin" : "legacy",
@@ -160,46 +80,11 @@
          "source_literal" : "KG-ISF-COMPLETENESS.1"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.1a"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.1b",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "agent-identity-prose-class",
          "source_literal" : "KG-ISF-COMPLETENESS.1b"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1b.i",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.1b.i"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1b.ii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.1b.ii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1b.iii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.1b.iii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.1b.iv",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.1b.iv"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.2",
@@ -216,67 +101,11 @@
          "source_literal" : "KG-ISF-COMPLETENESS.2a"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.i",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.2a.i"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.ii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.2a.ii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.iii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.2a.iii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.iv",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "agent-identity-prose-class",
-         "source_literal" : "KG-ISF-COMPLETENESS.2a.iv"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.v",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "isf-lowering-fidelity",
-         "source_literal" : "KG-ISF-COMPLETENESS.2a.v"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vi",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "isf-lowering-fidelity",
-         "source_literal" : "KG-ISF-COMPLETENESS.2a.vi"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.2b",
          "lifecycle" : "open",
          "origin" : "legacy",
          "part_id" : "isf-lowering-fidelity",
          "source_literal" : "KG-ISF-COMPLETENESS.2b"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.3",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "isf-lowering-fidelity",
-         "source_literal" : "KG-ISF-COMPLETENESS.3"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.4",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "isf-lowering-fidelity",
-         "source_literal" : "KG-ISF-COMPLETENESS.4"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5",
@@ -286,90 +115,6 @@
          "source_literal" : "KG-ISF-COMPLETENESS.5"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.i",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "isf-lowering-fidelity",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.i"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.ii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-early-leaves",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.ii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.iii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-early-leaves",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.iii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.iv",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-early-leaves",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.iv"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.iv.a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-early-leaves",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.iv.a"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.v",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-early-leaves",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.v"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.vi",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-sealed-contracts",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.vi"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-sealed-contracts",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.vi.a"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.vii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-sealed-contracts",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.vii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.vii.a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-sealed-contracts",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.vii.a"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.vii.b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-sealed-contracts",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.vii.b"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.viii",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-sealed-contracts",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.viii"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.x",
          "lifecycle" : "open",
          "origin" : "structural",
@@ -377,72 +122,11 @@
          "source_literal" : "KG-ISF-COMPLETENESS.5.x"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xi",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xii",
          "lifecycle" : "open",
          "origin" : "structural",
          "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.xii"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.ix",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "enum-surface-sealed-contracts",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.ix"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a.1",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xi.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a.2",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.1",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.2",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3.a",
@@ -457,74 +141,14 @@
          "part_id" : "enum-surface-recent-leaves"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.b",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.c",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.6",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       },
       {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.7",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.8",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "enum-surface-recent-leaves"
-      },
-      {
          "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii",
          "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "isf-parameter-widths"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.a",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "isf-parameter-widths"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.b",
-         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "isf-parameter-widths"
       },
@@ -549,24 +173,6 @@
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.f",
          "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "isf-parameter-widths"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.i",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "isf-parameter-widths"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.ii",
-         "lifecycle" : "closed",
-         "origin" : "post_migration",
-         "part_id" : "isf-parameter-widths"
-      },
-      {
-         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.iii",
-         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "isf-parameter-widths"
       },

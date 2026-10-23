@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
+  > why were RISC-V Debug register fields in the wrong register
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why were RISC-V/TRM register tables unextracted (unknown table_kind)
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why were TMC's Bits | Name | Function tables uncited
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why were TMC's When asserted: rules removed
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why were True and False known signal names in AXI
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why were register names synthetic register_table_NNNN and how is the heading association done
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)

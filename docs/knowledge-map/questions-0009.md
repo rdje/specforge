@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > how many Signal statements does the corpus carry
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > how many SpecForge mdBook doctests currently fail
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
@@ -296,5 +298,3 @@
   > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > how many statements and captions does the persisted corpus hold
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > how many statements does are-not-permitted newly admit

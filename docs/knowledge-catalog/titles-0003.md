@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md) | 2026-09-19 | `current` | The caption repair SHIPPED in .6b: the caption test moved before the modal route, -8/+15 on the proof stratum… |
 | [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-10-22 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
 | [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |
@@ -60,4 +61,3 @@
 | [docling-device-cpu](../knowledge/docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
 | [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |
-| [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md) | 2026-09-24 | `current` | A page-batched Docling bundle keeps its tables under documents[], so a census that reads top-level tables mis… |

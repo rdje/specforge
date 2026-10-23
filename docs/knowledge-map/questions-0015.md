@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is CapturedRegionResidualRecord
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > what is CombinationRow.value_encodings / CombinationValueEncoding / bind_combination_value_encodings
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -90,6 +94,8 @@
   > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
 - [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
   > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.17
+- [a-sharded-task-manifest-carries-no-closed-route](../knowledge/a-sharded-task-manifest-carries-no-closed-route.md)
+  > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.17a
 - [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
   > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.43
 - [a-collection-member-at-its-per-file-rollover-may-be-sealed](../decisions/0058-a-collection-member-at-its-per-file-rollover-may-be-sealed.md)
@@ -292,9 +298,3 @@
   > what is in seed_swd_derivation.json (29 spec-verified facts: 11 frame fields, 4 operations, 13 FSM states, 1 target/SWDIO/SWCLK rising-edge fact — still faithful, still the target)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > what is index-family signal canonicalization
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what is interior_texts in SourceIR
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is is_condition_only_subject / conditional_clause_spans
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > what is is_nominal_verb_occurrence

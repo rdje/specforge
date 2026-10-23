@@ -1119,6 +1119,12 @@ sub validate_destinations_absent {
 
 sub manifest_expected_subset {
     my ($contract) = @_;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.17a / ADR 0057 — a sharded route catalog carries every leaf with its lifecycle, so
+    # the manifest carries only the routes that are not closed, as the root declares only those owners; a closed route
+    # stays in its catalog part. An inline catalog has no lifecycle to cut on and keeps every route.
+    my $routes = deep_clone($contract->{leaf_routes} // []);
+    $routes = [grep { ($_->{lifecycle} // '') ne 'closed' } @$routes]
+        if ($contract->{route_catalog_state} // '') eq 'sharded';
     return {
         schema_version => 1,
         contract_id => $contract->{contract_id},
@@ -1131,7 +1137,7 @@ sub manifest_expected_subset {
         marker_prefix => $contract->{marker_prefix},
         parts => deep_clone($contract->{destinations}{parts}),
         regions => deep_clone($contract->{regions}),
-        leaf_routes => deep_clone($contract->{leaf_routes}),
+        leaf_routes => $routes,
         migrated_on => $contract->{migration_metadata}{migrated_on},
         reason => $contract->{migration_metadata}{reason},
         verifier => $contract->{verifier},
@@ -2454,6 +2460,8 @@ sub run_self_test {
         ['inline route catalog positive', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]) }, undef],
         ['inline route catalog with a lifecycle', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{leaf_routes}[0]{lifecycle} = 'closed' }, qr/must not declare a lifecycle/],
         ['inline route catalog with a route prefix', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{destinations}{route_part_prefix} = 'docs/tasks/program/routes-' }, qr/must not declare a route_part_prefix/],
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.17a — a sharded manifest carries no closed route; its catalog part does.
+        ['sharded manifest carries a closed route', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{leaf_routes} = deep_clone($_[1]{leaf_routes}); write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/manifest field 'leaf_routes' disagrees/],
         # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 / ADR 0056 — a sharded catalog's route count is its parts' bound alone.
         ['sharded manifest route count', 'migrated', 'complete', sub { $_[1]{limits}{manifest}{max_leaf_routes} = 16 }, qr/must not declare manifest max_leaf_routes/],
         ['sharded route exemption missing', 'migrated', 'complete', sub { delete $_[1]{limits}{manifest}{leaf_route_exemption} }, qr/must declare manifest leaf_route_exemption/],
@@ -2734,8 +2742,9 @@ sub run_self_test {
 
     # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 added seven leaf-route exemption cases (73 -> 80);
     # EXTRACTION-REPRESENTATION-GAPS.48 three root-owner-registry lifecycle cases (80 -> 83);
-    # EXTRACTION-REPRESENTATION-GAPS.56.a eight archived-part cases (83 -> 91).
-    my $expected = 91;
+    # EXTRACTION-REPRESENTATION-GAPS.56.a eight archived-part cases (83 -> 91);
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.17a one manifest closed-route case (91 -> 92).
+    my $expected = 92;
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
     # and both sides drop together. The expected total is declared here, independently of the
     # suite, so a case removed — or one added and not declared — fails instead of moving a

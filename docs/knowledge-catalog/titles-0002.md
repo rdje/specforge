@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md) | 2026-06-04 | `current` | Per-author adopt/defer ledger — what SpecForge takes from / leaves out of each grounded author |
 | [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md) | 2026-06-16 | `current` | The .1b.iii coordinated-subject split replaces a relation whose subject is "X and Y" with one relation per co… |
 | [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md) | 2026-06-23 | `current` | The dense-prose agent explosion (eMMC 153 actors) is a relation-subject extraction-precision problem (148/153… |
 | [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md) | 2026-06-16 | `current` | The .1a structural agent-identity gate rejects relation subjects whose first content token is a universal fun… |
@@ -60,4 +61,3 @@
 | [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md) | 2026-06-15 | `current` | Promote a doc's constraint surface onto canonical WITHOUT re-ingest (the CANONICAL-PROMOTION-SWEEP per-doc pr… |
 | [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md) | 2026-06-15 | `current` | specforge stage commands write outputs to the canonical path from the artifact's recorded artifact_layout, NO… |
 | [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md) | 2026-09-21 | `current` | Only 2 of 550 minted enums are document-stated page-break continuations, so a span rule cannot be made FP-fre… |
-| [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md) | 2026-09-19 | `current` | The caption repair SHIPPED in .6b: the caption test moved before the modal route, -8/+15 on the proof stratum… |

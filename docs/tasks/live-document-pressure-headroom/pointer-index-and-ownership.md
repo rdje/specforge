@@ -252,7 +252,7 @@ They travel with it: `.30a` reads a leaf's two strata inside one part file.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17 — a sharded task tree's leaf count is bounded by its route catalog`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17a`
-  Status: `pending`
+  Status: `done` (`2026-10-23`; found blocking by `EXTRACTION-REPRESENTATION-GAPS.67`)
   Goal: give the task-evidence manifest's byte ceiling a warning band and a remedy
   Acceptance: `.17` removed the manifest's route count for sharded contracts, and the nearest stop is now the
   manifest file's portable byte ceiling (65,536), which `read_json_object` enforces as a hard error with no warning:
@@ -261,5 +261,22 @@ They travel with it: `.30a` reads a leaf's two strata inside one part file.
   already carry complete membership) or whether a warning band and a declared remedy (a closed-route shard) bound
   it, and state where the next stop goes.
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17`
-  Verification: `pending`
-  Commit: `pending`
+  **The stop arrived.** On `2026-10-23` the extraction representation gaps manifest was 65,501 bytes at 228 routes,
+  190 of them closed, and opening `.67.a` and `.67.b` took it past 65,536, so no leaf of that tree could open.
+  **Measured.** Of the eight task-evidence contracts, the six sharded ones carried 519 closed routes in their
+  manifests, 209 to 235 bytes each in the pretty encoding. The route catalog parts carry every route with its
+  lifecycle, and only `check_active_task_evidence.pl` reads a manifest's `leaf_routes`.
+  **Decided.** A sharded manifest carries only the routes that are not closed: the cut ADR 0057 made for the root's
+  owner registry, applied to the manifest's projection (`manifest_expected_subset`), which the writer and the
+  validator share. A closed route stays in its catalog part, and an inline catalog, which has no lifecycle, keeps
+  every route under its count. No warning band was needed: the manifest no longer grows with closures.
+  **Result.** Rewritten from the contracts: extraction representation gaps 65,501 -> 25,418 bytes (38 open routes),
+  claim verification 25,525 -> 13,307, extraction quality gauge 28,732 -> 16,053, KG-ISF completeness 28,703 ->
+  15,918, this tree 37,283 -> 19,174, spec-to-intent 33,413 -> 15,322; the two inline ones unchanged.
+  **Where the next stop goes.** The manifest now grows with open leaves and parts only. At about 211 bytes an open
+  route, the extraction representation gaps manifest binds near 190 more open leaves; its parts are bounded by
+  `max_parts` (24) first.
+  Verification: `perl scripts/check_active_task_evidence.pl --self-test` 92/92 (one case added: a sharded manifest
+  carrying a closed route disagrees with the contract, RED with the cut removed); all eight contracts `--write`
+  then `--check` valid; `check_doctrines.sh` at commit.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17a — a sharded manifest carries no closed route`

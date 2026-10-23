@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > where does parse_table_width_hint_text refuse a cell
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > where does retired roadmap direction go
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -54,6 +60,8 @@
   > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
+- [a-sharded-task-manifest-carries-no-closed-route](../knowledge/a-sharded-task-manifest-carries-no-closed-route.md)
+  > where is a closed leaf's route (routes-000N.md)
 - [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
   > where is a list item's number (marker, enumerated) in the converter output and in SourceIR
 - [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
@@ -290,11 +298,3 @@
   > which cell did the CoreSight TMC DATA phantom come from
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > which census measures escaped identifier fragments
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > which chains would a parameterised-width adapter change reach
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > which checks pin the retained-bundle population at 24
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control-audit fields are gated and which must be read from the report
