@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
+  > why is AXI's 'CMO transactions are assumed to be Non-shareable' not AWDOMAIN's absent value (it holds for a class of requests only)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
 - [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
   > why is AxSNOOP's absent value bound to AWSNOOP and ARSNOOP now
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -294,7 +298,3 @@
   > why is repeating the same check not independent verification
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why is residual actionability 8 of 16 in the current reviewed result
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why is scope binding not used for protocol states
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is scripts/lib/corpus_replay_binary.sh a shared predicate

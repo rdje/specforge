@@ -5,7 +5,6 @@ use std::env;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 use crate::exit_code;
 use crate::project_data::{self, Environment};
@@ -88,11 +87,8 @@ fn step(
     arguments: &[&str],
     extra: Option<(&str, String)>,
 ) -> i32 {
-    let mut command = Command::new(program);
-    command.args(arguments).current_dir(root);
-    for (name, value) in environment {
-        command.env(name, value);
-    }
+    let mut command = project_data::command(program, root, environment);
+    command.args(arguments);
     if let Some((name, value)) = extra {
         command.env(name, value);
     }

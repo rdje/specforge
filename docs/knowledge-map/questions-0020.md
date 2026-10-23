@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > which arrow spellings does the declaration reader accept
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > which banded registries are coherent
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
@@ -295,5 +297,3 @@
   > which seam reads the quoted encoding notation
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > which section of a bounded task root grows fastest
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > which section should a chapter split move

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why did the Cortex-A76 reviewed source region disappear
 - [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
   > why did the Knowledge Map bundle's 512-fact and 4,096-key caps move
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -296,5 +298,3 @@
   > why does Mode Name not count as a name role
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > why does OpenCAPI Discovery Configuration no longer emit ISF
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why does PPROT have members named 0 and 1

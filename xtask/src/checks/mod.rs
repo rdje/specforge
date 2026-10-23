@@ -1,0 +1,66 @@
+//! `cargo xtask check <doctrine>`: the doctrine gates ported to Rust (`RUSTDOC-AND-XTASK.6`). Each replaces the
+//! script the doctrine driver registers, which stays as a shim over it.
+
+pub mod rustdoc;
+
+use std::path::Path;
+
+/// One ported doctrine check: its name, the script it replaced, and its entry point.
+#[derive(Debug, Clone, Copy)]
+pub struct Check {
+    pub name: &'static str,
+    pub replaces: &'static str,
+    pub run: fn(&Path, &[String]) -> i32,
+}
+
+/// Every ported check, in the order `.6` ports them.
+pub const CHECKS: &[Check] = &[Check {
+    name: "rustdoc",
+    replaces: "scripts/check_rustdoc.sh",
+    run: rustdoc::run,
+}];
+
+/// Run the check named by the first argument with the rest; a missing or unknown name prints the checks and
+/// exits 2.
+pub fn run(root: &Path, arguments: &[String]) -> i32 {
+    let Some(name) = arguments.first() else {
+        eprint!("{}", usage());
+        return 2;
+    };
+    match CHECKS.iter().find(|check| check.name == name) {
+        Some(check) => (check.run)(root, &arguments[1..]),
+        None => {
+            eprintln!("xtask: unknown check '{name}'");
+            eprint!("{}", usage());
+            2
+        }
+    }
+}
+
+/// The checks `cargo xtask check` knows.
+pub fn usage() -> String {
+    let mut text = String::from("Usage: cargo xtask check <doctrine>\n\nChecks:\n");
+    for check in CHECKS {
+        text.push_str(&format!(
+            "  {}  (replaces {})\n",
+            check.name, check.replaces
+        ));
+    }
+    text
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn every_check_is_listed_and_a_missing_or_unknown_one_exits_2() {
+        let help = usage();
+        for check in CHECKS {
+            assert!(help.contains(check.name) && help.contains(check.replaces));
+        }
+        let root = crate::repository_root();
+        assert_eq!(run(&root, &[]), 2);
+        assert_eq!(run(&root, &["no-such-check".to_string()]), 2);
+    }
+}

@@ -5,6 +5,7 @@
 //! once a port reproduces its script, the script becomes a shim over `cargo xtask`, so every command a
 //! record cites keeps working.
 
+pub mod checks;
 pub mod docs;
 pub mod project_data;
 
@@ -22,6 +23,8 @@ pub enum Runner {
         replaces: &'static str,
         run: fn(&Path, &[String]) -> i32,
     },
+    /// The ported doctrine checks, each replacing the script its doctrine registers (`checks::CHECKS`).
+    Checks,
 }
 
 /// One `cargo xtask` command: its name, how it runs, and what it does.
@@ -33,13 +36,15 @@ pub struct Task {
 }
 
 impl Task {
-    /// The script that implements the command, or that its native port replaced.
-    pub fn script(&self) -> &'static str {
+    /// The script that implements the command, or that its native port replaced; `None` for `check`, whose
+    /// checks each name their own.
+    pub fn script(&self) -> Option<&'static str> {
         match self.runner {
             Runner::Script(script)
             | Runner::Native {
                 replaces: script, ..
-            } => script,
+            } => Some(script),
+            Runner::Checks => None,
         }
     }
 }
@@ -63,6 +68,11 @@ pub const TASKS: &[Task] = &[
             run: docs::run,
         },
         summary: "build the mdBook and the rustdoc API reference beside it",
+    },
+    Task {
+        name: "check",
+        runner: Runner::Checks,
+        summary: "run one ported doctrine check (cargo xtask check <doctrine>)",
     },
 ];
 
@@ -105,6 +115,7 @@ pub fn run(task: &Task, arguments: &[String]) -> std::io::Result<i32> {
             Ok(exit_code(status))
         }
         Runner::Native { run, .. } => Ok(run(&root, arguments)),
+        Runner::Checks => Ok(checks::run(&root, arguments)),
     }
 }
 
@@ -127,12 +138,18 @@ mod tests {
     #[test]
     fn every_command_names_an_existing_script() {
         let root = repository_root();
-        for task in TASKS {
+        let scripts = TASKS
+            .iter()
+            .filter_map(|task| task.script().map(|script| (task.name, script)))
+            .chain(
+                checks::CHECKS
+                    .iter()
+                    .map(|check| (check.name, check.replaces)),
+            );
+        for (name, script) in scripts {
             assert!(
-                root.join(task.script()).is_file(),
-                "{} names {}, which does not exist",
-                task.name,
-                task.script()
+                root.join(script).is_file(),
+                "{name} names {script}, which does not exist"
             );
         }
     }
@@ -140,15 +157,23 @@ mod tests {
     #[test]
     fn a_ported_scripts_shim_runs_its_native_command() {
         let root = repository_root();
-        for task in TASKS {
-            if let Runner::Native { replaces, .. } = task.runner {
-                let shim = std::fs::read_to_string(root.join(replaces)).expect("the shim exists");
-                assert!(
-                    shim.contains(&format!("exec cargo xtask {}", task.name)),
-                    "{replaces} is not a shim over cargo xtask {}",
-                    task.name
-                );
-            }
+        let shims = TASKS
+            .iter()
+            .filter_map(|task| match task.runner {
+                Runner::Native { replaces, .. } => Some((replaces, task.name.to_string())),
+                _ => None,
+            })
+            .chain(
+                checks::CHECKS
+                    .iter()
+                    .map(|check| (check.replaces, format!("check {}", check.name))),
+            );
+        for (replaces, command) in shims {
+            let shim = std::fs::read_to_string(root.join(replaces)).expect("the shim exists");
+            assert!(
+                shim.contains(&format!("exec cargo xtask {command}")),
+                "{replaces} is not a shim over cargo xtask {command}"
+            );
         }
     }
 

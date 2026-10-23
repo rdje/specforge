@@ -235,6 +235,8 @@
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is captured_region_residuals
 - [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > what is cargo xtask check (rustdoc)
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
   > what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
   > what is check_signal_records / CheckSignalRecord and where does it come from
@@ -296,5 +298,3 @@
   > what is excludes_self and why does a classifier need it
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids

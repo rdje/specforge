@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
 - [a-fields-restated-sub-table-types-its-values-and-bits](../knowledge/a-fields-restated-sub-table-types-its-values-and-bits.md)
@@ -295,5 +297,3 @@
   > what is the complete parenthetical data-head declaration census
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what is the completeness gauge over-counting on APB
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the condition-read-as-obligation error class and its gate

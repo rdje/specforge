@@ -188,11 +188,19 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `pending`
 
 - ID: `RUSTDOC-AND-XTASK.8`
-  Status: `pending` (CODE; wave 1)
+  Status: `done` (`2026-10-23`; CODE; wave 1; checklist below)
   Goal: `cargo xtask check rustdoc` replaces `scripts/check_rustdoc.sh`
   Acceptance: `.6`'s parity evidence; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `cargo xtask check <doctrine>` dispatches the ported checks (`xtask/src/checks/`, a
+  `Runner::Checks` command whose table names each check's replaced script); `rustdoc` is the first. It activates the
+  project-data roots, writes the scratch crate under `TMPDIR`, requires its `cargo doc` to fail with *unresolved
+  link*, then documents the workspace under `-D warnings`, printing the script's lines and exit codes. The shim keeps
+  the doctrine's registered path, the project-data activation and its own argument refusal (so the usage line names
+  it as the driver invoked it), then runs `exec cargo xtask check rustdoc`. **Parity** with HEAD's script, through
+  the driver's absolute-path invocation: the current tree (0), an argument (2) and the `[CLK_I]` link restored (1),
+  each with identical stdout, stderr and exit code.
+  Verification: `cargo test -p xtask --lib` 10/10; parity in `.project-data/tmp/rdx-8/`
+  Commit: `RUSTDOC-AND-XTASK.8 — cargo xtask check rustdoc replaces the RUSTDOC gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.9`
   Status: `pending` (CODE; wave 1)
@@ -297,14 +305,27 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 - [x] **LOCKSTEP** — book `getting-started.md` and `reference/api-reference.md`; KM card
   `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.8` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `RUSTDOC` doctrine ran only as shell (`scripts/check_rustdoc.sh`, `.2`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask` had no `check` command. RED 4/4, every file restored
+  byte-identically: the self-test crate linking to a real item, the doctrine's `-D warnings` dropped, an unknown
+  check accepted, the shim no longer running the native check; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 0 -> 1, byte-identical to the script on three inputs.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 10
+  passed; `check_doctrines.sh --gate` PASS at commit (the `RUSTDOC` entry now runs through its shim).
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s `RUSTDOC` row; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.8` | `pending` | wave 1: the smallest gate, already Rust-adjacent |
-| 2 | `RUSTDOC-AND-XTASK.9`-`.12` | `pending` | wave 1, in order |
-| 3 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
-| 4 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4 |
+| 1 | `RUSTDOC-AND-XTASK.9`-`.12` | `pending` | wave 1, in order |
+| 2 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 3 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4 |
 
 ## Decisions
 
@@ -329,6 +350,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `2026-10-23` | `.4` | xtask tests; dispatcher parity with the scripts | 3/3; identical output and exit codes |
 | `2026-10-23` | `.5` | xtask tests; native docs parity with HEAD's script | 7/7; identical on success and with mdbook absent |
 | `2026-10-23` | `.6` | the 20 doctrines' direct script trees | ranked; waves set |
+| `2026-10-23` | `.8` | xtask tests; RUSTDOC parity through the driver's invocation | 10/10; identical on three inputs |
 
 ## Commit Log
 
@@ -340,6 +362,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `.4` | `RUSTDOC-AND-XTASK.4 — cargo xtask dispatches to the current tooling` | the `xtask` crate and alias |
 | `.5` | `RUSTDOC-AND-XTASK.5 — cargo xtask docs builds the book and the API reference natively` | the first native command; the docs script a shim |
 | `.6` | `RUSTDOC-AND-XTASK.6 — the order the doctrine gates move to cargo xtask (DESIGN)` | four waves; parity rules |
+| `.8` | `RUSTDOC-AND-XTASK.8 — cargo xtask check rustdoc replaces the RUSTDOC gate's script` | the first ported gate |
 
 ## Changelog
 

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > where does a fronted condition end when it contains a list
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > where does a minted enum value come from
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -296,5 +298,3 @@
   > which admissibility routes run before the relational test
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > which architecture owns work and which one verifies published claims
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > which arrow spellings does the declaration reader accept

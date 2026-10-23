@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which section should a chapter split move
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
@@ -295,5 +297,3 @@
   > why can't extract-constraints-llm run inside a converge pass
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > why can't specforge evidence rebuild the evidence (normalized missing)
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion

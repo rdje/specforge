@@ -20,7 +20,7 @@ fn main() -> ExitCode {
     match xtask::run(task, &arguments[1..]) {
         Ok(code) => ExitCode::from(u8::try_from(code).unwrap_or(1)),
         Err(error) => {
-            eprintln!("xtask: cannot run {}: {error}", task.script());
+            eprintln!("xtask: cannot run {}: {error}", task.name);
             ExitCode::from(1)
         }
     }

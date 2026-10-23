@@ -2,6 +2,9 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay
+  > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > why does my census of backend.json tables find only 477
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -294,7 +297,3 @@
   > why is AXI AWAKEUP's hold guard unchanged (the condition already excludes the release)
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
-- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
-  > why is AXI's 'CMO transactions are assumed to be Non-shareable' not AWDOMAIN's absent value (it holds for a class of requests only)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)

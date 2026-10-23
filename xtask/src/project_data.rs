@@ -82,6 +82,25 @@ pub fn activate(root: &Path) -> Result<Environment, String> {
     Ok(environment)
 }
 
+/// The value `environment` gives `name`.
+pub fn path<'a>(environment: &'a Environment, name: &str) -> &'a PathBuf {
+    &environment
+        .iter()
+        .find(|(variable, _)| *variable == name)
+        .unwrap_or_else(|| panic!("{name} is an exported project-data variable"))
+        .1
+}
+
+/// A command for `program`, run from `root` with the project-data environment exported.
+pub fn command(program: &str, root: &Path, environment: &Environment) -> std::process::Command {
+    let mut command = std::process::Command::new(program);
+    command.current_dir(root);
+    for (name, value) in environment {
+        command.env(name, value);
+    }
+    command
+}
+
 /// The filesystem a path is on.
 fn device(path: &Path) -> Result<u64, String> {
     let metadata = fs::metadata(path)

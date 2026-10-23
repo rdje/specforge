@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why is scope binding not used for protocol states
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why is scripts/lib/corpus_replay_binary.sh a shared predicate
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > why is section-title boilerplate filtering insufficient
 - [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
@@ -294,7 +298,3 @@
   > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why was the AXI write-address handshake invariant never extracted
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why was the Arm Debug replay killed at 400 pages
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused

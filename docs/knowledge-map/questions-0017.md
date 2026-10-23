@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the condition-read-as-obligation error class and its gate
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > what is the constraint-subject-must-be-declared filter
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
@@ -295,5 +297,3 @@
   > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > what proved that analysis commands can violate project data locality
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > what radix does a single-quoted cell use
