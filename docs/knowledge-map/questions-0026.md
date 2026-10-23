@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-document-stated-collective-name-stands-for-its-members](../knowledge/a-document-stated-collective-name-stands-for-its-members.md)
+  > why is AxSNOOP's absent value bound to AWSNOOP and ARSNOOP now
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -296,5 +298,3 @@
   > why is scope binding not used for protocol states
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why is scripts/lib/corpus_replay_binary.sh a shared predicate
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why is section-title boilerplate filtering insufficient

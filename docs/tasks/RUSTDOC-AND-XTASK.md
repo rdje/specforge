@@ -37,7 +37,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 - ID: `RUSTDOC-AND-XTASK`
   Status: `active`
   Goal: the rustdoc API reference, and the incremental move to `cargo xtask`
-  Children: `RUSTDOC-AND-XTASK.1`-`.7`
+  Children: `RUSTDOC-AND-XTASK.1`-`.15`
 
 - ID: `RUSTDOC-AND-XTASK.1`
   Status: `done` (`2026-10-23`; DESIGN)
@@ -147,18 +147,103 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
   Commit: `RUSTDOC-AND-XTASK.5 — cargo xtask docs builds the book and the API reference natively`
 
 - ID: `RUSTDOC-AND-XTASK.6`
-  Status: `pending` (DESIGN)
+  Status: `done` (`2026-10-23`; DESIGN; opened `.8`-`.15`)
   Goal: the order in which the driver's 23 gates move to xtask
   Acceptance: rank the gates by cost and risk (size, self-tests, callers), open one leaf per gate in that order, and
   state each one's parity evidence.
-  Verification: `pending`
-  Commit: `pending`
+  **Measured `2026-10-23`** (`.project-data/tmp/rdx-6/rank2.py`). The driver registers 20 doctrines (the 23 scripts
+  `.1` counted include their helpers). Following each one's direct invocations (comment lines aside), its script tree
+  runs from one 103-line shell file (`RUSTDOC`) to 61 files and 33,989 lines (`CLAIM-VERIFICATION`):
+  - shell, one or two files: `RUSTDOC` 103 lines, `KNOWLEDGE-MAP` 136, `MEMORY-ARCH` 183, `TASK-ACCEPTANCE` 213,
+    `README-POLICY` 277;
+  - Perl or Python, one file: `SECTION-ANCHORS` 146, `TASK-NODE-RETENTION` 285, `CONTRACT-ENCODING` 323,
+    `OWNERSHIP-CITATIONS` 413, `PUBLISHED-ASSERTIONS` 1,175, `RESIDUAL-ACTIONABILITY` 1,190;
+  - several files: `CORPUS-FRONTIER` 631, `CONSTRAINT-PART-SPAN` 652, `CHAIN-CURRENCY` 945, `PROOF-SEAL-CURRENCY`
+    1,076, `PROOF-SEAL-TOTAL` 1,111, `PROJECT-DATA-LOCALITY` 1,154;
+  - composites: `PRODUCTION-GENERICITY` 7 files / 3,367 lines, `LIVE-DOC-SIZE` 26 / 19,699, `CLAIM-VERIFICATION`
+    61 / 33,989.
+  `KNOWLEDGE-MAP`, `MEMORY-ARCH` and `TASK-ACCEPTANCE` have no self-test; the others do.
+  **Decided.**
+  - **The unit.** One doctrine per leaf, its whole direct script tree, as `cargo xtask check <doctrine>` (lower
+    case). The driver keeps the doctrine's entry; its script becomes a shim that still activates the project-data
+    roots (`PROJECT-DATA-LOCALITY`) and then runs the native check.
+  - **Parity evidence.** The old script and the native check on the same inputs: the current tree; every self-test
+    case, ported as Rust tests with the same verdicts; and at least one deliberately broken input per refusal, with
+    identical stdout, stderr and exit code (paths named as the script names them). A doctrine without a self-test
+    gains one in its port, its cases proven against the old script first.
+  - **The order.** Wave 1, the small shell gates (`.8`-`.12`); wave 2, the single-file Perl and Python gates (`.13`);
+    wave 3, the multi-file gates and corpus oracles (`.14`); wave 4, the composites and then the driver itself (`.15`).
+    A wave opens one leaf per doctrine when it starts, in the order above.
+  - **Dependencies.** From wave 2, a port may use crates the workspace already locks (`serde_json`, `sha2`), never a
+    new crate and never a product crate; the `DEPENDENCIES` component changes with the first port that needs one.
+  Verification: `ranking in .project-data/tmp/rdx-6/rank2.txt; doctrine gates at commit`
+  Commit: `RUSTDOC-AND-XTASK.6 — the order the doctrine gates move to cargo xtask (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.7`
   Status: `pending`
   Goal: documentation coverage is a ratchet
   Acceptance: record each crate's undocumented public item count and refuse an increase at commit; the counts in
   `.1` are the baseline.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.8`
+  Status: `pending` (CODE; wave 1)
+  Goal: `cargo xtask check rustdoc` replaces `scripts/check_rustdoc.sh`
+  Acceptance: `.6`'s parity evidence; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.9`
+  Status: `pending` (CODE; wave 1)
+  Goal: `cargo xtask check knowledge-map` replaces `knowledge-map/scripts/check_knowledge_map.sh`
+  Acceptance: `.6`'s parity evidence, with a new self-test; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.10`
+  Status: `pending` (CODE; wave 1)
+  Goal: `cargo xtask check memory-arch` replaces `scripts/check_memory_architecture.sh`
+  Acceptance: `.6`'s parity evidence, with a new self-test; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.11`
+  Status: `pending` (CODE; wave 1)
+  Goal: `cargo xtask check task-acceptance` replaces `scripts/check_task_acceptance.sh`
+  Acceptance: `.6`'s parity evidence, with a new self-test; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.12`
+  Status: `pending` (CODE; wave 1)
+  Goal: `cargo xtask check readme-policy` replaces `scripts/check_readme_policy.sh`
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.13`
+  Status: `pending` (container; wave 2)
+  Goal: the single-file Perl and Python gates move to xtask
+  Acceptance: one leaf per doctrine, in order: `SECTION-ANCHORS`, `TASK-NODE-RETENTION`, `CONTRACT-ENCODING`,
+  `OWNERSHIP-CITATIONS`, `PUBLISHED-ASSERTIONS`, `RESIDUAL-ACTIONABILITY`; the `DEPENDENCIES` change for locked
+  crates with the first that needs one.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.14`
+  Status: `pending` (container; wave 3)
+  Goal: the multi-file gates and corpus oracles move to xtask
+  Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
+  `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.15`
+  Status: `pending` (container; wave 4)
+  Goal: the composite gates and the driver move to xtask
+  Acceptance: one leaf per doctrine, in order: `PRODUCTION-GENERICITY`, `LIVE-DOC-SIZE`, `CLAIM-VERIFICATION`; then
+  `check_doctrines.sh` itself.
   Verification: `pending`
   Commit: `pending`
 
@@ -216,8 +301,10 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.6` | `pending` | the gate port order |
-| 2 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 1 | `RUSTDOC-AND-XTASK.8` | `pending` | wave 1: the smallest gate, already Rust-adjacent |
+| 2 | `RUSTDOC-AND-XTASK.9`-`.12` | `pending` | wave 1, in order |
+| 3 | `RUSTDOC-AND-XTASK.7` | `pending` | the coverage ratchet |
+| 4 | `RUSTDOC-AND-XTASK.13`-`.15` | `pending` | waves 2-4 |
 
 ## Decisions
 
@@ -241,6 +328,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `2026-10-23` | `.3` | `run_docs_ci.sh`; the built page's API links | PASS; four links resolve |
 | `2026-10-23` | `.4` | xtask tests; dispatcher parity with the scripts | 3/3; identical output and exit codes |
 | `2026-10-23` | `.5` | xtask tests; native docs parity with HEAD's script | 7/7; identical on success and with mdbook absent |
+| `2026-10-23` | `.6` | the 20 doctrines' direct script trees | ranked; waves set |
 
 ## Commit Log
 
@@ -251,6 +339,7 @@ needs nothing but the toolchain, with each port proven to behave exactly as the 
 | `.3` | `RUSTDOC-AND-XTASK.3 — the API reference is published beside the mdBook` | the docs build and the book chapter |
 | `.4` | `RUSTDOC-AND-XTASK.4 — cargo xtask dispatches to the current tooling` | the `xtask` crate and alias |
 | `.5` | `RUSTDOC-AND-XTASK.5 — cargo xtask docs builds the book and the API reference natively` | the first native command; the docs script a shim |
+| `.6` | `RUSTDOC-AND-XTASK.6 — the order the doctrine gates move to cargo xtask (DESIGN)` | four waves; parity rules |
 
 ## Changelog
 

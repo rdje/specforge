@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > which signal is a conditional rule's consequent signal
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -295,5 +297,3 @@
   > why can't specforge evidence rebuild the evidence (normalized missing)
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why could the 262-table upper bound not be reproduced

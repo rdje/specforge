@@ -8,6 +8,7 @@ answers:
   - "what is the RUSTDOC doctrine / check_rustdoc.sh"
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "which cargo xtask commands exist (doctrines, ci, docs)"
+  - "in what order do the doctrine gates move to cargo xtask"
   - "how many scripts does SpecForge have and who calls them"
   - "how many public items lack documentation (missing_docs)"
   - "is a ported script deleted"
@@ -35,7 +36,10 @@ workspace member `xtask`, not a default member, standard library only, aliased i
 dispatches `doctrines`, `ci` and `docs` to their scripts, byte-identical in output and exit code (`xtask/src/lib.rs`,
 `TASKS`), and the production-genericity `DEPENDENCIES` check keeps it dependency-free and disconnected from the
 product; since `.5` `docs` is native (`xtask/src/docs.rs`, with `project_data.rs` for the project-data roots) and
-`scripts/run_docs_ci.sh` is its shim; the gates move one leaf each, in an order `.6` sets.
+`scripts/run_docs_ci.sh` is its shim; the gates move one leaf each as `cargo xtask check <doctrine>`, in `.6`'s four
+waves: the small shell gates (`.8`-`.12`), the single-file Perl and Python gates, the multi-file gates and corpus
+oracles, then the composites and the driver; a port proves parity on the current tree, every self-test case and a
+broken input per refusal, and from wave 2 may use crates the workspace already locks.
 
 **Scripts.** 123 under `scripts/`: 64 Python (23,831 lines), 32 Perl (26,723), 27 shell (4,694). The doctrine driver
 calls 23, CI 5, the hooks only the driver; 53 are maintenance tools run by hand. Records cite them 8,089 times, so a
