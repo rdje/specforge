@@ -269,7 +269,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.12 — cargo xtask check readme-policy replaces the README-POLICY gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.13`
-  Status: `in_progress` (container; wave 2; `.13.a`-`.13.e` done)
+  Status: `done` (`2026-10-23`; container; wave 2; `.13.a`-`.13.f` done)
   Goal: the single-file Perl and Python gates move to xtask
   Acceptance: one leaf per doctrine, in order: `SECTION-ANCHORS`, `TASK-NODE-RETENTION`, `CONTRACT-ENCODING`,
   `OWNERSHIP-CITATIONS`, `PUBLISHED-ASSERTIONS`, `RESIDUAL-ACTIONABILITY`; the `DEPENDENCIES` change for locked
@@ -391,12 +391,27 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   script`
 
 - ID: `RUSTDOC-AND-XTASK.13.f`
-  Status: `pending` (CODE; wave 2)
+  Status: `done` (`2026-10-23`; CODE; checklist below)
   Goal: `cargo xtask check residual-actionability` replaces
   `scripts/validate_residual_actionability_contract.py`
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-23`.** `xtask/src/checks/residual_actionability.rs` executes the required-residual rule over the
+  contract's 18-case matrix, re-derives the witness's partition from the tracked current result, binds the
+  reproduction command to its producer and published authorities, pins the retained chain set by its exact digest,
+  and holds every reviewed residual gold to the region law or a declared fact-scoped carrier. Values compare,
+  count, hash and print as Python's do (`pyjson`: `==` across `int`, `float` and `bool`, `Counter` arithmetic, `str`
+  and `repr` of lists and tuples). Its self-test runs the script's 40 RED mutations of the real contract and
+  authorities and its one admissible operation; a unit test also pins the rule's duplicate branch for a residual
+  cell, which the contract's own matrix leaves unexercised (Python agrees: `(1, 0)`). The Python shim keeps the
+  `argparse` front end. **Parity**: HEAD's script beside the shim on 31 inputs (the current tree, the self-test, four
+  argument forms, 25 broken inputs written into the real contract and its three authorities): identical stdout,
+  stderr and exit code on all 31, the three `argparse` cases compared under the script's real name, since
+  `argparse` wraps its usage line by program-name length. Where the script would stop with a traceback, the port
+  reports a refusal; where it iterates a hash-ordered `set`, the port reports in sorted order. **Cost:** 0.05 s for
+  the script, 0.12 s for the shim.
+  Verification: `cargo test -p xtask --lib` 65/65; parity and RED in `.project-data/tmp/rdx-13f/`
+  Commit: `RUSTDOC-AND-XTASK.13.f — cargo xtask check residual-actionability replaces the RESIDUAL-ACTIONABILITY
+  gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
   Status: `pending` (container; wave 3)
@@ -560,6 +575,24 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.f` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — the `RESIDUAL-ACTIONABILITY` doctrine ran only as Python
+  (`scripts/validate_residual_actionability_contract.py`); HEAD's copy is the parity baseline in
+  `.project-data/tmp/rdx-13f/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native check: `xtask/src/checks/mod.rs` listed 8 checks. RED 6/6, every file
+  restored byte-identically with a fresh mtime: a duplicate residual credited, the family state reading the other
+  bucket, the retained-set digest never compared, a boolean hashed apart from its integer, strings sorted in
+  reverse, the shim running another check; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 7 -> 8, which completes wave 2; identical output on 31 of 31 inputs;
+  self-test 40/40 RED and 1/1 admitted.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 65
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s row; book `getting-started.md`; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.e` (CODE) — DONE `2026-10-23`
 
 - [x] **REPRODUCE / MEASURE** — the `PUBLISHED-ASSERTIONS` doctrine ran only as Perl
@@ -712,8 +745,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.13.f` | `pending` | wave 2's last gate (`RESIDUAL-ACTIONABILITY`) |
-| 2 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
+| 1 | `RUSTDOC-AND-XTASK.14` | `pending` | wave 3, opening one leaf per doctrine (`CORPUS-FRONTIER` first) |
+| 2 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, then the driver |
 | 3 | `RUSTDOC-AND-XTASK.14`-`.15` | `pending` | waves 3-4, opening one leaf per doctrine as each starts |
 
 ## Decisions

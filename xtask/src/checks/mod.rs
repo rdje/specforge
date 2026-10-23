@@ -6,6 +6,7 @@ pub mod doctrine_tables;
 pub mod ownership_citations;
 pub mod published_assertions;
 pub mod readme_policy;
+pub mod residual_actionability;
 pub mod rustdoc;
 pub mod section_anchors;
 pub mod task_node_retention;
@@ -64,6 +65,11 @@ pub const CHECKS: &[Check] = &[
         name: "published-assertions",
         replaces: "scripts/check_published_assertions.pl",
         run: published_assertions::run,
+    },
+    Check {
+        name: "residual-actionability",
+        replaces: "scripts/validate_residual_actionability_contract.py",
+        run: residual_actionability::run,
     },
 ];
 
