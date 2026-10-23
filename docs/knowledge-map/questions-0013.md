@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > what are the exact migrated alignment task evidence metrics
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > what are the exact source-to-IntentIR precision recall and stage-loss totals
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -295,5 +297,3 @@
   > what does collect_signal_names_from_tables return
 - [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
   > what does completeness_candidate_misses count
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what does converge --promote-constraints-llm do and when does it run

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why is AWSNOOP[3] not resolved to AWSNOOP
 - [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
   > why is AXI 'Pseudocode description of the transfers' not apparatus (pseudocode put to use)
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
@@ -296,5 +298,3 @@
   > why is optionality not a permission_rules modality
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > why is page_image_path null / None for a large document
-- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
-  > why is placing a table by its page wrong

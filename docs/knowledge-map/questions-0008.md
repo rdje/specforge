@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > how does the value slot tell a state from a relation without an adjective list
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate classify a document / what is document_class
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -295,5 +297,3 @@
   > how many Docling tables does the persisted corpus have
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many Introducing CoreSight page paths are repository relative
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how many OpenCAPI AFU address note page paths are repository relative

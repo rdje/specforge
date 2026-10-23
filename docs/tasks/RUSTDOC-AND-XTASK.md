@@ -20,8 +20,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - Rewriting historical records. Verification logs, commit logs and closed leaves cite the scripts they ran; they
   stay as written, and a ported script stays as a shim that forwards to `cargo xtask`.
 - A big-bang port. Each gate moves in its own leaf, with parity evidence, or not at all.
-- New crates. `xtask` uses the standard library and only crates the workspace already locks (`serde_json` since
-  `.13.b`), so it builds offline and brings nothing new into the build.
+- New crates. `xtask` uses the standard library only (`serde_json` from `.13.b` to `.17`, when `pyjson` replaced
+  it), so it builds offline; the `DEPENDENCIES` check would admit only crates the workspace already locks.
 - Porting a portable architecture's kit (`.16`): the scripts other repositories copy stay in their portable language.
 - Requiring documentation on every public item now. Coverage is measured and ratcheted, never switched on blind.
 
@@ -281,7 +281,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   profile** (`[profile.dev.package.xtask]`, `.13.a`): unoptimized, a scan of the tree's 24.7 MB of Markdown took
   0.88 s against Perl's 0.11 s. **`DEPENDENCIES` changed with `.13.b`**, the first port to read JSON: xtask may depend
   only on `serde_json` or `sha2`, both already locked for the product, and never on a product crate (self-test 9 ->
-  11).
+  11). Since `.17` it needs neither: JSON is read and written through `xtask/src/pyjson.rs`, a reproduction of
+  Python's own `json` module, so a port's output matches the script's even where Python's wording shows.
   Verification: per child
   Commit: per child
 
@@ -320,7 +321,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   wording inside an invalid-JSON refusal, serde's `expected value at line 1 column 17` for Python's `Expecting
   value: line 1 column 17 (char 16)`; the refusal, line and column agree. A non-UTF-8 task file or a non-object
   registry line, which crash the script with a traceback, are refusals naming the file or line. **Cost:** 0.14 s
-  for the script, 0.16 s for the shim.
+  for the script, 0.16 s for the shim. **`.17` closes the one difference:** read through `pyjson`, all 27 inputs are
+  identical (`.project-data/tmp/rdx-13b/new17/`).
   Verification: `cargo test -p xtask --lib` 34/34; parity and RED in `.project-data/tmp/rdx-13b/`
   Commit: `RUSTDOC-AND-XTASK.13.b — cargo xtask check task-node-retention replaces the TASK-NODE-RETENTION gate's
   script`
@@ -392,6 +394,26 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   - `.9`-`.11` are retired with this reason, their nodes kept as history.
   Verification: `classification in .project-data/tmp/rdx-16/kit.txt; doctrine gates at commit`
   Commit: `RUSTDOC-AND-XTASK.16 — a portable architecture's kit stays portable (DESIGN)`
+
+- ID: `RUSTDOC-AND-XTASK.17`
+  Status: `done` (`2026-10-23`; CODE; checklist below)
+  Goal: the ports read and write JSON exactly as Python's `json` module does
+  Acceptance: one reader and writer that agree with CPython on its error messages, key order and encoder options,
+  proven against Python on a corpus; the ports that read JSON use it.
+  **Found by `.13.c`.** `CONTRACT-ENCODING` asks, of each contract under `doctrine/`, which of 80 `json.dumps`
+  option sets reproduces its bytes, so its port must write exactly what Python writes, in key order, with Python's
+  float `repr`; `serde_json` sorts keys and formats floats otherwise, and its error wording was already `.13.b`'s
+  one divergence. **Done `2026-10-23`.** `xtask/src/pyjson.rs` reproduces CPython 3.14's C scanner (its messages
+  and code-point positions, the trailing-comma refusals, surrogate pairs and the lone surrogates it keeps, the
+  4,300-digit `int` limit, a repeated key keeping its first position) and its encoder (`indent`, `sort_keys`,
+  `ensure_ascii`, `separators`, Python's float `repr`), with Python's `==`, truthiness, `repr` and `str` of the
+  values. **Proven** by a table of CPython's answers in the unit tests and an ignored differential test that reads a
+  corpus Python wrote (`.project-data/tmp/rdx-17/corpus.py`): 14,964 cases, 12,755 of them malformed inputs mutated
+  from the repository's JSON with Python's exact error, and every contract under all 80 encoder option sets, all
+  agree. `task-node-retention` now reads its registry through it (27 of 27 parity inputs identical), and xtask
+  depends on nothing again.
+  Verification: `cargo test -p xtask --lib` 38/38; the corpus test (`--ignored`) 14,964/14,964
+  Commit: `RUSTDOC-AND-XTASK.17 — pyjson: the ports read and write JSON exactly as Python does`
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
 
@@ -475,6 +497,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.17` (CODE) — DONE `2026-10-23`
+
+- [x] **REPRODUCE / MEASURE** — `serde_json` reworded Python's JSON errors (`.13.b`'s one divergence, 26 of 27
+  inputs identical) and cannot reproduce `json.dumps`: it sorts keys and writes `1e16` as `10000000000000000`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no Python-faithful JSON: HEAD's `xtask/src/checks/task_node_retention.rs:95`
+  parsed with `serde_json::from_str`. RED 6/6, every file restored byte-identically with a fresh mtime: the `\\u`
+  bound made inclusive, a repeated key kept twice, a trailing comma in an object accepted, DEL left unescaped under
+  `ensure_ascii`, the scientific threshold at 16, zero compared by its sign; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — corpus agreement 14,964/14,964; `task-node-retention` parity 26 -> 27 of 27;
+  xtask dependencies 1 -> 0.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 38
+  passed; `Cargo.lock` as before `.13.b`; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — the tree's Non-Goals, `.13` and `.13.b`; `xtask/Cargo.toml` and the profile comment in
+  `Cargo.toml`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.13.b` (CODE) — DONE `2026-10-23`
 

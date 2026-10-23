@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why does Instruction group not count as an ns unit and why does SMIN not count as min
 - [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
   > why does IntentIR carry so many assumptions that are not design intent
 - [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
@@ -296,5 +298,3 @@
   > why does invalid or already or validity no longer tag a signal
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > why does is_post_passive_binding_only_subject exempt a table row
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does is_post_passive_binding_only_subject need to be told which obligation it judges

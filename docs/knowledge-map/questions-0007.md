@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
@@ -296,5 +298,3 @@
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > how does the value slot tell a state from a relation without an adjective list

@@ -8,6 +8,7 @@
 pub mod checks;
 pub mod docs;
 pub mod project_data;
+pub mod pyjson;
 
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitStatus};

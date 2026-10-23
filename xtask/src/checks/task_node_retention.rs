@@ -6,12 +6,12 @@
 //! The registered script, `scripts/check_task_node_retention.py`, keeps its `argparse` front end (help,
 //! abbreviations, refusals) and passes this check exactly one of `--check`, `--report` or `--self-test`.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
 
-use serde_json::Value;
+use crate::pyjson::{self, Py};
 
 /// The task roots whose Markdown carries node ids.
 const ROOTS: [&str; 3] = ["docs/tasks", "docs/task-catalog", "docs/archive"];
@@ -53,18 +53,31 @@ pub fn run(root: &Path, arguments: &[String]) -> i32 {
     }
 }
 
-/// The removals registry as the script read it: its header, the declared removals by id, and every breach.
+/// The removals registry as the script read it: its header, the declared removals, and every breach.
 #[derive(Debug, Default)]
 pub struct Removals {
-    /// The `record_type: registry` header, or an empty object when there is none.
-    pub registry: serde_json::Map<String, Value>,
-    /// Each declared removal's id.
-    pub declared: BTreeSet<String>,
+    /// The `record_type: registry` header, when there is one.
+    pub registry: Option<Py>,
+    /// Each declared removal's id: the keys of the script's `dict`, so an id declared twice counts once.
+    pub declared: Vec<Py>,
     /// One line per shape error, in file order.
     pub breaches: Vec<String>,
 }
 
-/// Read `doctrine/task_nodes/removals.jsonl` under `root`.
+impl Removals {
+    /// The declared ids that are strings, the only ones a node id can match.
+    pub fn declared_ids(&self) -> BTreeSet<String> {
+        self.declared
+            .iter()
+            .filter_map(|id| match id {
+                Py::Str(text) => Some(pyjson::to_text(text)),
+                _ => None,
+            })
+            .collect()
+    }
+}
+
+/// Read `doctrine/task_nodes/removals.jsonl` under `root`, parsing each line as Python's `json.loads` does.
 pub fn load_removals(root: &Path) -> Removals {
     let mut removals = Removals::default();
     let path = root.join(REMOVALS);
@@ -92,72 +105,82 @@ pub fn load_removals(root: &Path) -> Removals {
             ));
             continue;
         }
-        let record = match serde_json::from_str::<Value>(line) {
-            Ok(Value::Object(record)) => record,
+        let record = match pyjson::loads(line) {
+            Ok(record @ Py::Dict(_)) => record,
             Ok(_) => {
                 removals
                     .breaches
                     .push(format!("{REMOVALS}:{number} is not a JSON object"));
                 continue;
             }
-            Err(error) => {
+            Err(message) => {
                 removals
                     .breaches
-                    .push(format!("{REMOVALS}:{number} is not valid JSON: {error}"));
+                    .push(format!("{REMOVALS}:{number} is not valid JSON: {message}"));
                 continue;
             }
         };
-        match record.get("record_type").and_then(Value::as_str) {
-            Some("registry") => {
-                let unknown = unknown_fields(&record, &REGISTRY_FIELDS);
-                if !unknown.is_empty() {
-                    removals.breaches.push(format!(
-                        "{REMOVALS}:{number} registry has unknown field(s): {}",
-                        python_list(&unknown)
-                    ));
-                }
-                removals.registry = record;
+        let kind = pyjson::get(&record, "record_type");
+        let is = |name: &str| matches!(kind, Some(Py::Str(text)) if *text == pyjson::py_str(name));
+        if is("registry") {
+            let unknown = unknown_fields(&record, &REGISTRY_FIELDS);
+            if !unknown.is_empty() {
+                removals.breaches.push(format!(
+                    "{REMOVALS}:{number} registry has unknown field(s): {}",
+                    string_list(unknown)
+                ));
             }
-            Some("removal") => {
-                let unknown = unknown_fields(&record, &REMOVAL_FIELDS);
-                if !unknown.is_empty() {
-                    removals.breaches.push(format!(
-                        "{REMOVALS}:{number} removal has unknown field(s): {}",
-                        python_list(&unknown)
-                    ));
-                }
-                let mut missing: Vec<String> = REMOVAL_FIELDS
-                    .iter()
-                    .filter(|field| !record.contains_key(**field))
-                    .map(|field| field.to_string())
-                    .collect();
-                missing.sort();
-                if !missing.is_empty() {
-                    removals.breaches.push(format!(
-                        "{REMOVALS}:{number} removal is missing: {}",
-                        python_list(&missing)
-                    ));
-                    continue;
-                }
-                removals.declared.insert(python_str(&record["id"]));
+            removals.registry = Some(record);
+        } else if is("removal") {
+            let unknown = unknown_fields(&record, &REMOVAL_FIELDS);
+            if !unknown.is_empty() {
+                removals.breaches.push(format!(
+                    "{REMOVALS}:{number} removal has unknown field(s): {}",
+                    string_list(unknown)
+                ));
             }
-            _ => removals.breaches.push(format!(
+            let mut missing: Vec<pyjson::PyStr> = REMOVAL_FIELDS
+                .iter()
+                .filter(|field| pyjson::get(&record, field).is_none())
+                .map(|field| pyjson::py_str(field))
+                .collect();
+            missing.sort();
+            if !missing.is_empty() {
+                removals.breaches.push(format!(
+                    "{REMOVALS}:{number} removal is missing: {}",
+                    string_list(missing)
+                ));
+                continue;
+            }
+            let id = pyjson::get(&record, "id").expect("checked present").clone();
+            if !removals
+                .declared
+                .iter()
+                .any(|known| pyjson::py_eq(known, &id))
+            {
+                removals.declared.push(id);
+            }
+        } else {
+            removals.breaches.push(format!(
                 "{REMOVALS}:{number} has unknown record_type {}",
-                python_repr(record.get("record_type").unwrap_or(&Value::Null))
-            )),
+                pyjson::repr(kind.unwrap_or(&Py::None))
+            ));
         }
     }
-    match removals.registry.get("expected_removals") {
-        None | Some(Value::Null) => removals
+    let count = Py::Int(removals.declared.len().to_string());
+    match removals
+        .registry
+        .as_ref()
+        .and_then(|registry| pyjson::get(registry, "expected_removals"))
+    {
+        None | Some(Py::None) => removals
             .breaches
             .push(format!("{REMOVALS} registry declares no expected_removals")),
-        Some(expected) if !python_equals_count(expected, removals.declared.len()) => {
-            removals.breaches.push(format!(
-                "{REMOVALS} declares expected_removals {} but carries {} — a removal was added or dropped without moving the declared total",
-                python_str(expected),
-                removals.declared.len()
-            ))
-        }
+        Some(expected) if !pyjson::py_eq(expected, &count) => removals.breaches.push(format!(
+            "{REMOVALS} declares expected_removals {} but carries {} — a removal was added or dropped without moving the declared total",
+            pyjson::str_of(expected),
+            removals.declared.len()
+        )),
         Some(_) => {}
     }
     removals
@@ -172,91 +195,23 @@ fn universal_lines(text: &str) -> Vec<String> {
         .collect()
 }
 
-fn unknown_fields(record: &serde_json::Map<String, Value>, known: &[&str]) -> Vec<String> {
-    record
-        .keys()
-        .filter(|key| !known.contains(&key.as_str()))
-        .cloned()
-        .collect()
-}
-
-/// Whether a JSON value equals a count as Python's `==` compares them (`1.0 == 1`, `True == 1`).
-fn python_equals_count(value: &Value, count: usize) -> bool {
-    match value {
-        Value::Number(number) => number.as_f64() == Some(count as f64),
-        Value::Bool(flag) => usize::from(*flag) == count,
-        _ => false,
-    }
-}
-
-/// A JSON value as Python's `str()` prints the object `json.loads` made of it.
-pub fn python_str(value: &Value) -> String {
-    match value {
-        Value::String(text) => text.clone(),
-        other => python_repr(other),
-    }
-}
-
-/// A JSON value as Python's `repr()` prints the object `json.loads` made of it.
-pub fn python_repr(value: &Value) -> String {
-    match value {
-        Value::Null => "None".to_string(),
-        Value::Bool(true) => "True".to_string(),
-        Value::Bool(false) => "False".to_string(),
-        Value::Number(number) => number.to_string(),
-        Value::String(text) => python_string_repr(text),
-        Value::Array(items) => format!(
-            "[{}]",
-            items.iter().map(python_repr).collect::<Vec<_>>().join(", ")
-        ),
-        Value::Object(map) => format!(
-            "{{{}}}",
-            map.iter()
-                .map(|(key, value)| format!("{}: {}", python_string_repr(key), python_repr(value)))
-                .collect::<Vec<_>>()
-                .join(", ")
-        ),
-    }
-}
-
-/// A list of strings as Python's `repr()` prints it.
-pub fn python_list(items: &[String]) -> String {
-    format!(
-        "[{}]",
-        items
-            .iter()
-            .map(|item| python_string_repr(item))
-            .collect::<Vec<_>>()
-            .join(", ")
-    )
-}
-
-/// A string as Python's `repr()` prints it: single quotes unless it holds one and no double quote.
-fn python_string_repr(text: &str) -> String {
-    let quote = if text.contains('\'') && !text.contains('"') {
-        '"'
-    } else {
-        '\''
+/// A record's keys outside `known`, sorted as Python sorts a set of strings.
+fn unknown_fields(record: &Py, known: &[&str]) -> Vec<pyjson::PyStr> {
+    let Py::Dict(pairs) = record else {
+        return Vec::new();
     };
-    let mut out = String::from(quote);
-    for character in text.chars() {
-        match character {
-            '\\' => out.push_str("\\\\"),
-            '\n' => out.push_str("\\n"),
-            '\r' => out.push_str("\\r"),
-            '\t' => out.push_str("\\t"),
-            character if character == quote => {
-                out.push('\\');
-                out.push(character);
-            }
-            character if (character as u32) < 0x20 || character as u32 == 0x7f => {
-                out.push_str(&format!("\\x{:02x}", character as u32))
-            }
-            character => out.push(character),
-        }
-    }
-    out.push(quote);
-    out
+    let mut unknown: Vec<pyjson::PyStr> = pairs
+        .iter()
+        .map(|(key, _)| key.clone())
+        .filter(|key| !known.iter().any(|field| pyjson::py_str(field) == *key))
+        .collect();
+    unknown.sort();
+    unknown
+}
+
+/// A list of strings as Python prints it.
+fn string_list(items: Vec<pyjson::PyStr>) -> String {
+    pyjson::repr(&Py::List(items.into_iter().map(Py::Str).collect()))
 }
 
 /// The node ids in `text`: each `` - ID: `…` `` at the start of a line, the id running to the next backtick, newlines
@@ -364,7 +319,7 @@ fn check(root: &Path) -> i32 {
             return 1;
         }
     };
-    for node in audit(head.as_ref(), &present, &removals.declared) {
+    for node in audit(head.as_ref(), &present, &removals.declared_ids()) {
         removals.breaches.push(format!(
             "task node `{node}` is in HEAD and in no tracked task surface now. A node may be renamed into descendants or retired through doctrine/task_nodes/removals.jsonl; it may not vanish."
         ));
@@ -398,93 +353,45 @@ fn report(root: &Path) -> i32 {
             return 1;
         }
     };
-    let vanished = audit(head.as_ref(), &present, &removals.declared);
-    let census = BTreeMap::from([
-        ("declared_removals", Value::from(removals.declared.len())),
+    let vanished = audit(head.as_ref(), &present, &removals.declared_ids());
+    let count = |size: usize| Py::Int(size.to_string());
+    let expected = removals
+        .registry
+        .as_ref()
+        .and_then(|registry| pyjson::get(registry, "expected_removals"))
+        .cloned()
+        .unwrap_or(Py::None);
+    let census = Py::Dict(vec![
         (
-            "expected_removals",
-            removals
-                .registry
-                .get("expected_removals")
-                .cloned()
-                .unwrap_or(Value::Null),
+            pyjson::py_str("declared_removals"),
+            count(removals.declared.len()),
         ),
+        (pyjson::py_str("expected_removals"), expected),
         (
-            "head_nodes",
-            head.as_ref()
-                .map_or(Value::Null, |head| Value::from(head.len())),
+            pyjson::py_str("head_nodes"),
+            head.as_ref().map_or(Py::None, |head| count(head.len())),
         ),
-        ("present_nodes", Value::from(present.len())),
-        ("vanished_unaccounted", Value::from(vanished)),
-    ]);
-    let census: serde_json::Map<String, Value> = census
-        .into_iter()
-        .map(|(key, value)| (key.to_string(), value))
-        .collect();
-    println!("{}", python_json(&Value::Object(census), 0));
-    0
-}
-
-/// A JSON value as Python's `json.dump(…, indent=2, sort_keys=True)` writes it, non-ASCII escaped.
-pub fn python_json(value: &Value, depth: usize) -> String {
-    let indent = |depth: usize| "  ".repeat(depth);
-    match value {
-        Value::Array(items) if items.is_empty() => "[]".to_string(),
-        Value::Object(map) if map.is_empty() => "{}".to_string(),
-        Value::Array(items) => format!(
-            "[\n{}\n{}]",
-            items
-                .iter()
-                .map(|item| format!("{}{}", indent(depth + 1), python_json(item, depth + 1)))
-                .collect::<Vec<_>>()
-                .join(",\n"),
-            indent(depth)
-        ),
-        Value::Object(map) => {
-            let sorted: BTreeMap<&String, &Value> = map.iter().collect();
-            format!(
-                "{{\n{}\n{}}}",
-                sorted
+        (pyjson::py_str("present_nodes"), count(present.len())),
+        (
+            pyjson::py_str("vanished_unaccounted"),
+            Py::List(
+                vanished
                     .iter()
-                    .map(|(key, value)| format!(
-                        "{}{}: {}",
-                        indent(depth + 1),
-                        ascii_json_string(key),
-                        python_json(value, depth + 1)
-                    ))
-                    .collect::<Vec<_>>()
-                    .join(",\n"),
-                indent(depth)
-            )
-        }
-        Value::String(text) => ascii_json_string(text),
-        other => other.to_string(),
-    }
-}
-
-/// A JSON string literal with every non-ASCII character escaped, as Python's `ensure_ascii` writes it.
-fn ascii_json_string(text: &str) -> String {
-    let mut out = String::from('"');
-    for character in text.chars() {
-        match character {
-            '"' => out.push_str("\\\""),
-            '\\' => out.push_str("\\\\"),
-            '\n' => out.push_str("\\n"),
-            '\r' => out.push_str("\\r"),
-            '\t' => out.push_str("\\t"),
-            '\u{8}' => out.push_str("\\b"),
-            '\u{c}' => out.push_str("\\f"),
-            character if (character as u32) < 0x20 || !character.is_ascii() => {
-                let mut units = [0u16; 2];
-                for unit in character.encode_utf16(&mut units) {
-                    out.push_str(&format!("\\u{unit:04x}"));
-                }
-            }
-            character => out.push(character),
-        }
-    }
-    out.push('"');
-    out
+                    .map(|node| Py::Str(pyjson::py_str(node)))
+                    .collect(),
+            ),
+        ),
+    ]);
+    // `json.dump(…, indent=2, sort_keys=True)`: the separators an indent implies, non-ASCII escaped.
+    let encoder = pyjson::Encoder {
+        indent: Some(2),
+        sort_keys: true,
+        ensure_ascii: true,
+        item_separator: ",",
+        key_separator: ": ",
+    };
+    println!("{}", pyjson::dumps(&census, &encoder).expect("ASCII-safe"));
+    0
 }
 
 type SelfTestCase = (&'static str, fn() -> Vec<String>, &'static [&'static str]);
@@ -544,11 +451,12 @@ fn self_test() -> i32 {
     for (case_id, run, expected) in SELF_TEST_CASES {
         let actual = run();
         if actual != *expected {
-            let expected: Vec<String> = expected.iter().map(|id| id.to_string()).collect();
+            let list =
+                |ids: Vec<String>| string_list(ids.iter().map(|id| pyjson::py_str(id)).collect());
             eprintln!(
                 "self-test FAIL {case_id}: expected {}, got {}",
-                python_list(&expected),
-                python_list(&actual)
+                list(expected.iter().map(|id| id.to_string()).collect()),
+                list(actual)
             );
             return 1;
         }
@@ -578,21 +486,28 @@ mod tests {
     }
 
     #[test]
-    fn python_formatting_is_reproduced() {
+    fn the_census_prints_as_python_wrote_it() {
+        let ids =
+            |items: &[&str]| string_list(items.iter().map(|item| pyjson::py_str(item)).collect());
+        assert_eq!(ids(&["alpha", "it's"]), "['alpha', \"it's\"]");
+        let text = |value: &str| Py::Str(pyjson::py_str(value));
+        let census = Py::Dict(vec![
+            (pyjson::py_str("b"), Py::List(Vec::new())),
+            (pyjson::py_str("a"), Py::List(vec![text("x"), text("é")])),
+            (pyjson::py_str("c"), Py::None),
+        ]);
+        let encoder = pyjson::Encoder {
+            indent: Some(2),
+            sort_keys: true,
+            ensure_ascii: true,
+            item_separator: ",",
+            key_separator: ": ",
+        };
         assert_eq!(
-            python_list(&["alpha".to_string(), "it's".to_string()]),
-            "['alpha', \"it's\"]"
-        );
-        assert_eq!(python_repr(&Value::Null), "None");
-        assert_eq!(python_repr(&serde_json::json!("tombstone")), "'tombstone'");
-        assert_eq!(python_str(&serde_json::json!("1")), "1");
-        assert!(!python_equals_count(&serde_json::json!("1"), 1));
-        assert!(python_equals_count(&serde_json::json!(1.0), 1));
-        assert!(python_equals_count(&serde_json::json!(true), 1));
-        let census = serde_json::json!({"b": [], "a": ["x", "é"], "c": null});
-        assert_eq!(
-            python_json(&census, 0),
-            "{\n  \"a\": [\n    \"x\",\n    \"\\u00e9\"\n  ],\n  \"b\": [],\n  \"c\": null\n}"
+            pyjson::dumps(&census, &encoder).as_deref(),
+            Some(
+                "{\n  \"a\": [\n    \"x\",\n    \"\\u00e9\"\n  ],\n  \"b\": [],\n  \"c\": null\n}"
+            )
         );
     }
 
@@ -624,7 +539,7 @@ mod tests {
             breaches(Some(&format!("{header}{{\"record_type\": x}}\n"))),
             [at(
                 2,
-                "is not valid JSON: expected value at line 1 column 17"
+                "is not valid JSON: Expecting value: line 1 column 17 (char 16)"
             )]
         );
         let long = format!("{header}\"{}\"\n", "x".repeat(RECORD_BYTE_CAP));

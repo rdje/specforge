@@ -269,6 +269,8 @@
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > how do the xtask ports read JSON like Python (pyjson)
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -295,5 +297,3 @@
   > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how does SpecForge bind a protocol state to its state machine
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
