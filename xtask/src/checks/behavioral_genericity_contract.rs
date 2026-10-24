@@ -3926,7 +3926,8 @@ fn light<'a>(retained: Option<&'a [String]>, declaration: Option<&'a Py>) -> Sco
 
 /// The script's RED cases: eight mutations of the contract and population, six of the retained set and its
 /// declaration, nine of the held-out evidence, and the one grown retained set ADR 0025 mandates admitting. Each
-/// mutation raises where the script's subscript, `pop` or `next` would.
+/// mutation raises where the script's subscript, `pop` or `next` would, and each boundary case must fail with its
+/// own binding's problem and no other.
 #[allow(clippy::too_many_lines)]
 fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Checked<i32> {
     let (baseline, _) = validate(repository, contract, rows, light(None, None))?;
@@ -4054,26 +4055,33 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
         keys.push(new_key.clone());
         keys
     };
-    let mut boundary_mutants: Vec<(&str, Vec<String>, Py)> = vec![
+    // Each boundary case carries the problem its own binding writes, and a declaration consistent with its retained
+    // set, so that it fails with that problem alone (`.15.d.i`: two cases reused the live declaration, whose keys
+    // lie outside their retained sets, and failed whether or not their own binding fired).
+    let mut boundary_mutants: Vec<(&str, Vec<String>, Py, &str)> = vec![
         (
             "vanished frozen key",
             frozen_keys[1..].to_vec(),
-            live_declaration.clone(),
+            declared(&[])?,
+            "behavioral population rows are no longer retained bundles",
         ),
         (
             "unreported post-boundary key",
             with_new(),
-            live_declaration.clone(),
+            declared(&[])?,
+            "undeclared as unqualified residuals",
         ),
         (
             "declaration for a key that is not retained",
             frozen_keys.clone(),
             declared(&[&new_key])?,
+            "is not a retained bundle",
         ),
         (
             "qualified key declared unqualified",
             with_new(),
             declared(&[&frozen_keys[0], &new_key])?,
+            "cannot be declared unqualified",
         ),
     ];
     let mut no_leaf = declared(&[&new_key])?;
@@ -4081,7 +4089,12 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
         first_mut(subscript_mut(&mut no_leaf, "unqualified_keys")?)?,
         "owing_leaf",
     )?;
-    boundary_mutants.push(("declaration without an owing leaf", with_new(), no_leaf));
+    boundary_mutants.push((
+        "declaration without an owing leaf",
+        with_new(),
+        no_leaf,
+        "owing_leaf must name the leaf",
+    ));
     let mut bad_relation = declared(&[&new_key])?;
     assign(
         first_mut(subscript_mut(&mut bad_relation, "unqualified_keys")?)?,
@@ -4092,16 +4105,21 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
         "declaration owing an ineligible relation",
         with_new(),
         bad_relation,
+        "owed_relations must be a distinct non-empty subset",
     ));
-    for (label, retained, declaration) in &boundary_mutants {
+    for (label, retained, declaration, expected) in &boundary_mutants {
         let (problems, _) = validate(
             repository,
             contract,
             rows,
             light(Some(retained), Some(declaration)),
         )?;
-        if problems.is_empty() {
+        if !problems.iter().any(|problem| problem.contains(expected)) {
             eprintln!("{LABEL} self-test missed {label}");
+            return Ok(1);
+        }
+        if let Some(other) = problems.iter().find(|problem| !problem.contains(expected)) {
+            eprintln!("{LABEL} self-test caught {label} only beside another problem: {other}");
             return Ok(1);
         }
         failures += 1;

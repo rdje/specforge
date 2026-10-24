@@ -755,7 +755,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   BEHAVIORAL-CONTRACT component's script`
 
 - ID: `RUSTDOC-AND-XTASK.15.d.i`
-  Status: `pending` (found by `.15.d`'s RED)
+  Status: `done` (`2026-10-24`; CODE; found by `.15.d`'s RED; checklist below)
   Goal: each subset-floor case in the behavioral self-test is caught by its own binding again
   Acceptance: deleting the subset-floor append, or the undeclared-excess append, fails the self-test and
   `cargo test -p xtask --lib`; each of the six boundary cases fails only with the problem written for it; claim
@@ -764,9 +764,14 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   cases `vanished frozen key` and `unreported post-boundary key` reuse the live post-boundary declaration, which has
   held seven keys since `EXTRACTION-REPRESENTATION-GAPS.3.a` (`2026-09-26`), and none of the seven is in those cases'
   retained set, so each case fails on seven `is not a retained bundle` problems whether or not its own binding
-  fires. The claim's RED evidence, that the deletion misses its case, has been false since then.
-  Verification: `pending`
-  Commit: `pending`
+  fires. The claim's RED evidence, that the deletion misses its case, has been false since then. **Done.** The two
+  cases now carry an empty declaration, consistent with their retained sets, and every boundary case names the
+  problem its own binding writes: the self-test counts it caught only when that problem is present and no other
+  is, and reports `missed` or `caught … only beside another problem` otherwise. Still 23/23 with 1/1 admitted.
+  Deleting the subset-floor append now prints `self-test missed vanished frozen key` and exits 1; the claim's
+  result records the 2026-09-26 to 2026-10-24 gap and the re-observation.
+  Verification: `cargo test -p xtask --lib` 103/103; RED in `.project-data/tmp/rdx-15d/red/`
+  Commit: `RUSTDOC-AND-XTASK.15.d.i — each subset-floor self-test case is caught by its own binding again`
 
 - ID: `RUSTDOC-AND-XTASK.15.e`
   Status: `pending`
@@ -931,6 +936,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.d.i` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — `.15.d`'s RED: deleting the subset-floor append, or the undeclared-excess append,
+  left the self-test at 23/23 and `cargo test -p xtask --lib` green, in the port and in HEAD's script alike.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `run_self_test`'s cases `vanished frozen key` and `unreported post-boundary
+  key` reused the live post-boundary declaration; its seven keys lie outside their retained sets, so each case
+  failed on seven `is not a retained bundle` problems whatever its own binding did. RED 4/4, restored with a fresh
+  mtime: either append deleted, or either case given the live declaration back; each fails `cargo test -p xtask
+  --lib`.
+- [x] **ADDRESSED (verified)** — each boundary case fails with its own problem alone; deleting the subset-floor
+  append prints `self-test missed vanished frozen key` and exits 1; self-test 23/23 with 1/1 admitted.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `xtask` 103 passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — claim `retained-growth-admitted-as-declared-residual` re-observed; the book's six subset-floor
+  faults are unchanged.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.d` (CODE) — DONE `2026-10-24`
 
@@ -1309,9 +1331,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.d.i` | `pending` | two subset-floor cases caught incidentally; a claim's RED stale |
-| 2 | `RUSTDOC-AND-XTASK.15.e` | `pending` | the orchestrator, calling every component in-process |
-| 3 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
+| 1 | `RUSTDOC-AND-XTASK.15.e` | `pending` | the orchestrator, calling every component in-process |
+| 2 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
 ## Decisions
 
