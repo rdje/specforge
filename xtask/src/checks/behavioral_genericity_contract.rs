@@ -25,6 +25,7 @@ use std::rc::Rc;
 
 use sha2::{Digest, Sha256};
 
+use super::{Output, Terminal};
 use crate::pyjson::{self, Py, PyStr};
 
 const LABEL: &str = "behavioral-genericity-contract";
@@ -3929,12 +3930,17 @@ fn light<'a>(retained: Option<&'a [String]>, declaration: Option<&'a Py>) -> Sco
 /// mutation raises where the script's subscript, `pop` or `next` would, and each boundary case must fail with its
 /// own binding's problem and no other.
 #[allow(clippy::too_many_lines)]
-fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Checked<i32> {
+fn run_self_test(
+    repository: &mut Repository,
+    contract: &Py,
+    rows: &[Row],
+    output: &mut dyn Output,
+) -> Checked<i32> {
     let (baseline, _) = validate(repository, contract, rows, light(None, None))?;
     if !baseline.is_empty() {
-        eprintln!("{LABEL} self-test baseline failed:");
+        output.err(&format!("{LABEL} self-test baseline failed:\n"));
         for problem in &baseline {
-            eprintln!("  {problem}");
+            output.err(&format!("  {problem}\n"));
         }
         return Ok(1);
     }
@@ -4008,7 +4014,7 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
     for (label, mutant_contract, mutant_rows) in &mutants {
         let (problems, _) = validate(repository, mutant_contract, mutant_rows, light(None, None))?;
         if problems.is_empty() {
-            eprintln!("{LABEL} self-test missed {label}");
+            output.err(&format!("{LABEL} self-test missed {label}\n"));
         } else {
             failures += 1;
         }
@@ -4115,11 +4121,13 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
             light(Some(retained), Some(declaration)),
         )?;
         if !problems.iter().any(|problem| problem.contains(expected)) {
-            eprintln!("{LABEL} self-test missed {label}");
+            output.err(&format!("{LABEL} self-test missed {label}\n"));
             return Ok(1);
         }
         if let Some(other) = problems.iter().find(|problem| !problem.contains(expected)) {
-            eprintln!("{LABEL} self-test caught {label} only beside another problem: {other}");
+            output.err(&format!(
+                "{LABEL} self-test caught {label} only beside another problem: {other}\n"
+            ));
             return Ok(1);
         }
         failures += 1;
@@ -4140,15 +4148,19 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
         light(Some(&grown), Some(&grown_declaration)),
     )?;
     if !admissible_problems.is_empty() {
-        eprintln!("{LABEL} self-test rejected the mandated grown retained set:");
+        output.err(&format!(
+            "{LABEL} self-test rejected the mandated grown retained set:\n"
+        ));
         for problem in &admissible_problems {
-            eprintln!("  {problem}");
+            output.err(&format!("  {problem}\n"));
         }
         return Ok(1);
     }
     if admissible_metrics.get("post_boundary_unqualified_documents") != Some(&(golds.len() as i64))
     {
-        eprintln!("{LABEL} self-test did not report the declared post-boundary residuals");
+        output.err(&format!(
+            "{LABEL} self-test did not report the declared post-boundary residuals\n"
+        ));
         return Ok(1);
     }
     let admitted = 1;
@@ -4236,7 +4248,7 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
         let mut problems = Vec::new();
         validate_held_out_evidence(repository, contract, rows, &mut problems, Some(mutant))?;
         if problems.is_empty() {
-            eprintln!("{LABEL} self-test missed {label}");
+            output.err(&format!("{LABEL} self-test missed {label}\n"));
         } else {
             evidence_failures += 1;
         }
@@ -4246,10 +4258,10 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
     }
     let total = failures + evidence_failures;
     let expected_total = mutants.len() + boundary_mutants.len() + evidence_mutants.len();
-    println!(
+    output.out(&format!(
         "{LABEL} self-test: {total}/{expected_total} RED cases pass, with {admitted}/1 mandated retained-set growth \
-         admitted"
-    );
+         admitted\n"
+    ));
     Ok(0)
 }
 
@@ -4257,58 +4269,63 @@ fn run_self_test(repository: &mut Repository, contract: &Py, rows: &[Row]) -> Ch
 
 /// `--self-test`, or the check, as the shim forwards it.
 pub fn run(root: &Path, arguments: &[String]) -> i32 {
+    run_to(root, arguments, &mut Terminal)
+}
+
+/// `run`, writing to `output` (`PRODUCTION-GENERICITY` captures it, `RUSTDOC-AND-XTASK.15.e`).
+pub fn run_to(root: &Path, arguments: &[String], output: &mut dyn Output) -> i32 {
     let self_test = match arguments {
         [] => false,
         [flag] if flag == "--self-test" => true,
         _ => {
-            eprintln!("Usage: cargo xtask check behavioral-genericity-contract [--self-test]");
+            output.err("Usage: cargo xtask check behavioral-genericity-contract [--self-test]\n");
             return 2;
         }
     };
     let mut repository = Repository::new(root);
-    match command(&mut repository, self_test) {
+    match command(&mut repository, self_test, output) {
         Ok(code) => code,
         Err(Uncaught(reason)) => {
-            eprintln!("{LABEL}: refused: {reason}");
+            output.err(&format!("{LABEL}: refused: {reason}\n"));
             1
         }
     }
 }
 
-fn command(repository: &mut Repository, self_test: bool) -> Checked<i32> {
+fn command(repository: &mut Repository, self_test: bool, output: &mut dyn Output) -> Checked<i32> {
     let contract = match repository.read_json(&repository.path(CONTRACT_PATH)) {
         Ok(contract) => contract,
         Err(error) => {
-            eprintln!("{LABEL}: {}", error.message());
+            output.err(&format!("{LABEL}: {}\n", error.message()));
             return Ok(1);
         }
     };
     let rows = match read_population(&repository.path(POPULATION_PATH))? {
         Ok(rows) => rows,
         Err(error) => {
-            eprintln!("{LABEL}: {error}");
+            output.err(&format!("{LABEL}: {error}\n"));
             return Ok(1);
         }
     };
     if !matches!(*contract, Py::Dict(_)) {
-        eprintln!("{LABEL}: contract must be an object");
+        output.err(&format!("{LABEL}: contract must be an object\n"));
         return Ok(1);
     }
     if self_test {
-        return run_self_test(repository, &contract, &rows);
+        return run_self_test(repository, &contract, &rows, output);
     }
     let (problems, metrics) = validate(repository, &contract, &rows, FULL)?;
     if !problems.is_empty() {
         for problem in &problems {
-            eprintln!("{LABEL}: {problem}");
+            output.err(&format!("{LABEL}: {problem}\n"));
         }
         return Ok(1);
     }
     let metric = |name: &str| metrics.get(name).copied().unwrap_or(0);
-    println!(
+    output.out(&format!(
         "{LABEL}: {} current documents; {} text-measurable / {} text-unmeasurable; {} reviewed calibration / {} \
          prospective holdout; {} vendor-novel / {} family-novel; {} live source authorities verified / {} external \
-         unavailable; {} retained post-boundary and unqualified",
+         unavailable; {} retained post-boundary and unqualified\n",
         metric("current_documents"),
         metric("text_projection_measurable_documents"),
         metric("text_projection_unmeasurable_documents"),
@@ -4319,7 +4336,7 @@ fn command(repository: &mut Repository, self_test: bool) -> Checked<i32> {
         metric("source_authorities_verified"),
         metric("external_authorities_unavailable"),
         metric("post_boundary_unqualified_documents")
-    );
+    ));
     Ok(0)
 }
 
@@ -4344,8 +4361,18 @@ mod tests {
     fn the_real_contract_holds_and_the_self_test_refuses_every_mutation() {
         let root = crate::repository_root();
         let mut repository = Repository::new(&root);
-        assert_eq!(command(&mut repository, false).ok(), Some(0));
-        assert_eq!(command(&mut repository, true).ok(), Some(0));
+        let mut output = crate::checks::Captured::default();
+        assert_eq!(command(&mut repository, false, &mut output).ok(), Some(0));
+        assert!(
+            output
+                .text
+                .ends_with(" retained post-boundary and unqualified\n")
+        );
+        let mut output = crate::checks::Captured::default();
+        assert_eq!(command(&mut repository, true, &mut output).ok(), Some(0));
+        assert!(output.text.contains(
+            " self-test: 23/23 RED cases pass, with 1/1 mandated retained-set growth admitted"
+        ));
     }
 
     #[test]

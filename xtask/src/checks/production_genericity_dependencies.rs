@@ -61,6 +61,11 @@ fn slurp(path: &Path) -> Result<String, Death> {
 
 /// `--root DIR` (resolved by the shim) and `--self-test`.
 pub fn run(repository: &Path, arguments: &[String]) -> i32 {
+    run_to(repository, arguments, &mut super::Terminal)
+}
+
+/// `run`, writing to `output` (`PRODUCTION-GENERICITY` captures it, `RUSTDOC-AND-XTASK.15.e`).
+pub fn run_to(repository: &Path, arguments: &[String], output: &mut dyn super::Output) -> i32 {
     let mut root = repository.to_path_buf();
     let mut self_test = false;
     let mut arguments = arguments.iter();
@@ -68,29 +73,29 @@ pub fn run(repository: &Path, arguments: &[String]) -> i32 {
         match argument.as_str() {
             "--root" => match arguments.next() {
                 Some(directory) => root = PathBuf::from(directory),
-                None => return usage(),
+                None => return usage(output),
             },
             "--self-test" => self_test = true,
-            _ => return usage(),
+            _ => return usage(output),
         }
     }
     let outcome = if self_test {
         run_self_tests(&root).map(|()| {
-            println!("{LABEL} self-test: 11/11 pass");
+            output.out(&format!("{LABEL} self-test: 11/11 pass\n"));
             0
         })
     } else {
         inspect_boundary(&root).map(|problems| {
             if problems.is_empty() {
-                println!(
+                output.out(&format!(
                     "{LABEL}: core -> conformance absent; conformance -> core and application -> {{core, conformance}} \
                      present; enforcement graph tool disconnected from all product packages; xtask uses only \
-                     already-locked crates and nothing depends on it"
-                );
+                     already-locked crates and nothing depends on it\n"
+                ));
                 return 0;
             }
             for problem in &problems {
-                eprintln!("{LABEL}: {problem}");
+                output.err(&format!("{LABEL}: {problem}\n"));
             }
             1
         })
@@ -98,15 +103,15 @@ pub fn run(repository: &Path, arguments: &[String]) -> i32 {
     match outcome {
         Ok(code) => code,
         Err(death) => {
-            eprintln!("{}", death.message);
+            output.err(&format!("{}\n", death.message));
             death.code
         }
     }
 }
 
-fn usage() -> i32 {
-    eprintln!(
-        "Usage: cargo xtask check production-genericity-dependencies [--root DIR] [--self-test]"
+fn usage(output: &mut dyn super::Output) -> i32 {
+    output.err(
+        "Usage: cargo xtask check production-genericity-dependencies [--root DIR] [--self-test]\n",
     );
     2
 }

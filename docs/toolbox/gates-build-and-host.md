@@ -145,7 +145,8 @@ never change.
 ### 7.2c `scripts/check_production_genericity.sh` — the PRODUCTION-GENERICITY structural gate
 - **WHAT:** composes the compiler-visible package-direction check, exact production module/claim inventory,
   exact rule/field/producer/seam/bypass joins, and the compiled graph's fixed-point raw/identity flow plus
-  proof-only canonical-authority analysis. All four components run and report even when one fails.
+  proof-only canonical-authority analysis. All four components run and report even when one fails. Native since
+  `RUSTDOC-AND-XTASK.15.e` (`cargo xtask check production-genericity`); the script is its shim.
 - **WHEN:** before any production extraction, proof, persistence, or package-boundary change; it also runs
   unconditionally through the doctrine driver and pre-commit hook.
 - **HOW:** `bash scripts/check_production_genericity.sh` for the fast clean-tree doctrine;

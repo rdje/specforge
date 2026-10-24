@@ -774,10 +774,35 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.d.i — each subset-floor self-test case is caught by its own binding again`
 
 - ID: `RUSTDOC-AND-XTASK.15.e`
-  Status: `pending`
+  Status: `done` (`2026-10-24`; CODE; checklist below)
   Goal: `cargo xtask check production-genericity` replaces `scripts/check_production_genericity.sh`
   Acceptance: `.6`'s parity evidence; the script a shim; the components called in-process and the graph crate
   launched as `_flow.sh` launched it.
+  **Done `2026-10-24`.** `xtask/src/checks/production_genericity.rs` composes the gate as the script did: every
+  component runs and reports, and no failure stops the rest. The four xtask components run in-process through a
+  new sink, `checks::Output` (the terminal, or one buffer holding both streams in the order they were written, as
+  `$(… 2>&1)` captured them); the graph crate (`--check-census`) and the two qualification tests run through
+  `cargo` with the project-data environment, their two streams one pipe. A passing component's output goes to
+  standard output and a failing one's to standard error, trailing newlines trimmed as command substitution trimmed
+  them; then the corpus-absent refusal and the `SPECFORGE_CORPUS_ABSENT` skips, the dangling-id meta-check, the
+  report, and the summary that never counts a skip. The shim keeps the activation and the argument check and passes
+  the name it was invoked by (`--program`), which the refusals quote; `scripts/check_production_genericity_flow.sh`
+  stays the graph's standalone entry. **Parity**: HEAD's script beside the shim, each run by its absolute path as
+  the driver runs it, on 13 cases (the default; three refused argument lists; a failing behavioral contract,
+  information flow and inventory; the corpus hidden and undeclared, declared, and declared empty; declared with the
+  corpus present; `--self-test`, alone and with the corpus hidden and declared): 11 identical, and both `--self-test`
+  runs identical apart from `cargo test`'s elapsed-time lines. **Cost:** the graph analysis dominates: by default
+  75-97 s for the script and 73-88 s for the shim, on a machine another repository's jobs held at a load average of
+  11-17; no difference shows through that noise.
+  Verification: `cargo test -p xtask --lib` 109/109; parity and RED in `.project-data/tmp/rdx-15e/`
+  Commit: `RUSTDOC-AND-XTASK.15.e — cargo xtask check production-genericity replaces the PRODUCTION-GENERICITY
+  gate's script`
+
+- ID: `RUSTDOC-AND-XTASK.15.1`
+  Status: `pending` (DESIGN; opened by `.15.e`, `PRODUCTION-GENERICITY` being native)
+  Goal: `LIVE-DOC-SIZE`'s component leaves
+  Acceptance: re-measure its 20 component scripts and their callers outside the orchestrator; one leaf per
+  component, the orchestrator last, in an order that keeps every kit caller's path and command line unchanged.
   Verification: `pending`
   Commit: `pending`
 
@@ -936,6 +961,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.e` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — `PRODUCTION-GENERICITY` ran as a 188-line shell orchestrator over its components'
+  shims: 5 of 5 baseline components PASS in 77 s. HEAD's copy is the parity baseline in `.project-data/tmp/rdx-15e/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native orchestrator: `xtask/src/checks/mod.rs` listed 20 checks, and its
+  components printed straight to the terminal, so none could be captured in-process. RED 6/6, restored with a fresh
+  mtime: trailing newlines kept, a cargo component's standard error left out of its pipe, a missing `source_ir`
+  read as a corpus, a skipped component counted as executed, a corpus-dependent id naming no component, the capture
+  dropping standard output; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — 13 parity cases: 11 identical, the two `--self-test` runs identical apart from
+  `cargo test`'s elapsed-time lines.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 109
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — book `getting-started.md` (the native doctrine checks); `docs/DOCTRINE_INSTANCE.md`'s
+  `PRODUCTION-GENERICITY` row; `docs/toolbox/gates-build-and-host.md` §7.2c; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.d.i` (CODE) — DONE `2026-10-24`
 
@@ -1331,7 +1375,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.e` | `pending` | the orchestrator, calling every component in-process |
+| 1 | `RUSTDOC-AND-XTASK.15.1` | `pending` | `LIVE-DOC-SIZE`'s component leaves, its turn after `.15.e` |
 | 2 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
 ## Decisions

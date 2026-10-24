@@ -9,6 +9,7 @@ pub mod corpus_frontier;
 pub mod doctrine_tables;
 pub mod ownership_citations;
 pub mod persisted_artifact_paths;
+pub mod production_genericity;
 pub mod production_genericity_dependencies;
 pub mod production_genericity_inventory;
 pub mod production_genericity_rules;
@@ -136,7 +137,51 @@ pub const CHECKS: &[Check] = &[
         replaces: "scripts/check_behavioral_genericity_contract.py",
         run: behavioral_genericity_contract::run,
     },
+    Check {
+        name: "production-genericity",
+        replaces: "scripts/check_production_genericity.sh",
+        run: production_genericity::run,
+    },
 ];
+
+/// Where a check writes (`RUSTDOC-AND-XTASK.15.e`): the terminal's two streams, or one buffer holding both in the
+/// order they were written, as a shell's `$(… 2>&1)` captured a component.
+pub trait Output {
+    /// Text for standard output.
+    fn out(&mut self, text: &str);
+    /// Text for standard error.
+    fn err(&mut self, text: &str);
+}
+
+/// The terminal: standard output and standard error.
+pub struct Terminal;
+
+impl Output for Terminal {
+    fn out(&mut self, text: &str) {
+        print!("{text}");
+    }
+
+    fn err(&mut self, text: &str) {
+        eprint!("{text}");
+    }
+}
+
+/// Both streams in one buffer, in the order they were written.
+#[derive(Default)]
+pub struct Captured {
+    /// What the check wrote, to either stream.
+    pub text: String,
+}
+
+impl Output for Captured {
+    fn out(&mut self, text: &str) {
+        self.text.push_str(text);
+    }
+
+    fn err(&mut self, text: &str) {
+        self.text.push_str(text);
+    }
+}
 
 /// Run the check named by the first argument with the rest; a missing or unknown name prints the checks and
 /// exits 2.
