@@ -14,7 +14,8 @@
 //!
 //! `scripts/check_proof_seal_currency.sh`, the registered script, is a shim that keeps its argument loop, its knobs
 //! (`SPECFORGE_PROOF_SEAL_GENERATED_ROOT`, `SPECFORGE_PROOF_SEAL_BIN`, `SPECFORGE_PROOF_SEAL_TOTAL_STAGES`) and the
-//! activation.
+//! activation. `scripts/check_proof_seal_total.sh`, the `PROOF-SEAL-TOTAL` doctrine's CI-tier entry, is a shim over
+//! `cargo xtask check proof-seal-total` ([`run_total`]) since `RUSTDOC-AND-XTASK.14.f`.
 
 use std::collections::HashSet;
 use std::fs;
@@ -83,6 +84,40 @@ pub fn run(repository: &Path, arguments: &[String]) -> i32 {
             eprintln!(
                 "Usage: cargo xtask check proof-seal-currency [--check|--total|--self-test] | --proof-ledger-candidates \
                  PATH... | --scan-proof-ledger PATH | --sealed-artifacts PATH..."
+            );
+            2
+        }
+    }
+}
+
+/// What `scripts/check_proof_seal_total.sh`, the `PROOF-SEAL-TOTAL` doctrine's entry (`SIGNAL-DECLARATION-ROW-DROP.1c`),
+/// asks for: its own registry row exists only because the driver passes one executable no arguments, so every mode
+/// but the self-test runs the total probe.
+#[derive(Debug, PartialEq, Eq)]
+enum TotalMode {
+    SelfTest,
+    Total,
+}
+
+/// The wrapper's reading of its first argument; any argument after it is ignored, as the wrapper ignored it.
+fn total_mode(arguments: &[String]) -> Option<TotalMode> {
+    match arguments.first().map(String::as_str) {
+        Some("--self-test") => Some(TotalMode::SelfTest),
+        None | Some("" | "--check" | "--total") => Some(TotalMode::Total),
+        Some(_) => None,
+    }
+}
+
+/// The `PROOF-SEAL-TOTAL` doctrine, native since `RUSTDOC-AND-XTASK.14.f`: this check's total probe, at CI tier, so a
+/// per-document replay-topology divergence the sampled stages cannot see is enforced rather than documented; and
+/// this check's own self-test, so a sweep over the registry reaches the same controls.
+pub fn run_total(repository: &Path, arguments: &[String]) -> i32 {
+    match total_mode(arguments) {
+        Some(TotalMode::SelfTest) => self_test(repository),
+        Some(TotalMode::Total) => gate(repository, true),
+        None => {
+            eprintln!(
+                "Usage: cargo xtask check proof-seal-total [--check|--total|--self-test]  (all modes run the TOTAL probe)"
             );
             2
         }
@@ -1225,6 +1260,33 @@ mod tests {
             "line one failed: twice "
         );
         assert_eq!(diagnostic(&[b'x'; 300]).len(), 200);
+    }
+
+    #[test]
+    fn the_total_entry_runs_the_total_probe_in_every_mode_but_the_self_test() {
+        let mode = |arguments: &[&str]| {
+            total_mode(
+                &arguments
+                    .iter()
+                    .map(|argument| (*argument).to_string())
+                    .collect::<Vec<_>>(),
+            )
+        };
+        assert_eq!(mode(&[]), Some(TotalMode::Total));
+        assert_eq!(mode(&["--check"]), Some(TotalMode::Total));
+        assert_eq!(mode(&["--total"]), Some(TotalMode::Total));
+        assert_eq!(mode(&["--check", "--anything"]), Some(TotalMode::Total));
+        assert_eq!(mode(&["--self-test"]), Some(TotalMode::SelfTest));
+        assert_eq!(mode(&["--bogus"]), None);
+        let shim =
+            fs::read_to_string(crate::repository_root().join("scripts/check_proof_seal_total.sh"))
+                .expect("the registered entry");
+        assert!(
+            shim.contains("--self-test) exec cargo xtask check proof-seal-total --self-test ;;")
+        );
+        assert!(
+            shim.contains("''|--check|--total) exec cargo xtask check proof-seal-total --total ;;")
+        );
     }
 
     #[test]

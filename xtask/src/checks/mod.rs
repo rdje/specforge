@@ -101,6 +101,11 @@ pub const CHECKS: &[Check] = &[
         replaces: "scripts/check_proof_seal_currency.sh",
         run: proof_seal_currency::run,
     },
+    Check {
+        name: "proof-seal-total",
+        replaces: "scripts/check_proof_seal_total.sh",
+        run: proof_seal_currency::run_total,
+    },
 ];
 
 /// Run the check named by the first argument with the rest; a missing or unknown name prints the checks and

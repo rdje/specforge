@@ -414,7 +414,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
-  Status: `in_progress` (container; wave 3; `.14.a`-`.14.e` done)
+  Status: `in_progress` (container; wave 3; `.14.a`-`.14.f` done, `.14.g` open)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
   `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
@@ -575,12 +575,21 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   script`
 
 - ID: `RUSTDOC-AND-XTASK.14.f`
-  Status: `pending`
-  Goal: `cargo xtask check proof-seal-total` replaces the `PROOF-SEAL-TOTAL` gate's script
+  Status: `done` (`2026-10-24`; CODE; checklist below)
+  Goal: `cargo xtask check proof-seal-total` replaces `scripts/check_proof_seal_total.sh`
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim. **Found by `.14.e`:** the wrapper's
   header says `--self-test` reaches "the same 19 controls"; the owning check declares 21. Correct it with the port.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-24`.** `PROOF-SEAL-TOTAL` has its own registry row only because the driver runs one executable per
+  row with no arguments, so its native entry, `run_total` in `xtask/src/checks/proof_seal_currency.rs`, reads the
+  first argument as the wrapper did (`--self-test` runs the owning check's self-test; none, `--check` and `--total`
+  run the total probe; anything after the first argument is ignored) and calls the owning check directly. The shim
+  keeps that dispatch, its usage refusal and the activation; its header no longer carries a control count, which
+  is the owning check's declaration (the stale "19" was 21). **Parity**: HEAD's wrapper beside the shim on 9 inputs
+  (the self-test, a refusal, every dispatch form including an empty and an ignored extra argument over a stub-binary
+  fixture corpus with a divergent document, and the persisted corpus): identical on all 9. **Cost:** 142 s either
+  way on the persisted corpus, the probes dominating.
+  Verification: `cargo test -p xtask --lib` 83/83; parity and RED in `.project-data/tmp/rdx-14f/`
+  Commit: `RUSTDOC-AND-XTASK.14.f — cargo xtask check proof-seal-total replaces the PROOF-SEAL-TOTAL gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14.g`
   Status: `pending` (opened `2026-10-23` by `.14.c`)
@@ -744,6 +753,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.f` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — the `PROOF-SEAL-TOTAL` entry ran only as shell (`scripts/check_proof_seal_total.sh`,
+  over the owning script); HEAD's copy is the parity baseline in `.project-data/tmp/rdx-14f/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native entry: `xtask/src/checks/mod.rs` listed 14 checks; and HEAD's
+  `scripts/check_proof_seal_total.sh:19` carried "the same 19 controls" by hand. RED 4/4, every file restored
+  byte-identically with a fresh mtime: `--check` no longer total, the last argument read, the self-test running the
+  probe, the shim running the sampled gate; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — ported gates 13 -> 14; identical output on 9 of 9 inputs, the persisted corpus
+  among them.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 83
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md`'s row; book `getting-started.md`; KM card
+  `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.e` (CODE) — DONE `2026-10-24`
 
@@ -1012,9 +1038,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.14.f` | `pending` | wave 3's sixth gate, `PROOF-SEAL-TOTAL`, the CI-tier wrapper |
-| 2 | `RUSTDOC-AND-XTASK.14.g` | `pending` | the persisted-artifact path tool `PROJECT-DATA-LOCALITY` composes |
-| 3 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
+| 1 | `RUSTDOC-AND-XTASK.14.g` | `pending` | wave 3's last leaf: the path tool `PROJECT-DATA-LOCALITY` composes |
+| 2 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
 
 ## Decisions
 

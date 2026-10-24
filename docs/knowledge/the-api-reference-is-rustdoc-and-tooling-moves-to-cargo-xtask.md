@@ -9,7 +9,7 @@ answers:
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "in what order do the doctrine gates move to cargo xtask"
-  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier, constraint-part-span, project-data-locality, chain-currency, proof-seal-currency)"
+  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier, constraint-part-span, project-data-locality, chain-currency, proof-seal-currency, proof-seal-total)"
   - "which crates may xtask depend on (serde_json, sha2)"
   - "how do the xtask ports read JSON like Python (pyjson)"
   - "what checks that the doctrine tables match the driver registry (DOCTRINE-TABLES)"
@@ -22,7 +22,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.e, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.f, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -59,8 +59,8 @@ which completes wave 2, `corpus-frontier` since `.14.a`, its adapter and Perl co
 `constraint-part-span` since `.14.b`, its adapter and Python census likewise, and `project-data-locality` since
 `.14.c`, which still runs the two tools it composes, and `chain-currency` since `.14.d`, which also holds the one
 content-identity predicate the rebuild remedy reaches through `scripts/lib/stage_artifact_identity.sh`, and
-`proof-seal-currency` since `.14.e`, which holds the seal reader `scripts/lib/proof_seal_scan.sh` now calls;
-`doctrine-tables`,
+`proof-seal-currency` since `.14.e`, which holds the seal reader `scripts/lib/proof_seal_scan.sh` now calls, with
+its CI-tier entry `proof-seal-total` since `.14.f`; `doctrine-tables`,
 the `DOCTRINE-TABLES` doctrine `.18` added after both doctrine tables were found to have drifted from the driver's
 registry, was written natively), in `.6`'s four waves: the small shell gates (`.8`-`.12`), the single-file Perl and
 Python gates, the multi-file gates and corpus oracles, then the composites and the driver; a port proves parity on
