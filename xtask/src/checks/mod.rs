@@ -1,6 +1,7 @@
 //! `cargo xtask check <doctrine>`: the doctrine gates ported to Rust (`RUSTDOC-AND-XTASK.6`). Each replaces the
 //! script the doctrine driver registers, which stays as a shim over it.
 
+pub mod behavioral_genericity_contract;
 pub mod chain_currency;
 pub mod constraint_part_span;
 pub mod contract_encoding;
@@ -129,6 +130,11 @@ pub const CHECKS: &[Check] = &[
         name: "production-genericity-rules",
         replaces: "scripts/check_production_genericity_rules.pl",
         run: production_genericity_rules::run,
+    },
+    Check {
+        name: "behavioral-genericity-contract",
+        replaces: "scripts/check_behavioral_genericity_contract.py",
+        run: behavioral_genericity_contract::run,
     },
 ];
 

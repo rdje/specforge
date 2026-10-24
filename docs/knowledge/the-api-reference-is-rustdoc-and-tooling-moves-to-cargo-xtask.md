@@ -22,7 +22,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.c, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.d, .17, .18, .19); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -68,7 +68,9 @@ registry, was written natively), in `.6`'s four waves: the small shell gates (`.
 Python gates, the multi-file gates and corpus oracles, then the composites and the driver (wave 4 sized by
 `.15.0`: each composite a leaf per component script, its orchestrator last, `PRODUCTION-GENERICITY`'s 3,136 lines
 before `LIVE-DOC-SIZE`'s 18,539; `production-genericity-dependencies` since `.15.a`,
-`production-genericity-inventory` since `.15.b`, `production-genericity-rules` since `.15.c`); a port proves
+`production-genericity-inventory` since `.15.b`, `production-genericity-rules` since `.15.c`,
+`behavioral-genericity-contract` since `.15.d`, whose script's problem order varied with Python's hash seed and
+whose totals used CPython 3.12's compensated `sum`; `.19` owns its 0.6 s over the script); a port proves
 parity on the current tree, every self-test case and a broken input per refusal, and from wave 2 may use crates the
 workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
 kit artifacts of the five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle,

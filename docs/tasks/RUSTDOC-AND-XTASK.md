@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: repository durability and portability
 - Created: `2026-10-23`
-- Last updated: `2026-10-23`
+- Last updated: `2026-10-24`
 - Owner: repo-local workflow
 
 ## Goal
@@ -727,10 +727,44 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   script`
 
 - ID: `RUSTDOC-AND-XTASK.15.d`
-  Status: `pending`
+  Status: `done` (`2026-10-24`; CODE; checklist below)
   Goal: `scripts/check_behavioral_genericity_contract.py` moves to xtask
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; the claim re-derivation it serves
   still reads its output.
+  **Done `2026-10-24`.** `xtask/src/checks/behavioral_genericity_contract.rs` holds the frozen behavioral contract
+  to its closed authority set, relations, stage comparison, input planes, failure taxonomy and evidence contract;
+  the reviewed recipes and the semantic-negative matrix; each of the 24 population rows to its SourceIR, normalized
+  Markdown, live source and five stage artifacts; the population assertions and frozen census; the held-out
+  evidence's split, 51 attempts, coverage, 90 strata and Wilson intervals; and the post-boundary declaration
+  (ADR 0050), in the script's order and words. It sees values as Python did (equality across `int`, `float` and
+  `bool`, `round` to even, `repr`, `OSError` and `UnicodeDecodeError` text, universal newlines, `csv`'s tab dialect,
+  `PurePath`), and where Python raised it refuses with the exception's text and exits 1. Its 23 RED cases and the
+  mandated grown retained set keep their verdicts. The Python shim keeps `argparse`; `PRODUCTION-GENERICITY` and the
+  claims `retained-growth-admitted-as-declared-residual` (its RED region now in the port) and
+  `wire-golds-installed-and-evidence-current` run it unchanged. **Found:** the script reported a row's non-integer
+  fields in `set` order, which moved with the hash seed (four orders in six seeds; the port keeps declared order);
+  its coverage totals rest on CPython 3.12's compensated `sum`, summed per attempt first; and a decoding error in the
+  population counts its position from its 8,192-byte read chunk. **Parity**: HEAD's script beside the port on 214
+  fixtures, each breaking one of the ten authority files or a SourceIR, 222 runs with 15 self-tests: 174 identical,
+  48 where Python raised and the port refused with the same exception text, exit code and stdout, none different.
+  **Cost** (quiet machine, before the swap): the script 3.7 s, 6.7 s with `--self-test`; the port 4.3-4.6 s (`.19`
+  owns the difference) and 2.0 s, each SourceIR read once as a projection of what it checks; peak memory 2.0 GB
+  against 1.5 GB.
+  Verification: `cargo test -p xtask --lib` 103/103; parity and RED in `.project-data/tmp/rdx-15d/`
+  Commit: `RUSTDOC-AND-XTASK.15.d — cargo xtask check behavioral-genericity-contract replaces the
+  BEHAVIORAL-CONTRACT component's script`
+
+- ID: `RUSTDOC-AND-XTASK.15.d.i`
+  Status: `pending` (found by `.15.d`'s RED)
+  Goal: each subset-floor case in the behavioral self-test is caught by its own binding again
+  Acceptance: deleting the subset-floor append, or the undeclared-excess append, fails the self-test and
+  `cargo test -p xtask --lib`; each of the six boundary cases fails only with the problem written for it; claim
+  `retained-growth-admitted-as-declared-residual` re-observed.
+  **Found `2026-10-24`.** RED deleted each append in the port and both survived; so do they in HEAD's script. The
+  cases `vanished frozen key` and `unreported post-boundary key` reuse the live post-boundary declaration, which has
+  held seven keys since `EXTRACTION-REPRESENTATION-GAPS.3.a` (`2026-09-26`), and none of the seven is in those cases'
+  retained set, so each case fails on seven `is not a retained bundle` problems whether or not its own binding
+  fires. The claim's RED evidence, that the deletion misses its case, has been false since then.
   Verification: `pending`
   Commit: `pending`
 
@@ -801,6 +835,19 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   `.16`'s 16 SpecForge doctrines that had scripts; this 17th was never a script.
   Verification: `cargo test -p xtask --lib` 53/53; self-test 8/8; RED in `.project-data/tmp/rdx-18/`
   Commit: `RUSTDOC-AND-XTASK.18 — DOCTRINE-TABLES: both doctrine tables match the driver's registry`
+
+- ID: `RUSTDOC-AND-XTASK.19`
+  Status: `pending` (found by `.15.d`)
+  Goal: a native check that parses as much JSON as its script did is no slower than the script
+  Acceptance: the behavioral contract's default mode at or under the Python script's time on the same tree,
+  measured; `pyjson`'s corpus proof (`.17`) still 14,964 of 14,964; no product crate's build changed.
+  **Measured `2026-10-24` (`.15.d`).** The behavioral contract parses 950 MB of stage artifacts and hashes 33 MB of
+  sources: 4.3-4.5 s natively against the script's 3.7 s. In a 3 s sample of the native run, 432 of 2,151 samples
+  are `pyjson::parse` collecting the whole input into a `Vec<char>` before it scans, and about 700 are `sha2`'s
+  software compression, which the dev profile leaves unoptimized because `[profile.dev.package.xtask]` optimizes
+  the tooling crate alone (`.13.a`). Peak memory is 2.0 GB against the script's 1.5 GB.
+  Verification: `pending`
+  Commit: `pending`
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
 
@@ -884,6 +931,30 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.d` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — `PRODUCTION-GENERICITY`'s behavioral contract ran only as Python
+  (`scripts/check_behavioral_genericity_contract.py`, 2,086 lines): `24 current documents; … 7 retained
+  post-boundary and unqualified` in 3.7 s, its self-test 23/23 with 1/1 admitted in 6.7 s. HEAD's copy is the
+  parity baseline in `.project-data/tmp/rdx-15d/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 19 checks. RED, each
+  restored byte-identically with a fresh mtime: 13 of 15 fail `cargo test -p xtask --lib` (a 4,096-byte decoding
+  chunk, `round` half away from zero, an uncompensated `sum`, a collapsed two-slash root, `int()` admitting a
+  leading underscore, a header skipping blank records, repeated prospective keys counted twice, a relation hashed
+  before its key is known, malformed attempts skipped by the counts, a plane id hashed before its relations, the
+  SourceIR projection dropping the claims, `0xff` read as a lead byte, the nested coverage sum flattened). The other
+  two, deleting either subset-floor append, survive in HEAD's script as well: a found defect, `.15.d.i`.
+- [x] **ADDRESSED (verified)** — 222 parity runs over 214 fixtures: 174 identical, 48 refused where Python raised,
+  none different; self-test 23/23 with 1/1 admitted; the claim re-derivations read the same lines.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 103
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes. The port keeps the script's data-only
+  labels (the self-test's three gold keys, the six category names).
+- [x] **LOCKSTEP** — KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`; claims
+  `retained-growth-admitted-as-declared-residual` and `wire-golds-installed-and-evidence-current` name the port as a
+  control; the book states the check's behaviour, not its language, and is unchanged.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.c` (CODE) — DONE `2026-10-24`
 
@@ -1238,8 +1309,9 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.d` | `pending` | `PRODUCTION-GENERICITY`'s last component, the behavioral contract |
+| 1 | `RUSTDOC-AND-XTASK.15.d.i` | `pending` | two subset-floor cases caught incidentally; a claim's RED stale |
 | 2 | `RUSTDOC-AND-XTASK.15.e` | `pending` | the orchestrator, calling every component in-process |
+| 3 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
 ## Decisions
 
