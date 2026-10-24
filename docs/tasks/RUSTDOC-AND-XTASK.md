@@ -663,11 +663,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.0 — size wave 4 before porting it (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.15.a`
-  Status: `pending`
+  Status: `done` (`2026-10-24`; CODE; checklist below)
   Goal: `scripts/check_production_genericity_dependencies.pl` moves to xtask
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-24`.** `xtask/src/checks/production_genericity_dependencies.rs` reads the workspace's members and
+  each manifest's `[dependencies]` names with the script's patterns (the table's body begins after the last newline
+  in the white space after its header and ends at the next line opening a table; a member is each match of
+  `/"([^"]+)"/g`), holds the product's package direction, the graph tool's and xtask's disconnection, xtask's
+  already-locked crates, and the core root and IR registry free of oracle modules, and reports in the script's
+  order and words; a file it cannot read ends it with the `errno` Perl's `die` left. Its self-test writes the same
+  fixture under `generated/` and keeps all 11 verdicts. The Perl shim keeps `Getopt::Long` (so `--root=DIR`,
+  `-self-test` and `--self` read as before, and a stray option exits 255) and the root resolution. **Parity**: HEAD's
+  script beside the shim on 29 inputs (ten argument forms; 19 fixture roots, one per rule, among them an aliased
+  reverse dependency, new crates in xtask, a duplicated member, an oracle module in the registry, a `[dependencies]`
+  header at the end of a file and a missing manifest): identical on all 29. Kept for parity: a members list with an
+  empty `""` misreads, the regex pairing its second quote with the next string; cargo refuses an empty member, so no
+  buildable workspace reaches it. **Cost:** 0.02 s for the script, 0.10 s for the shim.
+  Verification: `cargo test -p xtask --lib` 88/88; parity and RED in `.project-data/tmp/rdx-15a/`
+  Commit: `RUSTDOC-AND-XTASK.15.a — cargo xtask check production-genericity-dependencies replaces the DEPENDENCIES
+  component's script`
 
 - ID: `RUSTDOC-AND-XTASK.15.b`
   Status: `pending`
@@ -841,6 +855,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.a` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — `PRODUCTION-GENERICITY`'s `DEPENDENCIES` component ran only as Perl
+  (`scripts/check_production_genericity_dependencies.pl`); HEAD's copy is the parity baseline in
+  `.project-data/tmp/rdx-15a/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 16 checks. RED 7/7, the
+  file restored byte-identically with a fresh mtime: the reverse dependency admitted, the alias admitted, the tool's
+  dependency on the product admitted, the `trajectory` module renamed out of the oracle set, a table's body run past
+  the next table, an empty quoted member skipped whole, any crate admitted to xtask; each fails
+  `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — 29 of 29 inputs identical; self-test 11/11.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 88
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.g` (CODE) — DONE `2026-10-24`
 
@@ -1146,8 +1177,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.a` | `pending` | wave 4's first component: the production dependency direction check |
-| 2 | `RUSTDOC-AND-XTASK.15.b`-`.15.e` | `pending` | the rest of `PRODUCTION-GENERICITY`, its orchestrator last |
+| 1 | `RUSTDOC-AND-XTASK.15.b` | `pending` | `PRODUCTION-GENERICITY`'s second component, the inventory |
+| 2 | `RUSTDOC-AND-XTASK.15.c`-`.15.e` | `pending` | the rest of `PRODUCTION-GENERICITY`, its orchestrator last |
 
 ## Decisions
 

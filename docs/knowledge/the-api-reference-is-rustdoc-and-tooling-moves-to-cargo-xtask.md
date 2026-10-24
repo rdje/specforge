@@ -22,7 +22,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0, .15.a, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -67,9 +67,9 @@ the `DOCTRINE-TABLES` doctrine `.18` added after both doctrine tables were found
 registry, was written natively), in `.6`'s four waves: the small shell gates (`.8`-`.12`), the single-file Perl and
 Python gates, the multi-file gates and corpus oracles, then the composites and the driver (wave 4 sized by
 `.15.0`: each composite a leaf per component script, its orchestrator last, `PRODUCTION-GENERICITY`'s 3,136 lines
-before `LIVE-DOC-SIZE`'s 18,539); a port proves parity on the current tree, every self-test case and a broken input
-per refusal, and from wave 2 may use crates the workspace already locks. Since `.16` the port covers SpecForge's own
-16 doctrines only: the
+before `LIVE-DOC-SIZE`'s 18,539; `production-genericity-dependencies` since `.15.a`); a port proves parity on the
+current tree, every self-test case and a broken input per refusal, and from wave 2 may use crates the workspace
+already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
 kit artifacts of the five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle,
 `check_task_acceptance.sh`, `check_claim_verification.pl`, the driver and the hooks) stay in their portable language,
 because other repositories copy them. The `readme-policy` port fixed two fail-opens in the script it replaced: its
