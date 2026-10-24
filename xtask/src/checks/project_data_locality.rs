@@ -3,10 +3,10 @@
 //! activates the roots as `scripts/project_data_env.sh` does (`project_data::activate`), requires the contract text
 //! each seam carries (`.cargo/config.toml`'s forced variables, every shell entry point's activation, the native
 //! commands, the hooks, the product's temporary and subprocess seams), holds the two Python environments to their
-//! own directories, refuses disposable residue, and runs the two tools it composes with the activated environment:
-//! `scripts/check_persisted_artifact_paths.pl` (its self-test, then its check) and
+//! own directories, refuses disposable residue, runs the persisted-artifact path contract's self-test and check
+//! in-process (`persisted_artifact_paths`, native since `RUSTDOC-AND-XTASK.14.g`), and runs
 //! `scripts/test_project_data_locality.sh`, the shell activation's own cases, which stays shell with the library it
-//! tests.
+//! tests, with the activated environment.
 //!
 //! `scripts/check_project_data_locality.sh`, the registered script, is a shim over it that keeps its argument
 //! refusal and the shell activation.
@@ -196,11 +196,14 @@ pub fn run(repository: &Path, arguments: &[String]) -> i32 {
     {
         gate.note(".claude/hooks/post-compact.sh retains an absolute user-home path");
     }
-    let persisted = root.join("scripts/check_persisted_artifact_paths.pl");
-    if !succeeds(&persisted, &["--self-test"], root, environment.as_ref()) {
+    // The persisted-artifact path contract, native since `RUSTDOC-AND-XTASK.14.g`, in-process: its self-test, then its
+    // check, each reporting a failure on standard error as the tool does.
+    let (self_test_holds, check_holds) =
+        crate::checks::persisted_artifact_paths::locality_verdicts(root);
+    if !self_test_holds {
         gate.note("persisted-artifact path gate self-test failed");
     }
-    if !succeeds(&persisted, &["--check"], root, environment.as_ref()) {
+    if !check_holds {
         gate.note(
             "canonical artifacts or their producer seams violate the persisted-path contract",
         );
@@ -430,7 +433,6 @@ mod tests {
             ".cargo/config.toml",
             ".githooks/pre-commit",
             ".claude/hooks/post-compact.sh",
-            "scripts/check_persisted_artifact_paths.pl",
             "crates/specforge/src/persisted_path.rs",
             "crates/specforge/src/ir/source.rs",
             "crates/specforge/src/ir/evidence.rs",

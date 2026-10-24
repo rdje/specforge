@@ -8,10 +8,11 @@ answers:
   - "where does SpecForge canonicalize upstream artifact paths before serialization"
   - "how many generated artifacts still mention the deleted boot-volume repository"
   - "which IR stages have adopted move safe persisted paths"
+  - "where is the persisted-artifact path check implemented (cargo xtask check persisted-artifact-paths)"
 date: 2026-08-09
 status: current
 tags: [artifact-paths, portability, locality, generated, source-ir, evidence-ir, semantic-ir, intent-ir]
-evidence: docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.0-.4); crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; scripts/check_persisted_artifact_paths.pl
+evidence: docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.0-.4); crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; scripts/check_persisted_artifact_paths.pl; xtask/src/checks/persisted_artifact_paths.rs (native since RUSTDOC-AND-XTASK.14.g)
 reverify: "perl scripts/check_persisted_artifact_paths.pl --check"
 ---
 

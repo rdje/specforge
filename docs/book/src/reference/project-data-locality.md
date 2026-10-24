@@ -95,8 +95,9 @@ retired-root values; 82 explicitly labeled absolute source-library values remain
 Semantic, Intent, adapter, learning, and recovery workflows were exercised against the migrated corpus before
 the exact same-volume rollback copy was removed.
 
-The locality doctrine now runs 12 scanner self-tests, pins eleven producer/consumer files (including the
-dormant FigureRegion field), and scans every JSON artifact under `generated/`. Any absolute path-valued field,
+The locality doctrine now runs 18 self-test assertions (12 scanner cases, three seam cases, the migration
+rewrite and two origin insertions), pins twelve producer/consumer files (including the dormant FigureRegion
+field), and scans every JSON artifact under `generated/`. Any absolute path-valued field,
 including a command working directory, is rejected unless it is one of the narrow, origin-labeled external
 SourceIR/EvidenceIR provenance fields. This covers canonical stages, validation output, rescan plans, and source
 sidecars whenever they are present.

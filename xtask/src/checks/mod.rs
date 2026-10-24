@@ -7,6 +7,7 @@ pub mod contract_encoding;
 pub mod corpus_frontier;
 pub mod doctrine_tables;
 pub mod ownership_citations;
+pub mod persisted_artifact_paths;
 pub mod project_data_locality;
 pub mod proof_seal_currency;
 pub mod published_assertions;
@@ -105,6 +106,11 @@ pub const CHECKS: &[Check] = &[
         name: "proof-seal-total",
         replaces: "scripts/check_proof_seal_total.sh",
         run: proof_seal_currency::run_total,
+    },
+    Check {
+        name: "persisted-artifact-paths",
+        replaces: "scripts/check_persisted_artifact_paths.pl",
+        run: persisted_artifact_paths::run,
     },
 ];
 

@@ -414,7 +414,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14`
-  Status: `in_progress` (container; wave 3; `.14.a`-`.14.f` done, `.14.g` open)
+  Status: `done` (`2026-10-24`; container; wave 3; `.14.a`-`.14.g` done)
   Goal: the multi-file gates and corpus oracles move to xtask
   Acceptance: one leaf per doctrine, in order: `CORPUS-FRONTIER`, `CONSTRAINT-PART-SPAN`, `PROJECT-DATA-LOCALITY`,
   `CHAIN-CURRENCY`, `PROOF-SEAL-CURRENCY`, `PROOF-SEAL-TOTAL`. **Known consumer (`.13.e`):**
@@ -592,7 +592,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.14.f — cargo xtask check proof-seal-total replaces the PROOF-SEAL-TOTAL gate's script`
 
 - ID: `RUSTDOC-AND-XTASK.14.g`
-  Status: `pending` (opened `2026-10-23` by `.14.c`)
+  Status: `done` (`2026-10-24`; CODE; opened `2026-10-23` by `.14.c`; checklist below)
   Goal: the persisted-artifact path tool `PROJECT-DATA-LOCALITY` composes,
   `scripts/check_persisted_artifact_paths.pl`, moves to xtask
   Acceptance: `.6`'s parity evidence on all four modes (`--check`, `--report`, `--self-test` with its 18 declared
@@ -600,8 +600,29 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   native locality gate calls it natively. The book's `reference/project-data-locality.md` says the doctrine runs "12
   scanner self-tests" and "pins eleven producer/consumer files", where the tool declares 18 assertions (12 cases and
   six standalone checks) over 12 contract files: re-derive both and correct the book in the same leaf.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-24`.** `xtask/src/checks/persisted_artifact_paths.rs` reads every JSON file under `generated/` as
+  the script did: the twelve producer files and their seams (`persisted_path.rs`'s two callable seams by the script's
+  regex), the artifact kinds by path, each line's string members by the script's regex (so a value ends at an escaped
+  quote, as Perl's did), each path value decoded with every byte a character, and the external labels each artifact
+  kind may carry; past twenty absolute values it reports the count. The migration rewrites a legacy root's path
+  prefixes, labels each SourceIR's origin (declared, else repository-owned, else below exactly one authorized external
+  root) and each EvidenceIR's after its anchor line, and writes through a sibling temporary. Its 18 self-test
+  assertions keep their verdicts. `PROJECT-DATA-LOCALITY` now runs the self-test and the check in-process. The Perl
+  shim keeps the argument loop, the output layers (a refusal exits 25, a missing root 2, as before) and the root
+  resolution. **Re-derived for the book:** 18 self-test assertions (12 scanner cases, three seam cases, the migration
+  rewrite and two origin insertions) and twelve producer files; `reference/project-data-locality.md` said 12 and
+  eleven. The corrected line is a new counted candidate, given an `incomplete` region
+  (`adjudicate_book_quantity_regions.py --add`; 882 candidate lines, 586 regions). **Parity**: HEAD's script beside
+  the shim on 36 inputs (the self-test, the check, the report and the default on the persisted corpus, 5,930 artifacts
+  and 3,082,161 path values; six refusals; seven fixture roots for the scan and the contract, from a clean tree to
+  Windows and UNC values, an undecodable value, more than twenty absolute values, a symbolic link, broken seams and a
+  linked `generated/`, each checked and reported; eleven migrations, dry run and `--execute` on a fresh copy per
+  phase, with every refusal): identical stdout, stderr, exit code, and migrated tree on all 36. One behaviour is kept
+  for parity: a non-ASCII byte in an offending value prints as Perl printed it, each byte a Latin-1 character.
+  **Cost:** the check 94 s for the script, 13 s native; `PROJECT-DATA-LOCALITY` 119 s -> 13 s.
+  Verification: `cargo test -p xtask --lib` 86/86; parity and RED in `.project-data/tmp/rdx-14g/`
+  Commit: `RUSTDOC-AND-XTASK.14.g — cargo xtask check persisted-artifact-paths replaces the persisted-artifact path
+  tool`
 
 - ID: `RUSTDOC-AND-XTASK.15`
   Status: `pending` (container; wave 4)
@@ -753,6 +774,26 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.g` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — the persisted-artifact path contract ran only as Perl
+  (`scripts/check_persisted_artifact_paths.pl`, 94 s over the persisted corpus); HEAD's copy is the parity baseline in
+  `.project-data/tmp/rdx-14g/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native tool: `xtask/src/checks/mod.rs` listed 15 checks, and
+  `PROJECT-DATA-LOCALITY` spawned the Perl tool twice. RED 7/7, the file restored byte-identically with a fresh
+  mtime: `_root` keys ignored, UNC paths not absolute, the EvidenceIR's external label unauthorized, the message cap
+  off by one, escapes taken raw, the legacy needle without its slash, label lines skipped; each fails
+  `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — 36 of 36 inputs identical, migrated trees included; self-test 18/18; the book's
+  counts corrected.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 86
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — `.14` closed; `docs/DOCTRINE_INSTANCE.md`'s `PROJECT-DATA-LOCALITY` row; book
+  `reference/project-data-locality.md`; KM cards `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask` and
+  `cross-stage-artifact-paths-are-absolute`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.14.f` (CODE) — DONE `2026-10-24`
 
@@ -1038,8 +1079,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.14.g` | `pending` | wave 3's last leaf: the path tool `PROJECT-DATA-LOCALITY` composes |
-| 2 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: the composites, opening one leaf per doctrine as each starts |
+| 1 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: `PRODUCTION-GENERICITY`, then `LIVE-DOC-SIZE`, a leaf each |
 
 ## Decisions
 

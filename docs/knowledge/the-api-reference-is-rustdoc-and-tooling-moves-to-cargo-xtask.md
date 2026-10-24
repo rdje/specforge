@@ -22,7 +22,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.f, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .17, .18); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -57,8 +57,10 @@ since `.12`, `section-anchors` since `.13.a`, `task-node-retention` since `.13.b
 `ownership-citations` since `.13.d`, `published-assertions` since `.13.e`, `residual-actionability` since `.13.f`,
 which completes wave 2, `corpus-frontier` since `.14.a`, its adapter and Perl core one module, and
 `constraint-part-span` since `.14.b`, its adapter and Python census likewise, and `project-data-locality` since
-`.14.c`, which still runs the two tools it composes, and `chain-currency` since `.14.d`, which also holds the one
-content-identity predicate the rebuild remedy reaches through `scripts/lib/stage_artifact_identity.sh`, and
+`.14.c`, which runs the persisted-artifact path tool in-process since `.14.g` (the tool itself
+`cargo xtask check persisted-artifact-paths`) and still runs the shell activation's own cases, and
+`chain-currency` since `.14.d`, which also holds the one content-identity predicate the rebuild remedy reaches
+through `scripts/lib/stage_artifact_identity.sh`, and
 `proof-seal-currency` since `.14.e`, which holds the seal reader `scripts/lib/proof_seal_scan.sh` now calls, with
 its CI-tier entry `proof-seal-total` since `.14.f`; `doctrine-tables`,
 the `DOCTRINE-TABLES` doctrine `.18` added after both doctrine tables were found to have drifted from the driver's
