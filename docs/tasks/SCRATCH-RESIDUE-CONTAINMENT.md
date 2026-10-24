@@ -6,7 +6,7 @@
 - Status: `active` (`.0`, `.3`, `.5`-`.14`, `.16`-`.18` complete; `.1`, `.2`, `.4`, `.15` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-10-23`
+- Last updated: `2026-10-24`
 - Owner: repo-local workflow
 
 ## Goal
@@ -532,6 +532,30 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   reclamation at startup, or working files outside the tracked shard directory), fixed in the kit in place as
   `RUSTDOC-AND-XTASK.16` rules; and a mechanical refusal of a tracked generator working file, with a RED control.
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.20`
+  State: `done` (`2026-10-24`)
+  Goal: the startup sweep the directive fires when `docs/ARTIFACT_CLEANUP.md` is more than 24 hours old
+  Acceptance: every root under `.project-data/tmp/` classified named-or-chained; only unreachable scratch and
+  superseded rustc sessions removed; residue census proves them gone and every retained root intact
+  **Why now.** The record read `2026-10-23 07:42 +0200`; the sweep ran at `2026-10-24 07:42 +0200`, between commits
+  with a clean tree. **Scratch roots.** The chain is still one hop to
+  `spec-to-intent-f-iii-heldout/behavioral_holdout_evidence.json`, sha256 `4a05ec3d…`, equal to the declaration.
+  `.18`'s sweep, copied to `.project-data/tmp/src20/sweep.py`, no longer retains `erg-65a`: the HEAD seed baseline
+  moved with `EXTRACTION-REPRESENTATION-GAPS.65.b` and `.67.a` (both `2026-10-23`, after `.18`) to
+  `erg-67a/seeds_new`, the one path the sweep now protects inside an otherwise unreachable root; only tooling commits
+  have landed since `.67.a`, so it is current. It classifies 7 retained and the rest named or unreachable, and
+  removed **9 paths / 295 files / 2,115.7 MiB**: `erg-65a`'s superseded seeds, and the cascade, SourceIR and binary
+  snapshots of the committed slices `.65.b` (`erg-65b`) and `.67.a` (`erg-67a`); logs and scripts stay.
+  `.project-data/tmp` went **36,201,780 -> 34,034,800 KiB**. **Incremental cache.** No `cargo` or `rustc` ran in
+  this repository. 171 units: 57 superseded finalized sessions and 126 locks with no session, no `-working` session;
+  removed them, keeping each unit's newest session: **13,834,436 -> 11,879,304 KiB**. `target/release` and
+  `target/debug/deps` hold no `.bin`/`.log`. **`generated/`.** A run killed at `2026-10-23 16:33` left three fixture
+  roots (`live-document-size-tests.*` 2, `live-document-size-verifiers.*` 1; 47 files), removed; `.15`'s
+  dot-prefixed roots are 33, unchanged, and stay `.15`'s.
+  Verification: `every removal path absent; the re-plan is empty on both scripts; every retained root present, the
+  seed baseline's 12 files intact; chain sha256 re-derived 4a05ec3d…, equal`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.20 — the daily sweep: 2.1 GiB of scratch and 1.9 GiB of rustc sessions`
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability
@@ -545,6 +569,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-10-24` | `.20` daily sweep | chain sha256 equal; 9 paths / 295 files / 2,115.7 MiB removed (a superseded seed baseline and two committed slices' snapshots), the HEAD seed baseline protected; 57 superseded rustc sessions and 126 orphan locks removed (13.2 -> 11.3 GiB); three killed-run fixture roots under `generated/` removed |
 | `2026-10-23` | `.18` daily sweep | chain sha256 equal; 45 paths / 890 files / 6,920.3 MiB of unreachable scratch removed, logs and scripts kept, one in-flight root retained, whose committed slice's snapshots also went (5 paths / 203 files / 1,706.6 MiB); 19 superseded rustc sessions and 53 orphan locks removed (13.1 -> 10.4 GiB); no fixture residue under `generated/` |
 | `2026-10-22` | `.17` daily sweep | chain sha256 equal; 118 paths / 3,237 files / 22,556.8 MiB of unreachable scratch removed, logs and scripts kept, three in-flight roots retained; 22 superseded rustc sessions and 47 orphan locks removed (13.2 -> 10.3 GiB); 196 fixture roots a killed gate run left under `generated/` removed |
 | `2026-10-21` | `.16` daily sweep | chain sha256 equal; 56 unreachable roots, 11 of which accumulated scratch since `.14`; their data directories and executable/source copies removed (60 paths, 1,107 files, 7,803.9 MiB), logs and scripts kept; 35 superseded rustc sessions and 75 orphan locks removed (13.1 -> 9.8 GiB); every retained root present |
@@ -564,6 +589,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.20` | `SCRATCH-RESIDUE-CONTAINMENT.20 — the daily sweep: 2.1 GiB of scratch and 1.9 GiB of rustc sessions` | re-run the sweep; reclaim committed slices' snapshots, a superseded seed baseline, superseded incremental sessions and a killed run's fixtures |
 | `.18` | `SCRATCH-RESIDUE-CONTAINMENT.18 — the daily sweep: 8.4 GiB of scratch and 2.7 GiB of rustc sessions` | re-run the sweep; reclaim unreachable scratch, a committed slice's snapshots and superseded incremental sessions |
 | `.17` | `SCRATCH-RESIDUE-CONTAINMENT.17 — the daily sweep: 22.0 GiB of scratch and 2.9 GiB of rustc sessions` | re-run the sweep; reclaim unreachable scratch, superseded incremental sessions and a killed run's fixtures |
 | `.16` | `SCRATCH-RESIDUE-CONTAINMENT.16 — the daily sweep: 7.6 GiB of scratch and 3.3 GiB of rustc sessions` | re-run the sweep; reclaim unreachable scratch and superseded incremental sessions |
