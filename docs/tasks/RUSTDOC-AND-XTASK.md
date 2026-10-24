@@ -704,11 +704,27 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   component's script`
 
 - ID: `RUSTDOC-AND-XTASK.15.c`
-  Status: `pending`
+  Status: `done` (`2026-10-24`; CODE; checklist below)
   Goal: `scripts/check_production_genericity_rules.pl` moves to xtask
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-24`.** `xtask/src/checks/production_genericity_rules.rs` holds each rule-migration row to its
+  schema (13 fields; its family known to the claim inventory and unique; its stage, stem and migration leaf; its
+  premises; its capability and the alpha obligation that capability requires; compatibility; a target module and
+  schema owner that exist), resolves every producer, mutator, canonical-seam and bypass entrypoint as the script did
+  (`path#symbol`, the function named by the symbol's last non-empty `::` part declared with the script's signature
+  pattern, whose optional generics close at the last `>` before the `(`), expands each family's fields into unique
+  rule ids, requires the six canonical write seams, and holds each conformance bypass to its stage, leaf and a
+  fail-closed disposition. Its 7 self-test cases keep their verdicts on the same fixture under `generated/`. A
+  source file is read once rather than once per entrypoint. The Perl shim keeps `Getopt::Long` and the root
+  resolution. **Parity**: HEAD's script beside the shim on 34 inputs (five argument forms; 29 fixture roots holding
+  the real inventories and sources with one break each, from a wrong header to every rule-row field, malformed,
+  duplicate, missing and absent entrypoints, a symbol ending `::`, a generic signature, malformed claim rows, an
+  orphan family, every bypass refusal and a missing inventory): 33 identical, and one in stdout and exit code alone,
+  a short rule row, where Perl also warned of six uninitialized values. **Cost:** 0.06 s for the script, 0.21 s for
+  the shim.
+  Verification: `cargo test -p xtask --lib` 94/94; parity and RED in `.project-data/tmp/rdx-15c/`
+  Commit: `RUSTDOC-AND-XTASK.15.c — cargo xtask check production-genericity-rules replaces the RULES component's
+  script`
 
 - ID: `RUSTDOC-AND-XTASK.15.d`
   Status: `pending`
@@ -868,6 +884,22 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.c` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — `PRODUCTION-GENERICITY`'s `RULES` component ran only as Perl
+  (`scripts/check_production_genericity_rules.pl`); HEAD's copy is the parity baseline in
+  `.project-data/tmp/rdx-15c/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 18 checks. RED 7/7, the
+  file restored byte-identically with a fresh mtime: a duplicate entry admitted, trailing empty `::` parts kept,
+  generics closed at the first `>`, the word boundary before `fn` ignored, an alpha mismatch admitted, the canonical
+  seams unchecked, an unsafe bypass disposition admitted; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — 33 of 34 inputs identical, one in stdout and exit code; self-test 7/7.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 94
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.b` (CODE) — DONE `2026-10-24`
 
@@ -1206,8 +1238,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.c` | `pending` | `PRODUCTION-GENERICITY`'s third component, the rules |
-| 2 | `RUSTDOC-AND-XTASK.15.d`-`.15.e` | `pending` | the behavioral contract, then the orchestrator |
+| 1 | `RUSTDOC-AND-XTASK.15.d` | `pending` | `PRODUCTION-GENERICITY`'s last component, the behavioral contract |
+| 2 | `RUSTDOC-AND-XTASK.15.e` | `pending` | the orchestrator, calling every component in-process |
 
 ## Decisions
 
