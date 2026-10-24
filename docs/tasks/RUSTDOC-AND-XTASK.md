@@ -684,11 +684,24 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   component's script`
 
 - ID: `RUSTDOC-AND-XTASK.15.b`
-  Status: `pending`
+  Status: `done` (`2026-10-24`; CODE; checklist below)
   Goal: `scripts/check_production_genericity_inventory.pl` moves to xtask
   Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-24`.** `xtask/src/checks/production_genericity_inventory.rs` holds each module-inventory row to its
+  schema (five non-empty fields, a repository Rust path with no `..` component, a known current and target plane, a
+  lane `e.ii`-`e.iv`), each claim-family row likewise (six fields, a `stage.name` family matching its stage, a known
+  stage, field names), the inventories against the product's `.rs` files and the five artifact structs' `pub`
+  fields read line by line as the script read them, and every module and field classified exactly once; problems
+  read in the script's order and words, and an unreadable file ends it with Perl's `errno`. Its 3 self-test cases
+  keep their verdicts on the same fixture under `generated/`. The Perl shim keeps `Getopt::Long` and the root
+  resolution. **Parity**: HEAD's script beside the shim on 22 inputs (six argument forms; 16 fixture roots holding
+  the real inventories and sources with one break each: a wrong header, every row shape, a duplicate, an
+  unclassified, stale, hidden or directory-named module, a CRLF inventory, a duplicated family and its fields, an
+  unclassified field, a missing struct, a struct line with trailing space, a missing inventory and a missing source):
+  identical on all 22. **Cost:** 0.04 s for the script, 0.14 s for the shim.
+  Verification: `cargo test -p xtask --lib` 91/91; parity and RED in `.project-data/tmp/rdx-15b/`
+  Commit: `RUSTDOC-AND-XTASK.15.b — cargo xtask check production-genericity-inventory replaces the INVENTORY
+  component's script`
 
 - ID: `RUSTDOC-AND-XTASK.15.c`
   Status: `pending`
@@ -855,6 +868,22 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.b` (CODE) — DONE `2026-10-24`
+
+- [x] **REPRODUCE / MEASURE** — `PRODUCTION-GENERICITY`'s `INVENTORY` component ran only as Perl
+  (`scripts/check_production_genericity_inventory.pl`); HEAD's copy is the parity baseline in
+  `.project-data/tmp/rdx-15b/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 17 checks. RED 7/7, the
+  file restored byte-identically with a fresh mtime: a duplicate module admitted, stale paths unreported, an unknown
+  target plane admitted, a doubly classified field admitted, a field read with a space before its colon, `..`
+  components admitted, unclassified fields unreported; each fails `cargo test -p xtask --lib`.
+- [x] **ADDRESSED (verified)** — 22 of 22 inputs identical; self-test 3/3.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 91
+  passed; `check_doctrines.sh --gate` PASS at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code changes.
+- [x] **LOCKSTEP** — KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.a` (CODE) — DONE `2026-10-24`
 
@@ -1177,8 +1206,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.b` | `pending` | `PRODUCTION-GENERICITY`'s second component, the inventory |
-| 2 | `RUSTDOC-AND-XTASK.15.c`-`.15.e` | `pending` | the rest of `PRODUCTION-GENERICITY`, its orchestrator last |
+| 1 | `RUSTDOC-AND-XTASK.15.c` | `pending` | `PRODUCTION-GENERICITY`'s third component, the rules |
+| 2 | `RUSTDOC-AND-XTASK.15.d`-`.15.e` | `pending` | the behavioral contract, then the orchestrator |
 
 ## Decisions
 

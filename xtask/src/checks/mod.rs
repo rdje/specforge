@@ -9,6 +9,7 @@ pub mod doctrine_tables;
 pub mod ownership_citations;
 pub mod persisted_artifact_paths;
 pub mod production_genericity_dependencies;
+pub mod production_genericity_inventory;
 pub mod project_data_locality;
 pub mod proof_seal_currency;
 pub mod published_assertions;
@@ -117,6 +118,11 @@ pub const CHECKS: &[Check] = &[
         name: "production-genericity-dependencies",
         replaces: "scripts/check_production_genericity_dependencies.pl",
         run: production_genericity_dependencies::run,
+    },
+    Check {
+        name: "production-genericity-inventory",
+        replaces: "scripts/check_production_genericity_inventory.pl",
+        run: production_genericity_inventory::run,
     },
 ];
 
