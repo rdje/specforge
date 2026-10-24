@@ -625,10 +625,77 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   tool`
 
 - ID: `RUSTDOC-AND-XTASK.15`
-  Status: `pending` (container; wave 4)
+  Status: `in_progress` (container; wave 4; sized by `.15.0`)
   Goal: the composite gates move to xtask
   Acceptance: one leaf per doctrine, in order: `PRODUCTION-GENERICITY`, `LIVE-DOC-SIZE`. Since `.16`,
-  `CLAIM-VERIFICATION` and the driver (`check_doctrines.sh`) stay portable kit artifacts and are not ported.
+  `CLAIM-VERIFICATION` and the driver (`check_doctrines.sh`) stay portable kit artifacts and are not ported. Since
+  `.15.0`, each composite is a leaf per component script and its orchestrator last.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.15.0`
+  Status: `done` (`2026-10-24`; DESIGN)
+  Goal: size wave 4 before porting it
+  Acceptance: measure each composite's component tree and its other callers, re-check the kit classification, and
+  decide the leaves and their order.
+  **Measured `2026-10-24`** (`.project-data/tmp/rdx-15/measure.py`, `measure.txt`): `PRODUCTION-GENERICITY` is a
+  188-line shell orchestrator over five components, 3,136 lines: `check_production_genericity_dependencies.pl` 303,
+  `_inventory.pl` 292, `_rules.pl` 439, `check_behavioral_genericity_contract.py` 2,086, and
+  `check_production_genericity_flow.sh` 16, which only launches the Rust crate `specforge-production-graph` with
+  `--check-census`. `LIVE-DOC-SIZE` is a 90-line orchestrator over 20 components, 18,539 lines, from
+  `check_task_evidence_contracts.sh` 37 to `check_active_task_evidence.pl` 2,756 and
+  `check_rolling_ledger_protocol.pl` 2,579. Two of its components have callers outside it, among them the
+  `CLAIM-VERIFICATION` kit: `check_live_document_size.pl` and `check_canonical_collection_catalogs.pl`.
+  **Kit classification re-checked:** `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` is an adopted doctrine with a local
+  adoption block and a SpecForge implementation, not a kit to copy, so `.16`'s classification of `LIVE-DOC-SIZE` as
+  SpecForge's own stands.
+  **Decided.**
+  - One leaf per component script and the orchestrator last, so the orchestrator moves once and calls every
+    component in-process; until then it keeps calling each component's registered path, a shim once ported.
+  - `PRODUCTION-GENERICITY` first, being a sixth the size: `.15.a` dependencies, `.15.b` inventory, `.15.c` rules,
+    `.15.d` the behavioral contract (its output is a claim's re-derivation:
+    `wire-golds-installed-and-evidence-current` expects `7 retained post-boundary and unqualified`), `.15.e` the
+    orchestrator, which launches `specforge-production-graph` as `_flow.sh` did, since xtask may not depend on a
+    product crate.
+  - `LIVE-DOC-SIZE`'s leaves open when `PRODUCTION-GENERICITY` closes, in the same pattern; a component a kit
+    calls keeps its path and command line exactly, so the kit is unaffected.
+  Verification: `measurement in .project-data/tmp/rdx-15/; doctrine gates at commit`
+  Commit: `RUSTDOC-AND-XTASK.15.0 — size wave 4 before porting it (DESIGN)`
+
+- ID: `RUSTDOC-AND-XTASK.15.a`
+  Status: `pending`
+  Goal: `scripts/check_production_genericity_dependencies.pl` moves to xtask
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.15.b`
+  Status: `pending`
+  Goal: `scripts/check_production_genericity_inventory.pl` moves to xtask
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.15.c`
+  Status: `pending`
+  Goal: `scripts/check_production_genericity_rules.pl` moves to xtask
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.15.d`
+  Status: `pending`
+  Goal: `scripts/check_behavioral_genericity_contract.py` moves to xtask
+  Acceptance: `.6`'s parity evidence, its self-test ported; the script a shim; the claim re-derivation it serves
+  still reads its output.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `RUSTDOC-AND-XTASK.15.e`
+  Status: `pending`
+  Goal: `cargo xtask check production-genericity` replaces `scripts/check_production_genericity.sh`
+  Acceptance: `.6`'s parity evidence; the script a shim; the components called in-process and the graph crate
+  launched as `_flow.sh` launched it.
   Verification: `pending`
   Commit: `pending`
 
@@ -1079,7 +1146,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15` | `pending` | wave 4: `PRODUCTION-GENERICITY`, then `LIVE-DOC-SIZE`, a leaf each |
+| 1 | `RUSTDOC-AND-XTASK.15.a` | `pending` | wave 4's first component: the production dependency direction check |
+| 2 | `RUSTDOC-AND-XTASK.15.b`-`.15.e` | `pending` | the rest of `PRODUCTION-GENERICITY`, its orchestrator last |
 
 ## Decisions
 
