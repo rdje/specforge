@@ -14,6 +14,7 @@ pub mod derived_state_contracts;
 pub mod doctrine_tables;
 pub mod fsmgen_request_bundles;
 pub mod knowledge_map_projection;
+pub mod knowledge_map_shard_contract;
 pub mod ownership_citations;
 pub mod persisted_artifact_paths;
 pub mod production_genericity;
@@ -189,6 +190,11 @@ pub const CHECKS: &[Check] = &[
         name: "derived-state-contract-tests",
         replaces: "scripts/test_derived_state_contracts.pl",
         run: derived_state_contract_tests::run,
+    },
+    Check {
+        name: "knowledge-map-shard-contract",
+        replaces: "scripts/check_knowledge_map_shard_contract.pl",
+        run: knowledge_map_shard_contract::run,
     },
 ];
 
