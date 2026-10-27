@@ -906,15 +906,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.i — cargo xtask check canonical-collection-catalogs replaces the catalog generator`
 
 - ID: `RUSTDOC-AND-XTASK.15.j`
-  Status: `pending`
+  Status: `done` (`2026-10-27`; CODE; checklist below)
   Goal: `cargo xtask check derived-state-authority-tests` replaces the 411-line
     `scripts/test_derived_state_authorities.pl` and ports its 268-line helper
     `scripts/check_derived_state_authorities.pl` as `derived-state-authorities`
   Acceptance: `.15.1`'s common port contract for both scripts, including `--quiet`, `--root`, `--registry` and
     `--contract`; both project adapters and all positive/fail-closed fixtures agree. The book-truth caller,
     two derived-state contracts and two census verifiers keep their paths and argv.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-27`.** `xtask/src/checks/derived_state_authorities.rs` loads each declared verified-copy
+    contract, normalizes Rust semver, compares every primary and secondary copy, and verifies the FSMGen gitlink
+    against the stage-zero mode-160000 index entry. `derived_state_authority_tests.rs` builds fresh Git fixtures
+    under `generated/` and reproduces all 25 checks, including alternate declared paths, missing/duplicate/unknown
+    roles, unsafe paths, missing markers and both baseline agreements. The adapter source contains no secondary
+    copy path literals. Both Perl shims keep their original argument forms and output. **Parity:** original and
+    port on both real adapters and all 25 checks in quiet and verbose modes: byte-identical stdout, stderr and
+    exit code.
+  Verification: `cargo test -p xtask --lib` 120/120; all 25 checks and both adapters in `.project-data/tmp/rdx-15j/`
+  Commit: `RUSTDOC-AND-XTASK.15.j — cargo xtask check derived-state-authorities and authority tests replace Perl`
 
 - ID: `RUSTDOC-AND-XTASK.15.k`
   Status: `pending`
@@ -1217,6 +1225,24 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.j` (CODE) — DONE `2026-10-27`
+
+- [x] **REPRODUCE / MEASURE** — derived-state authority ran only as its 268-line adapter and 411-line test suite:
+  both real adapters agreed with their authorities, and all 25 Rust/gitlink checks passed. HEAD's scripts and
+  baselines are in `.project-data/tmp/rdx-15j/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 25 checks. RED: all 25
+  cases, including alternate paths, role/marker/semver/gitlink failures and the no-fallback source-literal case.
+  A nested boundary lookup was caught by every gitlink fixture and corrected to scan the captured boundary text;
+  quiet and verbose outputs then matched the original byte for byte.
+- [x] **ADDRESSED (verified)** — native checks 25 -> 27 (adapter and test command); both real adapters and all 25
+  checks are identical in stdout, stderr and exit code in quiet and verbose modes.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 120
+  passed; `check_doctrines.sh --fast`, `--only LIVE-DOC-SIZE,PROJECT-DATA-LOCALITY` PASS; mdBook and full gate.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code, extraction behavior or dependency graph changed.
+- [x] **LOCKSTEP** — book `getting-started.md` lists both new native checks; KM card and `MEMORY.md` updated; no
+  production rule was deleted or replaced.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.i` (CODE) — DONE `2026-10-27`
 
@@ -1707,24 +1733,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.j` | `pending` | the derived-state authority adapter and its test, 679 lines together |
-| 2 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
-| 3 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
-| 4 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
-| 5 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
-| 6 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
-| 7 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
-| 8 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
-| 9 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
-| 10 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
-| 11 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
-| 12 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
-| 13 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
-| 14 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
-| 15 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
-| 16 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
-| 17 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
-| 18 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
+| 1 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
+| 2 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
+| 3 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
+| 4 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
+| 5 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
+| 6 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
+| 7 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
+| 8 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
+| 9 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
+| 10 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
+| 11 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
+| 12 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
+| 13 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
+| 14 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
+| 15 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
+| 16 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
+| 17 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
 ## Decisions
 
@@ -1746,6 +1771,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-27` | `.15.j` | `cargo test -p xtask --lib`; both real adapters and all 25 checks in quiet and verbose modes; Rust oracles and focused doctrine gates | 120/120 and all 25 checks; every comparison byte-identical in stdout, stderr and exit status; no secondary fallback path literals |
 | `2026-10-27` | `.15.i` | `cargo test -p xtask --lib`; check/self-test/full-write/refusal parity; both claim probes; Rust oracles and focused doctrine gates | 117/117 and self-test 8/8; every comparison and generated tree byte-identical; claim kit and RED region native; both probes PASS |
 | `2026-10-27` | `.15.h` | `cargo test -p xtask --lib`; check/self-test/full-write/refusal parity; Rust oracles and focused doctrine gates | 115/115 and self-test 13/13; every comparison and the complete generated trees byte-identical; malformed-marker, stale-part and nonexistent-root refusals agree |
 | `2026-10-27` | `.15.g` | `cargo test -p xtask --lib`; check/self-test/argument/root/unknown-owner parity; Rust oracles and focused doctrine gates | 113/113 and self-test 17/17; every comparison byte-identical in stdout, stderr and exit status; all 16 refusal classes pass |
@@ -1764,6 +1790,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.j` | `RUSTDOC-AND-XTASK.15.j — cargo xtask check derived-state-authorities and authority tests replace Perl` | the 268-line adapter and 411-line suite native; all 25 checks in quiet and verbose modes |
 | `.15.i` | `RUSTDOC-AND-XTASK.15.i — cargo xtask check canonical-collection-catalogs replaces the catalog generator` | the 393-line generator and claim-kit literal native; full write and both probes pass |
 | `.15.h` | `RUSTDOC-AND-XTASK.15.h — cargo xtask check task-tree-catalog replaces the catalog generator` | the 374-line generator native; full write and generated trees byte-identical |
 | `.15.g` | `RUSTDOC-AND-XTASK.15.g — cargo xtask check fsmgen-request-bundles replaces the request-bundle checker` | the 355-line checker and all 17 cases native; exact argument and refusal parity |
@@ -1780,6 +1807,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-27`: `.15.j` moves the derived-state authority adapter and all 25 of its checks to `cargo xtask check`
+  with exact quiet and verbose parity.
 - `2026-10-27`: `.15.i` moves the canonical collection catalog generator and the claim kit's row-bound literal
   to `cargo xtask check`, with exact write and refusal parity.
 - `2026-10-27`: `.15.h` moves the task-tree catalog generator to `cargo xtask check` with exact write,
