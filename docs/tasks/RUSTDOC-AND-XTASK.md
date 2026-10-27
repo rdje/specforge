@@ -887,14 +887,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.h — cargo xtask check task-tree-catalog replaces the catalog generator`
 
 - ID: `RUSTDOC-AND-XTASK.15.i`
-  Status: `pending`
+  Status: `done` (`2026-10-27`; CODE; checklist below)
   Goal: `cargo xtask check canonical-collection-catalogs` replaces the 393-line
     `scripts/check_canonical_collection_catalogs.pl`
   Acceptance: `.15.1`'s common port contract, including `--check`, `--write`, `--self-test`, `--root`, `--config`
     and `--surfaces`; every index regenerates byte-identically. The claim kit reads `MAX_ROW_BYTES` from the
     native producer, and all five census commands and both claim controls keep their interface.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-27`.** `xtask/src/checks/canonical_collection_catalogs.rs` validates the bounded catalog and
+    surface registries, expands every declared target through the original glob grammar, reads each member's first
+    H1, and renders the five collection indexes and catalog root byte for byte. Same-directory atomic writes,
+    all eight parser/bound cases and the Perl shim are included. The claim kit now reads
+    `const MAX_ROW_BYTES: usize = 512` from the native module at line 19; its two claim records include that module
+    in every watched input, and the unsafe-member RED region points at the native case at lines 644-645. Both probes pass.
+  **Parity:** original and port on `--check`, `--self-test`, a full copied-tree `--write` with a member-title change,
+    a stale index, an unregistered surface, an unsafe config path and a nonexistent root: identical stdout, stderr
+    and exit code, with complete generated trees identical.
+  Verification: `cargo test -p xtask --lib` 117/117; parity and both claim probes in `.project-data/tmp/rdx-15i/`
+  Commit: `RUSTDOC-AND-XTASK.15.i — cargo xtask check canonical-collection-catalogs replaces the catalog generator`
 
 - ID: `RUSTDOC-AND-XTASK.15.j`
   Status: `pending`
@@ -1208,6 +1217,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.i` (CODE) — DONE `2026-10-27`
+
+- [x] **REPRODUCE / MEASURE** — canonical collection catalogs ran only as their 393-line Perl generator: five
+  indexes over 332 Markdown members, and 8/8 parser and bound cases. HEAD's script and baselines are in
+  `.project-data/tmp/rdx-15i/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 24 checks. RED: all
+  eight cases, a stale index, an unregistered surface, an unsafe config path and a nonexistent root produce the
+  same refusal. The claim kit's literal used to live in the Perl script; it now lives at
+  `xtask/src/checks/canonical_collection_catalogs.rs:19`, with the RED region and every watched input migrated.
+- [x] **ADDRESSED (verified)** — native checks 24 -> 25; check, self-test, full copied-tree write and every
+  representative refusal are identical in stdout, stderr and exit status; generated trees are byte-identical, and
+  both claim probes pass.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 117
+  passed; `check_doctrines.sh --fast`, `--only LIVE-DOC-SIZE,PROJECT-DATA-LOCALITY` PASS; mdBook and full gate.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code, extraction behavior or dependency graph changed.
+- [x] **LOCKSTEP** — book `getting-started.md` lists the new native check; KM card and `MEMORY.md` updated; no
+  production rule was deleted or replaced.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.h` (CODE) — DONE `2026-10-27`
 
@@ -1679,25 +1707,24 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.i` | `pending` | the 393-line canonical collection catalogs and their claim-kit consumer |
-| 2 | `RUSTDOC-AND-XTASK.15.j` | `pending` | the derived-state authority adapter and its test, 679 lines together |
-| 3 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
-| 4 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
-| 5 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
-| 6 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
-| 7 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
-| 8 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
-| 9 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
-| 10 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
-| 11 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
-| 12 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
-| 13 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
-| 14 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
-| 15 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
-| 16 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
-| 17 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
-| 18 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
-| 19 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
+| 1 | `RUSTDOC-AND-XTASK.15.j` | `pending` | the derived-state authority adapter and its test, 679 lines together |
+| 2 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
+| 3 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
+| 4 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
+| 5 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
+| 6 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
+| 7 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
+| 8 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
+| 9 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
+| 10 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
+| 11 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
+| 12 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
+| 13 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
+| 14 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
+| 15 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
+| 16 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
+| 17 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
+| 18 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
 ## Decisions
 
@@ -1719,6 +1746,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-27` | `.15.i` | `cargo test -p xtask --lib`; check/self-test/full-write/refusal parity; both claim probes; Rust oracles and focused doctrine gates | 117/117 and self-test 8/8; every comparison and generated tree byte-identical; claim kit and RED region native; both probes PASS |
 | `2026-10-27` | `.15.h` | `cargo test -p xtask --lib`; check/self-test/full-write/refusal parity; Rust oracles and focused doctrine gates | 115/115 and self-test 13/13; every comparison and the complete generated trees byte-identical; malformed-marker, stale-part and nonexistent-root refusals agree |
 | `2026-10-27` | `.15.g` | `cargo test -p xtask --lib`; check/self-test/argument/root/unknown-owner parity; Rust oracles and focused doctrine gates | 113/113 and self-test 17/17; every comparison byte-identical in stdout, stderr and exit status; all 16 refusal classes pass |
 | `2026-10-27` | `.15.f` | `cargo test -p xtask --lib`; success/argument/collision-RED parity; Rust oracles and focused doctrine gates | 111/111; all three old/new runs byte-identical in stdout, stderr and exit status; all 8 integration checks and every assertion RED control pass |
@@ -1736,6 +1764,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.i` | `RUSTDOC-AND-XTASK.15.i — cargo xtask check canonical-collection-catalogs replaces the catalog generator` | the 393-line generator and claim-kit literal native; full write and both probes pass |
 | `.15.h` | `RUSTDOC-AND-XTASK.15.h — cargo xtask check task-tree-catalog replaces the catalog generator` | the 374-line generator native; full write and generated trees byte-identical |
 | `.15.g` | `RUSTDOC-AND-XTASK.15.g — cargo xtask check fsmgen-request-bundles replaces the request-bundle checker` | the 355-line checker and all 17 cases native; exact argument and refusal parity |
 | `.15.f` | `RUSTDOC-AND-XTASK.15.f — cargo xtask check knowledge-map-projection-tests replaces the projection suite` | the 94-line integration suite native; success, argument and collision-RED parity |
@@ -1751,6 +1780,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-27`: `.15.i` moves the canonical collection catalog generator and the claim kit's row-bound literal
+  to `cargo xtask check`, with exact write and refusal parity.
 - `2026-10-27`: `.15.h` moves the task-tree catalog generator to `cargo xtask check` with exact write,
   marker, stale-part and root parity.
 - `2026-10-27`: `.15.g` moves the FSMGen request-bundle checker and its 17 cases to `cargo xtask check` with

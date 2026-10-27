@@ -779,7 +779,7 @@ sub run_probe {
             my $scaffold_lines = @lines - @rows;
             my $scaffold_bytes = length($catalog) - length(join('', @rows));
             my $max_row_bytes = 512;
-            require_literal('scripts/check_canonical_collection_catalogs.pl', 'my $MAX_ROW_BYTES = 512;', \@errors);
+            require_literal('xtask/src/checks/canonical_collection_catalogs.rs', 'const MAX_ROW_BYTES: usize = 512;', \@errors);
             my $full_lines = $scaffold_lines + $capacity;
             my $full_bytes = $scaffold_bytes + $capacity * ($max_row_bytes + 1);
             my $line_ceiling = $catalog_surface->{enforcement_ceilings}{lines_each} // 0;

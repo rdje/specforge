@@ -2,6 +2,7 @@
 //! script the doctrine driver registers, which stays as a shim over it.
 
 pub mod behavioral_genericity_contract;
+pub mod canonical_collection_catalogs;
 pub mod chain_currency;
 pub mod constraint_part_span;
 pub mod contract_encoding;
@@ -159,6 +160,11 @@ pub const CHECKS: &[Check] = &[
         name: "task-tree-catalog",
         replaces: "scripts/check_task_tree_catalog.pl",
         run: task_tree_catalog::run,
+    },
+    Check {
+        name: "canonical-collection-catalogs",
+        replaces: "scripts/check_canonical_collection_catalogs.pl",
+        run: canonical_collection_catalogs::run,
     },
 ];
 
