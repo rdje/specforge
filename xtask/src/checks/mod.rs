@@ -30,6 +30,7 @@ pub mod rustdoc;
 pub mod section_anchors;
 pub mod task_node_retention;
 pub mod task_tree_catalog;
+pub mod validation_snapshot_currentness;
 
 use std::path::Path;
 
@@ -195,6 +196,11 @@ pub const CHECKS: &[Check] = &[
         name: "knowledge-map-shard-contract",
         replaces: "scripts/check_knowledge_map_shard_contract.pl",
         run: knowledge_map_shard_contract::run,
+    },
+    Check {
+        name: "validation-snapshot-currentness",
+        replaces: "scripts/check_validation_snapshot_currentness.pl",
+        run: validation_snapshot_currentness::run,
     },
 ];
 

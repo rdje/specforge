@@ -973,13 +973,20 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.m — cargo xtask check knowledge-map-shard-contract replaces the shard planner`
 
 - ID: `RUSTDOC-AND-XTASK.15.n`
-  Status: `pending`
+  Status: `done` (`2026-10-28`; CODE; checklist below)
   Goal: `cargo xtask check validation-snapshot-currentness` replaces the 706-line
     `scripts/check_validation_snapshot_currentness.pl`
   Acceptance: `.15.1`'s common port contract for every existing mode; the reviewed boundary, source identity,
     partition coverage and all current/census verifier outputs agree.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-28`.** `xtask/src/checks/validation_snapshot_currentness.rs` validates the bounded contract,
+    reviewed Git object, four routed snapshot parts, live projection, producer regions and evidence. Its 12
+    self-tests seed and clean every fixture. **Parity:** default/check/report/self-test, argument failures, both
+    missing-root shapes, missing and malformed contracts, and the 32 KiB cap agree byte-for-byte with the original,
+    including read status 2, parse status 255 and diagnostic framing. The documentation refresh also exposed
+    `validate_tree` dropping `$skip_outputs`; it now reaches `prepare_context`, and the fact catalog's 60/60 suite
+    passes with the refreshed `--print-plan` contract and post-write check intact.
+  Verification: `cargo test -p xtask --lib` 126/126; all modes and edge probes in `.project-data/tmp/rdx-15n/`
+  Commit: `RUSTDOC-AND-XTASK.15.n — cargo xtask check validation-snapshot-currentness replaces the snapshot verifier`
 
 - ID: `RUSTDOC-AND-XTASK.15.o`
   Status: `pending`
@@ -1756,7 +1763,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 | 1 | `RUSTDOC-AND-XTASK.15.k` | `done` | the 574-line derived-state contract checker, before its test |
 | 2 | `RUSTDOC-AND-XTASK.15.l` | `done` | the 530-line derived-state contract test matrix |
 | 3 | `RUSTDOC-AND-XTASK.15.m` | `done` | the 675-line Knowledge Map shard contract |
-| 4 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
+| 4 | `RUSTDOC-AND-XTASK.15.n` | `done` | the 706-line validation-snapshot currentness check |
 | 5 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
 | 6 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
 | 7 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
@@ -1791,6 +1798,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-28` | `.15.n` | `cargo test -p xtask --lib`; original/native/shim mode, argument, root and contract-error parity; Rust oracles and focused doctrine gates | 126/126 and 12/12; every comparison byte-identical in stdout, stderr and exit status; read, parse and cap failures preserve their distinct contracts |
 | `2026-10-27` | `.15.m` | `cargo test -p xtask --lib`; original/native/shim mode, argument, root and contract-error parity; Rust oracles and focused doctrine gates | 124/124 and 13/13; 453 facts, 4,008 keys and 28 shards; every comparison byte-identical in stdout, stderr and exit status |
 | `2026-10-27` | `.15.l` | `cargo test -p xtask --lib`; original/native/shim verbose, quiet and invalid-argument parity; fixture-residue census; Rust oracles and focused doctrine gates | 122/122 and 47/47; every preserved-interface comparison byte-identical in stdout, stderr and exit status; no fixture residue |
 | `2026-10-27` | `.15.k` | `cargo test -p xtask --lib derived_state_contracts`; original/native check, report, relative-root and 50-case fixture/edge parity; Rust oracles and focused doctrine gates | 14 contracts, eight core verifiers and three secondary copies; all 50 checks pass and every comparison is byte-identical in stdout, stderr and exit status |
@@ -1813,6 +1821,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.n` | `RUSTDOC-AND-XTASK.15.n — cargo xtask check validation-snapshot-currentness replaces the snapshot verifier` | the 706-line verifier native; all 12 self-tests and exact mode/report/refusal parity |
 | `.15.m` | `RUSTDOC-AND-XTASK.15.m — cargo xtask check knowledge-map-shard-contract replaces the shard planner` | the 675-line planner native; all 13 self-tests and exact mode/report/refusal parity |
 | `.15.l` | `RUSTDOC-AND-XTASK.15.l — cargo xtask check derived-state-contract-tests replaces the contract test matrix` | the 530-line suite native; all 47 checks, exact quiet/verbose parity and no fixture residue |
 | `.15.k` | `RUSTDOC-AND-XTASK.15.k — cargo xtask check derived-state-contracts replaces the field-contract checker` | the 574-line checker native; 14 contracts, eight core verifiers and exact check/report parity |
@@ -1833,6 +1842,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-28`: `.15.n` moves validation-snapshot currentness to `cargo xtask check`, with all 12 self-tests and
+  exact mode, report and refusal parity.
 - `2026-10-27`: `.15.m` moves the Knowledge Map shard planner to `cargo xtask check`, with exact mode, report,
   argument and refusal parity and the portable generator query preserved.
 - `2026-10-27`: `.15.l` moves the 47-check derived-state contract suite to `cargo xtask check`, with exact

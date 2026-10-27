@@ -1083,7 +1083,7 @@ sub prepare_context {
 
 sub validate_tree {
     my ($base, $contract_path, $skip_outputs) = @_;
-    my ($errors, $context) = prepare_context($base, $contract_path, 0);
+    my ($errors, $context) = prepare_context($base, $contract_path, $skip_outputs);
     my @errors = @$errors;
     my $contract = $context->{contract};
     return (\@errors, {warnings => []}, $context) if ref($contract) ne 'HASH';

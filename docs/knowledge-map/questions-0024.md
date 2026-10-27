@@ -294,7 +294,7 @@
   > why does eMMC table_0020 declare HS400 as a signal
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > why does fact-card-catalog --write reject stale planned_outputs before refreshing them (validate_tree must pass skip_outputs to prepare_context; write renders past stale plans, then the normal check requires the refreshed --print-plan records)
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > why does folding a signal name's case matter beyond style
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does gate 2 of is_post_passive_binding_only_subject not exempt every table row
