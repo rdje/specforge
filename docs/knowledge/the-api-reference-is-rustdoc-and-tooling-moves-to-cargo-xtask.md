@@ -19,10 +19,10 @@ answers:
   - "how many public items lack documentation (missing_docs)"
   - "what is the documentation coverage ratchet (coverage_ceilings.tsv)"
   - "is a ported script deleted"
-date: 2026-10-23
+date: 2026-10-27
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.e, .17, .18, .19); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.1, .17, .18, .19); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -72,7 +72,9 @@ before `LIVE-DOC-SIZE`'s 18,539; `production-genericity-dependencies` since `.15
 `behavioral-genericity-contract` since `.15.d`, whose script's problem order varied with Python's hash seed and
 whose totals used CPython 3.12's compensated `sum`; `.19` owns its 0.6 s over the script; and
 `production-genericity` since `.15.e`, its four xtask components in-process through `checks::Output`, which
-captures both streams as `2>&1` did; `LIVE-DOC-SIZE` next, its leaves opened by `.15.1`); a port proves
+captures both streams as `2>&1` did. `LIVE-DOC-SIZE` is next: `.15.1` re-measured its 20 direct components as
+18,539 lines and found the 268-line derived-state authority helper behind a `File::Spec` path, then opened
+`.15.f`-`.15.z`, producers before callers and the orchestrator last, with every kit path and argv preserved); a port proves
 parity on the current tree, every self-test case and a broken input per refusal, and from wave 2 may use crates the
 workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
 kit artifacts of the five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle,
