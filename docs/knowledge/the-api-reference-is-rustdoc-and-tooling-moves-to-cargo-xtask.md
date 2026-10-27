@@ -9,7 +9,7 @@ answers:
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "in what order do the doctrine gates move to cargo xtask"
-  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier, constraint-part-span, project-data-locality, chain-currency, proof-seal-currency, proof-seal-total, production-genericity, knowledge-map-projection-tests, fsmgen-request-bundles, task-tree-catalog, canonical-collection-catalogs, derived-state-authorities, derived-state-authority-tests)"
+  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier, constraint-part-span, project-data-locality, chain-currency, proof-seal-currency, proof-seal-total, production-genericity, knowledge-map-projection-tests, fsmgen-request-bundles, task-tree-catalog, canonical-collection-catalogs, derived-state-authorities, derived-state-authority-tests, derived-state-contracts)"
   - "which crates may xtask depend on (serde_json, sha2)"
   - "how do the xtask ports read JSON like Python (pyjson)"
   - "what checks that the doctrine tables match the driver registry (DOCTRINE-TABLES)"
@@ -22,7 +22,7 @@ answers:
 date: 2026-10-27
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.1, .15.f-.15.j, .17, .18, .19); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.1, .15.f-.15.k, .17, .18, .19); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -81,7 +81,9 @@ self-test cases and exact argument, root and refusal parity; `task-tree-catalog`
 byte-identical writes and all 13 cases; `canonical-collection-catalogs` is native since `.15.i`, with
 byte-identical writes and the claim kit's row-bound literal and RED region moved to the Rust producer;
 `derived-state-authorities` and `derived-state-authority-tests` are native since `.15.j`, with all 25 checks and
-exact quiet/verbose parity); a port proves parity on the current tree, every self-test case and a
+exact quiet/verbose parity; `derived-state-contracts` is native since `.15.k`, validating 14 contracts and executing
+eight core verifiers with byte-identical check, report and 47-case fixture parity; its native SpecForge adapter fast
+path coexists with generic adapter execution using the caller's registry); a port proves parity on the current tree, every self-test case and a
 broken input per refusal, and from wave 2 may use crates the
 workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
 kit artifacts of the five portable architectures (`check_memory_architecture.sh`, the `knowledge-map/` bundle,

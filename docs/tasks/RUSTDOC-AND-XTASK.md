@@ -925,14 +925,22 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.j — cargo xtask check derived-state-authorities and authority tests replace Perl`
 
 - ID: `RUSTDOC-AND-XTASK.15.k`
-  Status: `pending`
+  Status: `done` (`2026-10-27`; CODE; checklist below)
   Goal: `cargo xtask check derived-state-contracts` replaces the 574-line
     `scripts/check_derived_state_contracts.pl`
   Acceptance: `.15.1`'s common port contract, including `--root`, `--registry`, `--surfaces` and `--report`;
     every field class, marker, authority, secondary-copy and executed-verifier contract agrees, and the
     book-truth caller is unchanged.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-27`.** `xtask/src/checks/derived_state_contracts.rs` validates both bounded registries, all four
+    field classes, current-surface ownership, markers and secondary copies, and executes every core and adapter
+    verifier in the original order. One `ContractState` carries the seen sets and counters, keeping validation and
+    the report's 14 contracts, eight core verifiers and three secondary copies exact. SpecForge's declared adapter
+    stays in-process; other adapter paths execute with the caller's root and registry, and verifier symlinks fail
+    closed, preserving the generic interface exercised by the existing suite. The Perl shim preserves its modes and
+    four-class declaration. **Parity:** original and port produce byte-identical stdout, stderr and exit code for the
+    complete check, `--report`, and all 47 existing fixture checks.
+  Verification: `cargo test -p xtask --lib` 121/121; check/report and 47-case parity in `.project-data/tmp/rdx-15k/`
+  Commit: `RUSTDOC-AND-XTASK.15.k — cargo xtask check derived-state-contracts replaces the field-contract checker`
 
 - ID: `RUSTDOC-AND-XTASK.15.l`
   Status: `pending`
@@ -1733,7 +1741,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
+| 1 | `RUSTDOC-AND-XTASK.15.k` | `done` | the 574-line derived-state contract checker, before its test |
 | 2 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
 | 3 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
 | 4 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
@@ -1771,6 +1779,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-27` | `.15.k` | `cargo test -p xtask --lib derived_state_contracts`; original/native check, report, relative-root and 50-case fixture/edge parity; Rust oracles and focused doctrine gates | 14 contracts, eight core verifiers and three secondary copies; all 50 checks pass and every comparison is byte-identical in stdout, stderr and exit status |
 | `2026-10-27` | `.15.j` | `cargo test -p xtask --lib`; both real adapters and all 25 checks in quiet and verbose modes; Rust oracles and focused doctrine gates | 120/120 and all 25 checks; every comparison byte-identical in stdout, stderr and exit status; no secondary fallback path literals |
 | `2026-10-27` | `.15.i` | `cargo test -p xtask --lib`; check/self-test/full-write/refusal parity; both claim probes; Rust oracles and focused doctrine gates | 117/117 and self-test 8/8; every comparison and generated tree byte-identical; claim kit and RED region native; both probes PASS |
 | `2026-10-27` | `.15.h` | `cargo test -p xtask --lib`; check/self-test/full-write/refusal parity; Rust oracles and focused doctrine gates | 115/115 and self-test 13/13; every comparison and the complete generated trees byte-identical; malformed-marker, stale-part and nonexistent-root refusals agree |
@@ -1790,6 +1799,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.k` | `RUSTDOC-AND-XTASK.15.k — cargo xtask check derived-state-contracts replaces the field-contract checker` | the 574-line checker native; 14 contracts, eight core verifiers and exact check/report parity |
 | `.15.j` | `RUSTDOC-AND-XTASK.15.j — cargo xtask check derived-state-authorities and authority tests replace Perl` | the 268-line adapter and 411-line suite native; all 25 checks in quiet and verbose modes |
 | `.15.i` | `RUSTDOC-AND-XTASK.15.i — cargo xtask check canonical-collection-catalogs replaces the catalog generator` | the 393-line generator and claim-kit literal native; full write and both probes pass |
 | `.15.h` | `RUSTDOC-AND-XTASK.15.h — cargo xtask check task-tree-catalog replaces the catalog generator` | the 374-line generator native; full write and generated trees byte-identical |
@@ -1807,6 +1817,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-27`: `.15.k` moves the derived-state field-contract checker to `cargo xtask check`, with exact complete-check
+  and report parity across 14 contracts and eight core verifiers.
 - `2026-10-27`: `.15.j` moves the derived-state authority adapter and all 25 of its checks to `cargo xtask check`
   with exact quiet and verbose parity.
 - `2026-10-27`: `.15.i` moves the canonical collection catalog generator and the claim kit's row-bound literal

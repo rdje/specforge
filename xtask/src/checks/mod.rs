@@ -9,6 +9,7 @@ pub mod contract_encoding;
 pub mod corpus_frontier;
 pub mod derived_state_authorities;
 pub mod derived_state_authority_tests;
+pub mod derived_state_contracts;
 pub mod doctrine_tables;
 pub mod fsmgen_request_bundles;
 pub mod knowledge_map_projection;
@@ -177,6 +178,11 @@ pub const CHECKS: &[Check] = &[
         name: "derived-state-authority-tests",
         replaces: "scripts/test_derived_state_authorities.pl",
         run: derived_state_authority_tests::run,
+    },
+    Check {
+        name: "derived-state-contracts",
+        replaces: "scripts/check_derived_state_contracts.pl",
+        run: derived_state_contracts::run,
     },
 ];
 
