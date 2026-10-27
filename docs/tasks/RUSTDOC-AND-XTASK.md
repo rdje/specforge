@@ -853,13 +853,23 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.f — cargo xtask check knowledge-map-projection-tests replaces the projection suite`
 
 - ID: `RUSTDOC-AND-XTASK.15.g`
-  Status: `pending`
+  Status: `done` (`2026-10-27`; CODE; checklist below)
   Goal: `cargo xtask check fsmgen-request-bundles` replaces the 355-line
     `scripts/check_fsmgen_request_bundles.pl`
   Acceptance: `.15.1`'s common port contract, including `--check`, `--self-test` and `--root`; every request
     packet, ledger join, legacy exemption and portability refusal agrees.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-27`.** `xtask/src/checks/fsmgen_request_bundles.rs` holds every packet to the request schema,
+    lifecycle, layout, summary, signoff, verification, ownership, ledger and portability rules, reading JSON and
+    scalar values through `pyjson` and `perl`. Its 17 self-test cases copy the real packets and task trees under
+    `generated/` and keep their verdicts: one accepted baseline and 16 refusals, including both ledger directions,
+    the current-state-dependent status mutation and every portability refusal. The Perl shim keeps the original
+    argument loop and usage text, resolves the requested root for the check and uses the repository only as Cargo's
+    fallback working directory, so a nonexistent root keeps its original diagnostic and exit code. **Parity:** the
+    original beside native and shim on `--check`, `--self-test`, a relative root, a nonexistent root, an unknown
+    option, a missing option value and an actual unknown-owner packet: identical stdout, stderr and exit code on
+    all of them; self-test is 17/17.
+  Verification: `cargo test -p xtask --lib` 113/113; parity and RED in `.project-data/tmp/rdx-15g/`
+  Commit: `RUSTDOC-AND-XTASK.15.g — cargo xtask check fsmgen-request-bundles replaces the request-bundle checker`
 
 - ID: `RUSTDOC-AND-XTASK.15.h`
   Status: `pending`
@@ -1191,6 +1201,25 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.g` (CODE) — DONE `2026-10-27`
+
+- [x] **REPRODUCE / MEASURE** — the FSMGen request-bundle gate ran only as its 355-line Perl script: 16 current
+  packets plus three legacy exemptions, and 17 self-test cases (one accepted, 16 refused). HEAD's script and
+  baselines are in `.project-data/tmp/rdx-15g/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 22 checks. RED: the
+  real tree plus all 17 mutations runs in `the_real_tree_and_all_self_test_cases_hold`; an actual unknown-owner
+  packet is refused identically. A UTF-8 delimiter-length bug was located by the multi-field ledger case, and a
+  nonexistent-root probe caught the shim changing the original diagnostic and exit 1 to 2; both were fixed and
+  re-proven before the full suite.
+- [x] **ADDRESSED (verified)** — native checks 22 -> 23; check, self-test, relative/nonexistent roots, unknown
+  options, missing values and the full unknown-owner refusal are byte-identical in stdout, stderr and exit code.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 113
+  passed; `check_doctrines.sh --fast`, `--only LIVE-DOC-SIZE,PROJECT-DATA-LOCALITY` PASS; mdBook and full gate.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code, extraction behavior or dependency graph changed.
+- [x] **LOCKSTEP** — book `getting-started.md` lists the new native check; KM card and `MEMORY.md` updated; no
+  production rule was deleted or replaced.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.f` (CODE) — DONE `2026-10-27`
 
@@ -1625,27 +1654,26 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.g` | `pending` | the 355-line FSMGen request-bundle check |
-| 2 | `RUSTDOC-AND-XTASK.15.h` | `pending` | the 374-line task-tree catalog |
-| 3 | `RUSTDOC-AND-XTASK.15.i` | `pending` | the 393-line canonical collection catalogs and their claim-kit consumer |
-| 4 | `RUSTDOC-AND-XTASK.15.j` | `pending` | the derived-state authority adapter and its test, 679 lines together |
-| 5 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
-| 6 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
-| 7 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
-| 8 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
-| 9 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
-| 10 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
-| 11 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
-| 12 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
-| 13 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
-| 14 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
-| 15 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
-| 16 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
-| 17 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
-| 18 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
-| 19 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
-| 20 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
-| 21 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
+| 1 | `RUSTDOC-AND-XTASK.15.h` | `pending` | the 374-line task-tree catalog |
+| 2 | `RUSTDOC-AND-XTASK.15.i` | `pending` | the 393-line canonical collection catalogs and their claim-kit consumer |
+| 3 | `RUSTDOC-AND-XTASK.15.j` | `pending` | the derived-state authority adapter and its test, 679 lines together |
+| 4 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
+| 5 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
+| 6 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
+| 7 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
+| 8 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
+| 9 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
+| 10 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
+| 11 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
+| 12 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
+| 13 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
+| 14 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
+| 15 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
+| 16 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
+| 17 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
+| 18 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
+| 19 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
+| 20 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
 ## Decisions
 
@@ -1667,6 +1695,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-27` | `.15.g` | `cargo test -p xtask --lib`; check/self-test/argument/root/unknown-owner parity; Rust oracles and focused doctrine gates | 113/113 and self-test 17/17; every comparison byte-identical in stdout, stderr and exit status; all 16 refusal classes pass |
 | `2026-10-27` | `.15.f` | `cargo test -p xtask --lib`; success/argument/collision-RED parity; Rust oracles and focused doctrine gates | 111/111; all three old/new runs byte-identical in stdout, stderr and exit status; all 8 integration checks and every assertion RED control pass |
 | `2026-10-27` | `.15.1` | measurement over all 20 direct components, tracked callers and script-name closure; `check_doctrines.sh --fast`; `check_doctrines.sh --only LIVE-DOC-SIZE` | 20 / 18,539 lines plus one 268-line helper; `.15.f`-`.15.z` opened with producers before callers; both focused gates PASS |
 | `2026-10-23` | `.1` | rustdoc build under `-D warnings`; `missing_docs` per crate; scripts inventory | fails on one link; counts and inventory recorded |
@@ -1682,6 +1711,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.g` | `RUSTDOC-AND-XTASK.15.g — cargo xtask check fsmgen-request-bundles replaces the request-bundle checker` | the 355-line checker and all 17 cases native; exact argument and refusal parity |
 | `.15.f` | `RUSTDOC-AND-XTASK.15.f — cargo xtask check knowledge-map-projection-tests replaces the projection suite` | the 94-line integration suite native; success, argument and collision-RED parity |
 | `.15.1` | `RUSTDOC-AND-XTASK.15.1 — LIVE-DOC-SIZE's component leaves, measured and ordered (DESIGN)` | 20 direct components plus one helper; `.15.f`-`.15.z` opened |
 | `.1` | `RUSTDOC-AND-XTASK.1 — measure rustdoc and the scripts, decide the API reference and xtask (DESIGN)` | measurement and decisions |
@@ -1695,6 +1725,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-27`: `.15.g` moves the FSMGen request-bundle checker and its 17 cases to `cargo xtask check` with
+  exact argument, root and refusal parity.
 - `2026-10-27`: `.15.f` moves the Knowledge Map projection integration suite to `cargo xtask check` with exact
   success, ignored-argument and collision-RED parity.
 - `2026-10-27`: `.15.1` measures and orders the `LIVE-DOC-SIZE` component ports as `.15.f`-`.15.z`.

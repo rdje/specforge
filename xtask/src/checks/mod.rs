@@ -7,6 +7,7 @@ pub mod constraint_part_span;
 pub mod contract_encoding;
 pub mod corpus_frontier;
 pub mod doctrine_tables;
+pub mod fsmgen_request_bundles;
 pub mod knowledge_map_projection;
 pub mod ownership_citations;
 pub mod persisted_artifact_paths;
@@ -147,6 +148,11 @@ pub const CHECKS: &[Check] = &[
         name: "knowledge-map-projection-tests",
         replaces: "scripts/test_knowledge_map_projection.sh",
         run: knowledge_map_projection::run,
+    },
+    Check {
+        name: "fsmgen-request-bundles",
+        replaces: "scripts/check_fsmgen_request_bundles.pl",
+        run: fsmgen_request_bundles::run,
     },
 ];
 
