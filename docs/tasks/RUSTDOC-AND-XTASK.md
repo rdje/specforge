@@ -943,13 +943,20 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.k — cargo xtask check derived-state-contracts replaces the field-contract checker`
 
 - ID: `RUSTDOC-AND-XTASK.15.l`
-  Status: `pending`
+  Status: `done` (`2026-10-27`; CODE; checklist below)
   Goal: `cargo xtask check derived-state-contract-tests` replaces the 530-line
     `scripts/test_derived_state_contracts.pl`
   Acceptance: `.15.1`'s common port contract, including `--quiet`; the complete positive and fail-closed matrix
     runs against `.15.k`'s native checker through the preserved script interface, with no fixture residue.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-27`.** `xtask/src/checks/derived_state_contract_tests.rs` builds bounded fixtures under
+    `generated/`, drives `.15.k` with the preserved root, registry and surface arguments, and removes every fixture.
+    All 47 checks cover checker neutrality, all four classifications, generic core and adapter proof files, secondary
+    copies and every original refusal. **Parity:** original, native and shimmed verbose and quiet runs are
+    byte-identical in stdout, stderr and exit status; the script's invalid-argument status remains 255, while direct
+    native misuse exits 2.
+  Verification: `cargo test -p xtask --lib` 122/122; 47/47 checks, no fixture residue, parity in
+    `.project-data/tmp/rdx-15l/`
+  Commit: `RUSTDOC-AND-XTASK.15.l — cargo xtask check derived-state-contract-tests replaces the contract test matrix`
 
 - ID: `RUSTDOC-AND-XTASK.15.m`
   Status: `pending`
@@ -1742,7 +1749,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `RUSTDOC-AND-XTASK.15.k` | `done` | the 574-line derived-state contract checker, before its test |
-| 2 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
+| 2 | `RUSTDOC-AND-XTASK.15.l` | `done` | the 530-line derived-state contract test matrix |
 | 3 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
 | 4 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
 | 5 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
@@ -1779,6 +1786,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-27` | `.15.l` | `cargo test -p xtask --lib`; original/native/shim verbose, quiet and invalid-argument parity; fixture-residue census; Rust oracles and focused doctrine gates | 122/122 and 47/47; every preserved-interface comparison byte-identical in stdout, stderr and exit status; no fixture residue |
 | `2026-10-27` | `.15.k` | `cargo test -p xtask --lib derived_state_contracts`; original/native check, report, relative-root and 50-case fixture/edge parity; Rust oracles and focused doctrine gates | 14 contracts, eight core verifiers and three secondary copies; all 50 checks pass and every comparison is byte-identical in stdout, stderr and exit status |
 | `2026-10-27` | `.15.j` | `cargo test -p xtask --lib`; both real adapters and all 25 checks in quiet and verbose modes; Rust oracles and focused doctrine gates | 120/120 and all 25 checks; every comparison byte-identical in stdout, stderr and exit status; no secondary fallback path literals |
 | `2026-10-27` | `.15.i` | `cargo test -p xtask --lib`; check/self-test/full-write/refusal parity; both claim probes; Rust oracles and focused doctrine gates | 117/117 and self-test 8/8; every comparison and generated tree byte-identical; claim kit and RED region native; both probes PASS |
@@ -1799,6 +1807,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.l` | `RUSTDOC-AND-XTASK.15.l — cargo xtask check derived-state-contract-tests replaces the contract test matrix` | the 530-line suite native; all 47 checks, exact quiet/verbose parity and no fixture residue |
 | `.15.k` | `RUSTDOC-AND-XTASK.15.k — cargo xtask check derived-state-contracts replaces the field-contract checker` | the 574-line checker native; 14 contracts, eight core verifiers and exact check/report parity |
 | `.15.j` | `RUSTDOC-AND-XTASK.15.j — cargo xtask check derived-state-authorities and authority tests replace Perl` | the 268-line adapter and 411-line suite native; all 25 checks in quiet and verbose modes |
 | `.15.i` | `RUSTDOC-AND-XTASK.15.i — cargo xtask check canonical-collection-catalogs replaces the catalog generator` | the 393-line generator and claim-kit literal native; full write and both probes pass |
@@ -1817,6 +1826,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-27`: `.15.l` moves the 47-check derived-state contract suite to `cargo xtask check`, with exact
+  verbose/quiet parity and self-cleaning fixtures.
 - `2026-10-27`: `.15.k` moves the derived-state field-contract checker to `cargo xtask check`, with exact complete-check
   and report parity across 14 contracts and eight core verifiers.
 - `2026-10-27`: `.15.j` moves the derived-state authority adapter and all 25 of its checks to `cargo xtask check`

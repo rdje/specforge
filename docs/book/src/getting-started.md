@@ -100,7 +100,7 @@ checks move to native Rust one at a time (`cargo xtask check rustdoc`, `readme-p
 `residual-actionability`, `corpus-frontier`, `constraint-part-span`, `project-data-locality`, `chain-currency`,
 `proof-seal-currency`, `proof-seal-total`, `production-genericity`, `knowledge-map-projection-tests` and
 `fsmgen-request-bundles`, `task-tree-catalog`, `canonical-collection-catalogs`, `derived-state-authorities`,
-`derived-state-authority-tests` and `derived-state-contracts` so far, and `doctrine-tables` was written natively), and a script stays
+`derived-state-authority-tests`, `derived-state-contracts` and `derived-state-contract-tests` so far, and `doctrine-tables` was written natively), and a script stays
 behind as a shim
 once its port reproduces it. The scripts of the portable architectures SpecForge adopts, such as the doctrine driver
 and the knowledge-map bundle, stay as they are, because other repositories copy them (`RUSTDOC-AND-XTASK`).
