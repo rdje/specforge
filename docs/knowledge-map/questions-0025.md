@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > why does generated/ hold artifacts the canonical loader refuses
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
   > why does git_top return a path that does not equal the repository root
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -295,5 +297,3 @@
   > why is ADIv6's caption-less HPROT map not a signal layout
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
   > why is ADR 0038 not split or rewritten
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > why is AHB ADDR_WIDTH declared as 10

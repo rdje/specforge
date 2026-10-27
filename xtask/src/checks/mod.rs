@@ -23,6 +23,7 @@ pub mod residual_actionability;
 pub mod rustdoc;
 pub mod section_anchors;
 pub mod task_node_retention;
+pub mod task_tree_catalog;
 
 use std::path::Path;
 
@@ -153,6 +154,11 @@ pub const CHECKS: &[Check] = &[
         name: "fsmgen-request-bundles",
         replaces: "scripts/check_fsmgen_request_bundles.pl",
         run: fsmgen_request_bundles::run,
+    },
+    Check {
+        name: "task-tree-catalog",
+        replaces: "scripts/check_task_tree_catalog.pl",
+        run: task_tree_catalog::run,
     },
 ];
 
