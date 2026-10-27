@@ -7,6 +7,7 @@ pub mod constraint_part_span;
 pub mod contract_encoding;
 pub mod corpus_frontier;
 pub mod doctrine_tables;
+pub mod knowledge_map_projection;
 pub mod ownership_citations;
 pub mod persisted_artifact_paths;
 pub mod production_genericity;
@@ -141,6 +142,11 @@ pub const CHECKS: &[Check] = &[
         name: "production-genericity",
         replaces: "scripts/check_production_genericity.sh",
         run: production_genericity::run,
+    },
+    Check {
+        name: "knowledge-map-projection-tests",
+        replaces: "scripts/test_knowledge_map_projection.sh",
+        run: knowledge_map_projection::run,
     },
 ];
 

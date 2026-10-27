@@ -833,13 +833,24 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.1 — LIVE-DOC-SIZE's component leaves, measured and ordered (DESIGN)`
 
 - ID: `RUSTDOC-AND-XTASK.15.f`
-  Status: `pending`
+  Status: `done` (`2026-10-27`; CODE; checklist below)
   Goal: `cargo xtask check knowledge-map-projection-tests` replaces the 94-line
     `scripts/test_knowledge_map_projection.sh`
   Acceptance: `.15.1`'s common port contract; all eight generation, drift, collision, cleanup, staging, bound,
     name and residue checks reproduce. The portable generator and checker stay external commands at their paths.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-27`.** `xtask/src/checks/knowledge_map_projection.rs` builds the fixture, invokes the portable
+    generator and checker at their unchanged paths, and reproduces all eight checks, their fail-closed assertions,
+    both output streams, exit statuses and cleanup. The shell script is a shim that keeps project-data activation;
+    arguments remain ignored, as the script ignored them. `run_to` also writes through `checks::Output`, ready for
+    `.15.z`. **Parity:** HEAD's script beside the port on the current tree, with an ignored argument, and with a
+    controlled `cksum` mutation that changes the projection during the collision check: identical stdout, stderr
+    and exit code on all three (0, 0 and 1 respectively); the RED path names `collision failure replaced a
+    committed output`. The shell shim and native entry are identical too. Unit tests cover every assertion RED;
+    a whole-`generated/` cleanup census proved racy under parallel tests and was narrowed to the test's own
+    fixture, then passed repeatedly.
+  Verification: `cargo test -p xtask --lib` 111/111; success/argument/RED parity in `.project-data/tmp/rdx-15f/`;
+    `mdbook test` and `mdbook build` PASS with the existing `<operation>` warning unchanged
+  Commit: `RUSTDOC-AND-XTASK.15.f — cargo xtask check knowledge-map-projection-tests replaces the projection suite`
 
 - ID: `RUSTDOC-AND-XTASK.15.g`
   Status: `pending`
@@ -1180,6 +1191,26 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - [x] **LOCKSTEP** — `CLAIM_VERIFICATION.md`'s RED-region rule; `README_POLICY.md`'s adoption note;
   `docs/DOCTRINE_INSTANCE.md`'s `README-POLICY` row; `docs/toolbox/gates-build-and-host.md`; book
   `getting-started.md`; KM card `the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask`.
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.f` (CODE) — DONE `2026-10-27`
+
+- [x] **REPRODUCE / MEASURE** — the Knowledge Map projection integration suite ran only as its 94-line shell
+  script: `8/8` on stdout, five kit lines on stderr, exit 0, and an arbitrary argument ignored. HEAD's script and
+  those baselines are in `.project-data/tmp/rdx-15f/old/`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no native component: `xtask/src/checks/mod.rs` listed 21 checks. RED:
+  `every_integration_assertion_fails_closed` exercises each new assertion with a broken fixture, and a controlled
+  `cksum` mutation makes both implementations report `collision failure replaced a committed output`, exit 1.
+  The first whole-`generated/` cleanup assertion also failed under parallel tests on another test's live fixture;
+  its mechanism was the shared census, narrowed to the test's own path before the rerun passed.
+- [x] **ADDRESSED (verified)** — native checks 21 -> 22; success, ignored-argument and collision-RED runs are all
+  byte-identical in stdout, stderr and exit status, and the compatibility shim agrees with the native entry.
+- [x] **NO REGRESSION** — `cargo fmt --check` and `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 475 / 171 / 1,943 and `xtask` 111
+  passed; `check_doctrines.sh --fast`, `--only LIVE-DOC-SIZE,PROJECT-DATA-LOCALITY` PASS; `mdbook test` and
+  `mdbook build` PASS with the existing `<operation>` warning unchanged; full doctrine gate at commit.
+- [x] **GENERICITY (ADR 0006)** — tooling only; no product code, extraction behavior or dependency graph changed.
+- [x] **LOCKSTEP** — book `getting-started.md` lists the new native check; KM card and `MEMORY.md` updated; no
+  production rule was deleted or replaced.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.15.e` (CODE) — DONE `2026-10-24`
 
@@ -1594,28 +1625,27 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RUSTDOC-AND-XTASK.15.f` | `pending` | the 94-line Knowledge Map projection integration suite |
-| 2 | `RUSTDOC-AND-XTASK.15.g` | `pending` | the 355-line FSMGen request-bundle check |
-| 3 | `RUSTDOC-AND-XTASK.15.h` | `pending` | the 374-line task-tree catalog |
-| 4 | `RUSTDOC-AND-XTASK.15.i` | `pending` | the 393-line canonical collection catalogs and their claim-kit consumer |
-| 5 | `RUSTDOC-AND-XTASK.15.j` | `pending` | the derived-state authority adapter and its test, 679 lines together |
-| 6 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
-| 7 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
-| 8 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
-| 9 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
-| 10 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
-| 11 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
-| 12 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
-| 13 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
-| 14 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
-| 15 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
-| 16 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
-| 17 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
-| 18 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
-| 19 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
-| 20 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
-| 21 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
-| 22 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
+| 1 | `RUSTDOC-AND-XTASK.15.g` | `pending` | the 355-line FSMGen request-bundle check |
+| 2 | `RUSTDOC-AND-XTASK.15.h` | `pending` | the 374-line task-tree catalog |
+| 3 | `RUSTDOC-AND-XTASK.15.i` | `pending` | the 393-line canonical collection catalogs and their claim-kit consumer |
+| 4 | `RUSTDOC-AND-XTASK.15.j` | `pending` | the derived-state authority adapter and its test, 679 lines together |
+| 5 | `RUSTDOC-AND-XTASK.15.k` | `pending` | the 574-line derived-state contract checker, before its test |
+| 6 | `RUSTDOC-AND-XTASK.15.l` | `pending` | the 530-line derived-state contract test matrix |
+| 7 | `RUSTDOC-AND-XTASK.15.m` | `pending` | the 675-line Knowledge Map shard contract |
+| 8 | `RUSTDOC-AND-XTASK.15.n` | `pending` | the 706-line validation-snapshot currentness check |
+| 9 | `RUSTDOC-AND-XTASK.15.o` | `pending` | the 746-line task-tree archive check |
+| 10 | `RUSTDOC-AND-XTASK.15.p` | `pending` | the 751-line Source PDF registry currentness check |
+| 11 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
+| 12 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
+| 13 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
+| 14 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
+| 15 | `RUSTDOC-AND-XTASK.15.u` | `pending` | the 1,559-line core surface test matrix |
+| 16 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
+| 17 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
+| 18 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
+| 19 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
+| 20 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
+| 21 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
 ## Decisions
 
@@ -1637,6 +1667,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-27` | `.15.f` | `cargo test -p xtask --lib`; success/argument/collision-RED parity; Rust oracles and focused doctrine gates | 111/111; all three old/new runs byte-identical in stdout, stderr and exit status; all 8 integration checks and every assertion RED control pass |
 | `2026-10-27` | `.15.1` | measurement over all 20 direct components, tracked callers and script-name closure; `check_doctrines.sh --fast`; `check_doctrines.sh --only LIVE-DOC-SIZE` | 20 / 18,539 lines plus one 268-line helper; `.15.f`-`.15.z` opened with producers before callers; both focused gates PASS |
 | `2026-10-23` | `.1` | rustdoc build under `-D warnings`; `missing_docs` per crate; scripts inventory | fails on one link; counts and inventory recorded |
 | `2026-10-23` | `.2` | `RUSTDOC` doctrine; RED with the link restored; oracles | PASS; RED fails as it must |
@@ -1651,6 +1682,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.f` | `RUSTDOC-AND-XTASK.15.f — cargo xtask check knowledge-map-projection-tests replaces the projection suite` | the 94-line integration suite native; success, argument and collision-RED parity |
 | `.15.1` | `RUSTDOC-AND-XTASK.15.1 — LIVE-DOC-SIZE's component leaves, measured and ordered (DESIGN)` | 20 direct components plus one helper; `.15.f`-`.15.z` opened |
 | `.1` | `RUSTDOC-AND-XTASK.1 — measure rustdoc and the scripts, decide the API reference and xtask (DESIGN)` | measurement and decisions |
 | `.2` | `RUSTDOC-AND-XTASK.2 — rustdoc builds warning-free, and a commit that breaks it is refused` | the link escaped; the `RUSTDOC` gate |
@@ -1663,5 +1695,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-27`: `.15.f` moves the Knowledge Map projection integration suite to `cargo xtask check` with exact
+  success, ignored-argument and collision-RED parity.
 - `2026-10-27`: `.15.1` measures and orders the `LIVE-DOC-SIZE` component ports as `.15.f`-`.15.z`.
 - `2026-10-23`: Created task tree.

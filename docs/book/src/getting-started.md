@@ -98,8 +98,8 @@ cargo xtask docs              # the mdBook and the rustdoc API reference beside 
 checks move to native Rust one at a time (`cargo xtask check rustdoc`, `readme-policy`, `section-anchors`,
 `task-node-retention`, `contract-encoding`, `ownership-citations`, `published-assertions`,
 `residual-actionability`, `corpus-frontier`, `constraint-part-span`, `project-data-locality`, `chain-currency`,
-`proof-seal-currency`, `proof-seal-total` and `production-genericity` so far, and `doctrine-tables` was written
-natively), and a script stays
+`proof-seal-currency`, `proof-seal-total`, `production-genericity` and `knowledge-map-projection-tests` so far,
+and `doctrine-tables` was written natively), and a script stays
 behind as a shim
 once its port reproduces it. The scripts of the portable architectures SpecForge adopts, such as the doctrine driver
 and the knowledge-map bundle, stay as they are, because other repositories copy them (`RUSTDOC-AND-XTASK`).
