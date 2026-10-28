@@ -1,6 +1,7 @@
 //! `cargo xtask check <doctrine>`: the doctrine gates ported to Rust (`RUSTDOC-AND-XTASK.6`). Each replaces the
 //! script the doctrine driver registers, which stays as a shim over it.
 
+pub mod active_task_evidence;
 pub mod behavioral_genericity_contract;
 pub mod canonical_collection_catalogs;
 pub mod chain_currency;
@@ -255,6 +256,11 @@ pub const CHECKS: &[Check] = &[
         name: "fact-card-catalog",
         replaces: "scripts/check_fact_card_catalog.pl",
         run: fact_card_catalog::run,
+    },
+    Check {
+        name: "active-task-evidence",
+        replaces: "scripts/check_active_task_evidence.pl",
+        run: active_task_evidence::run,
     },
 ];
 
