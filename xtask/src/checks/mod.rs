@@ -32,6 +32,7 @@ pub mod published_assertions;
 pub mod readme_policy;
 pub mod residual_actionability;
 pub mod roadmap_projection_contract;
+pub mod rolling_ledger_protocol;
 pub mod rustdoc;
 pub mod section_anchors;
 pub mod source_pdf_registry_currentness;
@@ -234,6 +235,11 @@ pub const CHECKS: &[Check] = &[
         name: "roadmap-projection-contract",
         replaces: "scripts/check_roadmap_projection_contract.pl",
         run: roadmap_projection_contract::run,
+    },
+    Check {
+        name: "rolling-ledger-protocol",
+        replaces: "scripts/check_rolling_ledger_protocol.pl",
+        run: rolling_ledger_protocol::run,
     },
     Check {
         name: "live-document-size-core",
