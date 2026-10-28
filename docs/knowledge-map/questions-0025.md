@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > why does fact-card-catalog --write reject stale planned_outputs before refreshing them (validate_tree must pass skip_outputs to prepare_context; write renders past stale plans, then the normal check requires the refreshed --print-plan records)
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > why does folding a signal name's case matter beyond style
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -293,7 +297,3 @@
   > why is 198 exactly the largest fact-card maximum the current projection allows
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
   > why is A4.4 ARCACHE | AWCACHE not a value combination (one collective's members: one key per channel)
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > why is ADIv6 ABORT emitted 5 bits wide
-- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
-  > why is ADIv6 Table B2-7's bit-to-signal mapping not read

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > does the LLM constraint path apply positional subject gates
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > does the LLM constraint path use classify_signal_constraint_kind
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
   > does the Layer D grounding filter need to be weakened
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -294,7 +298,3 @@
   > how can I browse every SpecForge knowledge fact card by id or title
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how can SpecForge automatically choose the next task without gaming metrics
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > how can a collection use a membership index outside its own surface
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > how can a live surface null a size dimension

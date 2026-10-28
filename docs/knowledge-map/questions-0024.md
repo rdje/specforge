@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > why does EvidenceIR schema 2 clear old protocol records
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why does GIC 400 emit fifteen registers with missing access
 - [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
@@ -294,7 +298,3 @@
   > why does eMMC declare a signal called t
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > why does eMMC table_0020 declare HS400 as a signal
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > why does fact-card-catalog --write reject stale planned_outputs before refreshing them (validate_tree must pass skip_outputs to prepare_context; write renders past stale plans, then the normal check requires the refreshed --print-plan records)

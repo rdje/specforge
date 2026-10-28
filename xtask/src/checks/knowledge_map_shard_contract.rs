@@ -1220,7 +1220,7 @@ mod tests {
             output.text
         );
         assert!(output.text.contains("\"facts\":453"));
-        assert!(output.text.contains("\"question_keys\":4011"));
+        assert!(output.text.contains("\"question_keys\":4012"));
         assert!(output.text.contains("\"shards\":28"));
         assert!(output.text.contains("\"output_files\":29"));
     }

@@ -128,6 +128,8 @@
   > can SpecForge report to an upstream project other than FSMGen
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > can SpecForge use FSMGen's (stable …) sampled-value predicate
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > can TCK SWCLK SCL or SCK be an initiator's system clock (EXTRACTION-REPRESENTATION-GAPS.69)
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses (no — and the serial path that once scored 29/29 is retired too; it is 5/29 today, see swd-serial-frame-score-retired-by-genericity)
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
@@ -295,6 +297,3 @@
   > can the positional spurious-subject gates be wired into the LLM constraint path
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > can the retired SWD serial frame fields be recovered by binding a document-stated phase to nearby statements (NO — the nearest preceding phase-stating statement resolves for all 11 gold fields and is WRONG for ALL ELEVEN, correct on none; re-derive with python3 scripts/measure_swd_frame_phase_scope.py. APnDP/RnW/Start/Parity/Stop would inherit transfer and Park would inherit
-  > data, all against a gold phase of request; A, ACK and DATAIN sit 278, 303 and 324 statements after the nearest one, which says response)

@@ -10,9 +10,10 @@ answers:
   - "why does a windowed monitor refuse a value that is not a level (must be valid)"
   - "how many .isf files are emitted (AXI, AHB, APB-E)"
   - "does SpecForge accept FSMGen's default reset rst_n for a document that states no reset (FSMGEN-REQUESTS.9.a)"
-date: 2026-10-22
+  - "can TCK SWCLK SCL or SCK be an initiator's system clock (EXTRACTION-REPRESENTATION-GAPS.69)"
+date: 2026-10-28
 tags: [isf, reset, system-contract, apb, fsmgen, extraction-representation-gaps, decision, measured]
-evidence: crates/specforge/src/ir/semantic.rs (build_system_contract, SystemResetKind::NotStated); crates/specforge/src/ir/isf_ir.rs (the reset timing match, reset_kind_not_stated_residual_packet, windowed_event_refusal); docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md (.7.d, .21, .29-.31); docs/book/src/pipeline/isf-adapter.md (Where do the clock and reset come from?); docs/tasks/FSMGEN-REQUESTS.md (.9.a)
+evidence: crates/specforge/src/ir/semantic.rs (build_system_contract, SystemResetKind::NotStated); crates/specforge/src/ir/isf_ir.rs (the reset timing match, reset_kind_not_stated_residual_packet, windowed_event_refusal); docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md (.7.d, .21, .29-.31); docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md (.69); docs/book/src/pipeline/isf-adapter.md (Where do the clock and reset come from?); docs/tasks/FSMGEN-REQUESTS.md (.9.a); .project-data/tmp/erg-69/census.py
 reverify: "cargo test --offline -p specforge-core --lib -- an_unstated_reset_kind a_windowed_event_lowers_only_a_signal_becoming_true. jq -r '.system_contract.reset_kind' generated/semantic_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/semantic_ir.json -> not_stated; subs/fsmgen/bin/fsmgen --quiet --strict --check --json generated/adapters/isf/ihi0024_e_2023_02_amba_5_apb_protocol_specification/requester.isf -> 0 diagnostics (2026-09-26)."
 ---
 
@@ -45,5 +46,7 @@ APB-E's `requester.isf` is strict-clean. Three files are emitted now: AXI, AHB a
 `(reset …)` becomes its `rst_n` async active-low default, reported `legacy_default`; a clock-only domain has no reset
 and no startup state; no form defers the choice to instantiation. SPECFORGE does not accept that default: only a
 stated reset's unstated kind is defaulted (above), never the pin. On the 31 chains all 26 blocked adapters lack a
-grounded clock as well as a reset, so a deferred-reset form would unblock none and no request is filed; the four
-whose only clocks are bus signals (`TCK`, `SWCLK`, `SCL`, `SCK`) are `EXTRACTION-REPRESENTATION-GAPS.69`.
+grounded clock as well as a reset, so a deferred-reset form would unblock none and no request is filed. The `.69`
+census found no bus-clock alternative: the initiator drives the protocol clock or no typed signal declares it, and
+no applicable reset completes a contract. `TCK`, `SWCLK`, `SCL` and `SCK` are not substituted for an initiator's
+system clock; `.7e.i` remains the actor-graph route.

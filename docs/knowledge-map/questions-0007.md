@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > how does SourceIR proof migration handle a classifier implementation change
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how does SpecForge bind a protocol state to its state machine
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -294,7 +298,3 @@
   > how does the published-assertion gate decide which surfaces are watched
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how does the register reader recover a field name with no name column
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how does the section-heading field reader tell a message container from a register container
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms

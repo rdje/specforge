@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > why is ADIv6 ABORT emitted 5 bits wide
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > why is ADIv6 Table B2-7's bit-to-signal mapping not read
 - [a-table-naming-a-signals-bits-is-its-layout](../knowledge/a-table-naming-a-signals-bits-is-its-layout.md)
   > why is ADIv6's caption-less HPROT map not a signal layout
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -294,7 +298,3 @@
   > why is file_digest uncached in repin_claim_regions
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > why is its not a determiner for relation verbs (GIC ITS agent)
-- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
-  > why is kg-bench 156/156 not enough for an enum change
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why is lowering_status blocked

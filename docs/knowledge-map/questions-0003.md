@@ -2,6 +2,9 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > can the retired SWD serial frame fields be recovered by binding a document-stated phase to nearby statements (NO — the nearest preceding phase-stating statement resolves for all 11 gold fields and is WRONG for ALL ELEVEN, correct on none; re-derive with python3 scripts/measure_swd_frame_phase_scope.py. APnDP/RnW/Start/Parity/Stop would inherit transfer and Park would inherit
+  > data, all against a gold phase of request; A, ACK and DATAIN sit 278, 303 and 324 statements after the nearest one, which says response)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > can the reviewed dataset source_region predicates be edited
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
@@ -294,7 +297,3 @@
   > does a SourceIR table have a reading order
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does a blocked adapter remove a previously emitted isf
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > does a caption route r1 refuses ever get admitted by the caption repair
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > does a check notice when one of its own self-test cases is deleted

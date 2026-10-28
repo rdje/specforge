@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what precision and recall floors must a supported document category meet
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > what predicate decides whether eval-extraction will score a document
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what prevents one Knowledge Map question from pointing to multiple fact cards
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -293,7 +297,3 @@
   > where does SpecForge canonicalize upstream artifact paths before serialization
 - [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
   > where does SpecForge carry a state transition a table states
-- [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
-  > where does SpecForge carry the value a signal takes when it is absent or not driven
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > where does SpecForge read a constraint's condition (extract_condition_clause, stated_condition_clauses)

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.69",
-      "literal" : "`.69` — a bus-clocked protocol grounds its actor's clock or says why not.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70",
+      "literal" : "`.70` — an encoding member's support requirement is read.",
       "mode" : "eligible",
       "part_id" : "protocol-and-clock-leaves"
    },
@@ -208,12 +208,6 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a",
-         "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "protocol-and-clock-leaves"
-      },
-      {
-         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.69",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "protocol-and-clock-leaves"
@@ -436,13 +430,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — protocol and clock leaves",
          "metrics" : {
-            "bytes" : 11812,
+            "bytes" : 13325,
             "line_bytes" : 120,
-            "lines" : 132
+            "lines" : 146
          },
          "part_id" : "protocol-and-clock-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md",
-         "sha256" : "0fa7d01d01d7aee3ecb03294d13da5e6ef1d97bf3d3fb41d4e6e5616dce28cf5",
+         "sha256" : "c45f6857772537403d8da5941e10ea181d16a229ca20ffda22a0e40be174b2d4",
          "state" : "active"
       },
       {

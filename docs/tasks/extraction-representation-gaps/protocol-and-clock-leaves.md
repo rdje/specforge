@@ -87,7 +87,7 @@ and dated entries go to this part.
   names, decide whether the pairs are read (TMC's rows state no direction or width; *B2-7* is a wire-to-register-bit
   map like `.41.e`'s), and measure every chain.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.69`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `FSMGEN-REQUESTS.9.a`)
+  Status: `done` (`2026-10-28`; DESIGN; opened by `FSMGEN-REQUESTS.9.a`)
   Goal: **a protocol whose only clock is a bus signal grounds its actor's clock, or says why not.** **Reproduce:**
   RISC-V debug, ADIv6, I2C and I2S are blocked by nothing but *no source-grounded system clock/reset contract*; each
   documents a bus clock (`TCK`, `SWCLK`, `SCL`, `SCK`) but no system clock, so the adapter writes
@@ -95,6 +95,20 @@ and dated entries go to this part.
   I2C controller drives `SCL` from a clock the specification does not name). Acceptance: census the 26 blocked chains'
   clock evidence, decide per role whether a bus clock is the actor's `.isf` clock (and what reset then applies, given
   `FSMGEN-REQUESTS.9.a`'s refusal of an invented reset), and measure every chain's adapter.
+  **Measured `2026-10-28`** (all 26 blocked adapters; `.project-data/tmp/erg-69/census.py`, `census.json`). Twenty-two
+  have no bus-clock candidate. The other four have no complete role-and-reset contract:
+  - RISC-V debug's `TCK` is driven by the debug adapter; `nRESET` resets cores and peripherals, not the debug logic,
+    while `nTRST` initializes the DTM separately. No typed interface signal or single applicable reset exists.
+  - ADIv6's `TCK`/`SWCLK` are protocol clocks; the SWD interface includes no reset, `DBGTRSTn` resets only the TAP
+    state machine, and `nSRST` is a system reset with different domain behavior. No complete contract follows.
+  - I2C's controller generates `SCL` (and the mode-specific `SCLH`/`USCL`) from an unnamed implementation clock, and
+    no reset is stated. The initiator is still the phrase `optional_open_drain`, owned by `.7e.i`.
+  - I2S's controller generates `SCK`, no actor is related to it, and no reset is stated.
+  **Decided.** No current bus clock is an initiator's own grounded `.isf` clock with an applicable reset, so no new
+  contract or emission is justified and no production code changes. `.7e.i` remains the implementation route after
+  `KG-ISF-COMPLETENESS.1` grounds these actors. No FSMGen reset default is invented.
+  Verification: all 26 adapter manifests reviewed, five emitted chains excluded from the blocked set; no source change
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.69 — no bus clock is an initiator's grounded system clock (DESIGN)`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`
   Status: `open` (`2026-10-23`; CODE; opened by `.61`; waits for `KG-ISF-COMPLETENESS.2a.vii.c.vi`)
   Goal: **a member's enabling property joins the property's own record.** Acceptance: once boolean properties are

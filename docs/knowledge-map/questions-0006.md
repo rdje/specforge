@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > how can a collection use a membership index outside its own surface
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > how can a live surface null a size dimension
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > how can a prose signal spelling bind to a declared one without a suffix inference
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -293,7 +297,3 @@
   > how does JSON::PP mark a decoded number versus a string
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how does SemanticIR preserve VALID READY without formal signal declarations
-- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
-  > how does SourceIR proof migration handle a classifier implementation change
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)

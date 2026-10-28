@@ -365,8 +365,10 @@ SpecForge found it, so no report was sent. The fix is not published yet; the pin
 `legacy_default`), a clock-only domain has no reset and no startup state, and no form leaves the choice to
 instantiation. SpecForge takes none of these: a kind may be chosen for a named reset, but writing a reset pin the
 specification does not name would be invention, so such a document stays blocked with its residual. On the 31 chains
-every blocked adapter also lacks a grounded clock, so a deferred-reset form would unblock none and none is requested;
-the four whose only clocks are bus signals (`TCK`, `SWCLK`, `SCL`, `SCK`) are `EXTRACTION-REPRESENTATION-GAPS.69`.
+every blocked adapter also lacks a grounded clock, so a deferred-reset form would unblock none and none is requested.
+The four whose only clocks are bus signals were censused in `.69`: the initiator drives the protocol clock, or no
+typed signal declares it, and no applicable reset completes a contract. `TCK`, `SWCLK`, `SCL` and `SCK` are not
+substituted for an initiator's own system clock, so no new emission is justified; `.7e.i` remains the actor-graph route.
 
 Once the contract names the reset, the reset leaves the interface, but a rule may still test it: AXI *SYSCOREQ
 and SYSCOACK must be deasserted when ARESETn is asserted* lowers with the guard `(== ARESETn 0)`, the level its

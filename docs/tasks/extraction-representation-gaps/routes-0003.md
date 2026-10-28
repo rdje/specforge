@@ -35,7 +35,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i` | `closed` | [Table reading leaves](../../archive/tasks/extraction-representation-gaps/table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii` | `closed` | [Table reading leaves](../../archive/tasks/extraction-representation-gaps/table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.56.c` | `closed` | [Table reading leaves](../../archive/tasks/extraction-representation-gaps/table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.69` | `open` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.69` | `closed` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.60.a` | `closed` | [Table reading leaves](../../archive/tasks/extraction-representation-gaps/table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.61.a` | `closed` | [Table reading leaves](../../archive/tasks/extraction-representation-gaps/table-reading-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.61.b` | `closed` | [Table reading leaves](../../archive/tasks/extraction-representation-gaps/table-reading-leaves.md) |

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how does the section-heading field reader tell a message container from a register container
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -293,7 +297,3 @@
   > how many .isf files are emitted (AXI, AHB, APB-E, Wishbone)
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how many AArch64 External Debug page sidecars are repository relative
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how many CoreSight Base System page sidecars are repository relative

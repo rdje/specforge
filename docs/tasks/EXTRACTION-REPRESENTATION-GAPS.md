@@ -38,13 +38,13 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.69` — a bus-clocked protocol grounds its actor's clock or says why not.
+`.70` — an encoding member's support requirement is read.
 
 Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
 `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property parameter
 (`KG-ISF-COMPLETENESS.2a.vii.c.vi`) and an FSMGen pin with actor-level assertions, `.61.c` waits for the same
-`.2a.vii.c.vi`, `.69` (a bus-clocked protocol's actor clock), `.3.c.viii.a` (a table
-whose columns the converter swapped), `.70` (an encoding member's support requirement), `.71` (a cell that names a
+`.2a.vii.c.vi`, `.3.c.viii.a` (a table
+whose columns the converter swapped), `.71` (a cell that names a
 note), `.72` (a note an address or timing table cites), `.73` (a matrix's continuation), `.54.a.ii` (the corpus
 memory's refresh: an equivalent store re-pinned with the 24-document behavioral re-qualification), `.44` (Symbol-font
 glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`,
@@ -105,7 +105,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.69`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.70`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.71`
