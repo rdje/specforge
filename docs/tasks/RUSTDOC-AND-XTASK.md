@@ -1128,13 +1128,18 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.x — cargo xtask check active-task-evidence replaces the task-evidence verifier`
 
 - ID: `RUSTDOC-AND-XTASK.15.y`
-  Status: `pending`
+  Status: `done` (`2026-10-28`; CODE)
   Goal: `cargo xtask check task-evidence-contracts` replaces the 37-line
     `scripts/check_task_evidence_contracts.sh`
   Acceptance: `.15.1`'s common port contract, including `--root`; the single eight-contract list runs every
     contract through `.15.x` in-process, preserves fail-accumulation and adds a focused self-test.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-28`.** `xtask/src/checks/task_evidence_contracts.rs` holds the one eight-contract list and
+    calls `.15.x` directly for each, preserving order, streams and status accumulation. The old path retains
+    project-data activation and `--root` handling as a shim. Original and native default runs are byte-identical;
+    invalid arguments and missing roots agree. A focused test proves a valid first contract does not hide a later
+    missing contract.
+  Verification: `cargo test -p xtask --lib` 149/149; original/native/shim parity in `.project-data/tmp/rdx-15y/`
+  Commit: `RUSTDOC-AND-XTASK.15.y — cargo xtask check task-evidence-contracts replaces the eight-contract wrapper`
 
 - ID: `RUSTDOC-AND-XTASK.15.z`
   Status: `pending`
@@ -1822,7 +1827,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 | 12 | `RUSTDOC-AND-XTASK.15.v` | `done` | the 1,729-line fact-card catalog |
 | 13 | `RUSTDOC-AND-XTASK.15.w` | `done` | the 2,579-line rolling-ledger protocol |
 | 14 | `RUSTDOC-AND-XTASK.15.x` | `done` | the 2,756-line active-task-evidence checker, before its wrapper |
-| 15 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
+| 15 | `RUSTDOC-AND-XTASK.15.y` | `done` | the 37-line eight-contract wrapper, after `.15.x` |
 | 16 | `RUSTDOC-AND-XTASK.15.z` | `pending` | the 90-line orchestrator, last so every component runs in-process |
 | 17 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
 
@@ -1846,6 +1851,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-28` | `.15.y` | `cargo test -p xtask --lib`; original/native/shim default, argument and missing-root parity; fail-accumulation probe; Rust oracles and focused doctrine gates | 149/149; all eight checks in-process; every comparison byte-identical in stdout, stderr and exit status |
 | `2026-10-28` | `.15.x` | `cargo test -p xtask --lib`; all eight original/native/shim contracts, 92 self-tests, migration/derived writes and rollback; Rust oracles and focused doctrine gates | 148/148 and 92/92; every real check/report and generated tree byte-identical; rollback status 25, diagnostics and restored bytes agree |
 | `2026-10-28` | `.15.w` | `cargo test -p xtask --lib`; original/native/shim real modes, 45 self-tests, planned emission, dry-run/apply/rollback and surrogate-title parity; Rust oracles and focused doctrine gates | 147/147 and 45/45; exact transaction trees and refusal behavior; failed apply restores exact bytes and leaves no residue |
 | `2026-10-28` | `.15.v` | `cargo test -p xtask --lib`; original/native/shim all modes, 60 self-tests, write trees, malformed bytes and surrogate-body parity; Rust oracles and focused doctrine gates | 145/145 and 60/60; 418 real cards and all output trees byte-identical; no known divergence or fixture residue |
@@ -1879,6 +1885,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.y` | `RUSTDOC-AND-XTASK.15.y — cargo xtask check task-evidence-contracts replaces the eight-contract wrapper` | the 37-line wrapper native; all eight contracts in-process, exact output and fail-accumulation |
 | `.15.x` | `RUSTDOC-AND-XTASK.15.x — cargo xtask check active-task-evidence replaces the task-evidence verifier` | the 2,756-line checker native; eight contracts, all 92 cases, exact write trees and rollback status/bytes |
 | `.15.w` | `RUSTDOC-AND-XTASK.15.w — cargo xtask check rolling-ledger-protocol replaces the ledger transaction guard` | the 2,579-line protocol native; all 45 cases, exact apply trees and byte-restoring rollback |
 | `.15.v` | `RUSTDOC-AND-XTASK.15.v — cargo xtask check fact-card-catalog replaces the fact-card generator` | the 1,729-line catalog native; all 60 cases, exact write trees and codepoint-preserving WTF-8 behavior |
@@ -1910,6 +1917,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-28`: `.15.y` moves the eight-contract wrapper to `cargo xtask check`, with in-process checks, exact
+  output and fail-accumulation.
 - `2026-10-28`: `.15.x` moves active-task evidence to `cargo xtask check`, with all eight contracts, all 92 cases,
   exact write trees and rollback status, diagnostics and restored bytes.
 - `2026-10-28`: `.15.w` moves the rolling-ledger protocol to `cargo xtask check`, with all 45 cases, exact

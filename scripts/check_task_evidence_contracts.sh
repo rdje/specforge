@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Check every registered active-task-evidence contract. One list, so a registry freshness hook and
-# the composed live-size gate cannot disagree about which contracts exist.
+# Check every registered active-task-evidence contract. Native implementation:
+# xtask/src/checks/task_evidence_contracts.rs (RUSTDOC-AND-XTASK.15.y).
 set -uo pipefail
 
 ADAPTER_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -15,23 +15,6 @@ if [ "$#" -gt 0 ]; then
   ROOT="$(cd "$2" && pwd)"
 fi
 
-CONTRACTS=(
-  doctrine/live_document_size/active_task_evidence.json
-  doctrine/live_document_size/corpus_task_evidence.json
-  doctrine/live_document_size/spec_to_intent_task_evidence.json
-  doctrine/live_document_size/claim_verification_task_evidence.json
-  doctrine/live_document_size/pressure_headroom_task_evidence.json
-  doctrine/live_document_size/extraction_quality_gauge_task_evidence.json
-  doctrine/live_document_size/kg_isf_completeness_task_evidence.json
-  doctrine/live_document_size/extraction_representation_gaps_task_evidence.json
-)
-
-fail=0
-for contract in "${CONTRACTS[@]}"; do
-  perl "$ROOT/scripts/check_active_task_evidence.pl" \
-    --root "$ROOT" \
-    --contract "$contract" \
-    --check || fail=1
-done
-
-exit "$fail"
+cd "$ADAPTER_ROOT" || exit 1
+export SPECFORGE_SHIM_PATH="$0"
+exec cargo xtask check task-evidence-contracts --root "$ROOT"

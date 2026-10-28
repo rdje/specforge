@@ -37,6 +37,7 @@ pub mod rolling_ledger_protocol;
 pub mod rustdoc;
 pub mod section_anchors;
 pub mod source_pdf_registry_currentness;
+pub mod task_evidence_contracts;
 pub mod task_node_retention;
 pub mod task_tree_archive;
 pub mod task_tree_catalog;
@@ -261,6 +262,11 @@ pub const CHECKS: &[Check] = &[
         name: "active-task-evidence",
         replaces: "scripts/check_active_task_evidence.pl",
         run: active_task_evidence::run,
+    },
+    Check {
+        name: "task-evidence-contracts",
+        replaces: "scripts/check_task_evidence_contracts.sh",
+        run: task_evidence_contracts::run,
     },
 ];
 
