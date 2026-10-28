@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: `RUSTDOC-AND-XTASK` `.15.s`, then `.15.t`-`.15.z`, `.19`. Then ERG
+- Next action: `RUSTDOC-AND-XTASK` `.15.t`, then `.15.u`-`.15.z`, `.19`. Then ERG
   `.67.b`, `.68`-`.73`, `.3.c.viii.a`; `.61.c`, `.3.c.v.v` wait on KG-ISF `.2a.vii.c.vi`; `.46.c` on FSMGEN-REQUESTS.12;
   `.54.a.ii`, `.44`, SRC `.15`/`.19`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF, TLIS, LDPH `.34c`/`.42`. Score 11 seeds per slice;
   book regions: `adjudicate_book_quantity_regions.py`. Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for

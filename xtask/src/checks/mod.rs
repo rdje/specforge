@@ -28,6 +28,7 @@ pub mod proof_seal_currency;
 pub mod published_assertions;
 pub mod readme_policy;
 pub mod residual_actionability;
+pub mod roadmap_projection_contract;
 pub mod rustdoc;
 pub mod section_anchors;
 pub mod source_pdf_registry_currentness;
@@ -225,6 +226,11 @@ pub const CHECKS: &[Check] = &[
         name: "fsmgen-feedback-protocol",
         replaces: "scripts/check_fsmgen_feedback_protocol.pl",
         run: fsmgen_feedback_protocol::run,
+    },
+    Check {
+        name: "roadmap-projection-contract",
+        replaces: "scripts/check_roadmap_projection_contract.pl",
+        run: roadmap_projection_contract::run,
     },
 ];
 
