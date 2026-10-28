@@ -67,10 +67,16 @@ and dated entries go to this part.
   `kg-bench`; product tests and clippy; measurements in `.project-data/tmp/erg-68a/`
   Commit: `EXTRACTION-REPRESENTATION-GAPS.68.a — the matrix reader keeps prose and value cells`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.68.a.i`
-  Status: `open` (`2026-10-28`; DOC; opened by `.68.a`'s archive rollover)
+  Status: `done` (`2026-10-28`; DOC; opened by `.68.a`'s archive rollover)
   Goal: **retire the consumed archive ceiling authority.** Acceptance: once `.68.a` has sealed the new archive
   bounds, remove its single-use `increase` record, prove the clean-tree live-document gate green, and advance to
   `.69`. The registry must not bank the authority after the bounds it admitted are committed.
+  **Done `2026-10-28`.** With the new bounds committed, `LIVE-DOC-SIZE` reported
+  `erg_task_evidence_archived_parts has unused or banked ceiling-increase authority` (RED). Removing that record left
+  only the registry control record, and the same gate passed (GREEN). The ten archived parts and their measured
+  bounds are unchanged.
+  Verification: `bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE` RED before, GREEN after removal
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.68.a.i — retire the consumed archive ceiling authority`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.viii`)
   Goal: **a table whose columns the converter swapped is read or refused as such.** **Reproduce:** CoreSight TMC

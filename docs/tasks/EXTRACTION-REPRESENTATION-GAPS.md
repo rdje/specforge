@@ -38,7 +38,7 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.68.a.i` — retire the consumed archive ceiling authority.
+`.69` — a bus-clocked protocol grounds its actor's clock or says why not.
 
 Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
 `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property parameter
@@ -104,7 +104,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.68.a.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.69`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`
