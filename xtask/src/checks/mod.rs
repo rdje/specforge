@@ -13,6 +13,7 @@ pub mod derived_state_authority_tests;
 pub mod derived_state_contract_tests;
 pub mod derived_state_contracts;
 pub mod doctrine_tables;
+pub mod fsmgen_feedback_protocol;
 pub mod fsmgen_request_bundles;
 pub mod knowledge_map_projection;
 pub mod knowledge_map_shard_contract;
@@ -219,6 +220,11 @@ pub const CHECKS: &[Check] = &[
         name: "corpus-kb-currentness",
         replaces: "scripts/check_corpus_kb_currentness.pl",
         run: corpus_kb_currentness::run,
+    },
+    Check {
+        name: "fsmgen-feedback-protocol",
+        replaces: "scripts/check_fsmgen_feedback_protocol.pl",
+        run: fsmgen_feedback_protocol::run,
     },
 ];
 

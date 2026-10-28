@@ -244,7 +244,7 @@
   > what is captured_region_residuals
 - [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
   > what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier, constraint-part-span, project-data-locality, chain-currency, proof-seal-currency, proof-seal-total, production-genericity, knowledge-map-projection-tests, fsmgen-request-bundles,
-  > task-tree-catalog, canonical-collection-catalogs, derived-state-authorities, derived-state-authority-tests, derived-state-contracts, derived-state-contract-tests, knowledge-map-shard-contract, validation-snapshot-currentness, task-tree-archive, source-pdf-registry-currentness, corpus-kb-currentness)
+  > task-tree-catalog, canonical-collection-catalogs, derived-state-authorities, derived-state-authority-tests, derived-state-contracts, derived-state-contract-tests, knowledge-map-shard-contract, validation-snapshot-currentness, task-tree-archive, source-pdf-registry-currentness, corpus-kb-currentness, fsmgen-feedback-protocol)
 - [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
   > what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
