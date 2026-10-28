@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# SpecForge adapter for the project-neutral live-document containment doctrine.
+# SpecForge adapter for project-neutral live-document containment. Native implementation:
+# xtask/src/checks/live_document_size.rs (RUSTDOC-AND-XTASK.15.z).
 set -uo pipefail
 
 ADAPTER_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -14,77 +15,6 @@ if [ "$#" -gt 0 ]; then
   ROOT="$(cd "$2" && pwd)"
 fi
 
-fail=0
-if [ -x "$ROOT/scripts/check_readme_policy.sh" ]; then
-  "$ROOT/scripts/check_readme_policy.sh" || fail=1
-else
-  printf 'live-document-size: required README route guard is missing or non-executable\n' >&2
-  fail=1
-fi
-
-if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
-  "$ROOT/scripts/check_readme_policy.sh" --self-test || fail=1
-  perl "$ROOT/scripts/test_live_document_size.pl" --quiet || fail=1
-  perl "$ROOT/scripts/test_derived_state_contracts.pl" --quiet || fail=1
-  perl "$ROOT/scripts/test_derived_state_authorities.pl" --quiet || fail=1
-  perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_roadmap_projection_contract.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_fsmgen_request_bundles.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_validation_snapshot_currentness.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_source_pdf_registry_currentness.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_corpus_kb_currentness.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_task_tree_catalog.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_task_tree_catalog.pl" --check || fail=1
-  perl "$ROOT/scripts/check_task_tree_archive.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_active_task_evidence.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_fact_card_catalog.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_fact_card_catalog.pl" --check || fail=1
-  perl "$ROOT/scripts/check_canonical_collection_catalogs.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_canonical_collection_catalogs.pl" --check || fail=1
-  perl "$ROOT/scripts/check_knowledge_map_shard_contract.pl" --self-test || fail=1
-  perl "$ROOT/scripts/check_knowledge_map_shard_contract.pl" --check || fail=1
-  bash "$ROOT/scripts/test_knowledge_map_projection.sh" || fail=1
-fi
-
-perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" \
-  --root "$ROOT" \
-  --registry doctrine/live_document_size/rolling_ledgers.jsonl || fail=1
-
-perl "$ROOT/scripts/check_roadmap_projection_contract.pl" \
-  --root "$ROOT" \
-  --contract doctrine/live_document_size/roadmap_projection.json \
-  --check || fail=1
-
-perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" \
-  --root "$ROOT" \
-  --contract doctrine/live_document_size/fsmgen_feedback.json \
-  --check || fail=1
-
-# FSMGEN-REQUESTS.0 — every FSMGen request bundle meets docs/upstream/fsmgen/PROCESS.md.
-perl "$ROOT/scripts/check_fsmgen_request_bundles.pl" --root "$ROOT" --check || fail=1
-
-perl "$ROOT/scripts/check_corpus_kb_currentness.pl" \
-  --root "$ROOT" \
-  --contract doctrine/live_document_size/corpus_kb.json \
-  --check || fail=1
-
-perl "$ROOT/scripts/check_derived_state_contracts.pl" \
-  --root "$ROOT" \
-  --registry doctrine/live_document_size/derived_state_contracts.jsonl \
-  --surfaces doctrine/live_document_size/surfaces.jsonl || fail=1
-
-perl "$ROOT/scripts/check_task_tree_archive.pl" \
-  --root "$ROOT" \
-  --contract doctrine/live_document_size/task_tree_archive.json \
-  --check || fail=1
-
-"$ROOT/scripts/check_task_evidence_contracts.sh" --root "$ROOT" || fail=1
-
-perl "$ROOT/scripts/check_live_document_size.pl" \
-  --root "$ROOT" \
-  --registry doctrine/live_document_size/surfaces.jsonl \
-  --routes doctrine/readme_entrypoint/routed_destinations.tsv \
-  --authorities doctrine/live_document_size/ceiling_increase_authorities.jsonl || fail=1
-
-exit "$fail"
+cd "$ADAPTER_ROOT" || exit 1
+export SPECFORGE_SHIM_PATH="$0"
+exec cargo xtask check live-document-size --root "$ROOT"

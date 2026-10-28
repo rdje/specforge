@@ -67,26 +67,31 @@ const AUTHOR_OVERFLOW: [&str; 7] = [
 /// Run the check from `root`, or with `--self-test` prove that each ceiling and refusal fails closed; returns the
 /// exit code `scripts/check_readme_policy.sh` gave.
 pub fn run(root: &Path, arguments: &[String]) -> i32 {
+    run_to(root, arguments, &mut super::Terminal)
+}
+
+/// `run`, writing to `output` for the native `LIVE-DOC-SIZE` orchestrator.
+pub fn run_to(root: &Path, arguments: &[String], output: &mut dyn super::Output) -> i32 {
     match arguments {
         [] => {}
-        [mode] if mode == "--self-test" => return self_test(root),
+        [mode] if mode == "--self-test" => return self_test(root, output),
         _ => {
-            eprintln!("Usage: cargo xtask check readme-policy [--self-test]");
+            output.err("Usage: cargo xtask check readme-policy [--self-test]\n");
             return 2;
         }
     }
     let problems = problems(root);
     if problems.is_empty() {
-        println!(
-            "readme-policy: README.md and all registered entrypoint routes satisfy the local contract."
+        output.out(
+            "readme-policy: README.md and all registered entrypoint routes satisfy the local contract.\n",
         );
         return 0;
     }
     for problem in &problems {
-        eprintln!("readme-policy: {problem}");
+        output.err(&format!("readme-policy: {problem}\n"));
     }
-    eprintln!(
-        "readme-policy: FAILED — repair README.md, README_POLICY.md, or the registered route/control instead of widening a ceiling."
+    output.err(
+        "readme-policy: FAILED — repair README.md, README_POLICY.md, or the registered route/control instead of widening a ceiling.\n",
     );
     1
 }
@@ -378,15 +383,15 @@ fn is_executable(path: &Path) -> bool {
 
 /// The script's self-test: each ceiling passes at its value and fails one above it, and each shape, control,
 /// lifecycle and route refusal fails closed.
-fn self_test(root: &Path) -> i32 {
+fn self_test(root: &Path, output: &mut dyn super::Output) -> i32 {
     match self_test_failure(root) {
         Some(failure) => {
-            eprintln!("readme-policy self-test: {failure}");
+            output.err(&format!("readme-policy self-test: {failure}\n"));
             1
         }
         None => {
-            println!(
-                "readme-policy self-test: caps, path locality, controls, and route coverage fail closed"
+            output.out(
+                "readme-policy self-test: caps, path locality, controls, and route coverage fail closed\n",
             );
             0
         }

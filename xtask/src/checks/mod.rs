@@ -19,6 +19,7 @@ pub mod fsmgen_feedback_protocol;
 pub mod fsmgen_request_bundles;
 pub mod knowledge_map_projection;
 pub mod knowledge_map_shard_contract;
+pub mod live_document_size;
 pub mod live_document_size_core;
 pub mod live_document_size_tests;
 pub mod ownership_citations;
@@ -267,6 +268,11 @@ pub const CHECKS: &[Check] = &[
         name: "task-evidence-contracts",
         replaces: "scripts/check_task_evidence_contracts.sh",
         run: task_evidence_contracts::run,
+    },
+    Check {
+        name: "live-document-size",
+        replaces: "scripts/check_live_document_size.sh",
+        run: live_document_size::run,
     },
 ];
 
