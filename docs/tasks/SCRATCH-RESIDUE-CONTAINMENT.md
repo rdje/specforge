@@ -3,11 +3,11 @@
 ## Metadata
 
 - Tree ID: `SCRATCH-RESIDUE-CONTAINMENT`
-- Status: `active` (`.0`, `.3`, `.5`-`.14`, `.16`-`.18`, `.20`-`.21` complete; `.1`, `.2`, `.4`, `.15`, `.19`
+- Status: `active` (`.0`, `.3`, `.5`-`.14`, `.16`-`.18`, `.20`-`.22` complete; `.1`, `.2`, `.4`, `.15`, `.19`
   pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-10-27`
+- Last updated: `2026-10-28`
 - Owner: repo-local workflow
 
 ## Goal
@@ -577,6 +577,26 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   re-derived 4a05ec3d…, equal; fixture and stray-artifact censuses empty`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.21 — the daily sweep: no scratch to reclaim, and 100.5 MiB of rustc sessions`
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.22`
+  State: `done` (`2026-10-28`)
+  Goal: the startup sweep the directive fires when `docs/ARTIFACT_CLEANUP.md` is more than 24 hours old
+  Acceptance: every root under `.project-data/tmp/` classified named-or-chained; only unreachable scratch and
+  superseded rustc sessions removed; residue census proves them gone and every retained root intact
+  **Why now.** The record read `2026-10-27 16:47 +0100`; the sweep ran at `2026-10-28 21:21 +0100`, after
+  `EXTRACTION-REPRESENTATION-GAPS.70.a` committed with a clean tree. **Scratch roots.** The chain is still one hop to
+  `spec-to-intent-f-iii-heldout`, sha256 `4a05ec3d…`, equal to the declaration. `.21`'s sweep, copied to
+  `.project-data/tmp/src22/sweep.py`, protects the current `erg-70a/seeds` baseline and the declared retentions. It
+  removed only the superseded `erg-67a/seeds_new` baseline: **1 path / 12 files / 20 KiB**. The current baseline's
+  11 reports and `DONE` remain, and both re-plans are empty. **Incremental cache.** No `cargo` or `rustc` ran in this
+  repository (one `cargo` ran in another). 174 units held 38 superseded finalized sessions and 76 orphan locks, no
+  `-working` session and no timestamp/mtime disagreement. Removed them, keeping each unit's newest session:
+  **15,208,344 -> 12,468,584 KiB (2,739,760 KiB freed)**; the 3.85 GiB plan exceeds freed bytes through hard links.
+  `target/release` and `target/debug/deps` hold no stray `.bin`/`.log`. **`generated/`.** No killed-run fixture roots;
+  `.15`'s 33 dot-prefixed roots are unchanged and stay `.15`'s.
+  Verification: `both re-plans empty; removed seed baseline absent; current seed baseline intact; retained chain sha256
+  re-derived 4a05ec3d…, equal; fixture and stray-artifact censuses empty`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.22 — the daily sweep: 12 stale seed reports and 2.6 GiB of rustc sessions`
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability
@@ -590,6 +610,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-10-28` | `.22` daily sweep | chain sha256 equal; superseded seed baseline removed (12 reports); 38 superseded rustc sessions and 76 orphan locks removed (15,208,344 -> 12,468,584 KiB); both re-plans empty; current seed baseline intact; fixture and stray-artifact censuses empty |
 | `2026-10-27` | `.21` daily sweep | chain sha256 equal; scratch plan 0 paths and no fixture residue; 3 superseded rustc sessions and 12 orphan locks removed (12,010,128 -> 11,907,228 KiB); both re-plans empty; retained roots and all 12 seed-baseline files intact |
 | `2026-10-24` | `.20` daily sweep | chain sha256 equal; 9 paths / 295 files / 2,115.7 MiB removed (a superseded seed baseline and two committed slices' snapshots), the HEAD seed baseline protected; 57 superseded rustc sessions and 126 orphan locks removed (13.2 -> 11.3 GiB); three killed-run fixture roots under `generated/` removed |
 | `2026-10-23` | `.18` daily sweep | chain sha256 equal; 45 paths / 890 files / 6,920.3 MiB of unreachable scratch removed, logs and scripts kept, one in-flight root retained, whose committed slice's snapshots also went (5 paths / 203 files / 1,706.6 MiB); 19 superseded rustc sessions and 53 orphan locks removed (13.1 -> 10.4 GiB); no fixture residue under `generated/` |
@@ -611,6 +632,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.22` | `SCRATCH-RESIDUE-CONTAINMENT.22 — the daily sweep: 12 stale seed reports and 2.6 GiB of rustc sessions` | re-run the sweep; remove a superseded seed baseline, superseded incremental sessions and orphan locks |
 | `.21` | `SCRATCH-RESIDUE-CONTAINMENT.21 — the daily sweep: no scratch to reclaim, and 100.5 MiB of rustc sessions` | re-run the sweep; no unreachable scratch or fixture residue; reclaim superseded incremental sessions and orphan locks |
 | `.20` | `SCRATCH-RESIDUE-CONTAINMENT.20 — the daily sweep: 2.1 GiB of scratch and 1.9 GiB of rustc sessions` | re-run the sweep; reclaim committed slices' snapshots, a superseded seed baseline, superseded incremental sessions and a killed run's fixtures |
 | `.18` | `SCRATCH-RESIDUE-CONTAINMENT.18 — the daily sweep: 8.4 GiB of scratch and 2.7 GiB of rustc sessions` | re-run the sweep; reclaim unreachable scratch, a committed slice's snapshots and superseded incremental sessions |
