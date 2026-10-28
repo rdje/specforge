@@ -17,6 +17,7 @@ pub mod fsmgen_feedback_protocol;
 pub mod fsmgen_request_bundles;
 pub mod knowledge_map_projection;
 pub mod knowledge_map_shard_contract;
+pub mod live_document_size_core;
 pub mod ownership_citations;
 pub mod persisted_artifact_paths;
 pub mod production_genericity;
@@ -231,6 +232,11 @@ pub const CHECKS: &[Check] = &[
         name: "roadmap-projection-contract",
         replaces: "scripts/check_roadmap_projection_contract.pl",
         run: roadmap_projection_contract::run,
+    },
+    Check {
+        name: "live-document-size-core",
+        replaces: "scripts/check_live_document_size.pl",
+        run: live_document_size_core::run,
     },
 ];
 

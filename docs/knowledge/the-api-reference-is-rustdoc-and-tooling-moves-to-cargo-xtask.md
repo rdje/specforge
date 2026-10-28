@@ -9,7 +9,7 @@ answers:
   - "what is cargo xtask in SpecForge / RUSTDOC-AND-XTASK"
   - "which cargo xtask commands exist (doctrines, ci, docs)"
   - "in what order do the doctrine gates move to cargo xtask"
-  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier, constraint-part-span, project-data-locality, chain-currency, proof-seal-currency, proof-seal-total, production-genericity, knowledge-map-projection-tests, fsmgen-request-bundles, task-tree-catalog, canonical-collection-catalogs, derived-state-authorities, derived-state-authority-tests, derived-state-contracts, derived-state-contract-tests, knowledge-map-shard-contract, validation-snapshot-currentness, task-tree-archive, source-pdf-registry-currentness, corpus-kb-currentness, fsmgen-feedback-protocol, roadmap-projection-contract)"
+  - "what is cargo xtask check (rustdoc, readme-policy, section-anchors, task-node-retention, contract-encoding, ownership-citations, published-assertions, residual-actionability, corpus-frontier, constraint-part-span, project-data-locality, chain-currency, proof-seal-currency, proof-seal-total, production-genericity, knowledge-map-projection-tests, fsmgen-request-bundles, task-tree-catalog, canonical-collection-catalogs, derived-state-authorities, derived-state-authority-tests, derived-state-contracts, derived-state-contract-tests, knowledge-map-shard-contract, validation-snapshot-currentness, task-tree-archive, source-pdf-registry-currentness, corpus-kb-currentness, fsmgen-feedback-protocol, roadmap-projection-contract, live-document-size-core)"
   - "which crates may xtask depend on (serde_json, sha2)"
   - "how do the xtask ports read JSON like Python (pyjson)"
   - "what checks that the doctrine tables match the driver registry (DOCTRINE-TABLES)"
@@ -22,7 +22,7 @@ answers:
 date: 2026-10-28
 status: current
 tags: [tooling, rustdoc, api-reference, xtask, scripts, ci, measured]
-evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.1, .15.f-.15.s, .17, .18, .19); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
+evidence: docs/tasks/RUSTDOC-AND-XTASK.md (.1, .2, .7, .12, .13.a-.13.f, .14.a-.14.g, .15.0-.15.1, .15.f-.15.t, .17, .18, .19); scripts/run_ci.sh (cargo doc step); scripts/check_rustdoc.sh; .project-data/tmp/rdx-1/
 reverify: "Run RUSTDOCFLAGS='-D warnings' cargo doc --offline --workspace --no-deps; list scripts/*.{py,pl,sh} and grep scripts/check_doctrines.sh for the ones it calls"
 ---
 
@@ -91,7 +91,9 @@ parity; `task-tree-archive` is native since `.15.o`, with all 15 source/route ca
 parity; `source-pdf-registry-currentness` is native since `.15.p`, with all 13 cases and exact mode/report/refusal
 parity; `corpus-kb-currentness` is native since `.15.q`, with all 17 cases and exact mode/report/refusal parity;
 `fsmgen-feedback-protocol` is native since `.15.r`, with all 13 cases and exact mode/report/refusal parity;
-`roadmap-projection-contract` is native since `.15.s`, with all 49 cases and exact mode/report/refusal parity);
+`roadmap-projection-contract` is native since `.15.s`, with all 49 cases and exact mode/report/refusal parity;
+`live-document-size-core` is native since `.15.t`, preserving every report, warning and lifecycle/refusal check,
+with all 126 fixture cases agreeing byte-for-byte through the preserved script interface);
 a port proves parity on the current tree, every self-test case and a
 broken input per refusal, and from wave 2 may use crates the
 workspace already locks. Since `.16` the port covers SpecForge's own 16 doctrines only: the
