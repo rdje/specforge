@@ -28,6 +28,7 @@ pub mod readme_policy;
 pub mod residual_actionability;
 pub mod rustdoc;
 pub mod section_anchors;
+pub mod source_pdf_registry_currentness;
 pub mod task_node_retention;
 pub mod task_tree_archive;
 pub mod task_tree_catalog;
@@ -207,6 +208,11 @@ pub const CHECKS: &[Check] = &[
         name: "task-tree-archive",
         replaces: "scripts/check_task_tree_archive.pl",
         run: task_tree_archive::run,
+    },
+    Check {
+        name: "source-pdf-registry-currentness",
+        replaces: "scripts/check_source_pdf_registry_currentness.pl",
+        run: source_pdf_registry_currentness::run,
     },
 ];
 
