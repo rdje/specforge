@@ -409,7 +409,6 @@ mod tests {
         std::fs::write(scratch.join("generated/source_ir/x"), b"").expect("an entry");
         assert!(!corpus_absent(&scratch));
         std::fs::remove_dir_all(&scratch).expect("the fixture removed");
-        assert!(!corpus_absent(&crate::repository_root()));
     }
 
     #[test]

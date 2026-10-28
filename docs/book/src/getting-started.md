@@ -93,6 +93,10 @@ cargo xtask doctrines --fast  # scripts/check_doctrines.sh --fast
 cargo xtask docs              # the mdBook and the rustdoc API reference beside it
 ```
 
+With no persisted corpus, `SPECFORGE_CORPUS_ABSENT=1` makes `run_ci.sh` name and skip only integration tests that need
+those artifacts, including the behavioral contract's combined real-contract/self-test check; every other test still
+runs. With the corpus present, nothing is skipped.
+
 `doctrines` and `ci` run their scripts with the same arguments and return their exit codes. `docs` is native Rust
 (`xtask/src/docs.rs`), and `scripts/run_docs_ci.sh` is now a shim over it. SpecForge's own commands and doctrine
 checks move to native Rust one at a time (`cargo xtask check rustdoc`, `readme-policy`, `section-anchors`,

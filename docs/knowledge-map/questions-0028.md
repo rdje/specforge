@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why was a Reserved | Reserved row dropped from a bit table
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)

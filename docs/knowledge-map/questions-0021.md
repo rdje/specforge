@@ -134,6 +134,8 @@
   > which words mark a swallowed word as a verb (has does was, complementizer that)
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > which xtask tests are skipped without a corpus
 - [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
   > who owns a gap between what a PDF states and what the isf can say
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
@@ -295,5 +297,3 @@
   > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > why can a per-table classifier not inherit a kind from a parent table
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)

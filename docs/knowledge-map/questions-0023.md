@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why did seed_axi_temporal fail after constraint promotion and how was it fixed
 - [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
@@ -296,5 +298,3 @@
   > why does CHI C2C's RsvdZero become reserved space without a Reserved keyword definition
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
-- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
-  > why does CoreSight TMC lack its AXI master interface signals

@@ -29,13 +29,12 @@ fi
 echo "[specforge-ci] running clippy with warnings denied"
 RUSTFLAGS="${CI_RUSTFLAGS}" cargo clippy --manifest-path Cargo.toml --workspace --all-targets -- -D warnings
 
-# ── The six tests that need the persisted corpus ────────────────────────────────────────────────
-# COMMIT-GATE-SINGLE-RUN.15. `/generated/` is untracked, so on a runner these six replay a normalized
-# bundle that does not exist and fail with `authority_unavailable: behavioral source authority is
-# unavailable`. They are named ONE BY ONE on purpose: `--skip behavioral_genericity` would also drop
-# that module's alpha-transform, comparator and classifier tests, which need no corpus and are real
-# coverage a runner CAN collect. A renamed test simply stops being skipped and the suite goes red,
-# which is the safe direction; an over-broad filter would go quiet instead, which is not.
+# ── The seven tests that need the persisted corpus ───────────────────────────────────────────────
+# COMMIT-GATE-SINGLE-RUN.15. `/generated/` is untracked, so these integration tests have no input on
+# a runner. They are named ONE BY ONE on purpose: `--skip behavioral_genericity` would also drop that
+# module's alpha-transform, comparator and classifier tests, which need no corpus and are real coverage
+# a runner CAN collect. A renamed test simply stops being skipped and the suite goes red, which is the
+# safe direction; an over-broad filter would go quiet instead, which is not.
 CORPUS_DEPENDENT_TESTS=(
   behavioral_genericity::tests::full_alpha_run_emits_five_stage_evidence
   behavioral_genericity::tests::full_reviewed_layout_run_emits_five_stage_evidence
@@ -43,6 +42,7 @@ CORPUS_DEPENDENT_TESTS=(
   behavioral_genericity::tests::full_semantic_negative_run_requires_declared_delta_and_rejects_invariance
   behavioral_genericity::tests::missing_source_attempt_is_unmeasurable_without_creating_output
   behavioral_genericity::tests::retained_authority_rejects_non_scratch_links_and_missing_alpha_report_runs_fresh
+  checks::behavioral_genericity_contract::tests::the_real_contract_holds_and_the_self_test_refuses_every_mutation
 )
 
 CI_TEST_FILTER=()

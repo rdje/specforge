@@ -9,10 +9,11 @@ answers:
   - "can the corpus be rebuilt on a CI runner"
   - "why does actions/checkout need fetch-depth 0 and submodules"
   - "what does a green hosted CI run actually prove"
-date: 2026-09-20
+  - "which xtask tests are skipped without a corpus"
+date: 2026-10-28
 status: current
 tags: [commit-gate-single-run, doctrine-enforcement, hosted-ci, corpus, coverage]
-evidence: .github/workflows/ci.yml; scripts/check_doctrines.sh; scripts/check_chain_currency.sh (absent-corpus skip); docs/tasks/COMMIT-GATE-SINGLE-RUN.md (.13/.14/.14a)
+evidence: .github/workflows/ci.yml; scripts/check_doctrines.sh; scripts/run_ci.sh (CORPUS_DEPENDENT_TESTS); scripts/check_chain_currency.sh (absent-corpus skip); docs/tasks/COMMIT-GATE-SINGLE-RUN.md (.13/.14/.14a); docs/tasks/RUSTDOC-AND-XTASK.md (.20)
 reverify: "count generated/source_ir entries whose source.requested_path is a tracked file — expect 21 of 78, the other 57 path_origin=external_input; in a fresh clone, SPECFORGE_CORPUS_ABSENT=1 bash scripts/check_doctrines.sh --all — expect 'ALL 13 executed doctrines PASS (18 registered)' and a NOT GOVERNED line naming 5."
 ---
 
@@ -53,6 +54,13 @@ Two things follow, and both are mechanical now:
   `LIVE-DOC-SIZE` reads boundary commits; `submodules: recursive` because `feedback-protocol` reads
   evidence under `subs/fsmgen`. At the defaults these produce *"revision … does not resolve in this
   repository"* and *"git exit 128"*, which look like content failures and are not.
+
+**Xtask integration tests (`RUSTDOC-AND-XTASK.20`, `2026-10-28`).** The same per-test rule covers the native checks:
+the production-genericity corpus-absence unit test uses only a synthetic empty/present fixture, while the behavioral
+contract's combined real-contract/self-test integration test reads real SourceIR and Markdown metrics even in its
+self-test baseline. `scripts/run_ci.sh` names that integration test in `CORPUS_DEPENDENT_TESTS`, so a declared
+corpus-free run skips it explicitly and runs every corpus-independent test. Hosted run `40770370381` exposed both
+assumptions; clean-worktree RED and local/corpus-free GREEN separate them without changing product behavior.
 
 Whether the corpus stratum should get a hosted subject — a small tracked fixture corpus whose
 sources are in `corpus/` — is open as `COMMIT-GATE-SINGLE-RUN.14a`. Do not close it by widening the

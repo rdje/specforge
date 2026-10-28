@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > why does CoreSight TMC lack its AXI master interface signals
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why does DATA_WIDTH/8 work as a width but DATA_WIDTH / 8 not
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -296,5 +298,3 @@
   > why does decoder go from 0/0 to connected (decoder also consolidated)
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > why does docling now extract text from inside a figure
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > why does docs/tasks have no file count cap

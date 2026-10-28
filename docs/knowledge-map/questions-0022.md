@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > why can a shape-only token-join rule not be shipped
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -295,5 +297,3 @@
   > why did repeated Reserved block a register fragment merge
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > why did retiring generic phases remove pure inferred actors
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json

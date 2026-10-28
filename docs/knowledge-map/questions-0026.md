@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
+  > why is 'the type of transactions that a device may generate' refused (a subject holding a relative clause)
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > why is 0010 read as ten
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -296,5 +298,3 @@
   > why is declarations_emitted not the reader's final decision
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated

@@ -39,7 +39,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 - ID: `RUSTDOC-AND-XTASK`
   Status: `done` (`2026-10-28`)
   Goal: the rustdoc API reference, and the incremental move to `cargo xtask` of SpecForge's own tooling
-  Children: `RUSTDOC-AND-XTASK.1`-`.19`
+  Children: `RUSTDOC-AND-XTASK.1`-`.20`
 
 - ID: `RUSTDOC-AND-XTASK.1`
   Status: `done` (`2026-10-23`; DESIGN)
@@ -625,14 +625,14 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   tool`
 
 - ID: `RUSTDOC-AND-XTASK.15`
-  Status: `in_progress` (container; wave 4; sized by `.15.0`)
+  Status: `done` (`2026-10-28`; container; `.15.z` completes wave 4)
   Goal: the composite gates move to xtask
   Children: `RUSTDOC-AND-XTASK.15.0`, `.15.a`-`.15.e`, `.15.1`, `.15.f`-`.15.z`
   Acceptance: one leaf per doctrine, in order: `PRODUCTION-GENERICITY`, `LIVE-DOC-SIZE`. Since `.16`,
   `CLAIM-VERIFICATION` and the driver (`check_doctrines.sh`) stay portable kit artifacts and are not ported. Since
   `.15.0`, each composite is a leaf per component script and its orchestrator last.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: every component and the in-process orchestrator passes with exact output, argv and status (`.15.z`)
+  Commit: `RUSTDOC-AND-XTASK.15.z — cargo xtask check live-document-size completes the native containment gate`
 
 - ID: `RUSTDOC-AND-XTASK.15.0`
   Status: `done` (`2026-10-24`; DESIGN)
@@ -1231,6 +1231,49 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
     all 14,964 cases. No source or product-crate build changed.
   Verification: paired timings in `.project-data/tmp/rdx-19/`; corpus `.project-data/tmp/rdx-17/corpus.jsonl`
   Commit: `RUSTDOC-AND-XTASK.19 — native behavioral-contract runtime meets the Python baseline`
+
+- ID: `RUSTDOC-AND-XTASK.20`
+  Status: `done` (`2026-10-28`; CODE; found by hosted run `40770370381`; checklist below)
+  Goal: **a corpus-free CI run executes every corpus-independent xtask test and names each real-corpus check it skips.**
+  **Reproduce:** hosted `SPECFORGE_CORPUS_ABSENT=1` failed `production_genericity::tests::
+  the_corpus_is_absent_without_an_entry_under_generated_source_ir` on its unrelated assertion that the real repository
+  has a corpus, and `behavioral_genericity_contract::tests::
+  the_real_contract_holds_and_the_self_test_refuses_every_mutation` because its real-corpus command has no input. The
+  second failure also prevents that test's 23 self-tests from running. Local runs with the corpus present pass both.
+  Acceptance: the first test uses only its synthetic fixture; skip the combined behavioral real-contract/self-test
+  integration test by its full name in `run_ci.sh` under a declared absent corpus, and retain every local check. Its
+  self-test baseline also reads real SourceIR and Markdown metrics, so no corpus-free substitute is fabricated and the
+  23 self-tests remain local-only with the real check. Prove both failures RED in a clean worktree, then GREEN, plus
+  focused Rust checks and the doctrine gates. No product behavior or corpus artifact changes.
+  **Done `2026-10-28`.** The production test no longer asserts that the real repository has a corpus; its synthetic
+  empty/present fixture is the whole test. `run_ci.sh` names the combined behavioral integration test in its existing
+  explicit corpus-dependent skip list. The behavioral test itself is byte-identical to its pre-leaf source: its baseline
+  and all 23 self-tests still run locally, while a corpus-free run reports the integration test as not run rather than
+  failing or inventing a fixture. Clean-worktree RED reproduced both hosted failures; with `source_ir` temporarily
+  hidden and the named test skipped, xtask passes 148 tests with one filtered and one ignored. With the corpus present,
+  all 149 xtask tests pass and no test is skipped. Hosted verification follows the repair push.
+  Verification: clean-worktree logs and local/corpus-free runs in `.project-data/tmp/rdx-20/`; product Rust checks and
+  doctrine gates; no product code or persisted artifact changed
+  Commit: `RUSTDOC-AND-XTASK.20 — corpus-free CI skips only tests that need the corpus`
+
+## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.20` (CODE) — DONE `2026-10-28`
+
+- [x] **REPRODUCE / MEASURE** — hosted run `40770370381` failed the two named tests with
+  `SPECFORGE_CORPUS_ABSENT=1`; a clean worktree with no `generated/` reproduced both failures. With the corpus present,
+  both pass.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `xtask/src/checks/production_genericity.rs:412` added an unrelated real-corpus
+  assertion to a synthetic unit test. `behavioral_genericity_contract.rs`'s real check and self-test baseline both read
+  real SourceIR and Markdown metrics, so the whole integration test needs the corpus.
+- [x] **ADDRESSED (verified)** — removed only the unrelated assertion and added the combined behavioral test's full
+  name to `CORPUS_DEPENDENT_TESTS`; corpus-free xtask now passes 148 tests with that one integration test filtered.
+- [x] **NO REGRESSION** — local xtask passes all 149 tests, including the real contract and all 23 self-tests; the
+  behavioral test source is byte-identical to its pre-leaf form. `cargo fmt --all -- --check`, clippy and the product
+  test suites pass; `bash -n scripts/run_ci.sh` passes. No product code or corpus artifact changed, so no chain reseal
+  or seed replay is implicated. `mdbook test` and `mdbook build` pass with the existing `<operation>` warning.
+- [x] **GENERICITY (ADR 0006)** — test isolation and an explicit per-test CI filter; no specification vocabulary,
+  extraction behavior or broad module skip. Corpus-independent tests cannot be hidden by the filter.
+- [x] **LOCKSTEP** — book `getting-started.md` (*Local verification*); KM
+  `hosted-ci-cannot-enforce-the-corpus-stratum`; task catalog regenerated; root and MEMORY resume ERG `.71`.
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
 
@@ -1860,6 +1903,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-28` | `.20` | clean-worktree RED for both hosted failures; local and corpus-free xtask suites; product Rust checks and doctrine gates | local 149/149 with the real contract and all 23 self-tests; corpus-free 148/148 with the one integration test explicitly filtered; no product or artifact change |
 | `2026-10-28` | `.15.y` | `cargo test -p xtask --lib`; original/native/shim default, argument and missing-root parity; fail-accumulation probe; Rust oracles and focused doctrine gates | 149/149; all eight checks in-process; every comparison byte-identical in stdout, stderr and exit status |
 | `2026-10-28` | `.19` | five paired original/native default runs; `XTASK_PYJSON_CORPUS` and its ignored differential test | native median 4.27 s against Python 4.36 s; all five outputs byte-identical; 14,964/14,964 corpus cases pass; no source changes |
 | `2026-10-28` | `.15.z` | `cargo test -p xtask --lib`; complete original/native orchestration, phase counts, root refusal and exact argv; Rust oracles and focused doctrine gates | 150/150; all 22 self-test/check calls and nine repository checks in-process; stdout, stderr and status byte-identical |
@@ -1896,6 +1940,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.20` | `RUSTDOC-AND-XTASK.20 — corpus-free CI skips only tests that need the corpus` | synthetic unit isolation and an explicit integration-test filter; local and corpus-free GREEN; no product change |
 | `.19` | `RUSTDOC-AND-XTASK.19 — native behavioral-contract runtime meets the Python baseline` | five paired runs at native median 4.27 s against 4.36 s; all 14,964 corpus cases pass; no source changes |
 | `.15.z` | `RUSTDOC-AND-XTASK.15.z — cargo xtask check live-document-size completes the native containment gate` | all 22 self-test/check calls and nine repository checks in-process; exact output, argv and status |
 | `.15.y` | `RUSTDOC-AND-XTASK.15.y — cargo xtask check task-evidence-contracts replaces the eight-contract wrapper` | the 37-line wrapper native; all eight contracts in-process, exact output and fail-accumulation |
@@ -1930,6 +1975,9 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-28`: `.20` removes a real-corpus assumption from a synthetic unit test and names the behavioral
+  real-contract/self-test integration test in CI's corpus-dependent filter; clean-worktree RED and both local and
+  corpus-free GREEN prove the repair without changing product behavior.
 - `2026-10-28`: `.19` closes the performance question with five paired native/Python runs at median 4.27 s against
   4.36 s, and all 14,964 pyjson corpus cases passing; no source changes.
 - `2026-10-28`: `.15.z` completes the in-process live-document-size orchestrator, with all 22 self-test/check

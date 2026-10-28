@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > why is every isf adapter blocked
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -296,5 +298,3 @@
   > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > why was TOOLBOX.md partitioned at sections 5-7 rather than anywhere else (measured over its 43 revisions, sections 5, 6 and 7 added 254 of the 370 lines and 100% of the last nine revisions', while sections 1-4 added exactly ONE line in three months - the cut follows the writer, not the line count)
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > why was a Reserved | Reserved row dropped from a bit table

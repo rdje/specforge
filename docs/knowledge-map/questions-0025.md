@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > why does docs/tasks have no file count cap
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -295,5 +297,3 @@
   > why is 'the hub shall ignore the route string and assume all packets are routed directly to the hub' an invariant now
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > why is 'the missing input cannot be assumed to take a fixed value' no longer an abstraction (a negated assume is a rule)
-- [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
-  > why is 'the type of transactions that a device may generate' refused (a subject holding a relative clause)
