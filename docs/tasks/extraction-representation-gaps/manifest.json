@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.b",
-      "literal" : "`.67.b` — the adapter names each signal set it does not lower.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68",
+      "literal" : "`.68` — a cross-tab whose cells are prose is read.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -253,12 +253,6 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
-      },
-      {
-         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.b",
-         "lifecycle" : "open",
-         "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -433,13 +427,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 52795,
+            "bytes" : 55827,
             "line_bytes" : 119,
-            "lines" : 573
+            "lines" : 605
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "6e11dd71d0133ec109327360ca5e7f8ebd3e9b9157ef6d71328d0fd63596691e",
+         "sha256" : "bcb3093a00287e0978f6a0fc2d715e21ffe1e5691189746e218475666e877b20",
          "state" : "active"
       },
       {

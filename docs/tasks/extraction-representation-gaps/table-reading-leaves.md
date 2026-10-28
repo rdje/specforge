@@ -175,9 +175,20 @@ here whole.
   - **Re-sealed.** The new field moved every stage's ruleset hash; `rebuild_stage_cascade.sh --write` re-sealed all
     31 chains, content-identical at every stage.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.67.b`
-  Status: `open` (`2026-10-23`; CODE; opened by `.67`; waits for `.67.a`)
+  Status: `done` (`2026-10-28`; CODE; opened by `.67`; checklist below)
   Goal: **the adapter names each signal set it does not lower.** Acceptance: one residual per `signal_sets` record,
   naming its caption, its members and the sentences that cite it; the `.isf` is unchanged; measure every chain.
+  **Done `2026-10-28`.**
+  - **Residual.** `protocol_residual_decisions` emits `isf_protocol_signal_set_<id>` per IntentIR record, naming its
+    caption (or `<none>`), every member as written (so a slice keeps its bits), its citing statements and its tables.
+    No IR field or `.isf` construct changes; no SemanticIR or `.isf` rule states equality between two transactions.
+  - **Measured.** Fresh before/after dry-runs over all 31 chains: 30 content-identical. AXI alone gains
+    `isf_protocol_signal_set_signal_set_0001`, naming all 25 members, the caption and `statement_1958`; residuals
+    117 -> 118. Every prior residual and every `.isf` is byte-identical. The real AXI adapter was rebuilt and
+    validated, with its content equal to the verified dry-run; no other persisted artifact was rewritten.
+  Verification: focused adapter test and seven RED controls; 31-chain replay and currency; 11 seeds; `kg-bench`;
+  `flow_census`; measurements in `.project-data/tmp/erg-67b/`
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.67.b — the adapter names each signal set it does not lower`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.68`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
   Goal: **a cross-tab whose cells are prose is read.** **Reproduce:** USB 3.2 *Table 8-8 Port Type Selection Matrix*
@@ -571,3 +582,24 @@ here whole.
   document, signal or vendor vocabulary.
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A table of signal names a rule cites*), `pipeline/semanticir.md`,
   `pipeline/intentir.md`; KM card `a-table-of-declared-names-is-a-rules-operand-set`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.67.b` (CODE) — DONE `2026-10-28`
+
+- [x] **REPRODUCE / MEASURE** — after `.67.a`, AXI's `signal_set_0001` reached IntentIR with 25 members and
+  `statement_1958`, but its adapter's 117 residuals named none of them.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/adapters.rs` accounted for every other protocol table
+  but had no `signal_sets` arm. RED 7/7, the file restored byte-identically: no set residualized, only the first,
+  caption dropped, member spelling dropped, citing statements dropped, rule limitation dropped, supporting tables
+  dropped; each fails `isf_adapter_residualizes_each_signal_set_naming_its_rule_and_members`.
+- [x] **ADDRESSED (verified)** — one `isf_protocol_signal_set_<id>` per record, with the caption, every member as
+  written, citing statements and tables; AXI's one packet is above.
+- [x] **NO REGRESSION** — fresh before/after dry-runs of all 31 chains: 30 identical, AXI 117 -> 118 residuals,
+  every previous residual and `.isf` byte-identical. AXI's persisted adapter rebuilt and validated;
+  `check_chain_currency.sh` 31 of 31 current at every stage. All 11 seed reports byte-identical to `.67.a`'s (temp
+  paths masked); `kg-bench` 158/158. `cargo fmt --all -- --check` and the focused workspace test pass; `mdbook test`
+  and `mdbook build` pass with the existing `<operation>` warning unchanged. `flow_census.json` rolled (+0 functions,
+  +2 decision sites, +0 helper edges, +1 semantic macro); the genericity boundary is unchanged.
+- [x] **GENERICITY (ADR 0006)** — reads only the typed set's caption, member spellings, statement ids and table ids;
+  no document, signal or vendor vocabulary.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` and `pipeline/isf-enums.md`; KM card
+  `a-table-of-declared-names-is-a-rules-operand-set`; root frontier `.68`, its owner registry and evidence contract.

@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: the program objective (ADR 0033, amended by ADR 0053) and `R0` downstream contract hygiene
 - Created: `2026-09-25`
-- Last updated: `2026-10-19`
+- Last updated: `2026-10-28`
 - Owner: repo-local workflow
 - Decision: ADR 0053 (`docs/decisions/0053-extraction-and-isf-requests-advance-in-parallel.md`)
 
@@ -38,12 +38,12 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.67.b` — the adapter names each signal set it does not lower.
+`.68` — a cross-tab whose cells are prose is read.
 
 Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
 `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property parameter
 (`KG-ISF-COMPLETENESS.2a.vii.c.vi`) and an FSMGen pin with actor-level assertions, `.61.c` waits for the same
-`.2a.vii.c.vi`, `.68` (a cross-tab of prose), `.69` (a bus-clocked protocol's actor clock), `.3.c.viii.a` (a table
+`.2a.vii.c.vi`, `.69` (a bus-clocked protocol's actor clock), `.3.c.viii.a` (a table
 whose columns the converter swapped), `.70` (an encoding member's support requirement), `.71` (a cell that names a
 note), `.72` (a note an address or timing table cites), `.73` (a matrix's continuation), `.54.a.ii` (the corpus
 memory's refresh: an equivalent store re-pinned with the 24-document behavioral re-qualification), `.44` (Symbol-font
@@ -112,7 +112,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.71`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.72`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.73`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.67.b`
 
 ## Changelog
 

@@ -504,6 +504,9 @@ adapter's width of 1 is also its default for a symbolic one. Every other check i
 does not drive, one whose covered width is not stated, or one whose enable is a phase or an expression. AXI lowers 45
 of its 123, APB5 2 of 14, AHB5 1 of 16, each `.isf` FSMGen-strict clean. `collective_signal_names`
 (`.3.d.ii.a.ii`) are carried the same way: a name is not a port, and the members it stands for are already ports.
+Each `signal_sets` record (`.67.a`) has its own `isf_protocol_signal_set_<id>` residual (`.67.b`). It names the caption,
+every member as written, and the statements and tables that cite it. The caption and citing prose state the rule, but
+no SemanticIR or `.isf` rule form states equality between two transactions' values, so the operands stay in IntentIR.
 An equivalence rule (`.3.d.ii.b.ii`) gets a packet, `isf_protocol_equivalence_rule_` plus its id: `.isf` has no
 construct that treats one thing as another under a condition, and the rule's subject and equivalent are phrases no
 `.isf` name stands for yet. A document's permissions (`.3.d.iii.a`) share one packet, `isf_protocol_permission_rules`,

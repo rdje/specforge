@@ -632,7 +632,9 @@ there are at least four. It keeps the caption, each member as written with its n
 `citing_statement_ids`, the statements that name the table by its number (not the caption or a row). The rule itself
 stays as written; nothing turns *should be the same* into a constraint, since an equality between two transactions'
 values has no SemanticIR or `.isf` form. On `2026-10-23` AXI's is the only one, with one citing sentence. It reaches
-IntentIR unchanged, and `.67.b` adds the adapter's residual.
+IntentIR unchanged. Since `.67.b`, the adapter emits one `isf_protocol_signal_set_<id>` residual per record, naming
+its caption, every member as written, and its citing statements and tables. The residual keeps the rule visible in
+`adapter.json`; it does not change the rendered `.isf`.
 
 ### A table of marks per pair of keys
 

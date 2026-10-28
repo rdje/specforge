@@ -1483,6 +1483,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.value_combinations.len()
             + intent_ir.matrix_tables.len()
             + intent_ir.message_signal_layouts.len()
+            + intent_ir.signal_sets.len()
             + intent_ir.interface_edge_timings.len()
             + stated_absent_values.len()
             + intent_ir.equivalence_rules.len()
@@ -1587,6 +1588,34 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
                  no port takes a per-message bit mapping (FSMGen ladder F29, anticipated)",
                 signals.join(", "),
                 record.messages.join("; ")
+            ),
+        ));
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.67.b — the caption and citing prose state the rule, whose operands the set names.
+    // No SemanticIR or `.isf` rule form states equality between two transactions' values, so the operands stay typed.
+    for record in &intent_ir.signal_sets {
+        let members = record
+            .members
+            .iter()
+            .map(|member| format!("`{}`", member.text))
+            .collect::<Vec<_>>()
+            .join(", ");
+        residuals.push(protocol_residual_packet(
+            "signal_set",
+            "signal set",
+            &record.signal_set_id,
+            &record.citing_statement_ids,
+            &record.table_ids,
+            &format!(
+                "an `.isf` representation of its rule: no SemanticIR or `.isf` rule form states equality between two \
+                 transactions' values; caption: {}; members: {}; citing statements: {}",
+                record.caption.as_deref().unwrap_or("<none>"),
+                if members.is_empty() { "<none>" } else { &members },
+                if record.citing_statement_ids.is_empty() {
+                    "<none>".to_string()
+                } else {
+                    record.citing_statement_ids.join(", ")
+                }
             ),
         ));
     }
@@ -2896,6 +2925,91 @@ mod tests {
             packets[0]
                 .why_unresolved
                 .contains("supporting tables: table_0174, table_0175")
+        );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.67.b` — each signal set reaches the adapter as one residual naming its caption,
+    /// every member as written, and its citing statements, without changing the rendered `.isf`.
+    #[test]
+    fn isf_adapter_residualizes_each_signal_set_naming_its_rule_and_members() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_signal_sets.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let baseline = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("baseline_adapter"),
+        )?;
+        let baseline_isf = baseline.isf.expect("baseline ISF artifact");
+        intent_ir.signal_sets = serde_json::from_value(serde_json::json!([
+            {
+                "signal_set_id": "signal_set_0001",
+                "table_ids": ["table_0092", "table_0093"],
+                "caption": "Table A6.5: Signals that should be the same in an exclusive sequence",
+                "members": [
+                    {"table_id": "table_0092", "text": "AxID", "name": "AxID"},
+                    {"table_id": "table_0093", "text": "AxCACHE[1:0]", "name": "AxCACHE", "bits": "[1:0]"}
+                ],
+                "citing_statement_ids": ["statement_1958", "statement_1960"]
+            },
+            {
+                "signal_set_id": "signal_set_0002",
+                "table_ids": ["table_0100"],
+                "members": [{"table_id": "table_0100", "text": "AxADDR", "name": "AxADDR"}]
+            }
+        ]))?;
+        intent_ir.write_to_disk()?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("signal_set_adapter"),
+        )?;
+        assert_eq!(
+            artifact
+                .isf
+                .as_ref()
+                .expect("signal-set ISF artifact")
+                .source_text,
+            baseline_isf.source_text
+        );
+        let packets = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| packet.packet_id.starts_with("isf_protocol_signal_set_"))
+            .collect::<Vec<_>>();
+        assert_eq!(packets.len(), 2);
+        assert_eq!(
+            packets[0].packet_id,
+            "isf_protocol_signal_set_signal_set_0001"
+        );
+        for expected in [
+            "Table A6.5: Signals that should be the same in an exclusive sequence",
+            "`AxID`",
+            "`AxCACHE[1:0]`",
+            "citing statements: statement_1958, statement_1960",
+            "supporting statements: statement_1958, statement_1960; supporting tables: table_0092, table_0093",
+            "no SemanticIR or `.isf` rule form states equality between two transactions' values",
+        ] {
+            assert!(
+                packets[0].why_unresolved.contains(expected),
+                "missing {expected:?} in {}",
+                packets[0].why_unresolved
+            );
+        }
+        assert_eq!(
+            packets[1].packet_id,
+            "isf_protocol_signal_set_signal_set_0002"
+        );
+        assert!(packets[1].why_unresolved.contains("caption: <none>"));
+        assert!(packets[1].why_unresolved.contains("members: `AxADDR`"));
+        assert!(
+            packets[1]
+                .why_unresolved
+                .contains("citing statements: <none>")
         );
         Ok(())
     }
