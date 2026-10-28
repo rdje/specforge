@@ -123,10 +123,10 @@ Five active program groups support that north star: <!-- current_owners:start --
 - learning, arbitration, and corpus synthesis: the open R15c–R15g lanes remain owned by
   [`R15C-R15G-LEARNING-PLANE-BACKFILL`](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md);
 - repository durability and portability: live-document containment is owned by
-  [`LIVE-DOCUMENT-PRESSURE-HEADROOM`](docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md), the ingest boundary by
-  [`SOURCE-IR-REPRODUCIBILITY`](docs/tasks/SOURCE-IR-REPRODUCIBILITY.md), and the rustdoc API reference and the move to `cargo xtask` by
-  [`RUSTDOC-AND-XTASK`](docs/tasks/RUSTDOC-AND-XTASK.md), under the rule that a bound a surface can actually reach must have a remedy compliant
-  work can take — the rule the now-closed [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md) and `CORPUS-CHAIN-CURRENCY` established. <!-- current_owners:end -->
+  [`LIVE-DOCUMENT-PRESSURE-HEADROOM`](docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) and the ingest boundary by
+  [`SOURCE-IR-REPRODUCIBILITY`](docs/tasks/SOURCE-IR-REPRODUCIBILITY.md), under the rule that a bound a surface can
+  actually reach must have a remedy compliant work can take — the rule the now-closed
+  [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md) and `CORPUS-CHAIN-CURRENCY` established. <!-- current_owners:end -->
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md). This roadmap owns only high-level direction and milestone status;
 it does not mirror leaf frontiers, delivery chronology, or per-leaf measurements. Direction retired by a rollover is sealed byte-exact in

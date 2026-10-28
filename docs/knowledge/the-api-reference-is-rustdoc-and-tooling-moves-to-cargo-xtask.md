@@ -70,7 +70,8 @@ Python gates, the multi-file gates and corpus oracles, then the composites and t
 before `LIVE-DOC-SIZE`'s 18,539; `production-genericity-dependencies` since `.15.a`,
 `production-genericity-inventory` since `.15.b`, `production-genericity-rules` since `.15.c`,
 `behavioral-genericity-contract` since `.15.d`, whose script's problem order varied with Python's hash seed and
-whose totals used CPython 3.12's compensated `sum`; `.19` owns its 0.6 s over the script; and
+whose totals used CPython 3.12's compensated `sum`; `.19` measured five paired runs at median 4.27 s against the
+script's 4.36 s, while all 14,964 pyjson corpus cases still agree; and
 `production-genericity` since `.15.e`, its four xtask components in-process through `checks::Output`, which
 captures both streams as `2>&1` did. `.15.1` re-measured `LIVE-DOC-SIZE`'s 20 direct components as 18,539
 lines, found the 268-line derived-state authority helper behind a `File::Spec` path, and opened `.15.f`-`.15.z`,

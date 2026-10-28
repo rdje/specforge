@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `RUSTDOC-AND-XTASK`
-- Status: `active`
+- Status: `done` (`2026-10-28`)
 - Roadmap lane: repository durability and portability
 - Created: `2026-10-23`
 - Last updated: `2026-10-28`
@@ -37,7 +37,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 ## Task Tree
 
 - ID: `RUSTDOC-AND-XTASK`
-  Status: `active`
+  Status: `done` (`2026-10-28`)
   Goal: the rustdoc API reference, and the incremental move to `cargo xtask` of SpecForge's own tooling
   Children: `RUSTDOC-AND-XTASK.1`-`.19`
 
@@ -1216,7 +1216,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.18 — DOCTRINE-TABLES: both doctrine tables match the driver's registry`
 
 - ID: `RUSTDOC-AND-XTASK.19`
-  Status: `pending` (found by `.15.d`)
+  Status: `done` (`2026-10-28`; MEASUREMENT; found by `.15.d`)
   Goal: a native check that parses as much JSON as its script did is no slower than the script
   Acceptance: the behavioral contract's default mode at or under the Python script's time on the same tree,
   measured; `pyjson`'s corpus proof (`.17`) still 14,964 of 14,964; no product crate's build changed.
@@ -1225,8 +1225,12 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   are `pyjson::parse` collecting the whole input into a `Vec<char>` before it scans, and about 700 are `sha2`'s
   software compression, which the dev profile leaves unoptimized because `[profile.dev.package.xtask]` optimizes
   the tooling crate alone (`.13.a`). Peak memory is 2.0 GB against the script's 1.5 GB.
-  Verification: `pending`
-  Commit: `pending`
+  **Closed `2026-10-28`.** Five paired default runs on the same tree are byte-identical, with native median 4.27 s
+    against the Python script's 4.36 s (native 4.21-4.29, Python 4.29-4.57), so the acceptance threshold is met
+    without a speculative rewrite. `XTASK_PYJSON_CORPUS` has 14,964 lines and its ignored differential test passes
+    all 14,964 cases. No source or product-crate build changed.
+  Verification: paired timings in `.project-data/tmp/rdx-19/`; corpus `.project-data/tmp/rdx-17/corpus.jsonl`
+  Commit: `RUSTDOC-AND-XTASK.19 — native behavioral-contract runtime meets the Python baseline`
 
 ## Acceptance Checklist (enforced) — `RUSTDOC-AND-XTASK.2` (CODE) — DONE `2026-10-23`
 
@@ -1834,7 +1838,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 | 14 | `RUSTDOC-AND-XTASK.15.x` | `done` | the 2,756-line active-task-evidence checker, before its wrapper |
 | 15 | `RUSTDOC-AND-XTASK.15.y` | `done` | the 37-line eight-contract wrapper, after `.15.x` |
 | 16 | `RUSTDOC-AND-XTASK.15.z` | `done` | the 90-line orchestrator, last so every component runs in-process |
-| 17 | `RUSTDOC-AND-XTASK.19` | `pending` | the behavioral contract's 0.6 s over its script, measured in `.15.d` |
+| 17 | `RUSTDOC-AND-XTASK.19` | `done` | native median 4.27 s against Python 4.36 s over five paired runs, with 14,964 corpus cases passing |
 
 ## Decisions
 
@@ -1857,6 +1861,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-10-28` | `.15.y` | `cargo test -p xtask --lib`; original/native/shim default, argument and missing-root parity; fail-accumulation probe; Rust oracles and focused doctrine gates | 149/149; all eight checks in-process; every comparison byte-identical in stdout, stderr and exit status |
+| `2026-10-28` | `.19` | five paired original/native default runs; `XTASK_PYJSON_CORPUS` and its ignored differential test | native median 4.27 s against Python 4.36 s; all five outputs byte-identical; 14,964/14,964 corpus cases pass; no source changes |
 | `2026-10-28` | `.15.z` | `cargo test -p xtask --lib`; complete original/native orchestration, phase counts, root refusal and exact argv; Rust oracles and focused doctrine gates | 150/150; all 22 self-test/check calls and nine repository checks in-process; stdout, stderr and status byte-identical |
 | `2026-10-28` | `.15.x` | `cargo test -p xtask --lib`; all eight original/native/shim contracts, 92 self-tests, migration/derived writes and rollback; Rust oracles and focused doctrine gates | 148/148 and 92/92; every real check/report and generated tree byte-identical; rollback status 25, diagnostics and restored bytes agree |
 | `2026-10-28` | `.15.w` | `cargo test -p xtask --lib`; original/native/shim real modes, 45 self-tests, planned emission, dry-run/apply/rollback and surrogate-title parity; Rust oracles and focused doctrine gates | 147/147 and 45/45; exact transaction trees and refusal behavior; failed apply restores exact bytes and leaves no residue |
@@ -1891,6 +1896,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.19` | `RUSTDOC-AND-XTASK.19 — native behavioral-contract runtime meets the Python baseline` | five paired runs at native median 4.27 s against 4.36 s; all 14,964 corpus cases pass; no source changes |
 | `.15.z` | `RUSTDOC-AND-XTASK.15.z — cargo xtask check live-document-size completes the native containment gate` | all 22 self-test/check calls and nine repository checks in-process; exact output, argv and status |
 | `.15.y` | `RUSTDOC-AND-XTASK.15.y — cargo xtask check task-evidence-contracts replaces the eight-contract wrapper` | the 37-line wrapper native; all eight contracts in-process, exact output and fail-accumulation |
 | `.15.x` | `RUSTDOC-AND-XTASK.15.x — cargo xtask check active-task-evidence replaces the task-evidence verifier` | the 2,756-line checker native; eight contracts, all 92 cases, exact write trees and rollback status/bytes |
@@ -1924,6 +1930,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-28`: `.19` closes the performance question with five paired native/Python runs at median 4.27 s against
+  4.36 s, and all 14,964 pyjson corpus cases passing; no source changes.
 - `2026-10-28`: `.15.z` completes the in-process live-document-size orchestrator, with all 22 self-test/check
   calls and nine repository checks byte-identical to the original shell.
 - `2026-10-28`: `.15.y` moves the eight-contract wrapper to `cargo xtask check`, with in-process checks, exact
