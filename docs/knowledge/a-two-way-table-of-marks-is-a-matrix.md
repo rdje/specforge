@@ -18,8 +18,8 @@ answers:
 date: 2026-10-28
 status: current
 tags: [evidence-ir, tables, matrices, requirements, legality, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (read_matrix_tables; matrix_cell_kind; is_matrix_code_literal; matrix_caption_legend; matrix_table_surface; trailing_note_marks; bind_matrix_notes); docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.v, .3.c.v.i); docs/tasks/extraction-representation-gaps/table-reading-leaves.md (.68); .project-data/tmp/erg-68/
-reverify: "python3 .project-data/tmp/erg-68/census.py && python3 .project-data/tmp/erg-68/refine.py; cargo test --offline -p specforge-core --lib a_two_way_table_of_marks_is_a_matrix"
+evidence: crates/specforge/src/ir/evidence.rs (read_matrix_tables; read_value_and_prose_matrix_tables; matrix_cell_kind; is_matrix_code_literal; matrix_caption_legend; matrix_table_surface; trailing_note_marks; bind_matrix_notes); docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.v, .3.c.v.i); docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.68); docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md (.68.a); .project-data/tmp/erg-68a/
+reverify: "python3 .project-data/tmp/erg-68/census.py && python3 .project-data/tmp/erg-68/refine.py; cargo test --offline -p specforge-core --lib a_two_way_table_of"
 ---
 
 Many specification tables answer per pair of keys: AXI *A12.11* (opcode x `MTE_Support` x tag operation,
@@ -75,4 +75,6 @@ owns. Ten cross-tabs in 6 documents hold 45 rows / 213 non-empty cells: AHB `tab
 and independent keys, with the label count read from the headers' leading blank run. Existing readers, timing
 included, keep their tables; timing-limit roles and navigation refuse. `MatrixRow.cells[i]` is already the exact
 statement at `row.keys` x `column_keys[i]`, so no duplicate statement surface or synthesized sentence is needed.
-`.68.a` owns the `Value`/`Prose` classes and fallback; existing mark/modal records must not change.
+Since `.68.a`, `read_value_and_prose_matrix_tables` applies those rules after the mark/modal reader, with `Value` and
+`Prose` classes. A fresh before/after replay over all 31 chains adds exactly those ten records; every earlier matrix
+and every unrelated field is unchanged.

@@ -1237,8 +1237,14 @@ pub struct MatrixRow {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
 pub enum MatrixCellClass {
+    /// A symbolic mark such as `Y`, `-`, or a checkmark.
     Mark,
+    /// A modal requirement or permission stated in words.
     Modal,
+    /// A scalar, code, or parenthesized value.
+    Value,
+    /// A natural-language statement.
+    Prose,
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a code a matrix's caption defines, and its meaning, as written.
@@ -2889,14 +2895,66 @@ impl EvidenceIr {
             &collective_signal_names,
         );
         // EXTRACTION-REPRESENTATION-GAPS.3.c.v.i — a two-way table of marks or modal words is a matrix, unless another
-        // reader holds it.
+        // reader holds it. `.68.a`: the value/prose fallback runs second, over the tables no reader claimed.
+        let (mut matrix_tables, mark_and_modal_candidates) = read_matrix_tables(
+            source_ir,
+            &register_records,
+            &signal_presence_records,
+            &value_combinations,
+            &signal_layouts,
+        );
+        let mut claimed: HashSet<&str> = signal_presence_records
+            .iter()
+            .map(|record| record.table_id.as_str())
+            .chain(
+                register_records
+                    .iter()
+                    .flat_map(|record| record.supporting_table_ids.iter().map(String::as_str)),
+            )
+            .chain(
+                value_combinations
+                    .iter()
+                    .flat_map(|record| record.table_ids.iter().map(String::as_str)),
+            )
+            .chain(
+                signal_layouts
+                    .iter()
+                    .flat_map(|record| record.table_ids.iter().map(String::as_str)),
+            )
+            .chain(
+                message_signal_layouts
+                    .iter()
+                    .flat_map(|record| record.table_ids.iter().map(String::as_str)),
+            )
+            .chain(
+                signal_sets
+                    .iter()
+                    .flat_map(|record| record.table_ids.iter().map(String::as_str)),
+            )
+            .chain(
+                message_field_records
+                    .iter()
+                    .flat_map(|record| record.supporting_table_ids.iter().map(String::as_str)),
+            )
+            .chain(
+                timing_constraints
+                    .iter()
+                    .flat_map(|record| record.supporting_table_ids.iter().map(String::as_str)),
+            )
+            .collect();
+        claimed.extend(
+            matrix_tables
+                .iter()
+                .flat_map(|record| record.table_ids.iter().map(String::as_str)),
+        );
+        let (additional, value_and_prose_candidates) =
+            read_value_and_prose_matrix_tables(source_ir, &claimed, matrix_tables.len());
+        matrix_tables.extend(additional);
         let mut matrix_tables = matrix_table_surface(
-            read_matrix_tables(
-                source_ir,
-                &register_records,
-                &signal_presence_records,
-                &value_combinations,
-                &signal_layouts,
+            (
+                matrix_tables,
+                mark_and_modal_candidates,
+                value_and_prose_candidates,
             ),
             &mut extraction_manifest,
         );
@@ -33403,6 +33461,183 @@ fn read_matrix_tables(
     (records, candidates)
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.68.a` — a natural-language statement rather than a scalar, code or parenthesized
+/// value. A sentence's terminal punctuation wins over any version numbers it contains.
+fn matrix_cell_is_prose(text: &str) -> bool {
+    let text = text.trim();
+    let words = text.split_whitespace().count();
+    (words > 1 && text.ends_with(['.', '!', '?']))
+        || (words > 1 && !text.contains('(') && !text.bytes().any(|byte| byte.is_ascii_digit()))
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.68.a` — the majority cell class, or none when every cell is a mark, modal word or
+/// blank. Ties retain the existing mark/modal precedence; a new value/prose class never reclassifies an old matrix.
+fn value_and_prose_matrix_cell_class(
+    rows: &[Vec<String>],
+    label: usize,
+) -> Option<MatrixCellClass> {
+    let mut counts = [0; 4];
+    for cell in rows.iter().flat_map(|row| &row[label..]) {
+        let index = match matrix_cell_kind(cell) {
+            MatrixCellKind::Blank => continue,
+            MatrixCellKind::Mark => 0,
+            MatrixCellKind::Modal => 1,
+            MatrixCellKind::Other if matrix_cell_is_prose(cell) => 3,
+            MatrixCellKind::Other => 2,
+        };
+        counts[index] += 1;
+    }
+    if counts[2] + counts[3] == 0 {
+        return None;
+    }
+    let (mut class, mut majority) = (MatrixCellClass::Mark, counts[0]);
+    for (candidate, count) in [
+        (MatrixCellClass::Modal, counts[1]),
+        (MatrixCellClass::Value, counts[2]),
+        (MatrixCellClass::Prose, counts[3]),
+    ] {
+        if count > majority {
+            class = candidate;
+            majority = count;
+        }
+    }
+    Some(class)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.68.a` — a value/prose fallback after the mark/modal reader. Two header levels and
+/// their largest leading blank run give independent column paths and row labels. Timing layouts, navigation and
+/// tables claimed by another reader stay out; each admitted cell stays exactly as written beside its keys.
+fn read_value_and_prose_matrix_tables(
+    source_ir: &SourceIr,
+    claimed: &HashSet<&str>,
+    first_id: usize,
+) -> (Vec<MatrixTableRecord>, usize) {
+    let mut records: Vec<MatrixTableRecord> = Vec::new();
+    let mut references: Vec<(Option<String>, Vec<String>)> = Vec::new();
+    for table in &source_ir.structured_tables {
+        if claimed.contains(table.table_id.as_str())
+            || table.table_kind == TableKind::TimingParameter
+        {
+            continue;
+        }
+        let rows: Vec<Vec<String>> = table
+            .header_rows
+            .iter()
+            .chain(&table.body_rows)
+            .map(|row| {
+                row.iter()
+                    .map(|cell| cell.text.trim().to_string())
+                    .collect()
+            })
+            .collect();
+        let titles: Vec<String> = table
+            .header_rows
+            .last()
+            .map(|row| {
+                row.iter()
+                    .map(|cell| cell.text.split_whitespace().collect::<Vec<_>>().join(" "))
+                    .collect()
+            })
+            .unwrap_or_default();
+        let reference = caption_table_ref(table.caption_text.as_deref());
+        if let Some((reference, true)) = &reference
+            && let Some(index) = references.iter().rposition(|(head, head_titles)| {
+                head.as_deref() == Some(reference.as_str()) && *head_titles == titles
+            })
+        {
+            let width = records[index].row_key_titles.len() + records[index].column_keys.len();
+            let header = records[index].column_keys.first().map_or(0, Vec::len);
+            let label = records[index].row_key_titles.len();
+            if rows.iter().all(|row| row.len() == width) && rows.len() > header {
+                records[index].table_ids.push(table.table_id.clone());
+                for row in &rows[header..] {
+                    records[index].rows.push(MatrixRow {
+                        table_id: table.table_id.clone(),
+                        keys: row[..label].to_vec(),
+                        cells: row[label..].to_vec(),
+                    });
+                }
+            }
+            continue;
+        }
+        let width = rows.first().map_or(0, Vec::len);
+        if table.header_rows.len() < 2
+            || table.body_rows.len() < 2
+            || rows.len() < 3
+            || width < 3
+            || rows.iter().any(|row| row.len() != width)
+        {
+            continue;
+        }
+        let label = table
+            .header_rows
+            .iter()
+            .map(|row| {
+                row.iter()
+                    .position(|cell| !cell.text.trim().is_empty())
+                    .unwrap_or(width)
+            })
+            .max()
+            .unwrap_or(0);
+        if label == 0
+            || width - label < 2
+            || table
+                .body_rows
+                .iter()
+                .any(|row| row[0].text.trim().is_empty())
+        {
+            continue;
+        }
+        let timing_role = table.header_rows.iter().flatten().any(|cell| {
+            let text = cell.text.trim().trim_matches(['(', ')']);
+            [
+                "min", "minimum", "max", "maximum", "typ", "typical", "nominal",
+            ]
+            .iter()
+            .any(|word| text.eq_ignore_ascii_case(word))
+        });
+        let navigation = table
+            .body_rows
+            .iter()
+            .all(|row| caption_table_ref(Some(row[0].text.as_str())).is_some());
+        if timing_role || navigation {
+            continue;
+        }
+        let data = &rows[table.header_rows.len()..];
+        let Some(cell_class) = value_and_prose_matrix_cell_class(data, label) else {
+            continue;
+        };
+        records.push(MatrixTableRecord {
+            matrix_id: format!("matrix_table_{:04}", first_id + records.len() + 1),
+            table_ids: vec![table.table_id.clone()],
+            caption: table.caption_text.clone(),
+            row_key_titles: rows[table.header_rows.len() - 1][..label].to_vec(),
+            column_keys: (label..width)
+                .map(|index| {
+                    rows[..table.header_rows.len()]
+                        .iter()
+                        .map(|row| row[index].clone())
+                        .collect()
+                })
+                .collect(),
+            rows: data
+                .iter()
+                .map(|row| MatrixRow {
+                    table_id: table.table_id.clone(),
+                    keys: row[..label].to_vec(),
+                    cells: row[label..].to_vec(),
+                })
+                .collect(),
+            cell_class,
+            legend: matrix_caption_legend(table.caption_text.as_deref()),
+            notes: Vec::new(),
+        });
+        references.push((reference.map(|(reference, _)| reference), titles));
+    }
+    let candidates = records.len();
+    (records, candidates)
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.65.b` — the note number a bracketed mark holds (`[2]` -> `2`): one or two digits
 /// between square brackets.
 fn bracketed_note_number(text: &str) -> Option<&str> {
@@ -33675,22 +33910,43 @@ fn bind_presence_legends(
 }
 
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — the matrices read, recorded as the `matrix_tables` surface only when a
-/// table had the shape, so a document without one keeps its manifest unchanged.
+/// table had the shape, so a document without one keeps its manifest unchanged. `.68.a` accounts for the fallback apart.
 fn matrix_table_surface(
-    (records, candidates): (Vec<MatrixTableRecord>, usize),
+    (records, mark_and_modal_candidates, value_and_prose_candidates): (
+        Vec<MatrixTableRecord>,
+        usize,
+        usize,
+    ),
     manifest: &mut ExtractionManifest,
 ) -> Vec<MatrixTableRecord> {
-    if candidates > 0 {
+    let mut entries = Vec::new();
+    for (name, produced, kept) in [
+        (
+            "mark_and_modal_tables",
+            mark_and_modal_candidates,
+            records.len() - value_and_prose_candidates,
+        ),
+        (
+            "value_and_prose_tables",
+            value_and_prose_candidates,
+            value_and_prose_candidates,
+        ),
+    ] {
+        if produced > 0 {
+            entries.push(crate::ir::extractor::ExtractorRunEntry {
+                name: name.to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced,
+                kept,
+            });
+        }
+    }
+    if !entries.is_empty() {
         manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
             surface: "matrix_tables".to_string(),
             eligible: 1,
-            entries: vec![crate::ir::extractor::ExtractorRunEntry {
-                name: "mark_and_modal_tables".to_string(),
-                tier: ExtractorTier::Pattern,
-                eligible: true,
-                produced: candidates,
-                kept: records.len(),
-            }],
+            entries,
         });
     }
     records
@@ -52499,6 +52755,153 @@ The control register.
         );
         assert_eq!(matrices[1].cell_class, super::MatrixCellClass::Modal);
         assert!(matrices[1].legend.is_empty());
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.68.a` — a two-header cross-tab keeps exact value and prose cells with their
+    /// keys, joins continuations, and refuses maps, timing layouts, navigation and tables another reader holds.
+    #[test]
+    fn a_two_way_table_of_values_or_prose_is_a_matrix() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("value_matrices.md");
+        fs::write(&source, "# Value matrices\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table = |id: &str, caption: Option<&str>, header: &[&[&str]], body: &[&[&str]]| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                row_count: (header.len() + body.len()) as u32,
+                col_count: header[0].len() as u32,
+                header_rows: rows(header),
+                body_rows: rows(body),
+            }
+        };
+        source_ir.structured_tables.extend([
+            table(
+                "table_0001",
+                Some("Table 7-14. Start-up PHY Capability Match"),
+                &[&["", "", "DFP", "DFP"], &["", "", "Gen 1x1", "Gen 1x2"]],
+                &[
+                    &["UFP", "Gen 1x1", "Gen 1x1", "Gen 1x2"],
+                    &["UFP", "Gen 2x1", "Gen 1x1", "Gen 2x1"],
+                ],
+            ),
+            table(
+                "table_0002",
+                Some("Table 8-8. Port Type Selection Matrix"),
+                &[
+                    &["", "", "Port 2", "Port 2"],
+                    &["", "", "Upstream Only", "Both"],
+                ],
+                &[
+                    &[
+                        "Port 1",
+                        "Upstream Only",
+                        "Port 2 is the downstream port.",
+                        "Port 2 is the downstream port.",
+                    ],
+                    &[
+                        "Port 1",
+                        "Both",
+                        "Port 1 is the downstream port.",
+                        "Port 2 is the downstream port.",
+                    ],
+                ],
+            ),
+            table(
+                "table_0003",
+                Some("Table 8-8 Continued from previous page"),
+                &[
+                    &["", "", "Port 2", "Port 2"],
+                    &["", "", "Upstream Only", "Both"],
+                ],
+                &[&[
+                    "Port 1",
+                    "Downstream Only",
+                    "Port 1 is the downstream port.",
+                    "Port 1 is the downstream port.",
+                ]],
+            ),
+            table(
+                "table_0004",
+                None,
+                &[&["", "DP Offset", "DPBANKSEL"]],
+                &[&["BASEPTR0", "0x0", "0x2"], &["BASEPTR1", "0x0", "0x3"]],
+            ),
+            table(
+                "table_0005",
+                None,
+                &[&["", "Limits", "Limits"], &["", "Min", "Max"]],
+                &[&["tLOW", "1", "2"], &["tHIGH", "3", "4"]],
+            ),
+            table(
+                "table_0006",
+                None,
+                &[&["", "Title", "Title"], &["", "Page", "Page"]],
+                &[&["Table 8-1.", "238", "238"], &["Table 8-2.", "239", "239"]],
+            ),
+            table(
+                "table_0007",
+                None,
+                &[&["", "", "DFP", "DFP"], &["", "", "Gen 1x1", "Gen 1x2"]],
+                &[
+                    &["UFP", "Gen 1x1", "Gen 1x1", "Gen 1x2"],
+                    &["UFP", "Gen 2x1", "Gen 1x1", "Gen 2x1"],
+                ],
+            ),
+            table(
+                "table_0008",
+                None,
+                &[&["", "", "tBurst", "tBurst"], &["", "", "Min", "Max"]],
+                &[&["Polling.LFPS", "1", "2"], &["Ping.LFPS", "3", "4"]],
+            ),
+            table(
+                "table_0009",
+                None,
+                &[
+                    &["Feature", "Configuration", "Configuration"],
+                    &["Feature", "Single", "Multiple"],
+                ],
+                &[&["START", "Y", "Y"], &["STOP", "Y", "Y"]],
+            ),
+        ]);
+        let (matrices, candidates) = super::read_value_and_prose_matrix_tables(
+            &source_ir,
+            &std::collections::HashSet::from(["table_0007"]),
+            0,
+        );
+        assert_eq!(candidates, 2);
+        assert_eq!(matrices.len(), 2);
+        let value = &matrices[0];
+        assert_eq!(value.matrix_id, "matrix_table_0001");
+        assert_eq!(value.cell_class, super::MatrixCellClass::Value);
+        assert_eq!(value.row_key_titles, ["", ""]);
+        assert_eq!(value.column_keys[0], ["DFP", "Gen 1x1"]);
+        assert_eq!(value.rows[0].keys, ["UFP", "Gen 1x1"]);
+        assert_eq!(value.rows[0].cells, ["Gen 1x1", "Gen 1x2"]);
+        let prose = &matrices[1];
+        assert_eq!(prose.matrix_id, "matrix_table_0002");
+        assert_eq!(prose.cell_class, super::MatrixCellClass::Prose);
+        assert_eq!(prose.table_ids, ["table_0002", "table_0003"]);
+        assert_eq!(prose.rows.len(), 3);
+        assert_eq!(prose.rows[0].cells[0], "Port 2 is the downstream port.");
+        assert_eq!(prose.rows[2].cells[0], "Port 1 is the downstream port.");
         Ok(())
     }
 

@@ -24,7 +24,7 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-67-B-SIGNAL-SET-RESIDUALS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-68-A-VALUE-PROSE-MATRICES",
    "baseline": {
     "analyzed_functions": 2891,
     "decision_sites": 16394,
@@ -32,13 +32,13 @@
     "semantic_macros": 1650
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 18,
-    "helper_edges": 55,
-    "semantic_macros": 3
+    "analyzed_functions": 6,
+    "decision_sites": 64,
+    "helper_edges": 155,
+    "semantic_macros": 4
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.67.b",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.67.b: each IntentIR signal set receives one adapter residual naming its caption, every member as written, and its citing statements and tables; the rendered .isf is unchanged."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.68.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.68.a: a two-header value/prose fallback keeps exact matrix cells and their keys, while existing readers and timing or navigation shapes keep their dispositions."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

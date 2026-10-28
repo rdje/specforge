@@ -10,7 +10,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [evidence-ir, registers, sub-fields, layouts, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (fill_field_sub_fields; sub_field_bit_range); crates/specforge/src/ir/source.rs (RegisterSubField; RegisterSubFieldCell); docs/tasks/extraction-representation-gaps/table-reading-leaves.md (.60, .60.a)
+evidence: crates/specforge/src/ir/evidence.rs (fill_field_sub_fields; sub_field_bit_range); crates/specforge/src/ir/source.rs (RegisterSubField; RegisterSubFieldCell); docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.60, .60.a)
 reverify: "cargo test --offline -p specforge-core --lib a_register_fields_sub_field_table_lays_it_out"
 ---
 

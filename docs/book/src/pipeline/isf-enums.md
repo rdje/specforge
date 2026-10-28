@@ -636,7 +636,7 @@ IntentIR unchanged. Since `.67.b`, the adapter emits one `isf_protocol_signal_se
 its caption, every member as written, and its citing statements and tables. The residual keeps the rule visible in
 `adapter.json`; it does not change the rendered `.isf`.
 
-### A table of marks per pair of keys
+### A two-way table and the statement at each pair of keys
 
 AXI *Table A12.11* says which tag operation each read opcode may carry under each `MTE_Support` value (`Y` or `-`).
 I2C *Table 3* marks each protocol feature `M`, `O` or `n/a` per configuration, and its caption defines the codes.
@@ -650,17 +650,25 @@ record:
   with one. Two or more data columns follow. The header is the leading run of non-data rows, and seven in ten filled
   data cells must be marks or modal words. A footnote mark (`O [2]`, `Y 2`) is not part of the word.
 - **What is kept.** The row key titles, each data column's header path (`MTE_Support = Basic` over `Transfer`), each
-  row's keys and cells as written, the cell class (*mark* or *modal*), and the codes a caption defines (*M =
-  mandatory; O = optional; n/a = not applicable*).
+  row's keys and cells as written, the cell class (*mark*, *modal*, *value* or *prose*), and the codes a caption
+  defines (*M = mandatory; O = optional; n/a = not applicable*).
 - **Refused, and counted.** A data column titled by a slice (a layout or a value combination), bare-number column
   titles (a bit layout), label columns of code literals (an encoding), and two or more columns titled by declared
   register fields (TMC's *Permitted register writes*, keyed by `TraceCaptEn`, `TMCReady` and `MODE`). A table another
   reader holds keeps it: presence, register, value-combination and layout tables.
 
 On the 31 chains (`2026-10-22`): 48 matrices in 10 documents (AXI 22, USB 3.2 7, ADIv6 5, APB5 4, Cortex-A76 guide 3,
-OpenCAPI 3, I2C 2, AHB 1, USB4 CM 1); TMC's three field-keyed tables are refused. The current reader does not admit
-cross-tabs whose cells are values or prose (USB 3.2 *7-14*, *8-8*); `.68` decided their carrier and `.68.a` owns
-adding that fallback to this same record, without changing the existing matrices.
+OpenCAPI 3, I2C 2, AHB 1, USB4 CM 1); TMC's three field-keyed tables are refused.
+
+**Values and prose are matrices too (`.68.a`, `2026-10-28`).** A second, additive fallback reads a two-header cross-tab
+whose cells are values or natural-language statements. The largest leading blank run in those headers gives the label
+count, and each column keeps its complete header path. `MatrixRow.cells[i]` is the exact source statement at
+`row.keys` x `column_keys[i]`; no new sentence is synthesized and no duplicate statement collection is needed. The
+majority cell class is *mark*, *modal*, *value* or *prose*. A one-header attribute map or numbered sequence is not a
+cross-tab; timing-limit roles, navigation rows, and tables claimed by another reader are refused. On the 31 chains,
+this adds exactly 10 matrices in 6 documents, with 45 rows and 213 non-empty cells, and leaves every earlier matrix
+unchanged. USB 3.2 *7-14* now keeps each negotiated generation, while *8-8* keeps each downstream-port outcome and
+its tiebreaker sentence.
 
 Since `.3.c.v.ii` a matrix crosses SemanticIR and IntentIR unchanged, and the adapter states one
 `isf_protocol_matrix_table_*` residual per matrix: nothing executable names a matrix's keys yet. A legality matrix

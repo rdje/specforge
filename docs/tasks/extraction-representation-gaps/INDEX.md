@@ -18,7 +18,8 @@
 - [Packet and memory leaves](packet-and-memory-leaves.md)
 - [Encoding and state leaves](encoding-and-state-leaves.md)
 - [Layout and binding leaves](../../archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md) — archived
-- [Table reading leaves](table-reading-leaves.md)
+- [Table reading leaves](../../archive/tasks/extraction-representation-gaps/table-reading-leaves.md) — archived
+- [Protocol and clock leaves](protocol-and-clock-leaves.md)
 - [Unread intent leaves](../../archive/tasks/extraction-representation-gaps/unread-intent-leaves.md) — archived
 - [Default and assumption leaves](../../archive/tasks/extraction-representation-gaps/default-and-assumption-leaves.md) — archived
 - [Environment assumption leaves](../../archive/tasks/extraction-representation-gaps/environment-assumption-leaves.md) — archived
@@ -61,16 +62,16 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.46.c` | [Register binding leaves](register-binding-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.54.a.ii` | [Packet and memory leaves](packet-and-memory-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.68.a` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.69` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.61.c` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.70` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.71` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.72` | [Table reading leaves](table-reading-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.73` | [Table reading leaves](table-reading-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.68.a.i` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.69` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.61.c` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.70` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.71` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.72` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.73` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
 
 ## Complete route catalog
 

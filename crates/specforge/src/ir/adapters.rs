@@ -1555,8 +1555,8 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "a consumer: no condition names one of its members, and `.isf` has no combinational assignment that states the table without an invented storage target (ADR 0016)",
         ));
     }
-    // EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — a two-way table of marks or modal words. Whether a legality matrix
-    // becomes an assertion is decided from a consumer (`.3.c.v.iv`); requirement, version and effect matrices describe
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.v.ii — a two-way table of marks, modal words, values or prose (`.68.a`).
+    // Whether a legality matrix becomes an assertion is decided from a consumer (`.3.c.v.iv`); requirement, version and effect matrices describe
     // configuration and stay typed in IR (ADR 0033 §6).
     for record in &intent_ir.matrix_tables {
         residuals.push(protocol_residual_packet(

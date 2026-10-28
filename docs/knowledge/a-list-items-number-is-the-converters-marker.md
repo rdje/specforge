@@ -12,7 +12,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [source-ir, ingest, notes, matrices, value-combinations, extraction-representation-gaps, measured]
-evidence: docs/tasks/extraction-representation-gaps/table-reading-leaves.md (.65); generated/source_ir/um10204_rev7_0_2021_i2c_bus_specification/normalized/um10204_rev7_0_2021_i2c_bus_specification.backend.json (#/texts/199-201); crates/specforge/src/ir/source/docling_backend.rs (content element builder)
+evidence: docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.65); generated/source_ir/um10204_rev7_0_2021_i2c_bus_specification/normalized/um10204_rev7_0_2021_i2c_bus_specification.backend.json (#/texts/199-201); crates/specforge/src/ir/source/docling_backend.rs (content element builder)
 reverify: "In I2C's retained converter document, #/texts/199 has label list_item, enumerated true and marker [1]; its SourceIR content element elem_00102 has list_marker [1]"
 ---
 

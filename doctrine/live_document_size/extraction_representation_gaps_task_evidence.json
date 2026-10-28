@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68.a",
-      "literal" : "`.68.a` — the matrix reader keeps prose and value cells.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68.a.i",
+      "literal" : "`.68.a.i` — retire the consumed archive ceiling authority.",
       "mode" : "eligible",
-      "part_id" : "table-reading-leaves"
+      "part_id" : "protocol-and-clock-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -179,6 +179,8 @@
             "state" : "archived"
          },
          {
+            "archived_from" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
+            "git_blob" : "376a98d6015a5d3e98120a4105037877ef16b5f6",
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
             "metrics" : {
                "bytes" : 57862,
@@ -186,8 +188,21 @@
                "lines" : 626
             },
             "part_id" : "table-reading-leaves",
-            "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
+            "path" : "docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md",
+            "sealed_commit" : "1dec2b0a9434f302033d41f993a1c0c05bd51ab2",
             "sha256" : "7c714828cb7b57427e358192bc3bb6a68c32e0c213d5f5f4563460c18f486a01",
+            "state" : "archived"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — protocol and clock leaves",
+            "metrics" : {
+               "bytes" : 11274,
+               "line_bytes" : 120,
+               "lines" : 126
+            },
+            "part_id" : "protocol-and-clock-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md",
+            "sha256" : "d54622efe16334bb552f843b323bd8cf35f3ee7c96f1d366c00bd8b5a9759712",
             "state" : "active"
          },
          {
@@ -1559,7 +1574,7 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.i",
@@ -1595,7 +1610,7 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v.v",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.62",
@@ -1647,15 +1662,21 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68.a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "protocol-and-clock-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68.a.i",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.i",
@@ -1679,7 +1700,7 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.69",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.60.a",
@@ -1703,13 +1724,13 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.61.c",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.65.a",
@@ -1727,19 +1748,19 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.71",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.72",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.73",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-reading-leaves"
+         "part_id" : "protocol-and-clock-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.67.a",
@@ -1879,7 +1900,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.68.a` — the matrix reader keeps prose and value cells.",
+         "`.68.a.i` — retire the consumed archive ceiling authority.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1912,8 +1933,8 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv.b.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.68.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.68.a.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.69`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.70`",

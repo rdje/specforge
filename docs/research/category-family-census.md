@@ -172,6 +172,12 @@ OpenCAPI DLL `table_0050`/`table_0052`, OpenCAPI discovery `table_0025`, I2C `ta
 record, with `value` and `prose` cell classes; `.68.a` owns the reader. Reproduce with `.project-data/tmp/erg-68/census.py`
 and `refine.py`; the accepted and refused rows are in the same directory.
 
+**Implemented (`.68.a`, `2026-10-28`).** Fresh before/after EvidenceIR dry-runs over all 31 chains add exactly those
+10 matrices and no other content change; every earlier matrix and unrelated field is unchanged. The six chains rebuilt
+and validated stage by stage, gaining 10 adapter residuals (AHB 43 -> 44, OpenCAPI DLL 2 -> 4, discovery 5 -> 6,
+I2C 9 -> 10, USB 3.2 102 -> 106, Wishbone 8 -> 9). Every prior residual and every `.isf` is byte-identical. The
+comparison and seven RED controls are in `.project-data/tmp/erg-68a/`.
+
 ## The untyped tables no record cites (`.3.b`, `.3.b.ii`)
 
 Measured `2026-09-29` with `python3 scripts/measure_untyped_table_families.py` (read-only; `--samples N` prints N

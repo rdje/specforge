@@ -10,7 +10,7 @@ answers:
 date: 2026-10-28
 status: current
 tags: [evidence-ir, tables, rules, signal-sets, extraction-representation-gaps, measured]
-evidence: docs/tasks/extraction-representation-gaps/table-reading-leaves.md (.67, .67.a, .67.b); generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json (signal_set_0001); .project-data/tmp/erg-67b/replay.txt
+evidence: docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.67, .67.a, .67.b); generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json (signal_set_0001); .project-data/tmp/erg-67b/replay.txt
 reverify: "Replay AXI's IntentIR through specforge adapt --target isf --dry-run; require isf_protocol_signal_set_signal_set_0001 to name all 25 members, the caption and statement_1958, with manager.isf unchanged"
 ---
 

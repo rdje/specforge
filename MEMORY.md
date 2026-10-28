@@ -8,9 +8,9 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `EXTRACTION-REPRESENTATION-GAPS.68.a`. Gates that must cover the graph tool say `--workspace`.
-- Next action: implement the measured value/prose matrix fallback. Then ERG
-  `.69`-`.73`, `.3.c.viii.a`; `.61.c`, `.3.c.v.v` wait on KG-ISF `.2a.vii.c.vi`; `.46.c` on FSMGEN-REQUESTS.12;
+- Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
+- Next action: `EXTRACTION-REPRESENTATION-GAPS` `.68.a.i`, retire the consumed archive authority, then `.69`.
+  Then ERG `.70`-`.73`, `.3.c.viii.a`; `.61.c`, `.3.c.v.v` wait on KG-ISF `.2a.vii.c.vi`; `.46.c` on FSMGEN-REQUESTS.12;
   `.54.a.ii`, `.44`, SRC `.15`/`.19`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF, TLIS, LDPH `.34c`/`.42`. Score 11 seeds per slice;
   book regions: `adjudicate_book_quantity_regions.py`. Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for
   FSMGen's next exceptional push after it fixes our requests (don't poll); close `FSMGEN-REQUESTS.7`-`.10`, `.12` on
@@ -23,7 +23,7 @@
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`). A new top-level IR field moves that stage's rule
   fields, so it re-seals too: rebuild the content-changed chain by hand, then `rebuild_stage_cascade.sh --write`.
-- Part sizes: new ERG leaves -> `table-reading-leaves`; all-closed parts may be archived (`.56.a`); KG-ISF
+- Part sizes: new ERG leaves -> `protocol-and-clock-leaves`; all-closed parts may be archived (`.56.a`); KG-ISF
   actor-surface leaves -> `actor-surface-leaves`. A new part needs a contract part entry + a surfaces target.
   SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
   84.7% lines. Read which contract raised a warning before acting on it.

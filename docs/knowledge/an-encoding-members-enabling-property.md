@@ -13,7 +13,7 @@ answers:
 date: 2026-10-23
 status: current
 tags: [evidence-ir, semantic-ir, encodings, enums, value-combinations, properties, extraction-representation-gaps, measured]
-evidence: docs/tasks/extraction-representation-gaps/table-reading-leaves.md (.61, .61.a); crates/specforge/src/ir/evidence.rs (enabling_condition_column); generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json; crates/specforge/src/ir/evidence.rs (SignalPresenceRecord.presence_condition, the precedent)
+evidence: docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.61, .61.a); crates/specforge/src/ir/evidence.rs (enabling_condition_column); generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json; crates/specforge/src/ir/evidence.rs (SignalPresenceRecord.presence_condition, the precedent)
 reverify: "In AXI's SourceIR, list the tables whose first header row has a cell `Enable`, `Enable property` or `Property` — expect table_0061, table_0102-0106, table_0134 and table_0137 (the eight fragments), plus table_0277-0280 (B2.4, a property-constraint summary that mints no encoding)"
 ---
 

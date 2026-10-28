@@ -38,7 +38,7 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.68.a` — the matrix reader keeps prose and value cells.
+`.68.a.i` — retire the consumed archive ceiling authority.
 
 Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
 `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property parameter
@@ -52,16 +52,16 @@ glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENE
 register-map document's re-ingest. Closed leaves are read from the route catalog's lifecycles, not restated here; the
 list this paragraph carried until `2026-10-19` is in the `register-binding-leaves` part.
 
-Every new leaf and dated entry goes to the `table-reading-leaves` part, since `layout-and-binding-leaves` reached its
-size warning on `2026-10-22`; its open leaves moved there whole, and the part, every leaf closed, is archived
-(`.56.c`, `2026-10-22`). Since `2026-10-21` (`.56.a`) a part whose every leaf is closed is archived, byte-exact, under
+Every new leaf and dated entry goes to the `protocol-and-clock-leaves` part: `table-reading-leaves` crossed its
+mandatory rollover on `2026-10-28`, so its open leaves and `.68.a` moved there whole and it sealed at `1dec2b0a9`.
+Since `2026-10-21` (`.56.a`) a part whose every leaf is closed is archived, byte-exact, under
 `docs/archive/tasks/extraction-representation-gaps/` and takes no writes: `table-census-leaves`,
 `hint-and-notation-leaves`, `unread-intent-leaves`, `default-and-assumption-leaves`, `environment-assumption-leaves`,
-`layout-and-binding-leaves`, both `acceptance-checklists` halves and the `changelog`. A sealed leaf is amended by a
-new record in a live part. Of the eleven live parts, `program-and-census`, `census-leaves`,
+`layout-and-binding-leaves`, `table-reading-leaves`, both `acceptance-checklists` halves and the `changelog`. A sealed
+leaf is amended by a new record in a live part. Of the live parts, `program-and-census`, `census-leaves`,
 `clause-and-register-leaves`, `register-binding-leaves` and `encoding-and-state-leaves` are at or past their size
-warning (`2026-10-22`; a record for an open `census-leaves` leaf goes to `table-reading-leaves`), and the three legacy
-parts hold records for their own open leaves only.
+warning (`2026-10-22`; a record for an open `census-leaves` leaf goes to `protocol-and-clock-leaves`), and the three
+legacy parts hold records for their own open leaves only.
 
 ## Detailed task evidence
 
@@ -104,7 +104,7 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.68.a`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.68.a.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.69`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`
