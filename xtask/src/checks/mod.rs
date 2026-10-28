@@ -29,6 +29,7 @@ pub mod residual_actionability;
 pub mod rustdoc;
 pub mod section_anchors;
 pub mod task_node_retention;
+pub mod task_tree_archive;
 pub mod task_tree_catalog;
 pub mod validation_snapshot_currentness;
 
@@ -201,6 +202,11 @@ pub const CHECKS: &[Check] = &[
         name: "validation-snapshot-currentness",
         replaces: "scripts/check_validation_snapshot_currentness.pl",
         run: validation_snapshot_currentness::run,
+    },
+    Check {
+        name: "task-tree-archive",
+        replaces: "scripts/check_task_tree_archive.pl",
+        run: task_tree_archive::run,
     },
 ];
 
