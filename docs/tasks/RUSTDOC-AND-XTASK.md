@@ -1084,13 +1084,18 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.u — cargo xtask check live-document-size-tests replaces the test matrix`
 
 - ID: `RUSTDOC-AND-XTASK.15.v`
-  Status: `pending`
+  Status: `done` (`2026-10-28`; CODE)
   Goal: `cargo xtask check fact-card-catalog` replaces the 1,729-line `scripts/check_fact_card_catalog.pl`
   Acceptance: `.15.1`'s common port contract for every existing mode; card membership, capacity, titles,
     question keys and every generated index/part regenerate byte-identically, with census/producer commands
     unchanged.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-28`.** `xtask/src/checks/fact_card_catalog.rs` ports the complete parser, surface/question
+    authorities, deterministic landing/title-part writer, Git boundary and pressure contracts, preserving the
+    `.15.n` write flow. All 60 self-tests and the real 418-card tree agree; write trees are byte-identical and
+    remove only stale parts. WTF-8 card text preserves lone surrogates through parsing, rendering and hashing;
+    malformed-byte and path/usage refusals retain their original diagnostics.
+  Verification: `cargo test -p xtask --lib` 145/145; all modes, 60 cases and write parity in `.project-data/tmp/rdx-15v/`
+  Commit: `RUSTDOC-AND-XTASK.15.v — cargo xtask check fact-card-catalog replaces the fact-card generator`
 
 - ID: `RUSTDOC-AND-XTASK.15.w`
   Status: `pending`
@@ -1803,7 +1808,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 | 9 | `RUSTDOC-AND-XTASK.15.s` | `done` | the 1,169-line roadmap projection contract |
 | 10 | `RUSTDOC-AND-XTASK.15.t` | `done` | the 1,554-line core surface checker, before its test |
 | 11 | `RUSTDOC-AND-XTASK.15.u` | `done` | the 1,559-line core surface test matrix |
-| 12 | `RUSTDOC-AND-XTASK.15.v` | `pending` | the 1,729-line fact-card catalog |
+| 12 | `RUSTDOC-AND-XTASK.15.v` | `done` | the 1,729-line fact-card catalog |
 | 13 | `RUSTDOC-AND-XTASK.15.w` | `pending` | the 2,579-line rolling-ledger protocol |
 | 14 | `RUSTDOC-AND-XTASK.15.x` | `pending` | the 2,756-line active-task-evidence checker, before its wrapper |
 | 15 | `RUSTDOC-AND-XTASK.15.y` | `pending` | the 37-line eight-contract wrapper, after `.15.x` |
@@ -1830,6 +1835,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-28` | `.15.v` | `cargo test -p xtask --lib`; original/native/shim all modes, 60 self-tests, write trees, malformed bytes and surrogate-body parity; Rust oracles and focused doctrine gates | 145/145 and 60/60; 418 real cards and all output trees byte-identical; no known divergence or fixture residue |
 | `2026-10-28` | `.15.u` | `cargo test -p xtask --lib`; original/native/shim verbose, quiet and argument parity; construction-failure cleanup probe; capacity suite and unreachable-declaration RED; Rust oracles and focused doctrine gates | 142/142, 126/126 and 12/12; every preserved-interface comparison byte-identical in stdout, stderr and exit status; no fixture residue or capacity-bound change |
 | `2026-10-28` | `.15.t` | `cargo test -p xtask --lib`; original/native/shim real modes, all 126 fixtures and malformed-JSON differential; Rust oracles and focused doctrine gates | 140/140, 126/126 and 49/49; every preserved-interface comparison byte-identical in stdout, stderr and exit status; no fixture residue |
 | `2026-10-28` | `.15.s` | `cargo test -p xtask --lib`; original/native/shim mode, argument, root and contract-error parity; Rust oracles and focused doctrine gates | 136/136 and 49/49; every comparison byte-identical in stdout, stderr and exit status; 23 workstreams covered |
@@ -1860,6 +1866,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.v` | `RUSTDOC-AND-XTASK.15.v — cargo xtask check fact-card-catalog replaces the fact-card generator` | the 1,729-line catalog native; all 60 cases, exact write trees and codepoint-preserving WTF-8 behavior |
 | `.15.u` | `RUSTDOC-AND-XTASK.15.u — cargo xtask check live-document-size-tests replaces the test matrix` | the 1,559-line matrix native; all 126 checks, exact quiet/verbose parity and construction-failure cleanup |
 | `.15.t` | `RUSTDOC-AND-XTASK.15.t — cargo xtask check live-document-size-core replaces the surface verifier` | the 1,554-line surface checker native; all 126 fixtures and exact mode/report/refusal parity |
 | `.15.s` | `RUSTDOC-AND-XTASK.15.s — cargo xtask check roadmap-projection-contract replaces the roadmap verifier` | the 1,169-line roadmap contract native; all 49 cases and exact mode/report/refusal parity |
@@ -1888,6 +1895,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-28`: `.15.v` moves the fact-card catalog to `cargo xtask check`, with all 60 cases, byte-identical
+  generated trees and codepoint-preserving WTF-8 parsing, rendering and refusal behavior.
 - `2026-10-28`: `.15.u` moves the 126-check live-document matrix to `cargo xtask check`, with exact verbose, quiet
   and argument parity and cleanup on both success and fixture-construction failure.
 - `2026-10-28`: `.15.t` moves the live-document core checker to `cargo xtask check`, with all 126 fixture cases and

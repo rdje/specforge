@@ -13,6 +13,7 @@ pub mod derived_state_authority_tests;
 pub mod derived_state_contract_tests;
 pub mod derived_state_contracts;
 pub mod doctrine_tables;
+pub mod fact_card_catalog;
 pub mod fsmgen_feedback_protocol;
 pub mod fsmgen_request_bundles;
 pub mod knowledge_map_projection;
@@ -243,6 +244,11 @@ pub const CHECKS: &[Check] = &[
         name: "live-document-size-tests",
         replaces: "scripts/test_live_document_size.pl",
         run: live_document_size_tests::run,
+    },
+    Check {
+        name: "fact-card-catalog",
+        replaces: "scripts/check_fact_card_catalog.pl",
+        run: fact_card_catalog::run,
     },
 ];
 
