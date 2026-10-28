@@ -575,6 +575,20 @@ Measured on `2026-10-23`: 3 enums and 3 combinations, all in AXI. `AWSNOOP` has 
 boolean properties, which SemanticIR does not read yet (`.61.c`, after `KG-ISF-COMPLETENESS.2a.vii.c.vi`). The `.isf`
 enum keeps every member, and the adapter names the gated ones in one residual per enum (`.61.b`).
 
+### A member's support requirement
+
+An encoding row can also say whether support is required. ADIv6 *C2-3* gives `Word (32-bits)` `Yes a`, and the other
+sizes `No`; its `Size` enum keeps the codes but not that requirement. *C2-1* gives `AddrInc` `Always.` and a fallback
+to `0b00` when packed transfers are unsupported, which is conditional behavior, not an enabling property. `.70` found
+these two tables in the 31 chains, with nine non-reserved rows.
+
+The decided carrier is one row-level `SupportRequirementRecord` per row: encoding, meaning and support cell as written,
+plus each note's mark and exact text. A `Yes a` support cell and a `0b011 b` encoding each cite their own note by its
+mark. Note `a` makes `Size` read-only when only word is supported; note `b` ties larger accesses to the Large Data
+Extension. An optional symbol/member link joins only by exact table and literal equality, never row position or name
+spelling. C2-1 needs no such link. `.70.a` owns carrying the nine records to IntentIR and naming each in an adapter
+residual; no requirement becomes unconditional membership or a guessed property, and `.isf` stays unchanged.
+
 ### A signal's bit sub-fields
 
 AHB's *Table 3-6 Meaning of the HPROT bits* gives each bit a row: `HPROT[1]` *Privileged*, *When asserted, this bit

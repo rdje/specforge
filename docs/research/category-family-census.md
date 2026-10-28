@@ -178,6 +178,13 @@ and validated stage by stage, gaining 10 adapter residuals (AHB 43 -> 44, OpenCA
 I2C 9 -> 10, USB 3.2 102 -> 106, Wishbone 8 -> 9). Every prior residual and every `.isf` is byte-identical. The
 comparison and seven RED controls are in `.project-data/tmp/erg-68a/`.
 
+**Support requirements re-derived (`.70`, `2026-10-28`).** Only ADIv6 *C2-1* and *C2-3* have a `Support required?`
+column: three non-reserved `AddrInc` rows and six `Size` rows, nine in all. `Size` has three current enum members;
+`AddrInc` has none. `Yes a` and `0b011 b` join notes `a` and `b` by their own marks, including the read-only word-only
+rule and Large Data Extension support. Each row becomes a `SupportRequirementRecord` with exact encoding, meaning,
+support and note text, and an optional exact table/literal member join. C2-1's conditional fallback is not an enabling
+property. `.70.a` owns the reader and per-record adapter residual; `.isf` stays unchanged.
+
 ## The untyped tables no record cites (`.3.b`, `.3.b.ii`)
 
 Measured `2026-09-29` with `python3 scripts/measure_untyped_table_families.py` (read-only; `--samples N` prints N

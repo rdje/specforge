@@ -8,8 +8,8 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: `EXTRACTION-REPRESENTATION-GAPS` `.70`, the support-requirement column census.
+- Active unit: `EXTRACTION-REPRESENTATION-GAPS.70.a`. Gates that must cover the graph tool say `--workspace`.
+- Next action: implement the measured support-requirement records and note joins.
   Then ERG `.70`-`.73`, `.3.c.viii.a`; `.61.c`, `.3.c.v.v` wait on KG-ISF `.2a.vii.c.vi`; `.46.c` on FSMGEN-REQUESTS.12;
   `.54.a.ii`, `.44`, SRC `.15`/`.19`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF, TLIS, LDPH `.34c`/`.42`. Score 11 seeds per slice;
   book regions: `adjudicate_book_quantity_regions.py`. Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for

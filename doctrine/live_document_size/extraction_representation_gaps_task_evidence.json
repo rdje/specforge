@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70",
-      "literal" : "`.70` — an encoding member's support requirement is read.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70.a",
+      "literal" : "`.70.a` — support requirements and their notes reach IntentIR.",
       "mode" : "eligible",
       "part_id" : "protocol-and-clock-leaves"
    },
@@ -196,13 +196,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — protocol and clock leaves",
             "metrics" : {
-               "bytes" : 13325,
+               "bytes" : 15346,
                "line_bytes" : 120,
-               "lines" : 146
+               "lines" : 167
             },
             "part_id" : "protocol-and-clock-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md",
-            "sha256" : "c45f6857772537403d8da5941e10ea181d16a229ca20ffda22a0e40be174b2d4",
+            "sha256" : "2af5c6c2f33ecd3adae4c31fe00662625c20cd37c1d39c8995858b0a37d4ca42",
             "state" : "active"
          },
          {
@@ -1728,6 +1728,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "protocol-and-clock-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.70.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "protocol-and-clock-leaves"
@@ -1900,7 +1906,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.70` — an encoding member's support requirement is read.",
+         "`.70.a` — support requirements and their notes reach IntentIR.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1935,7 +1941,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`",
-         "- ID: `EXTRACTION-REPRESENTATION-GAPS.70`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.70.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.71`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.72`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.73`"

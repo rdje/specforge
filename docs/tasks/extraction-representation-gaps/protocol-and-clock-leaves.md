@@ -115,11 +115,32 @@ and dated entries go to this part.
   records, join each name in an `enabled_by` to its record, leave a name no record declares unjoined, and measure AXI's
   22 properties.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.70`
-  Status: `open` (`2026-10-23`; DESIGN; opened by `.61`)
+  Status: `done` (`2026-10-28`; DESIGN; opened by `.61`; opened `.70.a`)
   Goal: **an encoding member's support requirement is read.** **Reproduce:** ADIv6 *C2-3* (`Size value, CSW.Size |
   Memory access size | Support required?`) states `Yes a` for `Word` and `No` for the other sizes; the `Size` enum
   keeps the codes and drops the column. Acceptance: census encoding tables with a support-requirement column, decide
   the carrier (and how the footnote mark joins its note), and measure every chain.
+  **Measured `2026-10-28`** (31 chains). Two ADIv6 tables have such a column: *C2-1* `AddrInc` (three non-reserved
+  rows) and *C2-3* `Size` (six), nine support requirements in all. `Size` has three enum members in IntentIR;
+  `AddrInc` has none. C2-3's `Yes a` is note `a` (only word supported: the field is read-only and returns `0b010`);
+  larger rows carry note `b` (supported by the Large Data Extension). C2-1 states `Always.` and a conditional fallback
+  to `0b00` when packed transfers are unsupported, not an enabling property.
+  **Decided.**
+  - **One row-level `SupportRequirementRecord` per non-reserved row**, in EvidenceIR `support_requirements`: table ids,
+    encoding and meaning as written, the support cell as written, and `notes` (`mark` and exact note text). A `-` row
+    states no requirement. SemanticIR and IntentIR carry the records; an optional symbol id and member name join only
+    by exact table and literal equality, never row position or spelling. C2-1 needs no such link to be useful.
+  - **Notes join by their own marks.** Every cell in the row can cite a note: `Yes a` on the support cell, `0b011 b`
+    on the encoding. Join each trailing mark to the footnote with that mark on the table's pages, never by position.
+  - **Not lowered.** An `.isf` enum has no support-condition form, so no requirement becomes unconditional membership
+    or a guessed enabling property. Each record gets an adapter residual naming its encoding, meaning, support, notes
+    and any member link; `.isf` stays unchanged.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.70.a`
+  Status: `open` (`2026-10-28`; CODE; opened by `.70`)
+  Goal: **support requirements and their notes reach IntentIR.** Acceptance: implement the record, its optional exact
+    member join and note binding, register the new field, carry it to IntentIR and name each record in its adapter
+    residual; read exactly C2-1's three and C2-3's six rows, preserve every existing member and `.isf`, and measure all
+    31 chains.
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.68.a` (CODE) — DONE `2026-10-28`
 
 - [x] **REPRODUCE / MEASURE** — `.68`'s 31-chain census: 32 candidates, 10 two-way value/prose matrices in 6

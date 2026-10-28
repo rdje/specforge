@@ -10,10 +10,10 @@ answers:
   - "why is a member's enabling property not joined to the property's record yet (boolean properties, KG-ISF .2a.vii.c.vi)"
   - "does a gated enum member reach the .isf"
   - "what is isf_protocol_enum_enabled_members"
-date: 2026-10-23
+date: 2026-10-28
 status: current
 tags: [evidence-ir, semantic-ir, encodings, enums, value-combinations, properties, extraction-representation-gaps, measured]
-evidence: docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.61, .61.a); crates/specforge/src/ir/evidence.rs (enabling_condition_column); generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json; crates/specforge/src/ir/evidence.rs (SignalPresenceRecord.presence_condition, the precedent)
+evidence: docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.61, .61.a); docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md (.70); crates/specforge/src/ir/evidence.rs (enabling_condition_column); generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json; generated/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir.json (table_0072, table_0075); crates/specforge/src/ir/evidence.rs (SignalPresenceRecord.presence_condition, the precedent)
 reverify: "In AXI's SourceIR, list the tables whose first header row has a cell `Enable`, `Enable property` or `Property` — expect table_0061, table_0102-0106, table_0134 and table_0137 (the eight fragments), plus table_0277-0280 (B2.4, a property-constraint summary that mints no encoding)"
 ---
 
@@ -51,4 +51,6 @@ none of the 22 is a record.
 - a signal's presence property (`presence_condition`, joined by `.2a.vii.c.vi`);
 - a parity check's enable (`check_enable`);
 - CHI C2C's register property bits;
-- ADIv6 *C2-3*'s `Support required?`, a member's conformance requirement (`.70`).
+- ADIv6 *C2-3*'s `Support required?`, a member's conformance requirement (`.70`): a row-level record with exact support
+  and note text, not an enabling property. C2-1's conditional fallback has no enum and uses the same carrier; notes join
+  by their own marks, and optional member links join only by exact table and literal equality (`.70.a`).
