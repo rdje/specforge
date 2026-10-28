@@ -7,6 +7,7 @@ pub mod chain_currency;
 pub mod constraint_part_span;
 pub mod contract_encoding;
 pub mod corpus_frontier;
+pub mod corpus_kb_currentness;
 pub mod derived_state_authorities;
 pub mod derived_state_authority_tests;
 pub mod derived_state_contract_tests;
@@ -213,6 +214,11 @@ pub const CHECKS: &[Check] = &[
         name: "source-pdf-registry-currentness",
         replaces: "scripts/check_source_pdf_registry_currentness.pl",
         run: source_pdf_registry_currentness::run,
+    },
+    Check {
+        name: "corpus-kb-currentness",
+        replaces: "scripts/check_corpus_kb_currentness.pl",
+        run: corpus_kb_currentness::run,
     },
 ];
 

@@ -1014,13 +1014,17 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
   Commit: `RUSTDOC-AND-XTASK.15.p — cargo xtask check source-pdf-registry-currentness replaces the PDF registry verifier`
 
 - ID: `RUSTDOC-AND-XTASK.15.q`
-  Status: `pending`
+  Status: `done` (`2026-10-28`; CODE; checklist below)
   Goal: `cargo xtask check corpus-kb-currentness` replaces the 757-line
     `scripts/check_corpus_kb_currentness.pl`
   Acceptance: `.15.1`'s common port contract for every existing mode; managed-page membership, source identity,
     fixture staging and all current/census verifier outputs agree.
-  Verification: `pending`
-  Commit: `pending`
+  **Done `2026-10-28`.** `xtask/src/checks/corpus_kb_currentness.rs` validates reviewed validation, 158/158
+    Git-indexed KG fixtures, ten managed Markdown blocks, paired JSON, human regions and producer seams. Its 17
+    fixtures seed and clean every case. **Parity:** default/check/report/self-test, argument failures, root and
+    contract errors, unsafe paths and malformed JSON agree byte-for-byte, including read status 2 and parse 255.
+  Verification: `cargo test -p xtask --lib` 132/132; all modes and edge probes in `.project-data/tmp/rdx-15q/`
+  Commit: `RUSTDOC-AND-XTASK.15.q — cargo xtask check corpus-kb-currentness replaces the corpus KB verifier`
 
 - ID: `RUSTDOC-AND-XTASK.15.r`
   Status: `pending`
@@ -1774,7 +1778,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 | 4 | `RUSTDOC-AND-XTASK.15.n` | `done` | the 706-line validation-snapshot currentness check |
 | 5 | `RUSTDOC-AND-XTASK.15.o` | `done` | the 746-line task-tree archive check |
 | 6 | `RUSTDOC-AND-XTASK.15.p` | `done` | the 751-line Source PDF registry currentness check |
-| 7 | `RUSTDOC-AND-XTASK.15.q` | `pending` | the 757-line corpus KB currentness check |
+| 7 | `RUSTDOC-AND-XTASK.15.q` | `done` | the 757-line corpus KB currentness check |
 | 8 | `RUSTDOC-AND-XTASK.15.r` | `pending` | the 790-line FSMGen feedback protocol |
 | 9 | `RUSTDOC-AND-XTASK.15.s` | `pending` | the 1,169-line roadmap projection contract |
 | 10 | `RUSTDOC-AND-XTASK.15.t` | `pending` | the 1,554-line core surface checker, before its test |
@@ -1806,6 +1810,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-10-28` | `.15.q` | `cargo test -p xtask --lib`; original/native/shim mode, argument, root and contract-error parity; Rust oracles and focused doctrine gates | 132/132 and 17/17; all 158 fixtures and every comparison byte-identical in stdout, stderr and exit status |
 | `2026-10-28` | `.15.p` | `cargo test -p xtask --lib`; original/native/shim mode, argument, root and contract-error parity; Rust oracles and focused doctrine gates | 130/130 and 13/13; all 22 PDFs and every comparison byte-identical in stdout, stderr and exit status |
 | `2026-10-28` | `.15.o` | `cargo test -p xtask --lib`; original/native/shim mode, argument, root and contract-error parity; Rust oracles and focused doctrine gates | 128/128 and 15/15; every comparison byte-identical in stdout, stderr and exit status; no fixture residue |
 | `2026-10-28` | `.15.n` | `cargo test -p xtask --lib`; original/native/shim mode, argument, root and contract-error parity; Rust oracles and focused doctrine gates | 126/126 and 12/12; every comparison byte-identical in stdout, stderr and exit status; read, parse and cap failures preserve their distinct contracts |
@@ -1831,6 +1836,7 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15.q` | `RUSTDOC-AND-XTASK.15.q — cargo xtask check corpus-kb-currentness replaces the corpus KB verifier` | the 757-line corpus contract native; all 17 cases and exact mode/report/refusal parity |
 | `.15.p` | `RUSTDOC-AND-XTASK.15.p — cargo xtask check source-pdf-registry-currentness replaces the PDF registry verifier` | the 751-line registry verifier native; all 13 cases and exact mode/report/refusal parity |
 | `.15.o` | `RUSTDOC-AND-XTASK.15.o — cargo xtask check task-tree-archive replaces the archive contract` | the 746-line archive contract native; all 15 source/route cases and exact mode/report/refusal parity |
 | `.15.n` | `RUSTDOC-AND-XTASK.15.n — cargo xtask check validation-snapshot-currentness replaces the snapshot verifier` | the 706-line verifier native; all 12 self-tests and exact mode/report/refusal parity |
@@ -1854,6 +1860,8 @@ adds no crate to the build, with each port proven to behave exactly as the scrip
 
 ## Changelog
 
+- `2026-10-28`: `.15.q` moves corpus KB currentness to `cargo xtask check`, with all 17 cases and exact mode,
+  report and refusal parity.
 - `2026-10-28`: `.15.p` moves Source PDF registry currentness to `cargo xtask check`, with all 13 cases and exact
   mode, report and refusal parity.
 - `2026-10-28`: `.15.o` moves the task-tree archive contract to `cargo xtask check`, with all 15 source/route cases
