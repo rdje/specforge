@@ -1,6 +1,6 @@
 ---
 id: a-two-way-table-of-marks-is-a-matrix
-title: A two-way table whose cells are marks or modal words is a matrix (matrix_tables), unless another reader holds it
+title: A two-way table is a matrix (matrix_tables), unless another reader holds it or its shape is not a cross-tab
 answers:
   - "what does a presence code like YM mean (bind_presence_legends, .3.c.v.iii)"
   - "what does AHB's presence code OC mean (Table A-1, legend_table_id, .66)"
@@ -13,11 +13,13 @@ answers:
   - "why are TMC's Permitted register writes tables not matrices"
   - "what is a requirement, legality, version or effect matrix (.3.c.v)"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.c.v and .3.c.v.i"
-date: 2026-10-22
+  - "what is EXTRACTION-REPRESENTATION-GAPS.68 / .68.a (prose and value cross-tabs)"
+  - "how does a two-header cross-tab keep a statement per cell"
+date: 2026-10-28
 status: current
 tags: [evidence-ir, tables, matrices, requirements, legality, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (read_matrix_tables; matrix_cell_kind; is_matrix_code_literal; matrix_caption_legend; matrix_table_surface; trailing_note_marks; bind_matrix_notes); docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.v, .3.c.v.i)
-reverify: "cargo test --offline -p specforge-core --lib a_two_way_table_of_marks_is_a_matrix"
+evidence: crates/specforge/src/ir/evidence.rs (read_matrix_tables; matrix_cell_kind; is_matrix_code_literal; matrix_caption_legend; matrix_table_surface; trailing_note_marks; bind_matrix_notes); docs/archive/tasks/extraction-representation-gaps/layout-and-binding-leaves.md (.3.c.v, .3.c.v.i); docs/tasks/extraction-representation-gaps/table-reading-leaves.md (.68); .project-data/tmp/erg-68/
+reverify: "python3 .project-data/tmp/erg-68/census.py && python3 .project-data/tmp/erg-68/refine.py; cargo test --offline -p specforge-core --lib a_two_way_table_of_marks_is_a_matrix"
 ---
 
 Many specification tables answer per pair of keys: AXI *A12.11* (opcode x `MTE_Support` x tag operation,
@@ -64,3 +66,13 @@ and binds each mark to the one note with that mark printed beside the matrix's t
 cells; the cells stay as written. Measured on 31 chains: AXI *A12.13* 3 notes (`Update 1`, one `Y 2`,
 two `Y 3`), USB 3.2 *9-2* 2 on both columns; 29 chains identical. I2C *Table 3*'s notes are list
 items whose numbers the converter drops, so `O [2]` binds nothing (`.65`).
+
+**Prose and value cells (`.68`, decided `2026-10-28`).** A 31-chain census found 32 unclaimed candidates, then
+refused 22 one-header maps or sequences, bit layouts, timing tables, navigation rows and the I2C continuation `.73`
+owns. Ten cross-tabs in 6 documents hold 45 rows / 213 non-empty cells: AHB `table_0024`, OpenCAPI DLL
+`table_0050`/`table_0052`, OpenCAPI discovery `table_0025`, I2C `table_0013`, USB 3.2
+`table_0057`/`table_0097`/`table_0108`/`table_0211`, and Wishbone `table_0004`. They need at least two header levels
+and independent keys, with the label count read from the headers' leading blank run. Existing readers, timing
+included, keep their tables; timing-limit roles and navigation refuse. `MatrixRow.cells[i]` is already the exact
+statement at `row.keys` x `column_keys[i]`, so no duplicate statement surface or synthesized sentence is needed.
+`.68.a` owns the `Value`/`Prose` classes and fallback; existing mark/modal records must not change.

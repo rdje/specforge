@@ -164,6 +164,14 @@ the 31 current chains 1,219 table regions are listed (2,698 captured regions in 
 | a cross-tab whose cells are prose (USB 3.2 *8-8 Port Type Selection Matrix*) | 1 | `EXTRACTION-REPRESENTATION-GAPS.68` |
 | no owner, as `.3.c` decided: connector pinouts (RISC-V Debug MIPI ×2, ADIv6 SWJ-DP), the grid-filtered IOMMU `table_0077`, USB's compliance pattern (every row refused), and five encodings naming their quantity (RISC-V Debug privilege mode, USB *9-14*, *10-16*, *10-17* and its continuation) | 10 | none |
 
+**Value/prose cross-tabs re-derived (`.68`, `2026-10-28`).** The 31-chain census found 32 unclaimed candidates in 9
+documents and refused 22 as one-header attribute maps or sequences, bit layouts, timing tables, navigation, or the I2C
+continuation owned by `.73`. Ten two-way matrices in 6 documents hold 45 rows and 213 non-empty cells: AHB `table_0024`,
+OpenCAPI DLL `table_0050`/`table_0052`, OpenCAPI discovery `table_0025`, I2C `table_0013`, USB 3.2
+`table_0057`/`table_0097`/`table_0108`/`table_0211`, and Wishbone `table_0004`. They use the existing `matrix_tables`
+record, with `value` and `prose` cell classes; `.68.a` owns the reader. Reproduce with `.project-data/tmp/erg-68/census.py`
+and `refine.py`; the accepted and refused rows are in the same directory.
+
 ## The untyped tables no record cites (`.3.b`, `.3.b.ii`)
 
 Measured `2026-09-29` with `python3 scripts/measure_untyped_table_families.py` (read-only; `--samples N` prints N

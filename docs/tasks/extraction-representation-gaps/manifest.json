@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68",
-      "literal" : "`.68` — a cross-tab whose cells are prose is read.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68.a",
+      "literal" : "`.68.a` — the matrix reader keeps prose and value cells.",
       "mode" : "eligible",
       "part_id" : "table-reading-leaves"
    },
@@ -207,7 +207,7 @@
          "part_id" : "table-reading-leaves"
       },
       {
-         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68",
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.68.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-reading-leaves"
@@ -427,13 +427,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table reading leaves",
          "metrics" : {
-            "bytes" : 55827,
+            "bytes" : 57862,
             "line_bytes" : 119,
-            "lines" : 605
+            "lines" : 626
          },
          "part_id" : "table-reading-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-reading-leaves.md",
-         "sha256" : "bcb3093a00287e0978f6a0fc2d715e21ffe1e5691189746e218475666e877b20",
+         "sha256" : "7c714828cb7b57427e358192bc3bb6a68c32e0c213d5f5f4563460c18f486a01",
          "state" : "active"
       },
       {

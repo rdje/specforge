@@ -38,7 +38,7 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.68` — a cross-tab whose cells are prose is read.
+`.68.a` — the matrix reader keeps prose and value cells.
 
 Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
 `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property parameter
@@ -104,7 +104,7 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.44`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.54.a.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.68`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.68.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.69`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`

@@ -100,6 +100,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.65 / .65.a / .65.b / .71
 - [a-table-of-declared-names-is-a-rules-operand-set](../knowledge/a-table-of-declared-names-is-a-rules-operand-set.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.67 / .67.a / .67.b
+- [a-two-way-table-of-marks-is-a-matrix](../knowledge/a-two-way-table-of-marks-is-a-matrix.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.68 / .68.a (prose and value cross-tabs)
 - [a-table-of-declared-names-is-a-rules-operand-set](../knowledge/a-table-of-declared-names-is-a-rules-operand-set.md)
   > what is EvidenceIR signal_sets / citing_statement_ids
 - [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
@@ -296,5 +298,3 @@
   > what is document_signal_coreferences
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_type_declared / front_matter_doc_type_hint
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
-  > what is enum member-column drift

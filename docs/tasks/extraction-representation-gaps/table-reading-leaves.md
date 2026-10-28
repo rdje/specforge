@@ -190,12 +190,33 @@ here whole.
   `flow_census`; measurements in `.project-data/tmp/erg-67b/`
   Commit: `EXTRACTION-REPRESENTATION-GAPS.67.b — the adapter names each signal set it does not lower`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.68`
-  Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.vi`)
+  Status: `done` (`2026-10-28`; DESIGN; opened by `.3.c.vi`; opened `.68.a`)
   Goal: **a cross-tab whose cells are prose is read.** **Reproduce:** USB 3.2 *Table 8-8 Port Type Selection Matrix*
   answers, per pair of port capabilities (`Upstream Only`, `Downstream Only`, `Both`), which port is downstream in a
   sentence (*Port 2 is the downstream port*); `.3.c.v` set such cross-tabs aside as no matrix of marks (*7-14* too).
   Acceptance: census cross-tabs of prose or values, decide the record (keys and a statement per cell) and measure
   every chain.
+  **Measured `2026-10-28`** (31 chains; `.project-data/tmp/erg-68/census.py`, `refine.py`). The broad shape-first
+  census found 32 unclaimed candidates in 9 documents; 22 are one-header attribute maps or sequences, bit layouts,
+  timing tables, navigation, or the I2C continuation owned by `.73`. Ten are two-way value/prose matrices in 6
+  documents, holding 45 rows and 213 non-empty cells: AHB `table_0024` (HRESP x HREADYOUT, 4), OpenCAPI DLL
+  `table_0050` (59) and `table_0052` (31), OpenCAPI discovery `table_0025` (18), I2C `table_0013` (24), USB 3.2
+  `table_0057` (24), `table_0097` (16), `table_0108` (9) and `table_0211` (12), and Wishbone `table_0004` (16).
+  **Decided.**
+  - **The existing record.** `.3.c.v` already decided `matrix_tables` for value and prose classes. A
+    `MatrixTableRecord` holds the keys and every cell as written: `MatrixRow.cells[i]` is the source statement at
+    `row.keys` x `column_keys[i]`, not a synthesized sentence and not a duplicate statement collection. Add `Value`
+    and `Prose` to `MatrixCellClass`; keep the existing mark/modal records byte-identical.
+  - **The boundary.** A value/prose fallback needs at least two header levels, independent row and column keys, and
+    the label count from the largest leading blank run in those headers. Existing readers keep their tables, timing
+    included. Timing-limit roles and table-of-contents rows refuse the table; a one-header attribute map is not a
+    cross-tab. The adapter's existing per-matrix residual names each new record; no `.isf` form changes.
+- ID: `EXTRACTION-REPRESENTATION-GAPS.68.a`
+  Status: `open` (`2026-10-28`; CODE; opened by `.68`)
+  Goal: **the matrix reader keeps prose and value cells.** Acceptance: implement `.68`'s fallback and the two cell
+  classes, preserving every existing matrix; read exactly the ten measured tables (45 rows, 213 cells) in the six
+  chains, carry them to IntentIR and name each in its adapter residual, leave every `.isf` unchanged, and measure all
+  31 chains.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
   Status: `open` (`2026-10-22`; DESIGN; opened by `.3.c.viii`)
   Goal: **a table whose columns the converter swapped is read or refused as such.** **Reproduce:** CoreSight TMC
