@@ -136,11 +136,45 @@ and dated entries go to this part.
     or a guessed enabling property. Each record gets an adapter residual naming its encoding, meaning, support, notes
     and any member link; `.isf` stays unchanged.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.70.a`
-  Status: `open` (`2026-10-28`; CODE; opened by `.70`)
+  Status: `done` (`2026-10-28`; CODE; opened by `.70`; checklist below)
   Goal: **support requirements and their notes reach IntentIR.** Acceptance: implement the record, its optional exact
     member join and note binding, register the new field, carry it to IntentIR and name each record in its adapter
     residual; read exactly C2-1's three and C2-3's six rows, preserve every existing member and `.isf`, and measure all
     31 chains.
+  **Done `2026-10-28`.** `read_support_requirements` keeps each non-reserved row's exact encoding, meaning and support,
+  and joins each cited footnote by its mark. C2-1 contributes three rows with no member link; C2-3 contributes six,
+  three with exact member names. SemanticIR joins those three to `symbol_0_size` by exact table and literal identity;
+  IntentIR preserves all nine. The adapter gains nine named residuals (ADIv6 35 -> 44) without lowering a requirement
+  to membership or an enabling property. The other 30 chains are content-identical and every `.isf` is unchanged.
+  Verification: three focused tests and seven RED controls; fresh ADI replay/rebuild and 31-chain currency; 11 seeds;
+  `kg-bench` 158/158; product tests 475 / 171 / 1,948 and xtask 149; clippy, fmt and producer flow; measurements in
+  `.project-data/tmp/erg-70a/`
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.70.a — support requirements and their notes reach IntentIR`
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.70.a` (CODE) — DONE `2026-10-28`
+
+- [x] **REPRODUCE / MEASURE** — `.70`'s 31-chain census: only ADIv6 C2-1 and C2-3 have a support-requirement column,
+  with three and six non-reserved rows respectively. The support cells and footnotes were absent from every IR.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` had no support-requirement reader or
+  carrier. RED 7/7, all sources restored byte-identically: wrong support column, reserved rows admitted, notes dropped,
+  note joined by position, member joined without its encoding, symbol join without its literal check, and adapter
+  residual not wired; each fails its focused support-requirement test.
+- [x] **ADDRESSED (verified)** — fresh artifacts contain exactly nine records in all three IR stages, exact note `a`
+  on the word row and note `b` on three larger rows, and exactly three `symbol_0_size` member links. The adapter adds
+  exactly nine residuals naming the cells, notes, tables and links; no `.isf` is emitted for ADIv6.
+- [x] **NO REGRESSION** — old/new ADI comparison changes only the support field, its manifest, proofs and validation;
+  every prior adapter residual is unchanged. The other 30 chains are content-identical at every stage and every `.isf`
+  is unchanged. `check_chain_currency.sh` certifies 31 of 31 current; all 11 seed reports are identical after masking
+  temporary paths; `kg-bench` 158/158. Product tests 475 / 171 / 1,948 and xtask 149 pass; clippy and
+  `cargo fmt --all -- --check` are clean. `mdbook test` and `mdbook build` pass with the existing `<operation>`
+  warning unchanged. Producer flow is 2,901 functions / 16,500 decision sites / 21,186 helper edges / 1,658 macros;
+  the deliberate boundary is 139 rule roots / 79 grammar declassifiers.
+- [x] **GENERICITY (ADR 0006)** — a header's support/required words, one numeric encoding column, one remaining
+  meaning column, non-reserved support cells, exact note marks, and exact table/literal/member identity; no document,
+  table or vendor vocabulary, no positional member join and no synthesized requirement.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` (*A member's support requirement*); research
+  `category-family-census.md`; KM `an-encoding-members-enabling-property`; root frontier `.71`, MEMORY and the
+  hand-maintained evidence contract. The consumed book delta and producer census are rolled under `.70.a`.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.68.a` (CODE) — DONE `2026-10-28`
 
 - [x] **REPRODUCE / MEASURE** — `.68`'s 31-chain census: 32 candidates, 10 two-way value/prose matrices in 6

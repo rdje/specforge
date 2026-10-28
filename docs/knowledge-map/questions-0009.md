@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > how many .isf files are emitted (AXI, AHB, APB-E, Wishbone)
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how many AArch64 External Debug page sidecars are repository relative
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -294,7 +298,3 @@
   > how many reviewed source regions and modalities were found
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > how many rows must arm C correct to clear C1
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > how many runs does a doctrine timing need before it can be published
-- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
-  > how many scripts does SpecForge have and who calls them

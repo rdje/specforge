@@ -66,7 +66,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v.v` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.61.c` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.70.a` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.71` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.72` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.73` | [Protocol and clock leaves](protocol-and-clock-leaves.md) |

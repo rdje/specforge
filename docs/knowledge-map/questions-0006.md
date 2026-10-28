@@ -273,6 +273,8 @@
   > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
+- [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
+  > how do support requirement notes join their rows
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
 - [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
@@ -295,5 +297,3 @@
   > how does IntentIR find the temporal rule derived from a signal constraint (signal_constraint_rule_id)
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > how does JSON::PP mark a decoded number versus a string
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how does SemanticIR preserve VALID READY without formal signal declarations

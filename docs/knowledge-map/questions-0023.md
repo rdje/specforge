@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > why did seed_swd's constraint score 0
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why did six Introducing CoreSight interfaces disappear
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > why did specforge publish Arm recommends drives SPI or Manager sees drives LRCREDIT
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > why did specforge publish Manager reads HTRANS from this next access (a determiner then a sequence modifier makes access a noun)
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
@@ -290,11 +298,3 @@
   > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > why does CoreSight TMC lack its AXI master interface signals
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why does DATA_WIDTH/8 work as a width but DATA_WIDTH / 8 not
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why does DTI (ihi0088) have zero message_field_records
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > why does Docling re-ingest fail on Apple Silicon
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > why does DoclingDocument.model_validate fail with name Field required

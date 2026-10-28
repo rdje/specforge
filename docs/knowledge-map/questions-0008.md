@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > how does the register reader recover a field name with no name column
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how does the section-heading field reader tell a message container from a register container
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -178,6 +180,8 @@
   > how is an active task source locked before migration
 - [a-task-evidence-part-whose-leaves-are-all-closed-is-archived](../knowledge/a-task-evidence-part-whose-leaves-are-all-closed-is-archived.md)
   > how is an archived part verified (its bytes equal archived_from at sealed_commit, an ancestor of HEAD)
+- [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
+  > how is an encoding row's support requirement read
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -293,7 +297,3 @@
   > how long does the LIVE-DOC-SIZE doctrine take to run
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > how many .isf files are emitted (AXI, AHB, APB-E)
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > how many .isf files are emitted (AXI, AHB, APB-E, Wishbone)
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how many AArch64 External Debug page sidecars are repository relative

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > what is ADR 0044
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > what is ADR 0045
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is ADR 0046
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
@@ -181,6 +185,8 @@
 - [an-assume-sentence-about-the-document-is-apparatus](../knowledge/an-assume-sentence-about-the-document-is-apparatus.md)
   > what is StatementClass::Apparatus / the apparatus statement class
 - [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
+  > what is SupportRequirementRecord / support_requirements
+- [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
   > what is SymbolEnumMemberRecord.enabled_by / CombinationRow.enabled_by / EnablingCondition / enabling_column
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > what is SystemResetKind::NotStated / reset_kind not_stated
@@ -292,9 +298,3 @@
   > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > what is descriptive_consequent_signal
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is document_intent_category / the 6-category purpose recognizer
-- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
-  > what is document_notation_sections / names_document_notation / outline_number

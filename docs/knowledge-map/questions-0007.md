@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how does SemanticIR preserve VALID READY without formal signal declarations
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
   > how does SourceIR proof migration handle a classifier implementation change
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -296,5 +298,3 @@
   > how does the no-re-ingest canonical promotion protocol stay in place
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does the published-assertion gate decide which surfaces are watched
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > how does the register reader recover a field name with no name column

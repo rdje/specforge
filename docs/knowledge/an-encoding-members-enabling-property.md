@@ -10,11 +10,15 @@ answers:
   - "why is a member's enabling property not joined to the property's record yet (boolean properties, KG-ISF .2a.vii.c.vi)"
   - "does a gated enum member reach the .isf"
   - "what is isf_protocol_enum_enabled_members"
+  - "how is an encoding row's support requirement read"
+  - "what is SupportRequirementRecord / support_requirements"
+  - "how do support requirement notes join their rows"
+  - "what is isf_protocol_support_requirement"
 date: 2026-10-28
 status: current
 tags: [evidence-ir, semantic-ir, encodings, enums, value-combinations, properties, extraction-representation-gaps, measured]
-evidence: docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.61, .61.a); docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md (.70); crates/specforge/src/ir/evidence.rs (enabling_condition_column); generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json; generated/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir.json (table_0072, table_0075); crates/specforge/src/ir/evidence.rs (SignalPresenceRecord.presence_condition, the precedent)
-reverify: "In AXI's SourceIR, list the tables whose first header row has a cell `Enable`, `Enable property` or `Property` — expect table_0061, table_0102-0106, table_0134 and table_0137 (the eight fragments), plus table_0277-0280 (B2.4, a property-constraint summary that mints no encoding)"
+evidence: docs/archive/tasks/extraction-representation-gaps/table-reading-leaves.md (.61, .61.a); docs/tasks/extraction-representation-gaps/protocol-and-clock-leaves.md (.70, .70.a); crates/specforge/src/ir/evidence.rs (enabling_condition_column, read_support_requirements); crates/specforge/src/ir/semantic.rs (bind_support_requirement_members); crates/specforge/src/ir/adapters.rs (protocol_residual_decisions); generated/source_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/source_ir.json; generated/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir.json (table_0072, table_0075); crates/specforge/src/ir/evidence.rs (SignalPresenceRecord.presence_condition, the precedent)
+reverify: "In AXI's SourceIR, list the tables whose first header row has a cell `Enable`, `Enable property` or `Property` — expect table_0061, table_0102-0106, table_0134 and table_0137 (the eight fragments), plus table_0277-0280 (B2.4, a property-constraint summary that mints no encoding). For support requirements, run `cargo test --offline --workspace --lib --exclude specforge-production-graph support_requirement`, then inspect ADIv6 IntentIR for nine records and three exact `symbol_0_size` member links; `.70.a` records the corpus comparison and exact note text."
 ---
 
 AXI gates encoding members by interface properties in a table column. The untitled `AWCMO` table (`AWCMO | Label |
@@ -51,6 +55,12 @@ none of the 22 is a record.
 - a signal's presence property (`presence_condition`, joined by `.2a.vii.c.vi`);
 - a parity check's enable (`check_enable`);
 - CHI C2C's register property bits;
-- ADIv6 *C2-3*'s `Support required?`, a member's conformance requirement (`.70`): a row-level record with exact support
-  and note text, not an enabling property. C2-1's conditional fallback has no enum and uses the same carrier; notes join
-  by their own marks, and optional member links join only by exact table and literal equality (`.70.a`).
+- ADIv6 *C2-3*'s `Support required?`, a member's conformance requirement (`.70`), not an enabling property.
+
+**Support requirements are implemented (`.70.a`, `2026-10-28`).** EvidenceIR `support_requirements` keeps one row-level
+`SupportRequirementRecord` per non-reserved row, with exact encoding, meaning, support, and notes joined by their own
+marks. An optional member name comes only from a cited enum statement with the same table and literal; SemanticIR joins
+its `symbol_id` by the same identity, never row position or enum spelling. ADIv6 has nine records: three C2-1 rows with
+no enum link and six C2-3 rows, three of which join `symbol_0_size`. All nine cross IntentIR and earn one
+`isf_protocol_support_requirement_<id>` residual. No requirement becomes unconditional membership or a guessed enabling
+property, and no `.isf` changes.

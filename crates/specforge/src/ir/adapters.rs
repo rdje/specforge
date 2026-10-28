@@ -1482,6 +1482,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             + intent_ir.protocol_transitions.len()
             + intent_ir.value_combinations.len()
             + intent_ir.matrix_tables.len()
+            + intent_ir.support_requirements.len()
             + intent_ir.message_signal_layouts.len()
             + intent_ir.signal_sets.len()
             + intent_ir.interface_edge_timings.len()
@@ -1566,6 +1567,35 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             &[],
             &record.table_ids,
             "a consumer: no rule, guard or drive names its row and column keys; a legality matrix's lowering is decided apart (`EXTRACTION-REPRESENTATION-GAPS.3.c.v.iv`), and a requirement, version or effect matrix states configuration the `.isf` does not carry (ADR 0033 §6)",
+        ));
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.70.a — a support requirement is not an enabling property or an unconditional
+    // member declaration: `.isf` has no support-condition form, so each row and its notes stay typed in IntentIR.
+    for record in &intent_ir.support_requirements {
+        let notes = record
+            .notes
+            .iter()
+            .map(|note| format!("{}: {}", note.mark, note.text))
+            .collect::<Vec<_>>()
+            .join("; ");
+        let member = match (&record.symbol_id, &record.member_name) {
+            (Some(symbol), Some(member)) => format!("{symbol} / {member}"),
+            _ => "<none>".to_string(),
+        };
+        residuals.push(protocol_residual_packet(
+            "support_requirement",
+            "support requirement",
+            &record.support_requirement_id,
+            &[],
+            &record.table_ids,
+            &format!(
+                "an `.isf` form for a support condition on an encoding member or row; encoding: {}; meaning: {}; support: {}; member: {}; notes: {}",
+                record.encoding,
+                record.meaning,
+                record.support,
+                member,
+                if notes.is_empty() { "<none>" } else { &notes },
+            ),
         ));
     }
     // EXTRACTION-REPRESENTATION-GAPS.3.c.iv.c.ii — a signal laid out per message kind. No `.isf` port takes a per-message
@@ -2865,6 +2895,76 @@ mod tests {
             isf.rule_count, emitted_rules,
             "rule_count must equal emitted (rule …) forms\n{src}"
         );
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.70.a` — a support row reaches the adapter as one residual with exact notes and
+    /// member identity, and the rendered `.isf` is unchanged.
+    #[test]
+    fn isf_adapter_residualizes_a_support_requirement_with_its_notes() -> Result<()> {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_support_requirements.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let baseline = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("baseline_adapter"),
+        )?;
+        let baseline_isf = baseline.isf.expect("baseline ISF artifact");
+        intent_ir.support_requirements = serde_json::from_value(serde_json::json!([{
+            "support_requirement_id": "support_requirement_0001",
+            "table_ids": ["table_0075"],
+            "encoding": "0b010",
+            "meaning": "Word (32-bits)",
+            "support": "Yes a",
+            "notes": [{"mark": "a", "text": "On a word-only implementation, Size is read-only and returns 0b010."}],
+            "symbol_id": "symbol_0_size",
+            "member_name": "WORD__32_BITS"
+        }]))?;
+        intent_ir.write_to_disk()?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("support_adapter"),
+        )?;
+        assert_eq!(
+            artifact
+                .isf
+                .as_ref()
+                .expect("support ISF artifact")
+                .source_text,
+            baseline_isf.source_text
+        );
+        let packets = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| {
+                packet
+                    .packet_id
+                    .starts_with("isf_protocol_support_requirement_")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(packets.len(), 1);
+        assert_eq!(
+            packets[0].packet_id,
+            "isf_protocol_support_requirement_support_requirement_0001"
+        );
+        for expected in [
+            "encoding: 0b010",
+            "meaning: Word (32-bits)",
+            "support: Yes a",
+            "member: symbol_0_size / WORD__32_BITS",
+            "notes: a: On a word-only implementation, Size is read-only and returns 0b010.",
+            "supporting tables: table_0075",
+        ] {
+            assert!(
+                packets[0].why_unresolved.contains(expected),
+                "missing {expected:?}"
+            );
+        }
         Ok(())
     }
 

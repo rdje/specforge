@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > how many runs does a doctrine timing need before it can be published
+- [the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask](../knowledge/the-api-reference-is-rustdoc-and-tooling-moves-to-cargo-xtask.md)
+  > how many scripts does SpecForge have and who calls them
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
@@ -293,7 +297,3 @@
   > added, while line_bytes_each maximizes a per-LINE quantity that does not, so it has no growth driver and is freely reducible at any time)
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > is a lost table row key a source-assembly gap or a proposal-shape defect (both, and which one depends on the table — for 104 of 109 rows the binding is inside the span and a span-local rule can reach it; for 5 the column header binds the other axis and lives in a DIFFERENT statement, so the span cannot express the scope even in principle)
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > is a missing normalized bundle the same as a lost normalized bundle
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)

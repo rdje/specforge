@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is document_intent_category / the 6-category purpose recognizer
+- [a-section-defining-the-documents-notation-is-apparatus](../knowledge/a-section-defining-the-documents-notation-is-apparatus.md)
+  > what is document_notation_sections / names_document_notation / outline_number
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > what is document_signal_coreferences
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -66,6 +72,8 @@
   > what is isf_protocol_permission_rules
 - [an-absent-value-may-be-a-label-and-hold-for-a-class](../knowledge/an-absent-value-may-be-a-label-and-hold-for-a-class.md)
   > what is isf_protocol_signal_qualified_absent_value_
+- [an-encoding-members-enabling-property](../knowledge/an-encoding-members-enabling-property.md)
+  > what is isf_protocol_support_requirement
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
   > what is isf_register_width_not_stated
 - [a-software-agents-statement-is-software-intent](../knowledge/a-software-agents-statement-is-software-intent.md)
@@ -289,11 +297,3 @@
   > what is the behavioral genericity held-out population
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > what is the behavioural oracle for a coverage guard
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)

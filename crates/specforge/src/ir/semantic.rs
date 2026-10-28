@@ -21,8 +21,9 @@ use crate::ir::evidence::{
     SignalLayoutRecord, SignalPolarity, SignalPolarityConflictRecord, SignalPolarityRecord,
     SignalPresenceRecord, SignalSemanticConflictRecord, SignalSemanticHintRecord,
     SignalSemanticHintSourceKind, SignalSemanticTag, SignalSetRecord, SoftwareIntentRecord,
-    SourceLocalInferenceConstraintGrounding, StatementClass, ValueCombinationRecord,
-    VisualEvidenceRole, VisualObservationKind, enabling_condition, parse_visual_observation_json,
+    SourceLocalInferenceConstraintGrounding, StatementClass, SupportRequirementRecord,
+    ValueCombinationRecord, VisualEvidenceRole, VisualObservationKind, enabling_condition,
+    parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
     CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
@@ -312,6 +313,9 @@ pub struct SemanticIr {
     /// EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub matrix_tables: Vec<MatrixTableRecord>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.70.a` — support requirements and their notes, with any exact symbol/member join.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub support_requirements: Vec<SupportRequirementRecord>,
     /// Interface-edge timing observations projected losslessly from EvidenceIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
@@ -483,6 +487,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("message_signal_layouts", "semantic.carried_evidence"),
     ("signal_sets", "semantic.carried_evidence"),
     ("matrix_tables", "semantic.carried_evidence"),
+    ("support_requirements", "semantic.evidence_projection"),
     ("interface_edge_timings", "semantic.carried_evidence"),
     ("signal_presence_records", "semantic.carried_evidence"),
     ("check_signal_records", "semantic.carried_evidence"),
@@ -1020,6 +1025,9 @@ impl SemanticIr {
         // composition (`.2i`); universal English grammar, no name list (ADR 0006).
         let transaction_phases = build_transaction_phases(&context, &declared_signal_names);
 
+        let mut support_requirements = evidence_ir.support_requirements.clone();
+        bind_support_requirement_members(&mut support_requirements, &symbol_definitions);
+
         let mut artifact = Self {
             schema_version: SEMANTIC_IR_SCHEMA_VERSION,
             stage: IrStage::SemanticIr,
@@ -1063,6 +1071,7 @@ impl SemanticIr {
             message_signal_layouts: evidence_ir.message_signal_layouts.clone(),
             signal_sets: evidence_ir.signal_sets.clone(),
             matrix_tables: evidence_ir.matrix_tables.clone(),
+            support_requirements,
             interface_edge_timings: evidence_ir.interface_edge_timings.clone(),
             signal_presence_records: evidence_ir.signal_presence_records.clone(),
             check_signal_records: evidence_ir.check_signal_records.clone(),
@@ -1236,6 +1245,9 @@ impl SemanticIr {
         for record in &self.matrix_tables {
             cited.extend(borrow(&record.table_ids));
         }
+        for record in &self.support_requirements {
+            cited.extend(borrow(&record.table_ids));
+        }
         for record in &self.signal_presence_records {
             cited.insert(record.table_id.as_str());
             for value in record
@@ -1327,6 +1339,7 @@ impl SemanticIr {
         insert_field!(message_signal_layouts);
         insert_field!(signal_sets);
         insert_field!(matrix_tables);
+        insert_field!(support_requirements);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
@@ -3734,6 +3747,47 @@ fn build_interfaces(
         .collect();
 
     (interfaces, interface_conflicts)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.70.a` — the numeric value of an encoding with no footnote mark attached.
+fn support_encoding_value(text: &str) -> Option<u32> {
+    let text = text.trim();
+    text.parse::<u32>().ok().or_else(|| {
+        text.strip_prefix("0b")
+            .and_then(|digits| u32::from_str_radix(digits, 2).ok())
+            .or_else(|| {
+                text.strip_prefix("0x")
+                    .and_then(|digits| u32::from_str_radix(digits, 16).ok())
+            })
+    })
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.70.a` — join only the exact table, encoding and normalized member name. No match by
+/// row position or enum spelling; ambiguity leaves the support record unlinked.
+fn bind_support_requirement_members(
+    records: &mut [SupportRequirementRecord],
+    symbols: &[SymbolDefinitionRecord],
+) {
+    for record in records {
+        let Some(encoding) = support_encoding_value(&record.encoding) else {
+            continue;
+        };
+        let Some(member_name) = record.member_name.as_deref() else {
+            continue;
+        };
+        let mut candidates = symbols.iter().filter(|symbol| {
+            record.table_ids.iter().all(|table| symbol.supporting_table_ids.contains(table))
+                && symbol.members.iter().any(|member| {
+                    member.member_name == member_name
+                        && matches!(&member.value, ControlExpressionRecord::Literal { literal } if literal.parse::<u32>() == Ok(encoding))
+                })
+        });
+        if let Some(symbol) = candidates.next()
+            && candidates.next().is_none()
+        {
+            record.symbol_id = Some(symbol.symbol_id.clone());
+        }
+    }
 }
 
 fn build_system_contract(context: &SemanticContext) -> Option<SystemContractRecord> {
@@ -29577,7 +29631,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 67);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 68);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()
@@ -30056,5 +30110,50 @@ mod signal_declaration_row_drop_4a {
         assert_eq!(width_expression_length("log 2 (DATA_WIDTH) -"), Some(3));
         assert_eq!(width_expression_length("(8)"), Some(3));
         assert_eq!(width_expression_length("/ 8"), None);
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.70.a` — only exact table, encoding and normalized member identity joins.
+    #[test]
+    fn support_requirement_member_join_is_exact() {
+        let requirement = |encoding: &str| SupportRequirementRecord {
+            support_requirement_id: "support_requirement_0001".to_string(),
+            table_ids: vec!["table_0075".to_string()],
+            encoding: encoding.to_string(),
+            meaning: "Word (32-bits)".to_string(),
+            support: "Yes a".to_string(),
+            notes: Vec::new(),
+            symbol_id: None,
+            member_name: Some("WORD__32_BITS".to_string()),
+        };
+        let symbols = vec![SymbolDefinitionRecord {
+            symbol_id: "symbol_0_size".to_string(),
+            symbol_name: "Size".to_string(),
+            kind: SymbolDefinitionKind::Enum,
+            value: None,
+            members: vec![SymbolEnumMemberRecord {
+                member_name: "WORD__32_BITS".to_string(),
+                value: ControlExpressionRecord::Literal {
+                    literal: "2".to_string(),
+                },
+                declaration_order: 2,
+                supporting_statement_ids: vec!["statement_6639".to_string()],
+                automation_confidence: crate::ir::source::AutomationConfidence::High,
+                enabled_by: None,
+            }],
+            legal_values: Vec::new(),
+            recommended_values: Vec::new(),
+            declaration_order: 0,
+            supporting_statement_ids: vec!["statement_6639".to_string()],
+            supporting_table_ids: vec!["table_0075".to_string()],
+            automation_confidence: crate::ir::source::AutomationConfidence::High,
+        }];
+        let mut records = vec![requirement("0b010"), requirement("0b011")];
+        super::bind_support_requirement_members(&mut records, &symbols);
+        assert_eq!(records[0].symbol_id.as_deref(), Some("symbol_0_size"));
+        assert_eq!(records[1].symbol_id, None);
+        let mut wrong_table = requirement("0b010");
+        wrong_table.table_ids = vec!["table_0072".to_string()];
+        super::bind_support_requirement_members(std::slice::from_mut(&mut wrong_table), &symbols);
+        assert_eq!(wrong_table.symbol_id, None);
     }
 }

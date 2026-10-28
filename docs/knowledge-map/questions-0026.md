@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why is 0010 read as ten
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > why is 18 of 349 the wrong population for the constraint kind span
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > why is 198 exactly the largest fact-card maximum the current projection allows
+- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
+  > why is A4.4 ARCACHE | AWCACHE not a value combination (one collective's members: one key per channel)
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
   > why is ADIv6 ABORT emitted 5 bits wide
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
@@ -290,11 +298,3 @@
   > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why is every isf adapter blocked
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why is exact source region capture 13 of 14
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > why is file_digest uncached in repin_claim_regions
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > why is its not a determiner for relation verbs (GIC ITS agent)

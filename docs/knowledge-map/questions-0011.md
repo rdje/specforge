@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > is a missing normalized bundle the same as a lost normalized bundle
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
 - [a-list-items-number-is-the-converters-marker](../knowledge/a-list-items-number-is-the-converters-marker.md)
   > is a numbered list item beside a table a note
 - [a-check-coverage-table-binds-the-class-of-covered-signals](../knowledge/a-check-coverage-table-binds-the-class-of-covered-signals.md)
@@ -293,7 +297,3 @@
   > is the per-stage total seal probe active or inert
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > is the persisted corpus one code generation
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > is the portable 4096 question-key cap the binding authority on the knowledge map
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why was an encoding table whose enum reaches IntentIR listed as uncarried
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > why was an obligation recorded on the condition's signal (AWIDUNQ instead of RIDUNQ)
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)

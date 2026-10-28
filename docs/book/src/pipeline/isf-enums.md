@@ -582,12 +582,15 @@ sizes `No`; its `Size` enum keeps the codes but not that requirement. *C2-1* giv
 to `0b00` when packed transfers are unsupported, which is conditional behavior, not an enabling property. `.70` found
 these two tables in the 31 chains, with nine non-reserved rows.
 
-The decided carrier is one row-level `SupportRequirementRecord` per row: encoding, meaning and support cell as written,
-plus each note's mark and exact text. A `Yes a` support cell and a `0b011 b` encoding each cite their own note by its
-mark. Note `a` makes `Size` read-only when only word is supported; note `b` ties larger accesses to the Large Data
-Extension. An optional symbol/member link joins only by exact table and literal equality, never row position or name
-spelling. C2-1 needs no such link. `.70.a` owns carrying the nine records to IntentIR and naming each in an adapter
-residual; no requirement becomes unconditional membership or a guessed property, and `.isf` stays unchanged.
+Since `.70.a`, one row-level `SupportRequirementRecord` per non-reserved row carries the encoding, meaning and support
+cell as written, plus each note's mark and exact text. A `Yes a` support cell and a `0b011 b` encoding each cite their
+own note by its mark. Note `a` makes `Size` read-only when only word is supported; note `b` ties larger accesses to the
+Large Data Extension. `Size` joins its three current members by exact table and literal equality (`symbol_0_size` and
+`BYTE__8_BITS`, `HALFWORD__16_BITS`, `WORD__32_BITS`), never row position or name spelling. C2-1 has no member link.
+
+The nine records cross IntentIR, and each has an `isf_protocol_support_requirement_<id>` residual naming its encoding,
+meaning, support, notes, member link and tables. No requirement becomes unconditional membership or a guessed property,
+and `.isf` stays unchanged.
 
 ### A signal's bit sub-fields
 

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why does DATA_WIDTH/8 work as a width but DATA_WIDTH / 8 not
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why does DTI (ihi0088) have zero message_field_records
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > why does Docling re-ingest fail on Apple Silicon
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > why does DoclingDocument.model_validate fail with name Field required
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > why does EvidenceIR schema 2 clear old protocol records
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -290,11 +298,3 @@
   > why does docling now extract text from inside a figure
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > why does docs/tasks have no file count cap
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > why does eMMC declare a signal called PARTITION
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > why does eMMC declare a signal called t
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does eMMC table_0020 declare HS400 as a signal

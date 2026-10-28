@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > why can a shape-only token-join rule not be shipped
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > why can a shipped standalone extractor fail to improve the default end-to-end result
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why can an active task legacy route use a shorthand source literal
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > why can an extra blank line fail harmless layout comparison
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -289,11 +297,3 @@
   > why did retiring generic phases remove pure inferred actors
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
-- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
-  > why did seed_swd's constraint score 0
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why did six Introducing CoreSight interfaces disappear
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > why did specforge publish Arm recommends drives SPI or Manager sees drives LRCREDIT

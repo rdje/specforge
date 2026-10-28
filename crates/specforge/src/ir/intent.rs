@@ -18,7 +18,8 @@ use crate::ir::evidence::{
     MessageSignalLayoutRecord, OptionalFeatureRecord, PermissionRuleRecord,
     ProtocolOperationRecord, ProtocolStateRecord, ProtocolTransitionRecord, SerialFrameField,
     SignalLayoutRecord, SignalPolarityConflictRecord, SignalPolarityRecord, SignalPresenceRecord,
-    SignalSemanticConflictRecord, SignalSetRecord, SoftwareIntentRecord, ValueCombinationRecord,
+    SignalSemanticConflictRecord, SignalSetRecord, SoftwareIntentRecord, SupportRequirementRecord,
+    ValueCombinationRecord,
 };
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
@@ -200,6 +201,9 @@ pub struct IntentIr {
     /// SemanticIR (ADR 0016). The adapter lowers none of them and keeps one residual per matrix.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub matrix_tables: Vec<MatrixTableRecord>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.70.a` — support requirements and their notes, with any exact symbol/member join.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub support_requirements: Vec<SupportRequirementRecord>,
     /// Interface-edge timing observations carried losslessly from SemanticIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
@@ -369,6 +373,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("message_signal_layouts", "intent.carried_semantics"),
     ("signal_sets", "intent.carried_semantics"),
     ("matrix_tables", "intent.carried_semantics"),
+    ("support_requirements", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
     ("signal_presence_records", "intent.carried_semantics"),
     ("check_signal_records", "intent.carried_semantics"),
@@ -433,6 +438,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "message_signal_layouts",
     "signal_sets",
     "matrix_tables",
+    "support_requirements",
     "interface_edge_timings",
     "signal_presence_records",
     "check_signal_records",
@@ -812,6 +818,7 @@ impl IntentIr {
             message_signal_layouts: semantic_ir.message_signal_layouts.clone(),
             signal_sets: semantic_ir.signal_sets.clone(),
             matrix_tables: semantic_ir.matrix_tables.clone(),
+            support_requirements: semantic_ir.support_requirements.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             signal_presence_records: semantic_ir.signal_presence_records.clone(),
             check_signal_records: semantic_ir.check_signal_records.clone(),
@@ -899,6 +906,7 @@ impl IntentIr {
         insert_field!(message_signal_layouts);
         insert_field!(signal_sets);
         insert_field!(matrix_tables);
+        insert_field!(support_requirements);
         insert_field!(interface_edge_timings);
         insert_field!(signal_presence_records);
         insert_field!(check_signal_records);
@@ -1491,6 +1499,7 @@ impl IntentIr {
             message_signal_layouts: Vec::new(),
             signal_sets: Vec::new(),
             matrix_tables: Vec::new(),
+            support_requirements: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_presence_records: Vec::new(),
             check_signal_records: Vec::new(),
@@ -6967,8 +6976,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 66);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 46);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 67);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 47);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()

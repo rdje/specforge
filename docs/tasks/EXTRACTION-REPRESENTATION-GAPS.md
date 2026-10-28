@@ -38,14 +38,13 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.70.a` — support requirements and their notes reach IntentIR.
+`.71` — a cell that names a note reaches the note.
 
 Then, in order: `.46.c` waits for a FSMGen pin carrying `sf-isf-byte-group-reduction` (`FSMGEN-REQUESTS.12`),
 `.3.c.iv.b.iii` waits for a rule naming a signal's sub-field, `.3.c.v.v` waits for a property parameter
 (`KG-ISF-COMPLETENESS.2a.vii.c.vi`) and an FSMGen pin with actor-level assertions, `.61.c` waits for the same
-`.2a.vii.c.vi`, `.3.c.viii.a` (a table
-whose columns the converter swapped), `.71` (a cell that names a
-note), `.72` (a note an address or timing table cites), `.73` (a matrix's continuation), `.54.a.ii` (the corpus
+`.2a.vii.c.vi`, `.71`'s implementation leaf once designed, then `.3.c.viii.a` (a table
+whose columns the converter swapped), `.72` (a note an address or timing table cites), `.73` (a matrix's continuation), `.54.a.ii` (the corpus
 memory's refresh: an equivalent store re-pinned with the 24-document behavioral re-qualification), `.44` (Symbol-font
 glyphs, a re-seal of every chain). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`,
 `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a legacy
@@ -106,7 +105,6 @@ primary detail-routing authority.
 - ID: `EXTRACTION-REPRESENTATION-GAPS.46.c`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.61.c`
-- ID: `EXTRACTION-REPRESENTATION-GAPS.70.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.71`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.72`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.73`

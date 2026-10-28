@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what owns the SWD EvidenceIR to IntentIR projection gap
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what parts of the literature are deferred or flagged as future work
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > what per-record ceiling does the claim registry actually need
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what precision and recall floors must a supported document category meet
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -289,11 +297,3 @@
   > where does .cache/local-references/chipdoc resolve
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > where does .isf record dropped temporal obligations
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > where does AXI state MPAM_WIDTH values
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > where does EvidenceIR statement text come from
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > where does SpecForge canonicalize upstream artifact paths before serialization
-- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
-  > where does SpecForge carry a state transition a table states

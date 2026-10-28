@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what are the current USB4 Connection Manager artifact hashes
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > what are the current USB4 Inter-Domain artifact hashes
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > what are the current corpus KB live-document size metrics
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -294,7 +298,3 @@
   > what does byte_offset mean on a message field record when bit_range is None
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > what does check_book_current_truth.sh actually cover
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > what does check_proof_seal_currency.sh --total do

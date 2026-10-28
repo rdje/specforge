@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is every isf adapter blocked
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why is exact source region capture 13 of 14
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > why is file_digest uncached in repin_claim_regions
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why is its not a determiner for relation verbs (GIC ITS agent)
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > why is kg-bench 156/156 not enough for an enum change
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -290,11 +298,3 @@
   > why was TOOLBOX.md partitioned at sections 5-7 rather than anywhere else (measured over its 43 revisions, sections 5, 6 and 7 added 254 of the 370 lines and 100% of the last nine revisions', while sections 1-4 added exactly ONE line in three months - the cut follows the writer, not the line count)
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why was a Reserved | Reserved row dropped from a bit table
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why was an encoding table whose enum reaches IntentIR listed as uncarried

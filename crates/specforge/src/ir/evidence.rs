@@ -453,6 +453,9 @@ pub struct EvidenceIr {
     /// (serde-skipped) for documents with none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub matrix_tables: Vec<MatrixTableRecord>,
+    /// `EXTRACTION-REPRESENTATION-GAPS.70.a`: encoding rows' stated support requirements and their notes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub support_requirements: Vec<SupportRequirementRecord>,
     /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: state transitions a document states, with what fires each. Empty
     /// (serde-skipped) for documents that state none.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -1247,6 +1250,39 @@ pub enum MatrixCellClass {
     Prose,
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.70.a` — a footnote cited by a support-requirement row.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SupportNote {
+    /// The mark as printed (`a`, `b`, `1`, or a bracketed number).
+    pub mark: String,
+    /// The note text after its mark, exactly as written.
+    pub text: String,
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.70.a` — one encoding row's stated support requirement and its notes.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SupportRequirementRecord {
+    /// Stable id, e.g. `support_requirement_0001`.
+    pub support_requirement_id: String,
+    /// The table and, in order, each continuation of it.
+    pub table_ids: Vec<String>,
+    /// The row's encoding as written, including any footnote mark.
+    pub encoding: String,
+    /// The meaning assigned to that encoding, as written.
+    pub meaning: String,
+    /// The support-requirement cell as written.
+    pub support: String,
+    /// Notes cited by any cell in the row, joined by exact mark.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub notes: Vec<SupportNote>,
+    /// The symbol joined by exact table and literal equality in SemanticIR, when one exists.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub symbol_id: Option<String>,
+    /// The enum member joined by exact table and literal equality, when one exists.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub member_name: Option<String>,
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.3.c.v.i` — a code a matrix's caption defines, and its meaning, as written.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct MatrixLegendEntry {
@@ -1757,6 +1793,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("message_signal_layouts", "evidence.protocol_structure"),
     ("signal_sets", "evidence.protocol_structure"),
     ("matrix_tables", "evidence.protocol_structure"),
+    ("support_requirements", "evidence.normative"),
     ("protocol_transitions", "evidence.protocol_structure"),
     ("protocol_actors", "evidence.protocol_structure"),
     ("protocol_operations", "evidence.protocol_structure"),
@@ -2173,6 +2210,7 @@ impl EvidenceIr {
         insert_field!(message_signal_layouts);
         insert_field!(signal_sets);
         insert_field!(matrix_tables);
+        insert_field!(support_requirements);
         insert_field!(protocol_transitions);
         insert_field!(protocol_actors);
         insert_field!(protocol_operations);
@@ -2966,6 +3004,12 @@ impl EvidenceIr {
             &matrix_tables,
             &source_ir.structured_tables,
         );
+        // EXTRACTION-REPRESENTATION-GAPS.70.a — the support an encoding row requires, with its notes and any exact
+        // enum-member identity, not a guessed enabling property.
+        let support_requirements = support_requirement_surface(
+            read_support_requirements(source_ir, &extracted_statements),
+            &mut extraction_manifest,
+        );
         // EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii — the equivalence rules the document states.
         let equivalence_rules = equivalence_rule_surface(&extracted_statements);
         // EXTRACTION-REPRESENTATION-GAPS.3.d.iii.a — the permissions the document states.
@@ -3156,6 +3200,7 @@ impl EvidenceIr {
             message_signal_layouts,
             signal_sets,
             matrix_tables,
+            support_requirements,
             protocol_transitions,
             protocol_actors,
             protocol_operations,
@@ -33645,6 +33690,165 @@ fn bracketed_note_number(text: &str) -> Option<&str> {
     ((1..=2).contains(&inner.len()) && inner.bytes().all(|b| b.is_ascii_digit())).then_some(inner)
 }
 
+/// `EXTRACTION-REPRESENTATION-GAPS.70.a` — every non-reserved row of a table with a support-requirement column, with
+/// its encoding, meaning, support and exact notes. Member names come only from cited enum statements whose encoding
+/// agrees; note marks are joined on the table's pages, never by row position.
+fn read_support_requirements(
+    source_ir: &SourceIr,
+    statements: &[ExtractedStatement],
+) -> (Vec<SupportRequirementRecord>, usize) {
+    let footnotes = footnote_texts_by_page(source_ir);
+    let mut enum_members: HashMap<&str, Vec<(u32, &str)>> = HashMap::new();
+    for statement in statements {
+        let Some(rest) = statement.text.strip_prefix("Enum ") else {
+            continue;
+        };
+        let Some((left, code)) = rest.split_once(" = ") else {
+            continue;
+        };
+        let Some((_, member_name)) = left.split_once(' ') else {
+            continue;
+        };
+        let Some(value) = parse_encoding_numeric_literal(code.trim_end_matches('.')) else {
+            continue;
+        };
+        for table_id in &statement.supporting_table_ids {
+            enum_members
+                .entry(table_id)
+                .or_default()
+                .push((value, member_name));
+        }
+    }
+    let mut records = Vec::new();
+    for table in &source_ir.structured_tables {
+        let width = table.body_rows.first().map_or(0, Vec::len);
+        let Some(support_column) = (0..width).find(|column| {
+            table
+                .header_rows
+                .iter()
+                .filter_map(|row| row.get(*column))
+                .any(|cell| {
+                    let words: HashSet<String> = cell
+                        .text
+                        .split(|character: char| !character.is_ascii_alphabetic())
+                        .filter(|word| !word.is_empty())
+                        .map(str::to_ascii_lowercase)
+                        .collect();
+                    words.contains("support") && words.contains("required")
+                })
+        }) else {
+            continue;
+        };
+        let support_rows: Vec<_> = table
+            .body_rows
+            .iter()
+            .filter(|row| {
+                row.get(support_column).is_some_and(|cell| {
+                    let text = cell.text.trim();
+                    !text.is_empty() && text != "-"
+                })
+            })
+            .collect();
+        if support_rows.is_empty() {
+            continue;
+        }
+        let mut code_columns = (0..width).filter(|column| {
+            *column != support_column
+                && support_rows.iter().all(|row| {
+                    let text = row[*column].text.trim();
+                    let code = trailing_note_marks(text).last().map_or(text, |mark| {
+                        text.strip_suffix(&format!(" {mark}")).unwrap_or(text)
+                    });
+                    parse_encoding_numeric_literal(code).is_some()
+                })
+        });
+        let Some(encoding_column) = code_columns.next() else {
+            continue;
+        };
+        if code_columns.next().is_some() {
+            continue;
+        }
+        let mut meaning_columns =
+            (0..width).filter(|column| *column != support_column && *column != encoding_column);
+        let Some(meaning_column) = meaning_columns.next() else {
+            continue;
+        };
+        if meaning_columns.next().is_some() {
+            continue;
+        }
+        let pages = bit_position_table_page(table)
+            .map(|page| [page.saturating_sub(1), page, page + 1])
+            .unwrap_or_default();
+        for row in support_rows {
+            let encoding = row[encoding_column].text.trim().to_string();
+            let meaning = row[meaning_column].text.trim().to_string();
+            if meaning.is_empty() {
+                continue;
+            }
+            let mut notes = Vec::new();
+            for cell in [encoding_column, meaning_column, support_column] {
+                for mark in trailing_note_marks(&row[cell].text) {
+                    if notes.iter().any(|note: &SupportNote| note.mark == mark) {
+                        continue;
+                    }
+                    if let Some((_, text)) = pages
+                        .iter()
+                        .flat_map(|page| footnotes.get(page).into_iter().flatten())
+                        .find(|(candidate, _)| candidate == &mark)
+                    {
+                        notes.push(SupportNote {
+                            mark,
+                            text: text.clone(),
+                        });
+                    }
+                }
+            }
+            let member_name = parse_encoding_numeric_literal(&encoding).and_then(|value| {
+                let mut matches = enum_members
+                    .get(table.table_id.as_str())
+                    .into_iter()
+                    .flatten()
+                    .filter(|(candidate, _)| *candidate == value);
+                let (_, member_name) = matches.next()?;
+                matches.next().is_none().then_some(*member_name)
+            });
+            records.push(SupportRequirementRecord {
+                support_requirement_id: format!("support_requirement_{:04}", records.len() + 1),
+                table_ids: vec![table.table_id.clone()],
+                encoding,
+                meaning,
+                support: row[support_column].text.trim().to_string(),
+                notes,
+                symbol_id: None,
+                member_name: member_name.map(str::to_string),
+            });
+        }
+    }
+    let candidates = records.len();
+    (records, candidates)
+}
+
+/// `EXTRACTION-REPRESENTATION-GAPS.70.a` — the support requirements, recorded only when a table has such a column.
+fn support_requirement_surface(
+    (records, candidates): (Vec<SupportRequirementRecord>, usize),
+    manifest: &mut ExtractionManifest,
+) -> Vec<SupportRequirementRecord> {
+    if candidates > 0 {
+        manifest.record_surface_manifest(crate::ir::extractor::SurfaceManifest {
+            surface: "support_requirements".to_string(),
+            eligible: 1,
+            entries: vec![crate::ir::extractor::ExtractorRunEntry {
+                name: "support_required_columns".to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced: candidates,
+                kept: records.len(),
+            }],
+        });
+    }
+    records
+}
+
 /// `EXTRACTION-REPRESENTATION-GAPS.64` — the marks a cell or title closes with, in order: the words after its last
 /// other word, each a note number, a bracketed one or a lowercase letter (`Y 2`, `O [2]`, `State 1, 2`). A text of
 /// marks alone (`2, 3`) closes with none. `.65.b`: a bracketed mark stays bracketed (`[2]`), so it cites only a note
@@ -46439,7 +46643,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 53);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 54);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()
@@ -52902,6 +53106,144 @@ The control register.
         assert_eq!(prose.rows.len(), 3);
         assert_eq!(prose.rows[0].cells[0], "Port 2 is the downstream port.");
         assert_eq!(prose.rows[2].cells[0], "Port 1 is the downstream port.");
+        Ok(())
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.70.a` — support rows keep exact cells and notes, and only exact enum members join.
+    #[test]
+    fn support_requirement_rows_keep_notes_and_exact_members() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("support.md");
+        fs::write(&source, "# Support\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let rows = |cells: &[&[&str]]| -> Vec<Vec<StructuredTableCellRecord>> {
+            cells
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect()
+        };
+        let table =
+            |id: &str, caption: &str, header: &[&str], body: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: Some("page_0181".to_string()),
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                row_count: (1 + body.len()) as u32,
+                col_count: header.len() as u32,
+                header_rows: rows(&[header]),
+                body_rows: rows(body),
+            };
+        source_ir.structured_tables.extend([
+            table(
+                "table_0072",
+                "Table C2-1 Summary of AddrInc field values",
+                &["AddrInc value", "Description", "Support required?"],
+                &[
+                    &["0b00", "Auto-increment off", "Always."],
+                    &["0b01", "Increment single", "Always."],
+                    &[
+                        "0b10",
+                        "Increment packed",
+                        "If Packed transfers are supported.",
+                    ],
+                    &["0b11", "Reserved", "-"],
+                ],
+            ),
+            table(
+                "table_0075",
+                "Table C2-3 Size field values",
+                &[
+                    "Size value, CSW.Size",
+                    "Memory access size",
+                    "Support required?",
+                ],
+                &[
+                    &["0b000", "Byte (8-bits)", "No"],
+                    &["0b001", "Halfword (16-bits)", "No"],
+                    &["0b010", "Word (32-bits)", "Yes a"],
+                    &["0b011 b", "Doubleword (64-bits)", "No"],
+                    &["0b100 b", "128-bits", "No"],
+                    &["0b101 b", "256-bits", "No"],
+                    &["0b110 - 0b111", "Reserved", "-"],
+                ],
+            ),
+        ]);
+        for (element_id, _, text) in [
+            (
+                "note_a",
+                "a",
+                "a. On a word-only implementation, Size is read-only and returns 0b010.",
+            ),
+            (
+                "note_b",
+                "b",
+                "b. Supported by the MEM-AP Large Data Extension.",
+            ),
+        ] {
+            source_ir
+                .content_elements
+                .push(crate::ir::source::ContentElementRecord {
+                    element_id: element_id.to_string(),
+                    kind: crate::ir::source::ContentElementKind::Footnote,
+                    text: text.to_string(),
+                    heading_level: None,
+                    page_id: Some("page_0181".to_string()),
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: 1,
+                    list_marker: None,
+                });
+        }
+        let statement = |id: &str, text: &str| super::ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: Vec::new(),
+            supporting_table_ids: vec!["table_0075".to_string()],
+            related_visual_evidence_ids: Vec::new(),
+        };
+        let statements = [
+            statement("statement_6637", "Enum Size BYTE__8_BITS = 0."),
+            statement("statement_6638", "Enum Size HALFWORD__16_BITS = 1."),
+            statement("statement_6639", "Enum Size WORD__32_BITS = 2."),
+        ];
+        let (records, candidates) = super::read_support_requirements(&source_ir, &statements);
+        assert_eq!(candidates, 9);
+        assert_eq!(records.len(), 9);
+        assert!(
+            records[..3]
+                .iter()
+                .all(|record| record.member_name.is_none())
+        );
+        assert!(records[..3].iter().all(|record| record.notes.is_empty()));
+        assert_eq!(records[3].member_name.as_deref(), Some("BYTE__8_BITS"));
+        assert_eq!(records[4].member_name.as_deref(), Some("HALFWORD__16_BITS"));
+        assert_eq!(records[5].member_name.as_deref(), Some("WORD__32_BITS"));
+        assert_eq!(records[5].support, "Yes a");
+        assert_eq!(records[5].notes.len(), 1);
+        assert_eq!(records[5].notes[0].mark, "a");
+        assert_eq!(
+            records[5].notes[0].text,
+            "On a word-only implementation, Size is read-only and returns 0b010."
+        );
+        for record in &records[6..] {
+            assert_eq!(record.notes.len(), 1);
+            assert_eq!(record.notes[0].mark, "b");
+            assert_eq!(
+                record.notes[0].text,
+                "Supported by the MEM-AP Large Data Extension."
+            );
+        }
+        assert!(records.iter().all(|record| record.symbol_id.is_none()));
         Ok(())
     }
 

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why does eMMC declare a signal called PARTITION
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why does eMMC declare a signal called t
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does eMMC table_0020 declare HS400 as a signal
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -289,11 +297,3 @@
   > why is 'the missing input cannot be assumed to take a fixed value' no longer an abstraction (a negated assume is a rule)
 - [a-stated-permission-is-a-typed-record](../knowledge/a-stated-permission-is-a-typed-record.md)
   > why is 'the type of transactions that a device may generate' refused (a subject holding a relative clause)
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > why is 0010 read as ten
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > why is 18 of 349 the wrong population for the constraint kind span
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why is 198 exactly the largest fact-card maximum the current projection allows
-- [a-jointly-keyed-table-is-a-value-combination](../knowledge/a-jointly-keyed-table-is-a-value-combination.md)
-  > why is A4.4 ARCACHE | AWCACHE not a value combination (one collective's members: one key per channel)

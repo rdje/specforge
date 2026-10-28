@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > is the portable 4096 question-key cap the binding authority on the knowledge map
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
@@ -294,7 +298,3 @@
   > what are the current OpenCAPI Ready Definition artifact hashes
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > what are the current OpenCAPI Ready artifact hashes
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > what are the current USB4 Connection Manager artifact hashes
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > what are the current USB4 Inter-Domain artifact hashes

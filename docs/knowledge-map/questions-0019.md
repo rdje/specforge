@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > where does AXI state MPAM_WIDTH values
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > where does EvidenceIR statement text come from
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > where does SpecForge canonicalize upstream artifact paths before serialization
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > where does SpecForge carry a state transition a table states
 - [a-signals-stated-absent-value-rides-its-presence-record](../knowledge/a-signals-stated-absent-value-rides-its-presence-record.md)
   > where does SpecForge carry the value a signal takes when it is absent or not driven
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
@@ -290,11 +298,3 @@
   > which IR stages have adopted move safe persisted paths
 - [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
   > which IntentIR assumptions does SpecForge write itself (in this IntentIR pass)
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > which IntentIR families does the isf adapter never read
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > which IntentIR surfaces are lowered to the .isf vs silently dropped
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > which LLM or VLM does SpecForge use
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which Markdown files must the live-document containment registry cover

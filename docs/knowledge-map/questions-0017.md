@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what is the bit-exact adjacency chain rule
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what is the built-in RAM guard / autonomous memory safeguard during ingest
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -289,11 +297,3 @@
   > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > what owns live-document size limits and transition debt
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what owns the SWD EvidenceIR to IntentIR projection gap
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what parts of the literature are deferred or flagged as future work
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > what per-record ceiling does the claim registry actually need
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)

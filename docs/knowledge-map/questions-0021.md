@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > which register-table family stays residual (byte location size tables)
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > which registers carry size_bits
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > which registries are at risk from incoherent capacity bounds
+- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
+  > which registries does the numeric-type check cover
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > which replayable enums publish a colliding code
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -289,11 +297,3 @@
   > why can a per-table classifier not inherit a kind from a parent table
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > why can a shape-only token-join rule not be shipped
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > why can a shipped standalone extractor fail to improve the default end-to-end result
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why can an active task legacy route use a shorthand source literal
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why can an extra blank line fail harmless layout comparison

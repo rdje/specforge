@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > which IntentIR families does the isf adapter never read
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > which IntentIR surfaces are lowered to the .isf vs silently dropped
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > which LLM or VLM does SpecForge use
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which Markdown files must the live-document containment registry cover
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > which PDF task history ids exist only as tree-relative shorthand
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -289,11 +297,3 @@
   > which records cite the Reserved keyword definition (reserved_spans.keyword_definition_id)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > which refusal arm of the declaration reader is a real loss
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > which register-table family stays residual (byte location size tables)
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > which registers carry size_bits
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > which registries are at risk from incoherent capacity bounds
-- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
-  > which registries does the numeric-type check cover
