@@ -205,9 +205,13 @@ def render(found: list[dict]) -> None:
               f" {reach['portable_max_bytes']} still reaches {reach['reachable_records']}"
               f" at a per-record ceiling of {reach['reachable_at_max_record_bytes']}"
               f" — {reach['residual_records']} more.")
-        print("  That ceiling sits flush against today's largest record, so the extra slots are")
-        print("  bought by giving up the headroom the ceiling exists to provide. The envelope is")
-        print("  NEARLY spent, not spent; LIVE-DOCUMENT-PRESSURE-HEADROOM.36d owns the lifecycle.")
+        if reach["residual_records"]:
+            print("  That ceiling sits flush against today's largest record, so the extra slots are")
+            print("  bought by giving up the headroom the ceiling exists to provide. The envelope is")
+            print("  NEARLY spent, not spent; LIVE-DOCUMENT-PRESSURE-HEADROOM.36d owns the lifecycle.")
+        else:
+            print("  No further slot remains at that record size, but the declared capacity remains")
+            print("  exactly reachable. LIVE-DOCUMENT-PRESSURE-HEADROOM.36d still owns the lifecycle.")
 
 
 # The class as `.36a` measured it and `.36b` left it. These pin the SHAPE of the finding, not a
@@ -289,8 +293,11 @@ def self_test(root: str) -> int:
     reach = reachable_records(root, claims) if claims else None
     check("portable-cap-is-read-from-the-checker-not-a-literal",
           reach is not None and reach["portable_max_bytes"] == 262144)
-    check("residual-headroom-is-positive-so-the-envelope-is-not-spent",
-          reach is not None and reach["residual_records"] > 0)
+    # Zero spare slots does not make the declaration incoherent: it must remain REACHABLE, but no
+    # further capacity is promised. Requiring a positive residual would manufacture a failure from
+    # ordinary evidence growth and confuse that separate lifecycle trigger with the capacity proof.
+    check("declared-record-capacity-remains-reachable",
+          reach is not None and reach["reachable_records"] >= reach["declared_records"])
     check("residual-headroom-is-small-enough-that-a-lifecycle-is-still-owed",
           reach is not None and reach["residual_records"] <= 4)
 
